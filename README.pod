@@ -18,8 +18,8 @@ hohe Qualität für die Wiedergabe auf Papier. In einem PDF-Viewer kann
 die Druck-Fassung auch interaktiv genutzt werden, da sie mit
 Hyperlinks versehen ist.
 
-Sdoc befindet sich aktuell in Entwicklung und ist nur für Testzwecke
-geeignet.
+B<Sdoc befindet sich aktuell in Entwicklung und ist für einen
+ernsthaften Einsatz noch nicht geeignet.>
 
 =head1 AUTHOR
 
