@@ -23,7 +23,7 @@ ernsthaften Einsatz noch nicht geeignet.>
 
 =head1 AUTHOR
 
-Frank Seitz, LL<lt>http://fseitz.de/>
+Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
