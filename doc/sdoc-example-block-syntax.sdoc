@@ -1,0 +1,70 @@
+%Document:
+  title="Ein Beispieldokument"
+  author="Nico Laus"
+  date="today"
+
+%Section:
+  level=1
+  title="Einleitung"
+
+%Paragraph:
+Dies ist eine I{Einleitung}. Mit wenig C{Aufwand} erstellen wir in
+Sdoc ein B{Dokument}. Als Textauszeichnungen sind auch Kombinationen
+wie B{I{fett und kursiv}} oder C{I{monospace und kursiv}} möglich.
+.
+
+%Section:
+  level=2
+  title="Ein Beispiel"
+
+%Paragraph:
+Mit dem Satz des Pythagoras M~a^2+b^2=c^2~ berechnen wir die Länge der
+Hypotenuse: M~c=\sqrt{a^2+b^2}~.
+.
+
+%Graphic:
+  file="+/sdoc-graphic-illusion"
+  align="center"
+  scale=0.3
+
+%Paragraph:
+Programm-Quelltexte können wir mit Syntax-Highlighting verschönern:
+.
+
+%Code: lang=Perl ln=1 indent=1
+  open(my $fh, 'ls -l |') or die "open failed ($!)\n";
+  while (<$fh>) {
+      s/\n/<BR>\n/;
+      print;
+  }
+  close($fh) or die "close failed ($!)\n";
+.
+
+%Paragraph:
+Auf eine andere Stelle im Dokument zu verweisen ist einfach. Hier ist
+ein Verweis auf die L{Einleitung}.
+.
+
+%List:
+  listType="unordered"
+%Item: key="*"
+  %Paragraph:
+  Apfel
+  .
+%Item: key="*"
+  %Paragraph:
+  Birne
+  .
+%Item: key="*"
+  %Paragraph:
+  Pflaume
+  .
+
+%Paragraph:
+Das ist eine einfache Aufzählung. Aufzählungen können beliebig
+geschachtelt werden.
+.
+
+%Comment:
+# eof
+.

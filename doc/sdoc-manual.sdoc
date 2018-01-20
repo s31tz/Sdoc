@@ -1,0 +1,1167 @@
+%Document:
+  title="Sdoc"
+  author="Frank Seitz, http://fseitz.de/"
+  date="today"
+  sectionNumberDepth=3
+  fontSize=10pt
+  documentType=article
+
+%TableOfContents:
+  maxDepth=4
+
+---PageBreak---
+
+= Einleitung
+
+Dieses  Dokument beschreibt die Syntax und den Gebrauch der
+Auszeichnungsprache Sdoc. Sdoc ist eine Metasprache zum Verfassen von
+Dokumenten. Ein Dokument, das in Sdoc geschrieben ist, kann portabel
+in eine Online-Fassung (HTML) und in eine Druck-Fassung (PDF)
+übersetzt werden.
+
+Die Online-Fassung ist für die Wiedergabe in einem Browser vorgesehen.
+Das Aussehen kann via CSS gestaltet werden.
+
+Die Druck-Fassung wird von LaTeX gesetzt und besitzt eine entsprechend
+hohe Qualität für die Wiedergabe auf Papier. In einem PDF-Viewer kann
+die Druck-Fassung auch interaktiv genutzt werden, da sie mit
+Hyperlinks versehen ist.
+
+Dieses Dokument ist in Sdoc geschrieben. Es kann als Beispiel
+herangezogen werden. Wie es übersetzt werden kann, ist in Abschnitt
+L{+Dieses Dokument übersetzen} beschrieben.
+
+---PageBreak---
+
+= Beispiel
+
+== Sdoc
+
+%Code: load="+/sdoc-example.sdoc" filter="grep -av geometry" ln=1
+
+== PDF
+
+%Graphic:
+  file="+/sdoc-example"
+  latexOptions="clip,trim=0cm 0.5cm 0cm 0cm,width=1.0\textwidth"
+
+---PageBreak---
+
+= Syntax
+
+== Allgemeines
+
+=== Kommentare
+
+In den Quelltext des Dokuments können Kommentarzeilen eingebettet
+werden. Diese werden nicht mit gesetzt, aber als Kommentare in den
+Quelltext des Zielformats übertragen. Eine Kommentarzeile beginnt mit
+einem (#) am I{Zeilenanfang}. Eine Einrückung ist nicht erlaubt.
+
+  # Dies ist ein Kommentar, der nicht im Zieldokument erscheint
+
+Siehe auch Abschnitt L{+Kommentar}.
+
+%Link:
+  name="Kommentar"
+  regex="Syntax/Kommentar"
+
+=== Zeilenfortsetzungen
+
+Ist das letzte Zeichen einer Zeile ein Backslash (\), wird die nächste
+Zeile als eine Fortsetzung dieser Zeile angesehen und mit dieser
+zusammengefasst.
+
+  Hier ist ein URL, der sich in der Quelle über zwei
+  Zeilen erstreckt: https://de.wikipedia.org/\\
+  wiki/Auszeichnungssprache
+
+produziert:
+
+  Hier ist ein URL, der sich in der Quelle über zwei
+  Zeilen erstreckt: https://de.wikipedia.org/\
+  wiki/Auszeichnungssprache
+
+Leerraum am Anfang der Folgezeile wird entfernt. Soll Leerraum
+zwischen Zeile und Fortsetzungszeile erhalten bleiben, muss dieser I{vor}
+dem Backslash stehen.
+
+Eine Zeilenfortsetzung kann unterdrückt werden, indem der Backslash am
+Ende der Zeile durch einen vorangestellten Backslash maskiert wird.
+Der maskierende Backslash wird automatisch entfernt.
+
+=== Leerzeilen
+
+Leerzeilen können zur besseren optischen Gliederung zwischen
+aufeinanderfolgenden Elementen eingestreut werden, sind aber
+optional. Es macht keinen Unterschied, ob zum Beispiel zwischen einem
+Abschnittstitel und dem darauf folgenden Paragraphen eine Leerzeile
+steht oder nicht. Dasselbe gilt für alle anderen Kombinationen von
+Elementen. Einzige Ausnahme: Zwischen Paragraphen ist eine Leerzeile
+notwendig, um sie voneinander abzugrenzen.
+
+=== Pfad-Expansion
+
+Wird im Sdoc-Quelltext auf eine lokale Datei Bezug genommen
+und beginnt ihr Pfad mit C{+/}, wird das Pluszeichen zum
+Verzeichnis der Dokumentdatei expandiert.
+
+=== Block-Syntax und Wiki-Syntax
+
+Der Quelltext eines Sdoc-Dokuments kann als eine Abfolge von
+I{Blöcken} angesehen werden. Einige dieser Blöcke können I{Segmente}
+enthalten.
+
+Die allgemeine Schreibweise für einen Block ist
+
+  %TYPE: KEY=VAL ...
+  TEXT
+  .
+
+Hierbei ist C{TYPE} der Block-Typ, C{KEY=VAL ...} eine Liste von
+Block-Eigenschaften und C{TEXT} ist der Block-Text (der, je nach
+Block-Typ auch fehlen kann). Der Block-Text kann Segmente
+enthalten. I{Jedes} der Strukturelemente eines Sdoc-Dokuments kann in
+Block-Syntax notiert werden.
+
+Daneben definiert Sdoc für I{einige} - nicht alle - Block-Typen eine
+kompaktere Wiki-Syntax. Ein Abschnitt (Section) kann beispielsweise in
+Wiki-Syntax als
+
+  == Dies ist ein Abschnitt der Ebene 2
+
+oder in Block-Syntax als
+
+  %Section:
+    level=2
+    title="Dies ist ein Abschnitt der Ebene 2"
+
+notiert werden. Die Wiki-Syntax ist Q{Syntaktischer Zucker}, um das
+Dokument kompakter und lesbarer zu halten. In Abschnitt L{+Beispiel in
+Block-Syntax} ist das Beispiel aus Abschnitt L{+Beispiel/Sdoc}
+vollständig in Block-Syntax wiedergegeben.
+
+== Dokument (Document)
+
+Information über das Dokument wird in einem - optionalen -
+Dokument-Bock angegeben:
+
+  %Document:
+    author=STRING
+    date=STRING
+    documentType=article|report|book
+    fontSize=10pt|11pt|12pt
+    geometry=STRING
+    language=german|english
+    sectionNumberDepth=0|1|2|3|4|5
+    tableOfContents=BOOL
+    title=STRING
+
+Der Dokument-Block kann irgendwo im Dokument stehen. Es ist aus
+Gründen der Übersichtlichkeit aber sinnvoll, ihn an den Anfang zu
+setzen.
+
+Besitzt mindestens eines der Attribute C{author}, C{date} oder
+C{title} einen Wert, wird ein Dokument-Vorspann mit den entsprechenden
+Angaben generiert.
+
+Enthält das Dokument keinen Dokument-Block, wird kein
+Dokument-Vorspann generiert und alle Attribute erhalten ihre
+Defaultwerte (siehe Abschnitt L{Eigenschaften}).
+
+=== Eigenschaften
+
+[author]:
+  Der Autor des Dokuments.
+
+[date]:
+  Das Datum des Dokuments. Formatelemente der Funktion strftime(3)
+  werden expandiert. Spezielle Wert sind:
+
+  ['today']:
+    Wird unter LaTeX ersetzt zu: C{\today}, sonst C{%d. %B %Y}
+  ['now']:
+    Wird expandiert zu: C{%Y-%m-%d %H:%M:%S}
+
+  Ist kein Wert angegeben, erscheint kein Datum im Dokumenttitel.
+
+[documentType]:
+  (Default: article) Der Typ des Dokuments. Mögliche Werte: 'article',
+  'report', 'book'. Unter LaTeX wird der Wert übersetzt in die
+  Dokumentklassen scrartcl, scrreprt, scrbook.
+
+[fontSize]:
+  (Default: '10pt') Die Größe des LaTeX-Font. Mögliche Werte: '10pt',
+  '11pt', '12pt'.
+
+[geometry]:
+  Definition der Seitengeometrie mittels des LaTeX-Pakets C{geometry}.
+
+[language]:
+  (Default: german) Die Sprache, in der das Dokument verfasst ist.  In
+  dieser Sprache werden Dokument-Bezeichnungen wie z.B.
+  Q{Inhaltsverzeichnis} erzeugt. Ferner bestimmt die Sprache in LaTeX
+  die Trennregeln. Mögliche Werte: german, english.
+
+[sectionNumberDepth]:
+  (Default: 3) Die Abschnittsebene, bis zu welcher Abschnitte
+  numeriert werden.  Mögliche Werte: 0, 1, 2, 3, 4, 5. 0 bedeutet: Die
+  Abschnitte des Dokuments werden nicht numeriert.
+
+[tableOfContents]:
+  (Default: 1) Erzeuge ein Inhaltsverzeichnis, auch wenn das Dokument
+  keinen TableOfContents-Block enthält.
+
+[title]:
+  Der Titel des Dokuments.
+
+== Inhaltsverzeichnis (TableOfContents)
+
+Das Inhaltsverzeichnis wird an die Stelle plaziert, wo der
+TableOfContents-Block steht.
+
+  %TableOfContents:
+    maxDepth=N
+
+Der TableOfContents-Block ist optional. Kommt er im Dokument nicht
+vor, wird das Inhaltsverzeichnis automatisch nach dem
+Dokument-Vorspann eingefügt, wenn die Dokument-Eigenschaft
+C{tableOfContents=1} gesetzt ist (siehe Abschnitt
+L{+Dokument/Eigenschaften}). Ist C{tableOfContents=0} gesetzt, findet
+dies nicht statt und das Dokument erhält kein Inhaltsverzeichnis.
+
+%Link:
+  name="Dokument/Eigenschaften"
+  regex="Dokument.*/Eigenschaften"
+
+=== Eigenschaften
+
+[maxDepth]:
+  (Default: 3) Tiefe, bis zu welcher Abschnitte ins Inhaltsverzeichnis
+  aufgenommen werden. Mögliche Werte: 0, 1, 2, 3, 4, 5. 0 = kein
+  Inhaltsverzeichnis.
+
+== Abschnitt (Section)
+
+Ein Abschnitt beginnt mit einem oder mehreren =, gefolgt von
+mindestens einem Leerzeichen, gefolgt von dem Abschnittstitel. Die
+Zahl der = gibt die Ebene des Abschnitts an. Der Titel endet mit dem
+Ende der Zeile. Längere Titel können per Zeilenfortsetzung geschrieben
+werden.
+
+  = Dies ist ein Abschnitt der Ebene 1
+
+  == Dies ist ein Abschnitt der Ebene 2
+
+  === Dies ist ein Abschnitt der Ebene 3
+
+Abschnitte werden optional mit 1. 1.1. 1.2. ... 2. 2.1. usw.
+durchnummeriert, wenn das %Document-Attribut C{sectionNumberDepth}
+auf einen Wert > 0 gesetzt wird.
+
+=== Unterabschnitte vom Inhaltsverzeichnis ausschließen
+
+Sollen die I{Unterabschnitte} eines Abschnitts nicht im
+Inhaltsverzeichnis erscheinen, wird an die Folge von = des Abschnitts
+ein Ausrufungszeichen (!) angehängt. Mit dem Abschnitt endet der
+betreffende Teilbaum im Inhaltsverzeichnis. Die unterdrückten
+Unterabschnitte müssen nicht gekennzeichnet werden.
+
+  = Abschnitt A (erscheint in Inhaltsverzeichnis)
+
+  ==! Abschnitt AB (erscheint in Inhaltsverzeichnis)
+
+  === Abschnitt ABC (erscheint nicht in Inhaltsverzeichnis)
+
+  ==== Abschnitt ABCD (erscheint nicht in Inhaltsverzeichnis)
+
+Im Unterschied zum %TableOfContents-Attribut C{maxDepth} können auf
+diesem Weg Abschnitte unterschiedlicher Ebenen vom Inhaltsverzeichnis
+ausgeschlossen werden.
+
+=== Appendix
+
+Die Appendizes eines Dokuments beginnen ab dem ersten Abschnitt der
+Ebene 1, bei dem auf die = ein Pluszeichen (+) folgt:
+
+  =+ Mit diesem Abschnitt beginnen die Appendizes
+
+Alle folgenden Abschnitte und Unterabschnitte werden als Appendizes
+angesehen (unabhängig davon, ob sie mit + ausgezeichnet oder nicht) und
+entsprechend mit A. A.1. A.2 ... B. B.1. usw.  numeriert. Sonst gibt
+es keinen Unterschied zwischen Abschnitten und Appendizes.
+
+=== Eigenschaften
+
+  %Section:
+    anchor=STRING
+    isAppendix=BOOL
+    level=N
+    stopToc=BOOL
+    title=STRING
+
+[anchor]:
+  Anker des Abschnitts.
+  
+[isAppendix]:
+  Mit diesem Abschnitt beginnen die Appendizes.
+
+[level]:
+  Tiefe des Abschnitts in der Abschnittshierarchie, beginnend mit 1.
+
+[stopToc]:
+  Alle Abschnitte unterhalb dieses Abschnitts werden nicht in das
+  Inhaltsverzeichnis aufgenommen.
+
+[title]:
+  Titel des Abschnitts.
+
+== Zwischenüberschrift (BridgeHead)
+
+Ein Abschnitt wird vom Inhaltsverzeichnis ausgeschlossen und damit
+lediglich als Zwischenüberschrift genutzt, wenn an die Folge von = ein
+Stern (*) angehängt wird.
+
+  =* Zwischenüberschrift Stufe 1
+
+  ==* Zwischenüberschrift Stufe 2
+
+  ===* Zwischenüberschrift Stufe 3
+
+  ====* Zwischenüberschrift Stufe 4
+
+produziert:
+
+=* Zwischenüberschrift Stufe 1
+
+==* Zwischenüberschrift Stufe 2
+
+===* Zwischenüberschrift Stufe 3
+
+====* Zwischenüberschrift Stufe 4
+
+=== Eigenschaften
+
+  %BridgeHead:
+    anchor=STRING
+    level=N
+    title=STRING
+
+[anchor]:
+  Anker der Zwischenüberschrift.
+  
+[level]:
+  Größe der Zwischenüberschrift, beginnend mit 1.
+
+[title]:
+  Titel der Zwischenüberschrift.
+
+== Seitenumbruch (PageBreak)
+
+Ein Seitenumbruch wird erzeugt durch eine Zeile mit dem Inhalt
+
+  ---PageBreak---
+
+Dies darf nur der einzige Inhalt der Zeile sein, ohne Leerraum davor
+oder dahinter. Ein Seitenumbruch ist nur in der Druck-Fassung von
+Bedeutung bzw. wenn die Online-Fassung gedruckt wird.
+
+  Dies ist ein
+  Pragraph.
+
+  ---PageBreak---
+
+  Dieser Paragraph beginnt in
+  der gedruckten Version des Dokuments
+  auf einer neuen Seite.
+
+=== Eigenschaften
+
+  %PageBreak:
+
+Der Seitenumbruch hat keine Eigenschaften.
+
+== Paragraph (Paragraph)
+
+Ein Paragraph ist ein Textblock ohne Einrückung, der mit einer
+Leerzeile oder mit dem Beginn eines anderen Elements (Liste, Code,
+etc.) endet.
+
+  = Dies ist ein Abschnitt
+
+  Dies ist ein Paragraph auf Abschnittsebene,
+  der sich in der Quelle über drei
+  Zeilen erstreckt.
+
+  * Dies ist ebenfalls ein Paragraph,
+    allerdings auf Listenebene.
+  * Dies ist der zweite Punkt derselben
+    Liste. Noch ein Paragraph.
+
+=== Eigenschaften
+
+  %Paragraph:
+  TEXT
+  .
+
+Ein Paragraph hat keine Eigenschaften.
+
+== Abbildung (Graphic)
+
+Eine Abbildung ist ein freistehendes Bild zwischen zwei Paragraphen
+oder anderen Block-Elementen.
+
+  %Graphic:
+    file="+/sdoc-graphic-illusion"
+    scale=0.5
+
+produziert:
+
+%Graphic:
+  file="+/sdoc-graphic-illusion"
+  scale=0.5
+
+Für eine Grafik, die I{im Textfluss} erscheinen soll, siehe Abschnitt
+L{+G - Inline-Grafik}.
+
+=== Eigenschaften
+
+  %Graphic:
+    align=left|center|right
+    file=PATH
+    definition=BOOL
+    latexOptions=STRING
+    name=STRING
+    scale=X
+
+[align]:
+  (Default: 'left') Horizontale Ausrichtung des Bildes. Mögliche
+  Werte: 'left', 'center', 'right'.
+
+[file]:
+  Pfad der Bilddatei. Beginnt der Pfad mit C{+/}, wird das
+  Pluszeichen zum Pfad des Dokumentverzeichnisses expandiert.
+
+[definition]:
+  Wenn gesetzt, stellt der Grafik-Block lediglich eine Definition dar,
+  d.h. die Grafik wird nicht an dieser Stelle angezeigt, sondern an
+  anderer Stelle von einem G-Segment referenziert. Ist Attribut
+  C{name} definiert, ist der Default 1, andernfalls 0.
+
+[latexOptions]:
+  LaTeX-spezifische Optionen, die direkt an das LaTeX-Makro
+  C{\includegraphics} übergeben werden.
+
+[name]:
+  Name der Grafik. Ein Name muss angegeben sein, wenn die Grafik von
+  einem G-Segment referenziert wird. Ist ein Name gesetzt, ist der
+  Default für das Attribut C{definition} 1, sonst 0.
+
+[scale]:
+  Skalierungsfaktor. Im Falle von LaTeX wird dieser zu den
+  C{latexOptions} hinzugefügt, sofern dort kein Skalierungsfaktor
+  angegeben ist.
+
+== Aufzählung (List)
+
+Es gibt drei verschiedene Arten von Listen.
+
+=== Punktliste
+
+Eine Punktliste (oder I{unordered list}) ist eine Abfolge von Punkten,
+deren erste Zeile jeweils mit einem Stern (C{*}) beginnt.
+
+  * Apfel
+  * Birne
+  * Pflaume
+
+produziert:
+
+* Apfel
+* Birne
+* Pflaume
+
+=== Numerierungsliste
+
+Eine Numerierungsliste (oder I{ordered list}) ist eine Abfolge von
+Punkten, deren erste Zeile jeweils mit einer Zahl gefolgt von einem
+Punkt (C{.}) beginnt.
+
+  1. Staub wischen
+  2. Wäsche waschen
+  3. Essen kochen
+
+produziert:
+
+1. Staub wischen
+2. Wäsche waschen
+3. Essen kochen
+
+=== Definitionsliste
+
+Eine Definitionsliste (oder I{definition list}) ist eine Abfolge von
+Punkten, deren erste Zeile jeweils aus einem Term in eckigen Klammern
+gefolgt von einem Doppelpunkt C{[TERM]:} beginnt.
+
+  [255 239 213]:
+    PapayaWhip
+  [188 143 143]:
+    RosyBrown
+  [255 218 185]:
+    PeachPuff
+
+produziert:
+
+[255 239 213]:
+  PapayaWhip
+[188 143 143]:
+  RosyBrown
+[255 218 185]:
+  PeachPuff
+
+=== Verschachtelung von Listen
+
+Listen können beliebig verschachtelt werden:
+
+  * A
+    1. B
+    2. C
+       [D]:
+         E
+       [F]:
+         G
+    3. H
+  * I
+  * J
+
+produziert:
+
+* A
+  1. B
+  2. C
+     [D]:
+       E
+     [F]:
+       G
+  3. H
+* I
+* J
+
+=== Eigenschaften
+
+====* List
+
+  %List:
+    listType=TYPE
+
+[listType]:
+  Art der Liste. Mögliche Werte: 'unordered', 'ordered',,
+  'description'.  Wenn nicht gesetzt, wird der Wert vom ersten
+  List-Item gesetzt.
+
+====* Item
+
+  %Item:
+    key=STRING
+
+[key]:
+  Stern (*) im Falle einer Punktliste. Nummer im Falle einer
+  Nummerierungsliste. Zeichenkette im Falle einer Definitionsliste.
+
+== Code (Code)
+
+Ein Code-Abschnitt ist ein literaler Textblock, der, abgesehen von
+Einrückung, Farbgebung oder Zeilennumerierung, im Zielformat exakt so
+wiedergegeben wird wie er in der Quelle steht, einschließlich
+Leerzeichen und Zeilenumbrüchen.
+
+Es gibt zwei Möglichkeiten einen literalen Textblock anzugeben.
+
+=== Einrückung mit Leerraum
+
+Erstens entsteht ein Code-Abschnitt durch Einrückung mit ein oder mehr
+Leerzeichen am Zeilenanfang. Die Einrückung wird automatisch entfernt.
+
+  open(my $fh, 'ls -l |') or die "open failed ($!)\n";
+  while (<$fh>) {
+      s/\n/<BR>\n/;
+      print;
+  }
+  close($fh) or die "close failed ($!)\n";
+
+=== In Block-Syntax
+
+Zweitens kann ein Code-Abschnitt als Block definiert werden. Der Block
+beginnt mit C{%Code:} und endet mit einem einzelnen Punkt (C{.}) auf
+einer eigenen Zeile. Dazwischen ist eine Einrückung mit Leerzeichen
+erlaubt, aber nicht vorgeschrieben. Diese wird ebenfalls automatisch
+entfernt.
+
+  %Code:
+    Dies ist ein
+    Code-Block
+  .
+
+produziert:
+
+%Code:
+  Dies ist ein
+  Code-Block
+.
+
+=== Syntax-Highlighting
+
+Enthält der Code-Abschnitt den Quelltext einer Programmiersprache,
+lässt sich dieser mit Syntax-Highlighting aufwerten. Hierzu wird der
+Quelltext in einen Code-Block eingefasst und mit dem Attribut
+C{lang=LANGUAGE} versehen. Hierbei ist C{LANGUAGE} der Name der
+betreffenden Programmiersprache.
+
+  %Code: lang=Perl
+    sub gcd {
+        my ($class,$a,$b) = @_;
+        return $b == 0? $a: $class->gcd($b,$a%$b);
+    }
+  .
+
+produziert:
+
+%Code: lang=Perl
+  sub gcd {
+      my ($class,$a,$b) = @_;
+      return $b == 0? $a: $class->gcd($b,$a%$b);
+  }
+.
+
+=== Zeilennummern
+
+Wird das Attribut C{ln=N} mit C{N > 0} gesetzt, werden die Zeilen
+durchnummeriert, beginnend mit Zeilennummer C{N}. Die Nummerierung
+findet auch statt, wenn kein Syntax-Highlighting aktiviert ist.
+
+  %Code: lang=Perl ln=117
+    use DirHandle;
+
+    my $dh = DirHandle->new($dir);
+    while (my $entry = $dh->next) {
+        say $entry;
+    }
+    $dh->close;
+  .
+
+produziert:
+
+%Code: lang=Perl ln=117
+  use DirHandle;
+
+  my $dh = DirHandle->new($dir);
+  while (my $entry = $dh->next) {
+      say $entry;
+  }
+  $dh->close;
+.
+
+=== Text aus Datei laden
+
+Der Text des Code-Abschnitts wird bei Angabe von C{load=PATH} aus
+Datei C{PATH} gelesen. Ist C{PATH} ein relativer Pfad, wird diesem das
+Verzeichnis der Dokumentdatei vorangestellt.
+
+  %Code: load="/etc/timezone"
+
+produziert:
+
+%Code: load="/etc/timezone"
+
+=== Text von Programmaufruf
+
+Der Text des Code-Abchnitts wird bei Angabe von C{exec=COMMAND}
+vom Kommando C{COMMAND} geliefert und zwar von dessen Ausgabe auf
+stdout und stderr. Beginnt COMMAND mit einem Plus (+) wird dem
+Kommando der Pfad des Dokumentverzeichnisses vorangestellt.
+
+  %Code: exec="date --date=010101"
+
+produziert:
+
+%Code: exec="date --date=010101"
+
+=== Text filtern
+
+Der Text des Code-Abschnitts kann durch ein externes Programm
+gefiltert werden. Dies geschieht bei Angabe der Direktive
+C{filter=COMMAND}. Hierbei ist C{COMMAND} ein Kommando, das als
+Filter arbeitet, also von stdin liest und nach stdout schreibt.
+
+  %Code: filter="grep -v ^D"
+  A Dies
+  B ist
+  C ein
+  D Filter-
+  E Test
+  .
+
+produziert:
+
+%Code: filter="grep -v ^D"
+A Dies
+B ist
+C ein
+D Filter-
+E Test
+.
+
+=== Text extrahieren
+
+Kommt der Text aus einer Datei oder von einem Programmaufruf, möchte
+man u.U. nur einen Teil davon darstellen.
+
+Mit der Direktive C{extract} ist es möglich, den Text auf einen Teil
+zu reduzieren. Der Wert der Direktive ist ein Regulärer Ausdruck, der
+den gewünschten Teil Q{captured}.
+
+In einem längeren Codeabschnitt kann der interessante Teil zum
+Beispiel mit Markern wie "# begin" und "# end" gekennzeichnet sein:
+
+  %Code: extract="# begin\s+(.*)# end"
+  #!/usr/bin/env perl
+
+  use strict;
+  use warnings;
+  use 5.010;
+
+  # begin
+  my $max = '-inf';
+  for my $n (-100,-50,-10) {
+      $max = $n if $n > $max;
+  }
+  # end
+  say $max;
+  __END__
+  -10
+  .
+
+produziert:
+
+%Code: extract="# begin\s+(.*)# end"
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+use 5.010;
+
+# begin
+my $max = '-inf';
+for my $n (-100,-50,-10) {
+    $max = $n if $n > $max;
+}
+# end
+say $max;
+__END__
+-10
+.
+
+=== Eigenschaften
+
+  %Code:
+    exec=COMMAND
+    extract=REGEX
+    filter=COMMAND
+    indent=BOOL
+    load=FILE
+    lang=LANGUAGE
+    ln=N
+  TEXT
+  .
+
+Im Falle der Direktiven C{exec} und C{load} entfällt der Text-Body
+C{TEXT} und der abschließende Punkt.
+
+Die Reihenfolge der Ausführung der Direktiven C{exec}, C{extract},
+C{filter} und C{load} - sofern angegeben - ist:
+
+1. C{load} oder C{exec} (beide gemeinsam anzugeben ergibt keinen Sinn)
+2. C{filter}
+3. C{extract}
+
+[exec]:
+  Führe das Kommando C{COMMAND} aus und verwende dessen Ausgabe nach
+  stdout und stderr als Text des Code-Blocks. Der Code Block hat in
+  diesem Fall keinen Text-Body. Beginnt das Kommando mit C{+/}, wird
+  das Pluszeichen zum Pfad des Dokumentverzeichnisses expandiert.
+
+[extract]:
+  Reduziere den Text auf einen Teil. Der Reguläre Ausdruck $regex
+  hat Perl-Mächtigkeit und wird unter den Modifiern C{s} (C{.}
+  matcht Zeilenumbrüche) und C{m} (C{^} und C{$} matchen
+  Zeilenanfang und -ende) interpretiert. Der Reguläre Ausdruck
+  muss einen eingebetteten Klammerausdruck C{(...)} enthalten.
+  Dieser Q{captured} den gewünschten Teil.
+
+[filter]:
+  Schicke den Text des Code-Blocks an Kommando COMMAND und ersetze
+  ihn durch dessen Ausgabe. Das Kommando arbeitet als Filter, liest
+  also von stdin und schreibt nach stdout.
+
+[indent]:
+  (Default: I{kontextabhängig}) Rücke den Text ein. Im Falle von
+  Zeilennummern (C{ln=N}) oder Syntax-Highlighting (C{lang=LANGUAGE})
+  wird per Default I{nicht} eingerückt. Sonst wird per Default
+  eingerückt. Durch explizite Setzung des Attributs kann der jeweilige
+  Default überschrieben werden.
+
+[load]:
+  Lade Datei C{FILE} und verwende dessen Inhalt als Text des
+  Code-Blocks.  Der Code Block hat in diesem Fall keinen
+  Text-Body. Beginnt der Pfad der Datei mit C{+/}, wird das
+  Pluszeichen zum Pfad des Dokumentverzeichnisses expandiert.
+
+[lang]:
+  Wende Syntax-Highlighting auf den Text an. Das Attribut C{indent}
+  wird auf den Default 0 gesetzt.
+
+[ln]:
+  Setze an den Anfang der Zeilen eine Zeilennummer, wenn C{N > 0}.
+  Start-Zeilennummer ist C{N}. Das Attribut C{indent} wird auf den
+  Default 0 gesetzt.
+
+== Verweis (Link)
+
+Ein Verweis referenziert ein I{internes} oder I{externes}
+Ziel. Ein internes Ziel ist ein Knoten innerhalb desselben Dokuments.
+Ein externes Ziel ist eine Datei oder ein URL.
+
+Ein Verweis wird in den Text eines Sdoc-Dokuments durch ein L-Segment
+C{L\{TEXT\}} gesetzt.
+
+=== Eigenschaften
+
+  %Link:
+    name=STRING
+    file=PATH
+    regex=REGEX
+    url=URL
+
+[name]:
+  Name der Link-Definiton.
+
+[file]:
+  Pfad einer lokalen Datei.
+
+[regex]:
+  Regex, der den internen Zielknoten identifiziert.
+
+[url]:
+  URL eines externen Dokuments.
+
+== Kommentar (Comment)
+
+In den Quelltext eines Sdoc-Dokuments können Kommentarzeilen
+eingebettet werden. Diese werden, sofern das Zielformat dies
+unterstützt, als Kommentare dorthin übertragen. Unterstützt das
+Zielformat keine Kommentare, entfallen sie.
+
+Eine Kommentarzeile beginnt mit einem Hash (#) am I{Zeilenanfang},
+eine Einrückung ist nicht erlaubt.
+
+  # Dies ist ein Kommentar, der in den Quelltext des Zielformats
+  # übertragen wird, aber im Zieldokument nicht auftaucht
+
+In den Quelltext des LaTeX-Dokuments wird der Kommentar
+beispielsweise übertragen als
+
+  % Dies ist ein Kommentar, der in den Quelltext des Zielformats
+  % übertragen wird, aber im Zieldokument nicht auftaucht
+
+In Block-Syntax kann ein Kommentar auch geschrieben werden als
+
+  %Comment:
+  Dies ist ein Kommentar, der in den Quelltext des Zielformats
+  übertragen wird, aber im Zieldokument nicht auftaucht
+  .
+
+=== Eigenschaften
+
+  %Comment:
+  TEXT
+  .
+
+Ein Kommentar hat keine Eigenschaften.
+
+== Segment
+
+===! A - Anker (anchor)
+
+===! B - Fettschrift (bold)
+
+Der von C{B\{TEXT\}} eingefasste Text C{TEXT} wird fett wiedergegeben.
+
+====* Beispiel
+
+  Du machst mich B{sehr} wütend.
+
+Du machst mich B{sehr} wütend.
+
+===! C - Festbreitenschrift (code)
+
+Der von C{C\{TEXT\}} eingefasste Text C{TEXT} wird in
+Festbreitenschrift wiedergegeben.
+
+====* Beispiel
+
+  Der Konstruktoraufruf C{$class->new()} instantiiert das Objekt.
+
+Der Konstruktoraufruf C{$class->new()} instantiiert das Objekt.
+
+===! G - Inline-Grafik (graphic)
+
+Eine Inline-Grafik, also eine Grafik, die im Textfluss erscheint, wird
+durch ein G-Segment C{G\{NAME\}} erzeugt. Hierbei ist NAME der Name
+eines Grafik-Blocks (siehe Abschnitt L{+Abbildung}, der die Grafik mit
+allen Detailangaben definiert.
+
+Der Grafik-Block kann I{irgendwo} innerhalb des Dokuments stehen:
+z.B. nach dem Paragraphen, der das L-Segment enthält, am Ende des
+Abschnitts oder am Anfang oder am Ende des Dokuments.
+
+====* Beispiel
+
+  Dies ist eine G{Invader} Inline-Grafik.
+
+  %Graphic:
+    name="Invader"
+    file="+/sdoc-graphic-invader"
+    scale=0.08
+
+produziert:
+
+Dies ist eine G{Invader} Inline-Grafik.
+
+%Graphic:
+  name="Invader"
+  file="+/sdoc-graphic-invader"
+  scale=0.08
+
+===! I - Kursivschrift (italic)
+
+Der von C{I\{\}} eingefasste Text C{TEXT} wird kursiv wiedergegeben.
+
+====* Beispiel
+
+  Ich sagte, du sollst das I{nicht} essen.
+
+Ich sagte, du sollst das I{nicht} essen.
+
+===! L - Verweis (link)
+
+===! M - Mathematische Formel (math)
+
+Der von C{\M~TEXT~} eingefasste Text C{TEXT} wird als mathematische
+Formel gesetzt. Da die Formel-Syntax von LaTeX verwendet wird und
+diese umfangreichen Gebrauch von geschweiften Klammern macht, ist das
+Begrenzungszeichen des Segments C{\M~~} die Tilde (~).
+
+====* Beispiel
+
+  M~c=\sqrt{a^2+b^2}~
+
+produziert:
+
+M~c=\sqrt{a^2+b^2}~
+
+===! Q - Anführungszeichen (quote)
+
+Der von C{Q\{TEXT\}} eingefasste Text C{TEXT} wird in doppelte
+Anführungsstriche gesetzt. Dieses Konstrukt anstelle der doppelten
+Anführungsstriche auf der Tastatur (") zu verwenden ist für LaTeX
+wichtig, da die doppelten Anführungsstriche dort im Zusammenhang mit
+der Spracheinstellung C{ngerman} oder C{german} eine Sonderbedeutung
+haben und daher u.U. missinterpretiert werden.
+
+====* Beispiel
+
+  Was heißt schon Q{richtig}?
+
+Was heißt schon Q{richtig}?
+
+== Beispiel in Block-Syntax
+
+Hier das Beispiel aus Abschnitt L{+Beispiel/Sdoc} ohne Wiki-Syntax,
+also ausschließlich in Block-Syntax. Der Quelltext verlängert sich
+dadurch von 43 auf 70 Zeilen.
+
+%Code: load="+/sdoc-example-block-syntax.sdoc" ln=1
+
+= Sonstiges
+
+== Reservierte Zeichen
+
+Damit Zeichen mit einer Sonderbedeutung im Text richtig wiedergegeben
+werden, müssen diese - je nach Zielformat - gewandelt werden.
+
+=== LaTeX
+
+In LaTeX gibt es besonders viele reservierte Zeichen. Die folgende
+Liste umfasst alle Zeichen, die bei LaTeX/PDF als Zielformat im
+Fließtext besonders behandelt werden. Sie sollten in einem PDF korrekt
+dargestellt werden, einmal ohne und einmal mit einem Leerzeichen vor
+dem betreffenden Zeichen.
+
+Backslash: \xxx, \ xxx
+
+Größer: >0, > 0
+
+Kleiner: <0, < 0
+
+Tilde: ~x, ~ x
+
+Dollar: $x, $ x
+
+Unterstrich: _x, _ x
+
+Prozent: %x, % x
+
+Geschweifte Klammern: {x, { x, }x, } x
+
+Caret: ^x, ^ x
+
+Hash: #x, # x
+
+Kaufmanns-Und: &x, & x
+
+Pipe: |x, | x
+
+== Warnungen
+
+Beim Parsen und Übersetzen eines Sdoc-Dokuments können folgende
+Warnungen auftreten. Diese werden nach stderr geschrieben.
+
+[Appendix flag allowed on toplevel sections only]:
+  Ein Unterabschnitt ist mit '+' als Appendix gekennzeichnet worden.
+  Nur Hauptabschnitte können als Appendix gekennzeichnet werden.
+
+[Attribute "KEY" does not exist]:
+  Es wurde ein Block-Attribut zu setzen versucht, das nicht existiert.
+
+[Can't resolve link uniquely: \L{TEXT}]:
+  Ein interner Link konnte nicht eindeutig aufgelöst werden. Zwei oder
+  mehr gleichwertige Link-Ziele wurden ermittelt.
+
+[Can't resolve link: \L{TEXT}]:
+  Ein interner Link konnte nicht aufgelöst werden. Es wurde kein
+  Link-Ziel gefunden.
+
+[Graphic not found: \G{NAME}]:
+  Der Grafik-Knoten mit dem Namen C{NAME}, der von einem G-Segment
+  referenziert wird, konnte nicht gefunden werden.
+
+[Graphic node not used: name="NAME"]:
+  Der Grafik-Knoten mit dem Namen C{NAME}, der als Definition
+  deklariert ist, wird von keinem G-Segment genutzt.
+
+[Link node not used: name=Q{ungenutzt}]:
+  Es wurde per %Link: ein Link definiert, der nirgendwo innerhalb des
+  Dokuments genutzt wird.
+
+[More than anchor: \A{TEXT}]:
+  In einem Block wurde mehr als ein Anker gesetzt. Nur der erste Anker
+  innerhalb eines Blocks wird verwendet.
+
+[Node does not allow anchors: \A{TEXT}]:
+  In einem Block, der keinen Anker zulässt, wurde ein Anker zu
+  setzen versucht.
+
+[Node does not allow formulas: \M~TEXT~]:
+  In einem Block, der keine mathematische Formel zulässt, wurde eine
+  mathematische Formel zu setzen versucht.
+
+[Node does not allow inline graphics: \G{NAME}]:
+  In einem Block, der keine Inline-Grafik (G-Segment) zulässt, wurde
+  eine Inline-Grafik zu setzen versucht.
+
+[Node does not allow links: \L{TEXT}]:
+  In einem Block, der keine Links zulässt, wurde ein Link zu
+  setzen versucht.
+
+== Dieses Dokument übersetzen
+
+Übersetzung nach PDF:
+
+  $ sdoc pdf sdoc-manual.sdoc --output=sdoc-manual.pdf
+
+Vorschau auf das PDF-Dokument:
+
+  $ sdoc pdf sdoc-manual.sdoc --preview
+
+= Programmierung
+
+== Einen neuen Knoten-Typ definieren
+
+Um einen neuen Knoten-Typ C{TYPE} zur Sdoc-Sprache hinzuzufügen, gehen
+wir in folgenden Schritten vor:
+
+1. Wir erweitern die Methode C{LineProcessor::nextType()} um die
+   Erkennung des neuen Knoten-Typs, also die Erkennung seines Markup
+   im Sdoc-Quelltext. Besitzt der Knoten-Typ kein eigenes Markup,
+   sondern wird er allein in Block-Syntax notiert (wie z.B. der
+   L{Dokument-Knoten}), entfällt dieser Schritt.
+
+   %Link:
+     name="Dokument-Knoten"
+     regex="Syntax/Dokument"
+
+2. Wir tragen eine Instanz des neuen Knoten-Typs in ein Sdoc-Dokument
+   ein und versuchen dieses zu parsen mit
+
+     $ sdoc validate DOCUMENT.sdoc
+
+   Der neue Knoten-Typ C{TYPE} sollte zwar erkannt werden, aber die
+   Übersetzung sollte gleichwohl fehlschlagen mit der Fehlermeldung:
+
+     Exception:
+         SDOC-00002: Unknown node type
+     Type:
+         <TYPE>
+     ...
+
+   Schlägt die Übersetzung I{nicht} fehl, wurde der neue Knoten-Typ
+   nicht erkannt. Grund für den Fehler ist, dass noch keine
+   Knoten-Klasse für den neuen Typ implementiert wurde. Dies machen
+   wir im nächsten Schritt.
+
+3. Wir suchen uns eine ähnliche Knoten-Klasse aus den
+   C{Sdoc::Node}-Klassen aus, kopieren sie zur einer neuen Klasse
+   C{Sdoc::Node::TYPE} und schreiben diese geeignet um. Indem wir
+   die Regressionstestfälle mit anpassen, können wir sicherstellen, dass
+   das Parsen und Instantiieren des neuen Knoten-Typs funktioniert.
+
+4. Wir fügen die neue Knoten-Klasse C{Sdoc::Node::TYPE} zur
+   Import-Liste der Klasse C{Sdoc::Document} hinzu. Vergessen wir
+   dies, erhalten wir im nächsten Schritt weiterhin die Fehlermeldung
+   aus Schritt 2.
+
+5. Wir überprüfen, dass bei der Übersetzung in die Zielformate das
+   richtige Ergebnis produziert wird. Hierzu übersetzen wir das
+   Dokument nacheinander in die einzelnen Zielformate und sehen uns
+   das jeweilige Ergebnis an:
+
+     $ sdoc latex --preview DOCUMENT.sdoc
+     $ sdoc pdf --preview DOCUMENT.sdoc
+
+   Die Option C{--preview} ist hierbei praktisch, da das Dokument dann
+   in dem jeweiligen Format unmittelbar angezeigt wird.
+
+== Einen neuen Segment-Typ definieren
+ 
+Um einen neuen Segment-Typ C{T} zur Sdoc-Sprache hinzuzufügen, gehen
+wir in folgenden Schritten vor:
+
+1. Wir erweitern die Methode C{<%Sdoc::LineProcessor>%::parseSegments()}
+   um die Vorbehandlung des neuen Segment-Typs, also dessen Erkennung
+   und Wandlung in die interne Segment-Repräsentation. Hierzu suchen
+   wir den Code eines ähnlichen, bereits existierenden
+   Segment-Typs, kopieren diesen und passen ihn an.
+
+2. Wir erweitern die Methode(n) C{<%Sdoc::Node>%::FORMATText()}
+   (z.B. latexText()), so dass sie den FORMAT-spezifischen
+   Code neuen Segment-Typ erzeugen.
