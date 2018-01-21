@@ -6,6 +6,7 @@ use warnings;
 
 our $VERSION = 0.01;
 
+use Scalar::Util ();
 use Sdoc::Core::LaTeX::Generator;
 use Sdoc::Core::AnsiColor;
 use Sdoc::Core::TreeFormatter;
@@ -323,8 +324,7 @@ sub anchorPathAsArray {
                 my $node = $self;
                 while (1) {
                     $node = $node->parent;
-                    if ($node->type eq 'Document') {
-                        # Abbruch beim Dokument-Knoten
+                    if (!$node) {
                         last;
                     }
                     unshift @arr,($node->anchor // $node->type);
@@ -369,6 +369,48 @@ sub anchorPathAsString {
     }
 
     return join '/',@$anchorA;
+}
+
+# -----------------------------------------------------------------------------
+
+=head2 Referenzen
+
+=head3 weakenSelfReference() - Schwäche Referenz bei Referenz auf sich selbst
+
+=head4 Synopsis
+
+    $node->weakenSelfReference(\@arr);
+
+=head4 Arguments
+
+=over 4
+
+=item @arr
+
+Array von Knotenrefefenzen.
+
+=back
+
+=head4 Description
+
+Prüfe das Array von Knotenreferenzen @arr daraufhin, ob darin eine
+Referenz auf den Knoten $node selbst vorkommt. Wenn ja, mache
+diese Referenz zu einer schwachen Referenz.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub weakenSelfReference {
+    my ($self,$arr) = @_;
+
+    for (my $i = 0; $i < @$arr; $i++) {
+        if ($arr->[$i] == $self) {
+            Scalar::Util::weaken($arr->[$i]);
+        }
+    }
+
+    return;
 }
 
 # -----------------------------------------------------------------------------
@@ -687,7 +729,10 @@ sub latexText {
         }
         elsif ($seg eq 'C') {
             if ($self->type eq 'Paragraph') {
-                return sprintf '\texttt{\small %s}',$val;
+                if ($self->root->smallerMonospacedFont) {
+                    return sprintf '\texttt{\small %s}',$val;
+                }
+                return sprintf '\texttt{%s}',$val;
             }
             else {
                 return sprintf '\texttt{%s}',$val;
@@ -709,7 +754,11 @@ sub latexText {
 
             my ($name,$gph) = @{$self->graphicA->[$val]};
             if ($gph) {
-                $code = $gph->latexIncludeGraphics($gen,0);
+                my $type = $self->type;
+                if ($type eq 'Section' || $type eq 'BridgeHead') {
+                    $code = '\protect';
+                }
+                $code .= $gph->latexIncludeGraphics($gen,0);
             }
             else {
                 $code = sprintf 'G\{%s\}',$name;

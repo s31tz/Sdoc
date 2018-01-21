@@ -49,6 +49,11 @@ Zeige das Konvertierungsergebnis im Viewer an.
 
 Gib keine Warnungen aus.
 
+=item --shell-escape[=BOOL] (Default: 0)
+
+Muss als Option angegeben werden, wenn externe Programme aufgerufen
+werden müssen, um das Dokument zu übersetzen.
+
 =item --verbose[=BOOL] (Default: 0)
 
 Gib Laufzeitinformationen aus, z.B. die Logausgabe von C<pdflatex>.

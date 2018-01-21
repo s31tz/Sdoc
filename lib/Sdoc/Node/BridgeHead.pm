@@ -37,6 +37,16 @@ Anker der Zwischenüberschrift.
 
 Anker-Pfad der Zwischenüberschrift.
 
+=item formulaA => \@formulas
+
+Array mit den im Abschnittstitel vorkommenden Formeln aus
+M{}-Segmenten.
+
+=item graphicA => \@graphics
+
+Array mit Informationen über die im Abschnittstitel vorkommenden
+G-Segmente (Inline-Grafiken).
+
 =item level => $n
 
 Größe der Zwischenüberschrift, beginnend mit 1.
@@ -137,8 +147,10 @@ sub new {
 
     my $self = $class->SUPER::new('BridgeHead',$variant,$root,$parent,
         anchor => undef,
+        formulaA => [],
+        graphicA => [],
         level => undef,
-        linkA => undef,
+        linkA => [],
         linkId => undef,
         title => undef,
         titleS => undef,

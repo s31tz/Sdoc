@@ -216,6 +216,18 @@ sub new {
         }
     }
 
+    # Konsistenzbedingungen prüfen
+
+    if (($self->lang || $self->exec || $self->filter)
+            && !$root->shellEscape) {
+        $self->throw(
+            q~SDOC-00006: Option shellEscape (--shell-escape) must be set~,
+            file => $root->input,
+            line => $self->lineNum,
+            -stacktrace => 0,
+        );
+    }
+
     return $self;
 }
 

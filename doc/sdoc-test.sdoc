@@ -1,0 +1,17 @@
+%Document:
+  title="Testfälle"
+  author="L{http://google.com}, M~c=sqrt{a^2+b^2}~, G{Invader}"
+  date="now"
+
+= Abschnitt mit Link im Titel: L{http://google.com}
+
+= Abschnitt mit Formel im Titel: M~c=sqrt{a^2+b^2}~
+
+= Abschnitt mit Grafik im Titel: G{Invader}
+
+%Graphic:
+  name="Invader"
+  file="+/sdoc-graphic-invader"
+  scale=0.025
+
+# eof

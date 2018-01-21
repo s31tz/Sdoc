@@ -135,9 +135,9 @@ sub new {
     # Objekt instantiieren
 
     my $self = $class->SUPER::new('Paragraph',$variant,$root,$parent,
-        formulaA => undef,
-        graphicA => undef,
-        linkA => undef,
+        formulaA => [],
+        graphicA => [],
+        linkA => [],
         text => undef,
         textS => undef, # Text mit geparsten Segmenten
     );

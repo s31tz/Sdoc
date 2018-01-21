@@ -53,6 +53,7 @@ sub main {
         -output => undef,
         -preview => 0,
         -quiet => 0,
+        -shellEscape => 0,
         -verbose => 0,
         -help => 0,
     );
@@ -69,7 +70,10 @@ sub main {
     my $file = shift @$argA;
 
     my $a = Sdoc::Core::AnsiColor->new(1);
-    my $doc = Sdoc::Document->parse($file,-quiet=>$opt->quiet);
+    my $doc = Sdoc::Document->parse($file,
+        -quiet => $opt->quiet,
+        -shellEscape => $opt->shellEscape,
+    );
 
     my $output = $opt->output;
     
@@ -97,7 +101,8 @@ sub main {
 
                 my $dest = $h->destText;
                 if ($h->type eq 'internal') {
-                    $dest = $a->str('magenta',$h->destNode->anchorPathAsString);
+                    $dest = $a->str('magenta',
+                        $h->destNode->anchorPathAsString);
                 }
                 elsif ($h->type eq 'unresolved') {
                     $dest = $a->str('reverse','UNRESOLVED');

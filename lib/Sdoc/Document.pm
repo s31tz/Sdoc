@@ -96,6 +96,11 @@ Markup-Variante. Mögliche Werte: 'sdoc'.
 
 Gib keine Warnungen aus.
 
+=item -shellEscape => $bool (Default: 0)
+
+Muss als Option angegeben werden, wenn externe Programme aufgerufen
+werden müssen, um das Dokument zu übersetzen.
+
 =back
 
 =head4 Returns
@@ -120,10 +125,12 @@ sub parse {
 
     my $markup = 'sdoc';
     my $quiet = 0;
+    my $shellEscape = 0;
 
     Sdoc::Core::Option->extract(\@_,
         -markup => \$markup,
         -quiet => \$quiet,
+        -shellEscape => \$shellEscape,
     );
 
     # Relativen Pfad in absoluten Pfad wandeln
@@ -146,6 +153,7 @@ sub parse {
     $doc->set(
         input => $input,
         quiet => $quiet,
+        shellEscape => $shellEscape,
     );
     $doc->weaken(root=>$doc); # Verweis auf sich selbst
 

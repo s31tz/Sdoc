@@ -1,6 +1,6 @@
 %Document:
   title="Sdoc"
-  author="Frank Seitz, http://fseitz.de/"
+  author="Frank Seitz, L{http://fseitz.de/}"
   date="today"
   sectionNumberDepth=3
   fontSize=10pt
@@ -13,7 +13,7 @@
 
 = Einleitung
 
-Dieses  Dokument beschreibt die Syntax und den Gebrauch der
+Dieses Dokument beschreibt die Syntax und den Gebrauch der
 Auszeichnungsprache Sdoc. Sdoc ist eine Metasprache zum Verfassen von
 Dokumenten. Ein Dokument, das in Sdoc geschrieben ist, kann portabel
 in eine Online-Fassung (HTML) und in eine Druck-Fassung (PDF)
@@ -147,6 +147,7 @@ Information über das Dokument wird in einem - optionalen -
 Dokument-Bock angegeben:
 
   %Document:
+    anchor=STRING
     author=STRING
     date=STRING
     documentType=article|report|book
@@ -154,6 +155,7 @@ Dokument-Bock angegeben:
     geometry=STRING
     language=german|english
     sectionNumberDepth=0|1|2|3|4|5
+    smallerMonospacedFont=BOOL
     tableOfContents=BOOL
     title=STRING
 
@@ -169,8 +171,19 @@ Enthält das Dokument keinen Dokument-Block, wird kein
 Dokument-Vorspann generiert und alle Attribute erhalten ihre
 Defaultwerte (siehe Abschnitt L{Eigenschaften}).
 
+=== Segmente
+
+In Titel (C{title}), Autor (C{author}) und Datum (C{date})des
+Dokuments können Segmente (siehe Abschnitt L{+Syntax/Segment})
+verwendet werden:
+
+  A{}, B{}, C{}, G{}, I{}, L{}, M{}, Q{}
+
 === Eigenschaften
 
+[anchor]:
+  Anker des Dokuments.
+  
 [author]:
   Der Autor des Dokuments.
 
@@ -207,6 +220,9 @@ Defaultwerte (siehe Abschnitt L{Eigenschaften}).
   (Default: 3) Die Abschnittsebene, bis zu welcher Abschnitte
   numeriert werden.  Mögliche Werte: 0, 1, 2, 3, 4, 5. 0 bedeutet: Die
   Abschnitte des Dokuments werden nicht numeriert.
+
+[smallerMonospacedFont]:
+  Wähle einen kleineren Monospaced Font als standardmäßig.
 
 [tableOfContents]:
   (Default: 1) Erzeuge ein Inhaltsverzeichnis, auch wenn das Dokument
@@ -291,6 +307,13 @@ angesehen (unabhängig davon, ob sie mit + ausgezeichnet oder nicht) und
 entsprechend mit A. A.1. A.2 ... B. B.1. usw.  numeriert. Sonst gibt
 es keinen Unterschied zwischen Abschnitten und Appendizes.
 
+=== Segmente
+
+Im Titel eines Abschnitts können Segmente (siehe Abschnitt
+L{+Syntax/Segment}) verwendet werden:
+
+  A{}, B{}, C{}, G{}, I{}, L{}, M{}, Q{}
+
 === Eigenschaften
 
   %Section:
@@ -339,6 +362,13 @@ produziert:
 ===* Zwischenüberschrift Stufe 3
 
 ====* Zwischenüberschrift Stufe 4
+
+=== Segmente
+
+In einer Zwischenüberschrift können Segmente (siehe Abschnitt
+L{+Syntax/Segment}) verwendet werden:
+
+  A{}, B{}, C{}, G{}, I{}, L{}, M{}, Q{}
 
 === Eigenschaften
 
@@ -397,6 +427,13 @@ etc.) endet.
     allerdings auf Listenebene.
   * Dies ist der zweite Punkt derselben
     Liste. Noch ein Paragraph.
+
+=== Segmente
+
+In einem Paragraph können Segmente (siehe Abschnitt
+L{+Syntax/Segment}) verwendet werden:
+
+  B{}, C{}, G{}, I{}, L{}, M{}, Q{}
 
 === Eigenschaften
 
@@ -894,7 +931,7 @@ Ein Kommentar hat keine Eigenschaften.
 
 ===! B - Fettschrift (bold)
 
-Der von C{B\{TEXT\}} eingefasste Text C{TEXT} wird fett wiedergegeben.
+Der von C{B\{\}} eingefasste Text C{TEXT} wird fett wiedergegeben.
 
 ====* Beispiel
 
@@ -904,7 +941,7 @@ Du machst mich B{sehr} wütend.
 
 ===! C - Festbreitenschrift (code)
 
-Der von C{C\{TEXT\}} eingefasste Text C{TEXT} wird in
+Der von C{C\{\}} eingefasste Text C{TEXT} wird in
 Festbreitenschrift wiedergegeben.
 
 ====* Beispiel
@@ -971,7 +1008,7 @@ M~c=\sqrt{a^2+b^2}~
 
 ===! Q - Anführungszeichen (quote)
 
-Der von C{Q\{TEXT\}} eingefasste Text C{TEXT} wird in doppelte
+Der von C{Q\{\}} eingefasste Text C{TEXT} wird in doppelte
 Anführungsstriche gesetzt. Dieses Konstrukt anstelle der doppelten
 Anführungsstriche auf der Tastatur (") zu verwenden ist für LaTeX
 wichtig, da die doppelten Anführungsstriche dort im Zusammenhang mit
@@ -1063,7 +1100,7 @@ Warnungen auftreten. Diese werden nach stderr geschrieben.
   Es wurde per %Link: ein Link definiert, der nirgendwo innerhalb des
   Dokuments genutzt wird.
 
-[More than anchor: \A{TEXT}]:
+[More than one anchor: \A{TEXT}]:
   In einem Block wurde mehr als ein Anker gesetzt. Nur der erste Anker
   innerhalb eines Blocks wird verwendet.
 

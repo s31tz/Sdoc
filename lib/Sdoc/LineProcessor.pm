@@ -379,12 +379,10 @@ Codegenerierung durchgeführt.
 sub parseSegments {
     my ($self,$node,$key) = @_;
 
-    my $val = $node->get($key);
-    my (@links,@formulas,@graphics,$anchor);
+    my $val = $node->get($key) // '';
 
     my $markup = $self->markup;
     if ($markup eq 'sdoc') {
-        my $anchorCount = 0;
         my $sub = sub {
             my ($seg,$val) = @_;
 
@@ -399,12 +397,12 @@ sub parseSegments {
                     # Wir werten nur das erste A{}-Segment aus alle
                     # weiteren warnen wir an
 
-                    if (!$anchorCount++) {
-                        $anchor = $val;
-                        $val = '';
+                    if (defined $node->get('anchor')) {
+                        $node->warn('More than one anchor: A{%s}',$val);
                     }
                     else {
-                        $node->warn('More than anchor: A{%s}',$val);
+                        $node->set(anchor=>$val);
+                        $val = '';
                     }
                 }
             }
@@ -426,8 +424,9 @@ sub parseSegments {
                     # Dokuments durch einen Verweis auf den
                     # Grafik-Knoten ersetzt.
 
-                    push @graphics,[$val,undef];
-                    $val = $#graphics;
+                    my $graphicA = $node->graphicA;
+                    push @$graphicA,[$val,undef];
+                    $val = $#$graphicA;
                 }
             }
             elsif ($seg eq 'L') {
@@ -449,8 +448,9 @@ sub parseSegments {
                     # dem Parsen des gesamten Dokuments durch einen Hash
                     # mit Link-Information ersetzt.
 
-                    push @links,[$val,undef];
-                    $val = $#links;
+                    my $linkA = $node->linkA;
+                    push @$linkA,[$val,undef];
+                    $val = $#$linkA;
                 }
             }
             elsif ($seg eq 'M') {
@@ -467,8 +467,9 @@ sub parseSegments {
                 else {
                     # Mathematische Formel
 
-                    push @formulas,$val;
-                    $val = $#formulas;
+                    my $formulaA = $node->formulaA;
+                    push @$formulaA,$val;
+                    $val = $#$formulaA;
                 }
             }
 
@@ -519,18 +520,6 @@ sub parseSegments {
         $self->throw;
     }
 
-    if ($anchor) {
-        $node->set(anchor=>$anchor);
-    }
-    if ($node->exists('formulaA')) {
-        $node->set(formulaA=>\@formulas);
-    }
-    if ($node->exists('graphicA')) {
-        $node->set(graphicA=>\@graphics);
-    }
-    if ($node->exists('linkA')) {
-        $node->set(linkA=>\@links);
-    }
     $node->set(
         $key.'S'=>$val,
     );

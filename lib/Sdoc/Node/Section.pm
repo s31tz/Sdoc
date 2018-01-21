@@ -41,6 +41,16 @@ Anker-Pfad des Abschnitts.
 
 Liste der Subknoten.
 
+=item formulaA => \@formulas
+
+Array mit den im Abschnittstitel vorkommenden Formeln aus
+M{}-Segmenten.
+
+=item graphicA => \@graphics
+
+Array mit Informationen über die im Abschnittstitel vorkommenden
+G-Segmente (Inline-Grafiken).
+
 =item isAppendix => $bool (Default: 0)
 
 Mit diesem Abschnitt beginnen die Appendizes.
@@ -161,9 +171,11 @@ sub new {
     my $self = $class->SUPER::new('Section',$variant,$root,$parent,
         anchor => undef,
         childA => [],
+        formulaA => [],
+        graphicA => [],
         isAppendix => 0,
         level => undef,
-        linkA => undef,
+        linkA => [],
         linkId => undef,
         number => undef,
         tocStop => 0,

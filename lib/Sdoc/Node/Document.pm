@@ -8,7 +8,6 @@ use utf8;
 our $VERSION = 0.01;
 
 use POSIX ();
-use Scalar::Util ();
 use Sdoc::Core::Hash;
 use Digest::SHA ();
 
@@ -35,9 +34,17 @@ Dokument-Knoten folgende zusätzliche Attribute:
 
 =over 4
 
+=item anchor => undef
+
+Anker des Dokuments.
+
 =item author => $author
 
 Autor des Dokuments.
+
+=item authorS => $str
+
+Autor des Dokuments nach Parsing der Segmente.
 
 =item childA => \@childs
 
@@ -48,6 +55,10 @@ Array der direkten Kind-Knoten.
 Datum des Dokuments. today: YYYY-MM-DD, now: YYYY-MM-DD HH:MI:SS,
 strftime-Formatelemente werden expandiert.
 
+=item dateS => $str
+
+Datum des Dokuments nach Parsing der Segmente.
+
 =item documentType => $DocumentType (Default: 'article')
 
 Der Dokumenttyp. Diese Angabe ist für LaTeX relevant. Mögliche
@@ -56,6 +67,25 @@ Werte: 'article', 'report', 'book'.
 =item fontSize => $fontSize (Default: '10pt')
 
 Größe des LaTeX-Font. Mögliche Werte: '10pt', '11pt', '12pt'.
+
+=item formulaA => \@formulas
+
+Array mit den vorkommenden Formeln aus M-Segmenten der Attribute
+C<title>, C<author>, C<date>.
+
+=item graphicA => \@graphics
+
+Array mit den vorkommenden Grafiken aus G-Segmenten der Attribute
+C<title>, C<author>, C<date>.
+
+=item geometry => $str (Default: 'includeheadfoot,margin=2.54cm')
+
+Einstellungen des LaTeX-Pakets C<geometry>.
+
+=item graphicH => \%nodes
+
+Hash der Grafik-Knoten. Schlüssel des Hash ist der Name des
+Grafik-Knotens.
 
 =item input => $input
 
@@ -67,14 +97,10 @@ siehe Sdoc::Core::LineProcessor.
 
 Sprache, in der das Dokument verfasst ist.
 
-=item geometry => $str (Default: 'includeheadfoot,margin=2.54cm')
+=item linkA => \@links
 
-Einstellungen des LaTeX-Pakets C<geometry>.
-
-=item graphicH => \%nodes
-
-Hash der Grafik-Knoten. Schlüssel des Hash ist der Name des
-Grafik-Knotens.
+Array mit den vorkommenden Links aus L-Segmenten der Attribute
+C<title>, C<author>, C<date>.
 
 =item linkH => \%nodes
 
@@ -99,6 +125,15 @@ Tiefe, bis zu welcher Abschnitte
 Die Abschnittsebene, bis zu welcher Abschnitte numeriert werden.
 Mögliche Werte: 0, 1, 2, 3, 4, 5. 0 = keine Abschnittsnumerierung.
 
+=item shellEscape => $bool (Default: 0)
+
+Muss angegeben werden, wenn externe Programme aufgerufen
+werden müssen, um das Dokument zu übersetzen.
+
+=item smallerMonospacedFont => $bool (Default: 0)
+
+Wähle einen kleineren Monospaced Font als standardmäßig.
+
 =item tableOfContents => $bool (Default: 1)
 
 Erzeuge ein Inhaltsverzeichnis, auch wenn kein
@@ -107,6 +142,10 @@ Inhaltsverzeichnis-Knoten vorhanden ist.
 =item title => $str
 
 Dokument-Titel.
+
+=item titleS => $str
+
+Titel des Dokuments nach Parsing der Segmente.
 
 =back
 
@@ -187,6 +226,9 @@ sub new {
         }
 
         $root->setAttributes(variant=>$variant,%$attribH);
+        $par->parseSegments($root,'title');
+        $par->parseSegments($root,'author');
+        $par->parseSegments($root,'date');
 
         return; # Wir liefern kein Objekt
     }
@@ -197,23 +239,33 @@ sub new {
     # im Dokument gibt).
 
     my $self = $class->SUPER::new('Document',$variant,$root,$parent,
+        anchor => undef,
         author => undef,
+        authorS => undef,
         childA => [],
         date => undef,
+        dateS => undef,
         documentType => 'article',
         fontSize => '10pt',
+        formulaA => [], # nicht undef, da %Dokument nicht ex. muss
+        graphicA => [], # nicht undef, da %Dokument nicht ex. muss
         input => undef,
         language => 'german',
+        linkA => [], # nicht undef, da %Dokument nicht ex. muss
         geometry => undef,
         sectionNumberDepth => 3,
         tableOfContents => 1,
         title => undef,
+        titleS => undef,
         # memoize
+        anchorA => undef,
         graphicH => undef,
         linkH => undef,
         nodeA => undef,
         pathNodeA => undef,
         quiet => 0,
+        shellEscape => 0,
+        smallerMonospacedFont => 0,
         tocNode => undef,
     );
 
@@ -252,12 +304,7 @@ sub nodes {
 
         # Dokument-Knoten im Array finden und die Referenz zu einer
         # schwachen Referenz machen
-
-        for (my $i = 0; $i < @arr; $i++) {
-            if ($arr[$i]->type eq 'Document') {
-                Scalar::Util::weaken($arr[$i]);
-            }
-        }
+        $self->weakenSelfReference(\@arr);
 
         return \@arr;
     });
@@ -402,6 +449,10 @@ sub anchorNodes {
             }
         }
 
+        # Dokument-Knoten im Array finden und die Referenz zu einer
+        # schwachen Referenz machen
+        $self->weakenSelfReference(\@arr);
+
         return \@arr;
     });
 
@@ -514,6 +565,34 @@ sub tableOfContentsNode {
     }
 
     return undef;
+}
+
+# -----------------------------------------------------------------------------
+
+=head2 Anker
+
+=head3 anchor() - Anker des Dokuments
+
+=head4 Synopsis
+
+    $anchor = $sec->anchor;
+
+=head4 Returns
+
+Anker (String)
+
+=head4 Description
+
+Liefere den Wert des Attributs C<anchor>. Falls dies keinen Wert
+hat, liefere den Wert des Attributs C<title>.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub anchor {
+    my $self = shift;
+    return $self->get('anchor') || $self->title;
 }
 
 # -----------------------------------------------------------------------------
@@ -1172,7 +1251,8 @@ sub latex {
         + Breite des Leerraums zwischen Zeilennummer und Quelltext
     |);
     $code .= $gen->cmd('fvset',
-        -p => 'fontsize=\small,numbersep=0.8em',
+        -p => 'numbersep=0.8em'.
+            ($self->smallerMonospacedFont? ',fontsize=\small': ''),
         -nl => 2,
     );
     $code .= $gen->comment(-nl=>2,q|
@@ -1298,9 +1378,9 @@ sub latex {
 
     # Titelseite
 
-    my $title = $self->get('title');
-    my $author = $self->get('author');
-    my $date = $self->get('date');
+    my $title = $self->latexText($gen,'titleS');
+    my $author = $self->latexText($gen,'authorS');
+    my $date = $self->latexText($gen,'dateS');
     if ($date && $date eq 'today') {
         $date = '\today';
     }
