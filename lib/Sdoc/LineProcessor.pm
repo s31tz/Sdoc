@@ -153,6 +153,7 @@ sub nextType {
 
     my $markup = $self->markup;
     my $line = $self->lines->[0];
+    my $input = $line->input;
     my $lineNum = $line->number;
     my $text = $line->text;
 
@@ -206,7 +207,7 @@ sub nextType {
         $self->throw(
             q~SDOC-00004: Unexpected text (only pure markup allowed)~,
             Text => $text,
-            Input => ''.$self->input,
+            Input => $input,
             Line => $lineNum,
         );
     }
@@ -224,7 +225,7 @@ sub nextType {
         $self->throw(
             q~SDOC-00002: Unknown node type~,
             Type => $type,
-            Input => ''.$self->input,
+            Input => $input,
             Line => $lineNum,
         );
     }
@@ -288,6 +289,7 @@ sub readBlock {
     # nicht mit einem eingerücktem KEY= beginnt.
 
     my $line = shift @$lineA;
+    my $input = $line->input;
     my $lineNum = $line->number;
     my $text = $line->text;
 
@@ -303,6 +305,7 @@ sub readBlock {
     }
     my $attribH = {
         variant => 0,
+        input => $input,
         lineNum => $lineNum,
         Sdoc::Core::Converter->stringToKeyVal($attrib),
     };

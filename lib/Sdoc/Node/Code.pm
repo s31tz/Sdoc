@@ -149,6 +149,7 @@ sub new {
         # " TEXT"
 
         my $lineA = $par->lines;
+        my $input = $lineA->[0]->input;
         my $lineNum = $lineA->[0]->number;
 
         my $text = '';
@@ -163,6 +164,7 @@ sub new {
         $text = Sdoc::Core::Unindent->trim($text);
 
         $attribH = {
+            input => $input,
             lineNum => $lineNum,
             text => $text,
         };
@@ -222,7 +224,7 @@ sub new {
             && !$root->shellEscape) {
         $self->throw(
             q~SDOC-00006: Option shellEscape (--shell-escape) must be set~,
-            file => $root->input,
+            file => $self->input,
             line => $self->lineNum,
             -stacktrace => 0,
         );

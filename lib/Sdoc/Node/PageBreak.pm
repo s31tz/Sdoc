@@ -87,6 +87,7 @@ sub new {
         my $line = $par->shiftLine;
         
         $attribH = {
+            input => $line->input,
             lineNum => $line->number,
         };
     }
@@ -108,7 +109,7 @@ sub new {
 
 =head4 Synopsis
 
-    $code = $toc->latex($gen);
+    $code = $pbr->latex($gen);
 
 =head4 Arguments
 

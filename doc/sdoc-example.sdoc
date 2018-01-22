@@ -2,7 +2,7 @@
   title="Ein Beispieldokument"
   author="Nico Laus"
   date="today"
-  geometry="includeheadfoot,margin=2.6cm"
+  latexGeometry="includeheadfoot,margin=2.6cm"
 
 = Einleitung
 

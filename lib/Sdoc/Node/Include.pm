@@ -1,4 +1,4 @@
-package Sdoc::Node::Link;
+package Sdoc::Node::Include;
 use base qw/Sdoc::Node/;
 
 use strict;
@@ -6,13 +6,15 @@ use warnings;
 
 our $VERSION = 0.01;
 
+use Sdoc::Core::LineProcessor;
+
 # -----------------------------------------------------------------------------
 
 =encoding utf8
 
 =head1 NAME
 
-Sdoc::Node::Link - Link-Knoten
+Sdoc::Node::Include - Include-Knoten
 
 =head1 BASE CLASS
 
@@ -20,36 +22,24 @@ L<Sdoc::Node>
 
 =head1 DESCRIPTION
 
-Ein Objekt der Klasse repräsentiert einen Link.
+Ein Objekt der Klasse repräsentiert includierten Sdoc-Quelltext.
 
 =head1 ATTRIBUTES
 
 Über die Attribute der Basisklasse hinaus besitzt ein
-Inhaltsverzeichnis-Knoten folgende zusätzliche Attribute:
+Code-Knoten folgende zusätzliche Attribute:
 
 =over 4
 
-=item name => $name (Default: undef)
+=item childA => \@childs
 
-Name der Link-Definition.
+Liste der Subknoten.
 
-=item file => $path (Default: undef)
+=item load => $file
 
-Pfad einer lokalen Datei.
-
-=item regex => $regex (Default: undef)
-
-Regex, der den internen Zielknoten identifiziert.
-
-=item url => $url (Default: undef)
-
-URL eines externen Dokuments.
-
-=item useCount => $n
-
-Die Anzahl der Links im Text, die diesen Link-Knoten nutzen. Nach
-dem Parsen kann anhand dieses Zählers geprüft werden, ob jeder
-Link-Knoten genutzt wird.
+Lade Datei $file und füge dessen Inhalt in das Dokument
+ein. Beginnt der Pfad mit C<+/>, wird das Pluszeichen zum Pfad des
+Dokumentverzeichnisses expandiert.
 
 =back
 
@@ -57,11 +47,11 @@ Link-Knoten genutzt wird.
 
 =head2 Konstruktor
 
-=head3 new() - Instantiiere Link-Knoten
+=head3 new() - Instantiiere Include-Knoten
 
 =head4 Synopsis
 
-    $lnk = $class->new($par,$variant,$root,$parent);
+    $inc = $class->new($par,$variant,$root,$parent);
 
 =head4 Arguments
 
@@ -87,7 +77,7 @@ Eltern-Knoten.
 
 =head4 Returns
 
-Link-Knoten (Object)
+Code-Knoten (Object)
 
 =cut
 
@@ -103,8 +93,10 @@ sub new {
 
     my $attribH;
     if ($variant == 0) {
-        # %Link:
+        # %Code:
         #   KEY=VAL
+        # TEXT
+        # .
         $attribH = $par->readBlock;
     }
     elsif ($markup eq 'sdoc') {
@@ -113,14 +105,35 @@ sub new {
 
     # Objekt instantiieren
 
-    my $self = $class->SUPER::new('Link',$variant,$root,$parent,
-        name => undef,
-        file => undef,
-        regex => undef,
-        url => undef,
-        useCount => 0,
+    my $self = $class->SUPER::new('Include',$variant,$root,$parent,
+        childA => [],
+        load => undef,
     );
     $self->setAttributes(%$attribH);
+
+    if (my $file = $root->expandPlus($self->load)) {
+        my $lineA = $par->lines;
+
+        # Datei lesen und dem Input hinzufügen
+
+        unshift @$lineA,Sdoc::Core::LineProcessor->new($file,
+            -encoding => 'utf-8',
+            -lineContinuation => 'backslash',
+        )->lines;
+
+        # Hinzugefügte Zeilen als Child-Knoten verarbeiten
+
+        while (@$lineA) {
+            my ($nodeClass,$variant,$type) = $par->nextType(1);
+
+            # Ende, wenn alle Zeilen der Datei verarbeitet sind
+            if ($lineA->[0]->input ne $file) {
+                last;
+            }
+
+            $self->push(childA=>$nodeClass->new($variant,$par,$root,$self));
+        }
+    }
 
     return $self;
 }
@@ -129,11 +142,11 @@ sub new {
 
 =head2 Formate
 
-=head3 latex() - Generiere LaTeX-Code (Leerstring)
+=head3 latex() - Generiere LaTeX-Code
 
 =head4 Synopsis
 
-    $code = $lnk->latex($gen);
+    $code = $inc->latex($gen);
 
 =head4 Arguments
 
@@ -147,15 +160,15 @@ Generator für das Zielformat.
 
 =head4 Returns
 
-Leerstring ('')
+LaTeX-Code (String)
 
 =cut
 
 # -----------------------------------------------------------------------------
 
 sub latex {
-    my $self = shift;
-    return '';
+    my ($self,$gen) = @_;
+    return $self->generateChilds('latex',$gen);
 }
 
 # -----------------------------------------------------------------------------

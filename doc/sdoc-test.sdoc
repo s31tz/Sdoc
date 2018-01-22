@@ -2,6 +2,12 @@
   title="Testfälle"
   author="L{http://google.com}, M~c=sqrt{a^2+b^2}~, G{Invader}"
   date="now"
+# latexDocumentClass="article"
+
+%Graphic:
+  name="Invader"
+  file="+/sdoc-graphic-invader"
+  scale=0.025
 
 = Abschnitt mit Link im Titel: L{http://google.com}
 
@@ -9,9 +15,21 @@
 
 = Abschnitt mit Grafik im Titel: G{Invader}
 
-%Graphic:
-  name="Invader"
-  file="+/sdoc-graphic-invader"
-  scale=0.025
+= Definitionsliste mit Segmenten
+
+[C{Apfel}]:
+[B{Birne}]:
+[I{Pflaume}]:
+  Kursivschrift wird unter KOMA nicht dargestellt, unter
+  den LaTeX-Dokumentklassen schon.
+[L{http://google.com}]:
+[M~c=sqrt{a^2+b^2}~]:
+[Q{In Anführungszeichen}]:
+[\G{Invader}]:
+  Grafik im Term einer Definitionsliste geht unter LaTeX nicht.
+
+= Datei inkludieren
+
+%Include: load="+/sdoc-test-include.sdoc"
 
 # eof

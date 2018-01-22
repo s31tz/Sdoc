@@ -27,6 +27,12 @@ L<Sdoc::Core::Hash>
 
 =over 4
 
+=item input => $input
+
+Die Quelle der Eingabe (für Fehlermeldungen). Dies ist eine
+Zeichenkette (Dateipfad) oder eine Referenz (String- oder
+Array-Referenz), siehe Sdoc::Core::LineProcessor::Line.
+
 =item lineNum => $n
 
 Zeilennummer in der Quelle, an der die Knotendefinition
@@ -113,6 +119,7 @@ sub new {
         variant => $variant,
         root => $root,
         parent => $parent,
+        input => undef,
         lineNum => undef,
         @_,
     );
@@ -452,7 +459,7 @@ sub warn {
             sprintf($fmt,@_),
             $self->type,
             $self->lineNum,
-            $self->root->input;
+            $self->input;
     }
     
     return;
@@ -755,7 +762,7 @@ sub latexText {
             my ($name,$gph) = @{$self->graphicA->[$val]};
             if ($gph) {
                 my $type = $self->type;
-                if ($type eq 'Section' || $type eq 'BridgeHead') {
+                if ($type =~ /^(BridgeHead|Item|Section)$/) {
                     $code = '\protect';
                 }
                 $code .= $gph->latexIncludeGraphics($gen,0);
@@ -829,15 +836,17 @@ sub latexText {
                 q~SDOC-00001: Unknown segment~,
                 Segment => $seg,
                 Code => "$seg\{$val\}",
-                Input => ''.$doc->input,
+                Input => $self->input,
                 Line => $self->lineNum,
             );
         }
     };
 
     my $val = $self->get($key);
-    $val = $gen->protect($val); # Schütze reservierte LaTeX-Zeichen
-    1 while $val =~ s/([ABCGILMQ])\x01([^\x01\x02]*)\x02/$r->($1,$2)/e;
+    if (defined $val) {
+        $val = $gen->protect($val); # Schütze reservierte LaTeX-Zeichen
+        1 while $val =~ s/([ABCGILMQ])\x01([^\x01\x02]*)\x02/$r->($1,$2)/e;
+    }
 
     return $val;
 }
@@ -941,7 +950,7 @@ sub latexLevelToSectionName {
         $self->throw(
             q~SDOC-00005: Unexpected section level~,
             Level => $level,
-            Input => ''.$self->root->input,
+            Input => $self->input,
             Line => $self->lineNum,
         );
     }

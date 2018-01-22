@@ -36,6 +36,11 @@ Listenelement-Knoten folgende zusätzliche Attribute:
 
 Liste der Subknoten.
 
+=item formulaA => \@formulas
+
+Array mit den im Key vorkommenden Formeln aus
+M-Segmenten.
+
 =item key => $key
 
 Schlüssel im Falle einer Definitionsliste.
@@ -43,6 +48,10 @@ Schlüssel im Falle einer Definitionsliste.
 =item keyS => $keyS
 
 Schlüssel mit geparsten Segmenten.
+
+=item linkA => \@links
+
+Array mit Informationen über die im Key vorkommenden Links.
 
 =back
 
@@ -94,9 +103,10 @@ sub new {
 
     if ($parent->type ne 'List') {
         my $lineA = $par->lines;
-        # Wir geben der Liste die Zeilennummer des Item
+        # Wir geben der Liste die Eingabe/Zeilennummer des Item
         my $lineNum = $lineA->[0]->number;
-        unshift @$lineA,$par->lineClass->new('%List:',$lineNum);
+        my $inputR = $lineA->[0]->inputR;
+        unshift @$lineA,$par->lineClass->new('%List:',$lineNum,$inputR);
         return Sdoc::Node::List->new(0,$par,$root,$parent);
     }
 
@@ -153,6 +163,7 @@ sub new {
         }
 
         $attribH = {
+            input => $line->input,
             lineNum => $line->number,
             key => $key,
         };
@@ -162,8 +173,10 @@ sub new {
 
     my $self = $class->SUPER::new('Item',$variant,$root,$parent,
         childA => [],
+        formulaA => [],
         key => undef,
         keyS => undef,
+        linkA => [],
     );
     $self->setAttributes(%$attribH);
     $par->parseSegments($self,'key');

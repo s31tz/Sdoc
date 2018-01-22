@@ -149,6 +149,7 @@ sub new {
     }
 
     my @lines;
+    my $inputAsString = "$input"; # Wir wollen die Bezeichnung
     if (ref($input) eq 'ARRAY') { # Zeilen in neues Dokument
         @lines = @$input;
     }
@@ -159,7 +160,7 @@ sub new {
         }
         while (<$fh>) {
             chomp;
-            push @lines,$lineClass->new($_,$.);
+            push @lines,$lineClass->new($_,$.,\$inputAsString);
         }
         $fh->close;
     }
@@ -206,18 +207,20 @@ sub new {
     # Leerzeilen am Ende entfernen
     pop @lines while @lines && $lines[-1]->isEmpty;
 
-    return $class->SUPER::new(
-        input => $input,
+    my $self = $class->SUPER::new(
+        input => $inputAsString, # Wir wollen die Bezeichnung
         lineClass => $lineClass,
         lineA => \@lines,
     );
+
+    return $self;
 }
 
 # -----------------------------------------------------------------------------
 
 =head2 Akzessoren
 
-=head3 input() - Eingabequelle
+=head3 input() - Bezeichnung Eingabequelle
 
 =head4 Synopsis
 
@@ -225,8 +228,8 @@ sub new {
 
 =head4 Description
 
-Liefere die Eingabequelle. Dies kann ein Dateiname oder eine
-String- oder Arrayreferenz sein.
+Liefere die Bezeichnung der Eingabequelle. Dies kann ein Dateiname
+oder eine stringifizierte String- oder Arrayreferenz sein.
 
 =cut
 

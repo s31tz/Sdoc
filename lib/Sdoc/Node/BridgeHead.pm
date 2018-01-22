@@ -45,7 +45,7 @@ M{}-Segmenten.
 =item graphicA => \@graphics
 
 Array mit Informationen über die im Abschnittstitel vorkommenden
-G-Segmente (Inline-Grafiken).
+G-Segmenten (Inline-Grafiken).
 
 =item level => $n
 
@@ -137,6 +137,7 @@ sub new {
         $title =~ s/\s{2,}/ /g;
 
         $attribH = {
+            input => $line->input,
             lineNum => $line->number,
             level => $level,
             title => $title,

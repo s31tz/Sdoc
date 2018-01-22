@@ -158,6 +158,7 @@ sub new {
         $title =~ s/\s{2,}/ /g;
 
         $attribH = {
+            input => $line->input,
             lineNum => $line->number,
             level => $level,
             isAppendix => $isAppendix,

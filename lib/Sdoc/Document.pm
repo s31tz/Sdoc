@@ -11,6 +11,7 @@ use Sdoc::Node::Code;
 use Sdoc::Node::Comment;
 use Sdoc::Node::Document;
 use Sdoc::Node::Graphic;
+use Sdoc::Node::Include;
 use Sdoc::Node::Item;
 use Sdoc::Node::Link;
 use Sdoc::Node::List;

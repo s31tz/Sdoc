@@ -3,8 +3,9 @@
   author="Frank Seitz, L{http://fseitz.de/}"
   date="today"
   sectionNumberDepth=3
-  fontSize=10pt
-  documentType=article
+  latexFontSize=10pt
+  latexDocumentClass=scrartcl
+  latexPaperSize=a4paper
 
 %TableOfContents:
   maxDepth=4
@@ -149,11 +150,13 @@ Dokument-Bock angegeben:
   %Document:
     anchor=STRING
     author=STRING
+    copyComments=BOOL
     date=STRING
-    documentType=article|report|book
-    fontSize=10pt|11pt|12pt
-    geometry=STRING
     language=german|english
+    latexDocumentClass=scrartcl|scrreprt'|scrbook|article|report|book
+    latexFontSize=10pt|11pt|12pt
+    latexGeometry=STRING
+    latexPaperSize=a4paper
     sectionNumberDepth=0|1|2|3|4|5
     smallerMonospacedFont=BOOL
     tableOfContents=BOOL
@@ -198,23 +201,30 @@ verwendet werden:
 
   Ist kein Wert angegeben, erscheint kein Datum im Dokumenttitel.
 
-[documentType]:
-  (Default: article) Der Typ des Dokuments. Mögliche Werte: 'article',
-  'report', 'book'. Unter LaTeX wird der Wert übersetzt in die
-  Dokumentklassen scrartcl, scrreprt, scrbook.
-
-[fontSize]:
-  (Default: '10pt') Die Größe des LaTeX-Font. Mögliche Werte: '10pt',
-  '11pt', '12pt'.
-
-[geometry]:
-  Definition der Seitengeometrie mittels des LaTeX-Pakets C{geometry}.
+[copyComments]:
+  Kopiere Sdoc-Kommentare in den Quelltext des Zielformats. Dies ist
+  z.B. nützlich, um eine Stelle im Quelltext des Zielformats zu
+  finden, die aus einem bestimmten Sdoc-Konstrukt hervorgegangen ist.
 
 [language]:
-  (Default: german) Die Sprache, in der das Dokument verfasst ist.  In
+  (Default: german) Die Sprache, in der das Dokument verfasst ist. In
   dieser Sprache werden Dokument-Bezeichnungen wie z.B.
   Q{Inhaltsverzeichnis} erzeugt. Ferner bestimmt die Sprache in LaTeX
   die Trennregeln. Mögliche Werte: german, english.
+
+[latexDocumentClass]:
+  LaTeX-Dokumentklasse. Werte: 'scrartcl', 'scrreprt', 'scrbook',
+  'article', 'report', 'book', ...
+
+[latexFontSize]:
+  (Default: '10pt') Die Größe des LaTeX-Font. Mögliche Werte: '10pt',
+  '11pt', '12pt'.
+
+[latexGeometry]:
+  Definition der Seitengeometrie mittels des LaTeX-Pakets C{geometry}.
+
+[latexPaperSize]:
+  Papiergröße für LaTeX.
 
 [sectionNumberDepth]:
   (Default: 3) Die Abschnittsebene, bis zu welcher Abschnitte
@@ -584,6 +594,13 @@ produziert:
 * I
 * J
 
+=== Segmente
+
+Im Term einer Definitonsliste können Segmente (siehe Abschnitt
+L{+Syntax/Segment}) verwendet werden:
+
+  B{}, C{}, I{}, L{}, M{}, Q{}
+
 === Eigenschaften
 
 ====* List
@@ -891,6 +908,20 @@ C{L\{TEXT\}} gesetzt.
 [url]:
   URL eines externen Dokuments.
 
+== Datei inkludieren
+
+  %Include: load="+/sdoc-test-include.sdoc"
+
+=== Eigenschaften
+
+  %Include:
+    load=PATH
+
+[load]:
+  Lade Datei PATH und füge dessen Inhalt in das Dokument ein. Beginnt
+  der Pfad mit C{+/}, wird das Pluszeichen zum Pfad des
+  Dokumentverzeichnisses expandiert.
+
 == Kommentar (Comment)
 
 In den Quelltext eines Sdoc-Dokuments können Kommentarzeilen
@@ -1067,6 +1098,10 @@ Hash: #x, # x
 Kaufmanns-Und: &x, & x
 
 Pipe: |x, | x
+
+Latex-Symbol: LaTeX, LaTeX x
+
+Tex-Symbol: TeX, TeX x
 
 == Warnungen
 

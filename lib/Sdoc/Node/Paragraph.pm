@@ -113,6 +113,7 @@ sub new {
         # TEXT
 
         my $lineA = $par->lines;
+        my $input = $lineA->[0]->input;
         my $lineNum = $lineA->[0]->number;
 
         my $text = '';
@@ -127,6 +128,7 @@ sub new {
         chomp $text;
 
         $attribH = {
+            input => $input,
             lineNum => $lineNum,
             text => $text,
         };

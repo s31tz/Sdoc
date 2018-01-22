@@ -475,6 +475,8 @@ sub protect {
     $text =~ s/~/\\textasciitilde{}/g;      # ~
     $text =~ s/\^/\\textasciicircum{}/g;    # <
     $text =~ s/\|/\\textbar{}/g;            # |
+    $text =~ s/LaTeX/\\LaTeX{}/g;           # LaTeX
+    $text =~ s/(?<!La)TeX/\\TeX{}/g;        # TeX
 
     # Gekennzeichnete Backslashes zum Schluss wandeln
     $text =~ s/\\\x1d/\\textbackslash{}/g; # \

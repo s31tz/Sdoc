@@ -32,7 +32,7 @@ dem Zeileninhalt (Text) und einer Zeilennummer.
 
 =head4 Synopsis
 
-    $ln = $class->new($text,$number);
+    $ln = $class->new($text,$number,\$input);
 
 =head4 Description
 
@@ -44,11 +44,23 @@ Objekt zurück.
 # -----------------------------------------------------------------------------
 
 sub new {
-    my ($class,$text,$number) = @_;
+    my ($class,$text,$number,$inputR) = @_;
+
+    # Sicherheitstest für Übergangsphase nach Einführung des Parameters
+
+    if (!$inputR || !ref $inputR) {
+        $class->throw(
+            q~LINE-00002: Illegal path~,
+            Path => !defined($inputR)? 'undef': $inputR,
+            Text => $text,
+            Line => $number,
+        );
+    }
 
     my $self = bless [],$class;
     $self->text($text);     # entfernt Whitespace am Ende
     $self->number($number);
+    $self->inputR($inputR);
 
     return $self;
 }
@@ -128,6 +140,51 @@ sub number {
 
     $self->[1] = shift if @_;
     return $self->[1];
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 inputR() - Liefere/Setze Referenz auf Input-Bezeichnung
+
+=head4 Synopsis
+
+    $inputR = $ln->inputR;
+    $inputR = $ln->inputR(\$input);
+
+=head4 Description
+
+Liefere/Setze eine Referenz auf die Input-Bezeichung.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub inputR {
+    my $self = shift;
+    # @_: $inputR
+
+    if (@_) {
+        $self->[2] = shift;
+    }
+
+    return $self->[2];
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 input() - Liefere die Input-Bezeichnung
+
+=head4 Synopsis
+
+    $input = $ln->input;
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub input {
+    my $self = shift;
+    return ${$self->[2]};
 }
 
 # -----------------------------------------------------------------------------
@@ -290,7 +347,8 @@ sub dump {
         return sprintf "%4d: %s\n",$self->[1],$self->[0];
     }
 
-    $self->throw(q~LINE-00001: Ungültiges Ausgabeformat~,
+    $self->throw(
+        q~LINE-00001: Ungültiges Ausgabeformat~,
         Format=>$format,
     );
 }
