@@ -704,8 +704,8 @@ sub resolveLinks {
                 # Wir nutzen $text als Regex zur Suche des
                 # Zielknotens. Der Regex wird auf die Anker der
                 # Blattknoten angewendet, nicht auf den gesamten
-                # Pfad.
-                @nodes = $self->findDestNodes($srcNode,qr/\Q$text/,0);
+                # Pfad, wenn er keinen Slash (/) enthält.
+                @nodes = $self->findDestNodes($srcNode,qr/\Q$text/);
             }
             else {
                 if (my $regex = $lnk->regex) {
@@ -882,7 +882,7 @@ sub resolveGraphics {
 
 =head4 Synopsis
 
-    @nodes | $nodeA = $doc->findDestNodes($srcNode,$regex,$leafOnly);
+    @nodes | $nodeA = $doc->findDestNodes($srcNode,$regex);
 
 =head4 Arguments
 
@@ -896,13 +896,6 @@ Ausgangsknoten, der den Link enthält
 
 Regulärer Ausdruck, der den Zielknoten (nicht notwendigerweise
 eindeutig) identifiziert.
-
-=item $leafOnly
-
-Matche den Regex nur gegen den Anker von Blattknoten, nicht gegen
-den gesamten Anker-Pfad. Diesen Suchmodus nutzen wir, wenn wir den
-Link-Text I<direkt> suchen, also ohne Beteiligung eines
-Link-Knoten.
 
 =back
 
@@ -948,7 +941,7 @@ umgeht.
 # -----------------------------------------------------------------------------
 
 sub findDestNodes {
-    my ($self,$srcNode,$regex,$leafOnly) = @_;
+    my ($self,$srcNode,$regex) = @_;
 
     # Trefferliste @hits besteht aus Elementen der Art
     #
@@ -957,19 +950,17 @@ sub findDestNodes {
     # $node       [0] Potentieller Zielknoten
     # $matchCount [1] Anzahl der Übereinstimmenden Komponenenten am Pfadanfang
     # $pathLength [2] Gesamtzahl der Komponenten des Pfads
-    # $matchRatio [3] Verhältnis von Länge des gematchen Teils zur Gesamtlänge
 
     my @hits;
     for my $node ($self->anchorNodes) {
         if ($node == $srcNode) {
             next;
         }
-        my $path = $leafOnly? $node->anchor: $node->anchorPathAsString;
-        if ($path =~ /($regex)/) {
+        my $path = $node->anchorPathAsString;
+        if ($path =~ m|($regex)(?!.*/)|) {
             push @hits,[$node,
                 0,
                 scalar @{$node->anchorPathAsArray},
-                $leafOnly? length($1)/length($path): 0,
             ];
         }
     }
@@ -1015,15 +1006,12 @@ sub findDestNodes {
 
         # Trefferliste so sortieren, dass die besten Treffer oben
         # stehen. Die besten Treffer haben die größte Anzahl an
-        # Übereinstimmungen am Pfadanfang, die kürzeste Gesamtlänge
-        # und den größten Anteil des Matches an der Gesamtlänge (bei
-        # $leafOnly). Alle anderen Trefferlisten-Elemente entfernen wir.
+        # Übereinstimmungen am Pfadanfang und die kürzeste Gesamtlänge.
+        # Alle anderen Trefferlisten-Elemente entfernen wir.
 
-        @hits = sort {$b->[1] <=> $a->[1] || $a->[2] <=> $b->[2] ||
-            $a->[3] <=> $b->[3]} @hits;
+        @hits = sort {$b->[1] <=> $a->[1] || $a->[2] <=> $b->[2]} @hits;
         for (my $i = 1; $i < @hits; $i++) {
-            if ($hits[0][1] != $hits[$i][1] || $hits[0][2] != $hits[$i][2] ||
-                    $hits[0][3] != $hits[$i][3]) {
+            if ($hits[0][1] != $hits[$i][1] || $hits[0][2] != $hits[$i][2]) {
                 $#hits = $i-1; # Array auf beste gleichwertige Knoten kürzen
             }
         }

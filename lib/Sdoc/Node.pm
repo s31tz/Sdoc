@@ -934,7 +934,13 @@ sub latexLevelToSectionName {
     my ($self,$gen,$level) = @_;
 
     my $name;
-    if ($level == 1) {
+    if ($level == -1) {
+        $name = 'part';
+    }
+    elsif ($level == 0) {
+        $name = 'chapter';
+    }
+    elsif ($level == 1) {
         $name = 'section';
     }
     elsif ($level == 2) {

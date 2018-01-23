@@ -167,7 +167,7 @@ sub nextType {
             $type = 'Comment';
             $variant = 1;
         }
-        elsif ($text =~ /^=+[!+]* /) {
+        elsif ($text =~ /^=+[-+!]* /) {
             $type = 'Section';
             $variant = 1;
         }

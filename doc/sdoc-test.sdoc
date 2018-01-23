@@ -1,17 +1,25 @@
 %Document:
   title="Testfälle"
-  author="L{http://google.com}, M~c=sqrt{a^2+b^2}~, G{Invader}"
+  author="L{http://google.com}, M~c=\sqrt{a^2+b^2}~, G{Invader}"
   date="now"
-# latexDocumentClass="article"
+  latexDocumentClass="scrreprt"
 
 %Graphic:
   name="Invader"
   file="+/sdoc-graphic-invader"
   scale=0.025
 
+=- Erster Teil
+
+Dies ist der erste Teil.
+
+==- Erste Tests
+
+Dies ist das Kapitel mit den ersten Tests.
+
 = Abschnitt mit Link im Titel: L{http://google.com}
 
-= Abschnitt mit Formel im Titel: M~c=sqrt{a^2+b^2}~
+= Abschnitt mit Formel im Titel: M~c=\sqrt{a^2+b^2}~
 
 = Abschnitt mit Grafik im Titel: G{Invader}
 

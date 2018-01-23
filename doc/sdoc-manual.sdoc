@@ -305,6 +305,19 @@ Im Unterschied zum %TableOfContents-Attribut C{maxDepth} können auf
 diesem Weg Abschnitte unterschiedlicher Ebenen vom Inhaltsverzeichnis
 ausgeschlossen werden.
 
+=== Übergeordnete Ebenen
+
+Den Abschnittsebenen 1 bis 4 sind zwei weitere Ebenen I{übergeordnet},
+die für größere Dokumente oder zur Vereinigung mehrerer Dokumente
+verwendet werden können. Dies sind die Ebenen
+
+  =- Teil
+
+  ==- Kapitel
+
+In LaTeX stehen diese zur Verfügung, wenn die Dokumentklassen
+C{scrreprt}, C{scrbook}, C{report}, C{book} verwendet werden.
+
 === Appendix
 
 Die Appendizes eines Dokuments beginnen ab dem ersten Abschnitt der
@@ -881,12 +894,40 @@ C{filter} und C{load} - sofern angegeben - ist:
 
 == Verweis (Link)
 
-Ein Verweis referenziert ein I{internes} oder I{externes}
-Ziel. Ein internes Ziel ist ein Knoten innerhalb desselben Dokuments.
-Ein externes Ziel ist eine Datei oder ein URL.
+Ein Verweis referenziert ein I{internes} oder I{externes} Ziel. Ein
+internes Ziel ist eine andere Stelle innerhalb desselben Dokuments.
+Auf diese Stelle wird beim Verfolgen des Verweises positioniert. Ein
+externes Ziel ist eine lokale Datei oder ein URL. Diese externe
+Q{Ressource} wird beim Folgen des Verweises aufgerufen.
 
 Ein Verweis wird in den Text eines Sdoc-Dokuments durch ein L-Segment
-C{L\{TEXT\}} gesetzt.
+C{L\{TEXT\}} gesetzt. Hierbei ist es gleichgültig, ob es sich um einen
+internen oder einen externen Verweis handelt. Der Unterschied besteht
+in der Art und Weise, wie der Verweis intern aufgelöst wird (siehe unten).
+
+Der Link-Text C{TEXT} wird im Zieldokument als Verweis kenntlich
+gemacht und kann in HTML oder PDF angeklickt werden. Der Text kann
+auch umbrochen sein, sich also über mehr als eine Zeile
+erstrecken. Dies hat auf die Link-Auflösung durch Sdoc keinen
+Einfluss, denn der Text wird zunächst in zwei Schritten
+I{kanonisiert}:
+
+1. Zeilenumbrüche werden durch Leerzeilen ersetzt.
+2. Folgen von zwei und mehr Leerzeichen werden auf I{ein}
+   Leerzeichen reduziert.
+
+Für die Ermittelung des Ziels aus dem L-Segment
+
+  ... siehe Abschnitt L{Schachtelung
+  von  Segmenten} ...
+
+wird also der kanonisierte Text
+
+  Schachelung von Segmenten
+
+gebildet.
+
+=== Interner Verweis
 
 === Eigenschaften
 
@@ -908,9 +949,17 @@ C{L\{TEXT\}} gesetzt.
 [url]:
   URL eines externen Dokuments.
 
-== Datei inkludieren
+== Datei laden (Include)
+
+Durch einen Include-Block kann der Inhalt einer Datei zum Dokument
+hinzugefügt werden. Der geladene Sdoc-Quelltext wird an der Stelle zum
+Dokument hinzugefügt, an der der Include-Block steht.
 
   %Include: load="+/sdoc-test-include.sdoc"
+
+produziert:
+
+%Include: load="+/sdoc-test-include.sdoc"
 
 === Eigenschaften
 
@@ -925,21 +974,27 @@ C{L\{TEXT\}} gesetzt.
 == Kommentar (Comment)
 
 In den Quelltext eines Sdoc-Dokuments können Kommentarzeilen
-eingebettet werden. Diese werden, sofern das Zielformat dies
-unterstützt, als Kommentare dorthin übertragen. Unterstützt das
-Zielformat keine Kommentare, entfallen sie.
-
-Eine Kommentarzeile beginnt mit einem Hash (#) am I{Zeilenanfang},
-eine Einrückung ist nicht erlaubt.
+eingebettet werden. Eine Kommentarzeile beginnt mit einem Hash (#) am
+I{Zeilenanfang}, eine Einrückung ist nicht erlaubt.
 
   # Dies ist ein Kommentar, der in den Quelltext des Zielformats
   # übertragen wird, aber im Zieldokument nicht auftaucht
+
+Ist die Dokument-Eigenschaft C{copyComments=1} gesetzt, werden die
+Sdoc-Kommentare in das Zielformat übertragen, sofern das Zielformat
+Kommentare unterstützt. Unterstützt das Zielformat keine Kommentare,
+entfallen sie.
 
 In den Quelltext des LaTeX-Dokuments wird der Kommentar
 beispielsweise übertragen als
 
   % Dies ist ein Kommentar, der in den Quelltext des Zielformats
   % übertragen wird, aber im Zieldokument nicht auftaucht
+
+Kommentare in das Zielformat zu übertragen kann z.B. nützlich sein, um
+eine Stelle im Quelltext des Zielformats zu finden, die aus einem
+bestimmten Sdoc-Konstrukt hervorgegangen ist, oder um Kennzeichen für
+eine Weiterverarbeitung zu setzen.
 
 In Block-Syntax kann ein Kommentar auch geschrieben werden als
 
@@ -1022,6 +1077,38 @@ Ich sagte, du sollst das I{nicht} essen.
 
 ===! L - Verweis (link)
 
+====* Beispiel: Interner Link
+
+  L{Dokument}
+
+L{Dokument}
+
+====* Beispiel: Interner Link mit Seitenzahl
+
+  L{+Dokument}
+
+L{+Dokument}
+
+====* Beispiel: Externer Link
+
+  L{http://fseitz.de/}
+
+L{http://fseitz.de/}
+
+====* Beispiel: Link via Link-Definition
+
+  L{Google}
+
+  %Link:
+    name="Google"
+    url="http://google.com"
+
+L{Google}
+
+%Link:
+  name="Google"
+  url="http://google.com"
+
 ===! M - Mathematische Formel (math)
 
 Der von C{\M~TEXT~} eingefasste Text C{TEXT} wird als mathematische
@@ -1051,6 +1138,52 @@ haben und daher u.U. missinterpretiert werden.
   Was heißt schon Q{richtig}?
 
 Was heißt schon Q{richtig}?
+
+=== Allgemeines
+
+Ein Segment kann sich über mehrere Zeilen erstrecken.
+
+====* Segment aufheben
+
+Die Bedeutung eines Segments kann im Text (außerhalb von Segmenten)
+aufgehoben werden, indem dem Buchstabe ein Backslash vorangestellt
+wird.
+
+  \B{xxx}
+
+\B{xxx}
+
+====* Geschweifte Klammern innerhalb eines Segments
+
+Kommen innerhalb eines Segments geschweifte Klammern vor, müssen diese
+mit einem Backslash geschützt werden.
+
+  C{$x->\{'name'\}}
+
+C{$x->\{'name'\}}
+
+Auf diese Weise kann auch die Bedeutung eines Segments innerhalb eines
+anderen Segments aufgehoben werden. Das Voranstellen eines Backslash
+vor den Segment-Buschstaben ist hier nicht der richtige Weg, da die
+geschweiften Klammern dann ungeschützt sind.
+
+  C{C\{TEXT\}}
+
+C{C\{TEXT\}}
+
+====* Schachtelung von Segmenten
+
+Segmente können geschachtelt werden. Es hängt allerdings vom
+Zielformat ab, ob solche Konstuktionen ins Zielformat umgesetzt werden
+können.
+
+  B{So geht es I{auch}!}
+
+B{So geht es I{auch}!}
+
+  I{Näheres in Abschnitt L{Dokument}}
+
+I{Näheres in Abschnitt L{Dokument}}
 
 == Beispiel in Block-Syntax
 
@@ -1237,3 +1370,24 @@ wir in folgenden Schritten vor:
 2. Wir erweitern die Methode(n) C{<%Sdoc::Node>%::FORMATText()}
    (z.B. latexText()), so dass sie den FORMAT-spezifischen
    Code neuen Segment-Typ erzeugen.
+
+== Knoten-Eigenschaft hinzufügen
+
+Eine Eigenschaft ATTRIBUTE wird zur Knoten-Klasse Sdoc::Node::TYPE
+in zwei Schritten hinzugefügt:
+
+1. Wir beschreiben die Eigenschaft in der Klassen-Dokumentation.
+2. Wir fügen die Eigenschaft und ihren Defaultwert zum Konstruktor
+   hinzu (bei Aufruf des Basisklassen- Konstruktors).
+
+Anschließend kann die Eigenschaft im Sdoc-Quelltext gesetzt werden
+mit:
+
+  %TYPE:
+    ATTRIBUTE="VALUE"
+
+In den Methoden der Klasse kann die Eigenschaft abgefragt werden mit:
+
+   $val = $node->ATTRIBUTE;
+
+Beispiel: Eigenschaft C{language} der Klasse Sdoc::Node::Document.

@@ -147,9 +147,10 @@ sub new {
         # =+[!+]* TITLE
 
         my $line = $par->shiftLine;
-        $line->text =~ /^(=+)([!+]*) (.*)/;
+        $line->text =~ /^(=+)([-+!]*) (.*)/;
 
         my $level = length $1;
+        my $isHigher = index($2,'-') >= 0? 1: 0;
         my $isAppendix = index($2,'+') >= 0? 1: 0;
         my $tocStop = index($2,'!') >= 0? 1: 0;
         my $title = $3;
@@ -160,7 +161,7 @@ sub new {
         $attribH = {
             input => $line->input,
             lineNum => $line->number,
-            level => $level,
+            level => $isHigher? -2+$level: $level,
             isAppendix => $isAppendix,
             tocStop => $tocStop,
             title => $title,
