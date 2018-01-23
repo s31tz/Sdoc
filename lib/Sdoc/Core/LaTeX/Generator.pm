@@ -4,7 +4,7 @@ use base qw/Sdoc::Core::Hash/;
 use strict;
 use warnings;
 
-our $VERSION = 1.122;
+our $VERSION = 1.123;
 
 use Scalar::Util ();
 use Sdoc::Core::Option;
@@ -570,7 +570,7 @@ sub section {
 
 =head1 VERSION
 
-1.122
+1.123
 
 =head1 AUTHOR
 

@@ -4,7 +4,7 @@ use base qw/Sdoc::Core::Object/;
 use strict;
 use warnings;
 
-our $VERSION = 1.122;
+our $VERSION = 1.123;
 
 use 5.010;
 use Sdoc::Core::Formatter;
@@ -347,7 +347,7 @@ sub geoToDegree {
         }
         else {
             $class->throw(
-                q{MATH-00001: Unbekannte Himmelsrichtung},
+                q~MATH-00001: Unbekannte Himmelsrichtung~,
                 Direction=>$dir,
             );
         }
@@ -646,7 +646,7 @@ sub spikeValue {
 
 =head1 VERSION
 
-1.122
+1.123
 
 =head1 AUTHOR
 
@@ -654,7 +654,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2017 Frank Seitz
+Copyright (C) 2018 Frank Seitz
 
 =head1 LICENSE
 

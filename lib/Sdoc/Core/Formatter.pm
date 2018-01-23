@@ -4,7 +4,7 @@ use base qw/Sdoc::Core::Object/;
 use strict;
 use warnings;
 
-our $VERSION = 1.122;
+our $VERSION = 1.123;
 
 # -----------------------------------------------------------------------------
 
@@ -112,7 +112,7 @@ sub readableNumber {
 
 =head1 VERSION
 
-1.122
+1.123
 
 =head1 AUTHOR
 
@@ -120,7 +120,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2017 Frank Seitz
+Copyright (C) 2018 Frank Seitz
 
 =head1 LICENSE
 
