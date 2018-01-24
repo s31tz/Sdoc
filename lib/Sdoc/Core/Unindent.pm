@@ -363,10 +363,39 @@ sub trim {
     my $class = shift;
     my $str = shift // return '';
 
-    $str =~ s/^\n+//;
+    $str =~ s/^\s*\n//;
     $str =~ s/\s+$//;
 
     return $class->hereDoc($str);
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 trimNL() - Trim plus Newline
+
+=head4 Synopsis
+
+    $strOut = $class->trimNL($strIn);
+
+=head4 Description
+
+Wie die Methode L</trim>(), jedoch wird am Ende genau ein Newline
+angehängt, sofern der Sting nicht leer ist.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub trimNL {
+    my $class = shift;
+    my $str = shift // return '';
+
+    $str = $class->trim($str);
+    if ($str ne '') {
+        $str .= "\n";
+    }
+
+    return $str;
 }
 
 # -----------------------------------------------------------------------------
