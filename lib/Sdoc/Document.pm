@@ -18,6 +18,7 @@ use Sdoc::Node::List;
 use Sdoc::Node::PageBreak;
 use Sdoc::Node::Paragraph;
 use Sdoc::Node::Section;
+use Sdoc::Node::Table;
 use Sdoc::Node::TableOfContents;
 use Sdoc::Core::Option;
 use Sdoc::Core::Path;

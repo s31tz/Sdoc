@@ -371,11 +371,11 @@ sub trim {
 
 # -----------------------------------------------------------------------------
 
-=head3 trimNL() - Trim plus Newline
+=head3 trimNl() - Trim plus Newline
 
 =head4 Synopsis
 
-    $strOut = $class->trimNL($strIn);
+    $strOut = $class->trimNl($strIn);
 
 =head4 Description
 
@@ -386,7 +386,7 @@ angehängt, sofern der Sting nicht leer ist.
 
 # -----------------------------------------------------------------------------
 
-sub trimNL {
+sub trimNl {
     my $class = shift;
     my $str = shift // return '';
 

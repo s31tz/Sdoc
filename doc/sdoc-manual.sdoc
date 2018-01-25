@@ -634,6 +634,83 @@ L{+Syntax/Segment}) verwendet werden:
   Stern (*) im Falle einer Punktliste. Nummer im Falle einer
   Nummerierungsliste. Zeichenkette im Falle einer Definitionsliste.
 
+== Tabelle (Table)
+
+Eine Tabelle wird in Sdoc durch eine ASCII-Darstellung definiert:
+
+  %Table:
+    Right Left Center
+    ----- ---- ------
+        1 A      A
+       21 AB    AB
+      321 ABC   ABC
+  .
+
+Die Tabelle besteht aus einem Tabellen-Kopf und einem
+Tabellen-Körper. Der Kopf enthält die Kolumnen-Titel und der
+Körper die Kolumnen-Daten. Die beiden Bereiche werden durch eine
+Trennzeile aus Bindestrichen (-) und Leerzeichen ( )
+getrennt. Außer der Trennung in Kopf und Körper definiert die
+Trennzeile durch die Bindestriche die Anzahl, Lage und
+Breite der einzelnen Kolumnen.
+
+Obige Tabelle besitzt z.B. drei Kolumnen: Die erste Kolumne ist 5
+Zeichen breit und reicht von Zeichenposition 0 bis 4. Die zweite
+Kolumne ist 4 Zeichen breit und reicht von Zeichenposition
+6 bis 9. Die dritte Kolumne ist 6 Zeichen breit und reicht von
+Zeichenpostion 11 bis 16. Die Positionsangaben sind zeilenbezogen
+und 0-basiert.
+
+Aus der Anordnung der Werte in einer Kolumne - I{sowohl im Kopf als
+auch im Körper} - ergibt sich, ob die Kolumne links, rechts oder
+zentriert ausgerichtet ist. Bei einer links ausgerichteten
+Kolumne belegen I{alle} (nichtleeren) Werte die erste Zeichenpositon.
+Bei einer rechts ausgerichteten Kolumne belegen I{alle} (nichtleeren)
+Werte die letzte Zeichenpositon. Bei einer zentrierten Kolumne
+sind die Werte weder eindeutig links noch rechts ausgerichtet.
+
+Obige Tabellen-Definition produziert:
+
+%Table:
+  Right Left Center
+  ----- ---- ------
+      1 A      A
+     21 AB    AB
+    321 ABC   ABC
+.
+
+====* Tabelle mit mehrzeiligen Kolumnenwerten
+
+  %Table:
+      Right   Left             
+    Aligned   Aligned          Centered
+    -------   --------------   --------
+          1   This is             A
+              the first line
+    -------   --------------   --------
+          2   Second line         B
+    -------   --------------   --------
+          3   The third           C
+              line
+    -------   --------------   --------
+  .
+
+produziert:
+
+%Table:
+    Right   Left             
+  Aligned   Aligned          Centered
+  -------   --------------   --------
+        1   This is             A
+            the first line
+  -------   --------------   --------
+        2   Second line         B
+  -------   --------------   --------
+        3   The third           C
+            line
+  -------   --------------   --------
+.
+
 == Code (Code)
 
 Ein Code-Abschnitt ist ein literaler Textblock, der, abgesehen von

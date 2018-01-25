@@ -1165,6 +1165,32 @@ sub latex {
         -nl => 2,
     );
     $code .= $gen->comment(-nl=>2,q|
+        ### longtable: Darstellen von Tabellen ###
+    |);
+    $code .= $gen->cmd('usepackage',
+        -p => 'longtable',
+        -nl => 2,
+    );
+    $code .= $gen->comment(-nl=>2,q|
+        ### array:  Erweiterungen für array- und tabular-Umgebung ###
+        * Zusätzliche Höhe für Tabellenzeilen
+    |);
+    $code .= $gen->cmd('usepackage',
+        -p => 'array',
+    );
+    $code .= $gen->cmd('setlength',
+        -p => '\extrarowheight',
+        -p => '2pt',
+        -nl => 2,
+    );
+    $code .= $gen->comment(-nl=>2,q|
+        ### makecell: Spezielle Tabellenköpfe und mehrzeilige Zellen ###
+    |);
+    $code .= $gen->cmd('usepackage',
+        -p => 'makecell',
+        -nl => 2,
+    );
+    $code .= $gen->comment(-nl=>2,q|
         ### etoolbox: Einstellen der Abstände der Verbatim-Umgebung ###
     |);
     $code .= $gen->cmd('usepackage',
