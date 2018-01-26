@@ -684,6 +684,7 @@ sub tree {
 =head4 Synopsis
 
     $code = $node->latexText($gen,$key);
+    $code = $node->latexText($gen,\$str);
 
 =head4 Arguments
 
@@ -696,6 +697,10 @@ Generator für das Zielformat.
 =item $key
 
 Name des Attributs.
+
+=item $str
+
+Wert.
 
 =back
 
@@ -715,7 +720,7 @@ expandiert und die LaTeX-Metazeichen geschützt wurden. Dieser Wert
 # -----------------------------------------------------------------------------
 
 sub latexText {
-    my ($self,$gen,$key) = @_;
+    my ($self,$gen,$arg) = @_;
 
     my $doc = $self->root;
 
@@ -842,7 +847,7 @@ sub latexText {
         }
     };
 
-    my $val = $self->get($key);
+    my $val = ref $arg? $$arg: $self->get($arg);
     if (defined $val) {
         $val = $gen->protect($val); # Schütze reservierte LaTeX-Zeichen
         1 while $val =~ s/([ABCGILMQ])\x01([^\x01\x02]*)\x02/$r->($1,$2)/e;

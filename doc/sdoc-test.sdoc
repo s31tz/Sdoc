@@ -17,6 +17,20 @@ Dies ist der erste Teil.
 
 Dies ist das Kapitel mit den ersten Tests.
 
+= Tabelle mit Segmenten
+
+%Table:
+  Verschiedenes
+  ---------------------
+  B{Dies ist fett}
+  C{Dies ist monospace}
+  G{Invader}
+  I{Dies ist kursiv}
+  L{http://google.com}
+  M~c=\sqrt{a^2+b^2}~
+  Q{Dies ist ein Zitat}
+.
+
 = Abschnitt mit Link im Titel: L{http://google.com}
 
 = Abschnitt mit Formel im Titel: M~c=\sqrt{a^2+b^2}~

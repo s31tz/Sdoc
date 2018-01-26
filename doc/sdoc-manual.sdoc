@@ -636,47 +636,54 @@ L{+Syntax/Segment}) verwendet werden:
 
 == Tabelle (Table)
 
-Eine Tabelle wird in Sdoc durch eine ASCII-Darstellung definiert:
+Eine Tabelle wird durch eine ASCII-Darstellung innerhalb eines
+Table-Blocks definiert:
 
   %Table:
-    Right Left Center
-    ----- ---- ------
-        1 A      A
-       21 AB    AB
-      321 ABC   ABC
+    Links Rechts Zentriert
+    ----- ------ ---------
+    A          1    AB
+    AB        12    CD
+    ABC      123    EF
+    ABCD    1234    GH
   .
 
-Die Tabelle besteht aus einem Tabellen-Kopf und einem
-Tabellen-Körper. Der Kopf enthält die Kolumnen-Titel und der
-Körper die Kolumnen-Daten. Die beiden Bereiche werden durch eine
-Trennzeile aus Bindestrichen (-) und Leerzeichen ( )
-getrennt. Außer der Trennung in Kopf und Körper definiert die
-Trennzeile durch die Bindestriche die Anzahl, Lage und
-Breite der einzelnen Kolumnen.
+Die Darstellung besteht aus einem Kopf und einem Körper. Der Kopf
+enthält die Kolumnen-Titel, der Körper die Kolumnen-Daten. Die beiden
+Bereiche werden durch eine Trennzeile aus Bindestrichen (-) und
+Leerzeichen ( ) getrennt. Neben der Trennung von Titel und Daten hat
+die Trennzeile die wichtige Aufgabe, die Lage und Breite der Kolumnen
+zu definieren. Dies geschieht durch die Abschnitte aus Bindestrichen.
 
-Obige Tabelle besitzt z.B. drei Kolumnen: Die erste Kolumne ist 5
-Zeichen breit und reicht von Zeichenposition 0 bis 4. Die zweite
-Kolumne ist 4 Zeichen breit und reicht von Zeichenposition
-6 bis 9. Die dritte Kolumne ist 6 Zeichen breit und reicht von
-Zeichenpostion 11 bis 16. Die Positionsangaben sind zeilenbezogen
-und 0-basiert.
+Obige Tabelle besitzt aufgrund der drei Abschnitte aus Bindestichen
+drei Kolumnen:
 
-Aus der Anordnung der Werte in einer Kolumne - I{sowohl im Kopf als
-auch im Körper} - ergibt sich, ob die Kolumne links, rechts oder
-zentriert ausgerichtet ist. Bei einer links ausgerichteten
-Kolumne belegen I{alle} (nichtleeren) Werte die erste Zeichenpositon.
-Bei einer rechts ausgerichteten Kolumne belegen I{alle} (nichtleeren)
-Werte die letzte Zeichenpositon. Bei einer zentrierten Kolumne
-sind die Werte weder eindeutig links noch rechts ausgerichtet.
+* Die erste Kolumne ist 5 Zeichen breit und reicht von
+  Zeichenposition 1 bis 5.
+* Die zweite Kolumne ist 6 Zeichen breit und reicht von
+  Zeichenposition 7 bis 12.
+* Die dritte Kolumne ist 9 Zeichen breit und reicht von
+  Zeichenpostion 14 bis 20.
 
-Obige Tabellen-Definition produziert:
+Alle Daten außerhalb dieser Bereiche werden I{nicht} beachtet.
+
+Aus der Anordnung der Werte in einer Kolumne (bestehend aus Titel
+I{und} Daten) ergibt sich, ob die Kolumne links, rechts oder zentriert
+ausgerichtet ist. Bei einer links ausgerichteten Kolumne belegen
+I{alle} - nichtleeren - Werte die erste Zeichenpositon. Bei einer
+rechts ausgerichteten Kolumne belegen I{alle} - nichtleeren - Werte
+die letzte Zeichenpositon. Bei einer zentrierten Kolumne sind die
+Werte weder eindeutig links noch rechts ausgerichtet.
+
+Obige Tabellen-Definition produziert die Darstellung:
 
 %Table:
-  Right Left Center
-  ----- ---- ------
-      1 A      A
-     21 AB    AB
-    321 ABC   ABC
+  Links Rechts Zentriert
+  ----- ------ ---------
+  A          1    AB
+  AB        12    CD
+  ABC      123    EF
+  ABCD    1234    GH
 .
 
 ====* Tabelle mit mehrzeiligen Kolumnenwerten
@@ -710,6 +717,24 @@ produziert:
             line
   -------   --------------   --------
 .
+
+=== Segmente
+
+In den Zellen einer Tablle können Segmente (siehe Abschnitt
+L{+Syntax/Segment}) verwendet werden:
+
+  B{}, C{}, G{}, I{}, L{}, M{}, Q{}
+
+=== Eigenschaften
+
+  %Table:
+    caption=STRING
+  TEXT
+  .
+
+[caption]:
+  Die Beschriftung der Tabelle. Diese erscheint unter oder über der
+  Tabelle.
 
 == Code (Code)
 

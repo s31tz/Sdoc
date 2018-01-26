@@ -335,6 +335,7 @@ sub readBlock {
 =head4 Synopsis
 
     $par->parseSegments($node,$key);
+    $par->parseSegments($node,\$str);
 
 =head4 Arguments
 
@@ -348,12 +349,16 @@ Knoten.
 
 Knoten-Attribut, dessen Segmente geparst werden.
 
+=item $str
+
+String, dessen Segmente geparst werden.
+
 =back
 
 =head4 Description
 
-Parse Segmente auf Knoten-Attribut $key und setze die Attribute
-des Knotens $node entsprechend.
+Parse Segmente auf Knoten-Attribut $key oder in String $str und
+setze die Attribute des Knotens $node entsprechend.
 
 Der Wert mit (oder ohne) Segmenten wird so vorbereitet, dass
 dieser formatspezifisch bearbeitet werden kann. Auf dem
@@ -380,9 +385,11 @@ Codegenerierung durchgeführt.
 # -----------------------------------------------------------------------------
 
 sub parseSegments {
-    my ($self,$node,$key) = @_;
+    my $self = shift;
+    my $node = shift;
+    my $arg = shift; # $key -or- $ref
 
-    my $val = $node->get($key) // '';
+    my $val = ref $arg? $$arg: $node->get($arg) // '';
 
     my $markup = $self->markup;
     if ($markup eq 'sdoc') {
@@ -523,9 +530,14 @@ sub parseSegments {
         $self->throw;
     }
 
-    $node->set(
-        $key.'S'=>$val,
-    );
+    if (ref $arg) {
+        # Änderung "in place"
+        $$arg = $val;
+    }
+    else {
+        # Auf Attribut speichern
+        $node->set($arg.'S'=>$val);
+    }
 
     return;
 }
