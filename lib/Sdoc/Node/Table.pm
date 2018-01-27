@@ -128,6 +128,7 @@ sub new {
 
     my $self = $class->SUPER::new('Table',$variant,$root,$parent,
         asciiTable => undef,
+        border => 'hHV',
         formulaA => [],
         graphicA => [],
         linkA => [],
@@ -196,6 +197,7 @@ sub latex {
     my $alignA = $atb->alignments;
     my $rowA = $atb->rows;
     my $multiLine = $atb->multiLine;
+    my $border = $self->border // '';
 
     # Hilfsfunktion zum Erzeugen einer Zelle
 
@@ -215,8 +217,13 @@ sub latex {
         return $self->latexText($gen,\$val);
     };
 
+    my $code;
+
     # Linie oberhalb der Tabelle
-    my $code = $gen->cmd('hline');
+
+    if (index($border,'H') >= 0) {
+       $code .= $gen->cmd('hline');
+    }
 
     # Titelbereich
 
@@ -234,17 +241,25 @@ sub latex {
                 ),
                 -nl => 0,
             );
+            # Funktioniert nicht. Warum? s. renewcommand Node::Document
+            # $line .= $cell->($self,$gen,$titleA->[$i],$alignA->[$i]);
         }
-        $code .= $line.' \\\\ '.$gen->cmd('hline');
-        $code .= $gen->cmd('endfirsthead');
-        $code .= $gen->cmd('hline');
-        $code .= $line.' \\\\ '.$gen->cmd('hline');
+        # $code .= $line.' \\\\ '.$gen->cmd('hline');
+        # $code .= $gen->cmd('endfirsthead');
+        # $code .= $gen->cmd('hline');
+        $code .= "$line \\\\";
+        if ($border =~ /[th]/) {
+            $code .= ' '.$gen->cmd('hline',-nl=>0);
+        }
+        $code .= "\n";
         $code .= $gen->cmd('endhead');
     }
     
-    # Fußzeilenbereich
+    # Definition Zwischenfußzeile 
     
-    $code .= $gen->cmd('hline');
+    if (index($border,'H') >= 0) {
+       $code .= $gen->cmd('hline');
+    }
     $code .= $gen->cmd('multicolumn',
         -p => $atb->width,
         -p => 'r',
@@ -252,7 +267,17 @@ sub latex {
             'Fortsetzung nächste Seite': 'Continued next page'),
     );
     $code .= $gen->cmd('endfoot');
-    $code .= $gen->cmd('hline');
+
+    # Definition letzte Fußzeile
+
+    if (index($border,'H') >= 0) {
+       $code .= $gen->cmd('hline');
+    }
+    if (my $caption = $self->caption) {
+        # Tabellenunterschrift
+        # $code .= $gen->cmd('\\',-o=>'-1ex');
+        $code .= $gen->cmd('caption',-p=>$caption);
+    }
     $code .= $gen->cmd('endlastfoot');
 
     # Zeilen
@@ -265,15 +290,23 @@ sub latex {
             }
             $line .= $cell->($self,$gen,$row->[$i],$alignA->[$i].'t');
         }
-        $code .= "$line \\\\";
-        if ($multiLine && $row != $rowA->[-1]) {
-            $code .= $gen->cmd('hline',-nl=>0);
+        $code .= $line;
+        if ($row != $rowA->[-1]) {
+            $code .= ' \\\\';
+        }
+        if (index($border,'h') >= 0 && $row != $rowA->[-1]) {
+            $code .= ' '.$gen->cmd('hline',-nl=>0);
         }
         $code .= "\n";
     }
 
+    my $colSpec = join index($border,'v') >= 0? '|': '',@$alignA;
+    if (index($border,'V') >= 0) {
+        $colSpec = "|$colSpec|";
+    }
+
     return $gen->env('longtable',$code,
-        -p => join('',@$alignA),
+        -p => $colSpec,
         -nl => 2,
     );
 }

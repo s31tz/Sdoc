@@ -187,16 +187,18 @@ sub latex {
     my $code = '';
     if (!$self->definition) {
         if (my $align = $self->align) {
-            if ($align ne 'center') {
-                $align = "flush$align";
+            if ($align eq 'left') {
+                $code .= $gen->cmd('hspace*',-p=>'1.3em',-nl=>0);
             }
-            $code .= $gen->env($align,
-                $self->latexIncludeGraphics($gen,1),
+            $code .= $self->latexIncludeGraphics($gen,1);
+
+            $code = $gen->env($align eq 'center'? $align: "flush$align",
+                $code,
                 -nl=>2,
             );
         }
         else {
-            $code = $self->latexIncludeGraphics($gen,2);
+            $code = '\hspace*{1.3em}'.$self->latexIncludeGraphics($gen,2);
         }
     }
 

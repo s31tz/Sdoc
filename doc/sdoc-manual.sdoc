@@ -6,6 +6,7 @@
   latexFontSize=10pt
   latexDocumentClass=scrartcl
   latexPaperSize=a4paper
+  latexParSkip=0.5ex
 
 %TableOfContents:
   maxDepth=4
@@ -44,6 +45,7 @@ Abschnitt L{+Dieses Dokument übersetzen} beschrieben.
 %Graphic:
   file="+/sdoc-example"
   latexOptions="clip,trim=0cm 0.5cm 0cm 0cm,width=1.0\textwidth"
+  align="center"
 
 ---PageBreak---
 
@@ -367,8 +369,6 @@ Ein Abschnitt wird vom Inhaltsverzeichnis ausgeschlossen und damit
 lediglich als Zwischenüberschrift genutzt, wenn an die Folge von = ein
 Stern (*) angehängt wird.
 
-  =* Zwischenüberschrift Stufe 1
-
   ==* Zwischenüberschrift Stufe 2
 
   ===* Zwischenüberschrift Stufe 3
@@ -376,8 +376,6 @@ Stern (*) angehängt wird.
   ====* Zwischenüberschrift Stufe 4
 
 produziert:
-
-=* Zwischenüberschrift Stufe 1
 
 ==* Zwischenüberschrift Stufe 2
 
@@ -636,26 +634,42 @@ L{+Syntax/Segment}) verwendet werden:
 
 == Tabelle (Table)
 
-Eine Tabelle wird durch eine ASCII-Darstellung innerhalb eines
-Table-Blocks definiert:
+Eine Tabelle wird durch eine ASCII-Darstellung, eingefasst in einen
+Table-Block, definiert.
 
   %Table:
-    Links Rechts Zentriert
-    ----- ------ ---------
-    A          1    AB
-    AB        12    CD
-    ABC      123    EF
-    ABCD    1234    GH
+  Links Rechts Zentriert
+  ----- ------ ---------
+  A          1    AB
+  AB        12    CD
+  ABC      123    EF
+  ABCD    1234    GH
   .
 
-Die Darstellung besteht aus einem Kopf und einem Körper. Der Kopf
+produziert:
+
+%Table:
+Links Rechts Zentriert
+----- ------ ---------
+A          1    AB
+AB        12    CD
+ABC      123    EF
+ABCD    1234    GH
+.
+
+=== Definition
+
+Die Definition umfasst den Kopf und den Körper der Tabelle. Der Kopf
 enthält die Kolumnen-Titel, der Körper die Kolumnen-Daten. Die beiden
 Bereiche werden durch eine Trennzeile aus Bindestrichen (-) und
 Leerzeichen ( ) getrennt. Neben der Trennung von Titel und Daten hat
-die Trennzeile die wichtige Aufgabe, die Lage und Breite der Kolumnen
-zu definieren. Dies geschieht durch die Abschnitte aus Bindestrichen.
+die Trennzeile die wichtige Aufgabe, die Lage und die Breite der
+Kolumnen zu definieren.
 
 Obige Tabelle besitzt aufgrund der drei Abschnitte aus Bindestichen
+
+  ----- ------ ---------
+
 drei Kolumnen:
 
 * Die erste Kolumne ist 5 Zeichen breit und reicht von
@@ -665,57 +679,179 @@ drei Kolumnen:
 * Die dritte Kolumne ist 9 Zeichen breit und reicht von
   Zeichenpostion 14 bis 20.
 
-Alle Daten außerhalb dieser Bereiche werden I{nicht} beachtet.
+Alle Zeichen außerhalb dieser Bereiche werden I{nicht} beachtet. Dies
+gilt sowohl für die Kolumnentitel als auch die Kolumnendaten.
 
-Aus der Anordnung der Werte in einer Kolumne (bestehend aus Titel
-I{und} Daten) ergibt sich, ob die Kolumne links, rechts oder zentriert
+=== Ausrichtung
+
+Aus der Anordnung der Werte in einer Kolumne - sowohl Titel als auch
+Daten - ergibt sich, ob die Kolumne links, rechts oder zentriert
 ausgerichtet ist. Bei einer links ausgerichteten Kolumne belegen
-I{alle} - nichtleeren - Werte die erste Zeichenpositon. Bei einer
-rechts ausgerichteten Kolumne belegen I{alle} - nichtleeren - Werte
-die letzte Zeichenpositon. Bei einer zentrierten Kolumne sind die
-Werte weder eindeutig links noch rechts ausgerichtet.
+I{alle} (nichtleeren) Werte die erste Zeichenpositon. Bei einer rechts
+ausgerichteten Kolumne belegen I{alle} (nichtleeren) Werte die letzte
+Zeichenpositon. Bei einer zentrierten Kolumne sind die Werte weder
+eindeutig links noch rechts ausgerichtet.
 
-Obige Tabellen-Definition produziert die Darstellung:
+=== Mehrzeilige Werte
+
+Sowohl die Kolumnen-Titel als auch die Kolumnen-Daten können mehrzeilig
+sein. Ist dies der Fall, müssen auch die Daten-Zeilen mit einer
+Trennzeile voneinander getrennt werden.
+
+%Code:
+  %Table:
+    Right  Left   
+  Aligned  Aligned         Centered
+  -------  --------------  --------
+        1  Dies ist die       A
+           erste Zeile
+
+        2  Zweite Zeile       B
+
+        3  Die dritte         C
+           Zeile
+  .
+.
+
+produziert:
 
 %Table:
+  Right  Left   
+Aligned  Aligned         Centered
+-------  --------------  --------
+      1  Dies ist die       A
+         erste Zeile
+
+      2  Zweite Zeile       B
+
+      3  Die dritte         C
+         Zeile
+.
+
+=== Beschriftung
+
+Ist das Attribut C{caption} gesetzt, wird der Tabelle eine Beschriftung
+hinzugefügt.
+
+  %Table:
+    caption="Eine Tabelle"
+
   Links Rechts Zentriert
   ----- ------ ---------
   A          1    AB
   AB        12    CD
-  ABC      123    EF
-  ABCD    1234    GH
-.
-
-====* Tabelle mit mehrzeiligen Kolumnenwerten
-
-  %Table:
-      Right   Left             
-    Aligned   Aligned          Centered
-    -------   --------------   --------
-          1   This is             A
-              the first line
-    -------   --------------   --------
-          2   Second line         B
-    -------   --------------   --------
-          3   The third           C
-              line
-    -------   --------------   --------
   .
 
 produziert:
 
 %Table:
-    Right   Left             
-  Aligned   Aligned          Centered
-  -------   --------------   --------
-        1   This is             A
-            the first line
-  -------   --------------   --------
-        2   Second line         B
-  -------   --------------   --------
-        3   The third           C
-            line
-  -------   --------------   --------
+  caption="Eine Tabelle"
+
+Links Rechts Zentriert
+----- ------ ---------
+A          1    AB
+AB        12    CD
+.
+
+=== Linien
+
+%Table:
+  border=0
+  caption="border=0"
+
+  Links Rechts Zentriert
+  ----- ------ ---------
+  A          1    AB
+  AB        12    CD
+  ABC      123    EF
+.
+
+%Table:
+  border=t
+  caption="border=t"
+
+  Links Rechts Zentriert
+  ----- ------ ---------
+  A          1    AB
+  AB        12    CD
+  ABC      123    EF
+.
+
+%Table:
+  border=v
+  caption="border=v"
+
+  Links Rechts Zentriert
+  ----- ------ ---------
+  A          1    AB
+  AB        12    CD
+  ABC      123    EF
+.
+
+%Table:
+  border=hv
+  caption="border=hv"
+
+  Links Rechts Zentriert
+  ----- ------ ---------
+  A          1    AB
+  AB        12    CD
+  ABC      123    EF
+.
+
+%Table:
+  border=tH
+  caption="border=tH"
+
+  Links Rechts Zentriert
+  ----- ------ ---------
+  A          1    AB
+  AB        12    CD
+  ABC      123    EF
+.
+
+%Table:
+  border=hH
+  caption="border=hH"
+
+  Links Rechts Zentriert
+  ----- ------ ---------
+  A          1    AB
+  AB        12    CD
+  ABC      123    EF
+.
+
+%Table:
+  border=tHV
+  caption="border=tHV"
+
+  Links Rechts Zentriert
+  ----- ------ ---------
+  A          1    AB
+  AB        12    CD
+  ABC      123    EF
+.
+
+%Table:
+  border=hHV
+  caption="border=hHV"
+
+  Links Rechts Zentriert
+  ----- ------ ---------
+  A          1    AB
+  AB        12    CD
+  ABC      123    EF
+.
+
+%Table:
+  border=hvHV
+  caption="border=hvHV"
+
+  Links Rechts Zentriert
+  ----- ------ ---------
+  A          1    AB
+  AB        12    CD
+  ABC      123    EF
 .
 
 === Segmente
@@ -946,11 +1082,13 @@ Im Falle der Direktiven C{exec} und C{load} entfällt der Text-Body
 C{TEXT} und der abschließende Punkt.
 
 Die Reihenfolge der Ausführung der Direktiven C{exec}, C{extract},
-C{filter} und C{load} - sofern angegeben - ist:
+C{filter} und C{load} - so weit angegeben - ist:
 
-1. C{load} oder C{exec} (beide gemeinsam anzugeben ergibt keinen Sinn)
+1. C{load} oder C{exec} (nur alternativ möglich)
 2. C{filter}
 3. C{extract}
+
+# Eigenschaften
 
 [exec]:
   Führe das Kommando C{COMMAND} aus und verwende dessen Ausgabe nach

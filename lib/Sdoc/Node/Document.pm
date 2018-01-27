@@ -102,6 +102,10 @@ Einstellungen des LaTeX-Pakets C<geometry>.
 
 Papiergröße für LaTeX.
 
+=item latexParSkip => $length (Default: '0.5ex')
+
+Vertikaler Abstand zwischen Absätzen.
+
 =item linkA => \@links
 
 Array mit den vorkommenden Links aus L-Segmenten der Attribute
@@ -259,6 +263,7 @@ sub new {
         latexFontSize => '10pt',
         latexGeometry => undef,
         latexPaperSize => 'a4paper',
+        latexParSkip => '0.5ex',
         sectionNumberDepth => 3,
         tableOfContents => 1,
         title => undef,
@@ -1166,9 +1171,14 @@ sub latex {
     );
     $code .= $gen->comment(-nl=>2,q|
         ### longtable: Darstellen von Tabellen ###
+        + \LTleft - Default-Linkseinrückung von Tabellen
     |);
     $code .= $gen->cmd('usepackage',
         -p => 'longtable',
+    );
+    $code .= $gen->cmd('setlength',
+        -p => '\LTleft',
+        -p => '1.3em',
         -nl => 2,
     );
     $code .= $gen->comment(-nl=>2,q|
@@ -1190,6 +1200,17 @@ sub latex {
         -p => 'makecell',
         -nl => 2,
     );
+    # Funktioniert nicht. Warum?
+    # $code .= $gen->renewcommand('theadfont',
+    #     -p => '\itshape\small',
+    # );
+    # $code .= $gen->renewcommand('theadalign',
+    #     -p => 'lb',
+    # );
+    # $code .= $gen->renewcommand('cellalign',
+    #     -p => 'lt',
+    # );
+    
     $code .= $gen->comment(-nl=>2,q|
         ### etoolbox: Einstellen der Abstände der Verbatim-Umgebung ###
     |);
@@ -1206,9 +1227,12 @@ sub latex {
     );
     $code .= $gen->comment(-nl=>2,q|
         ### caption: Verbesserte Beschriftungen ###
+        + hypcap: Setzt Anker auf *Anfang* der Gleitumgebung
+        + singlelinecheck=off,margin=1.3em: Linksbndig, unsere Einrücktiefe
     |);
     $code .= $gen->cmd('usepackage',
-        -o => 'hypcap', # Setzt Anker auf *Anfang* der Gleitumgebung
+        -o => 'hypcap,singlelinecheck=off,margin=1.3em,font={sf,small}'.
+            ',labelsep=colon,labelfont=bf,skip=1ex',
         -p => 'caption',
         -nl => 2,
     );
@@ -1251,9 +1275,8 @@ sub latex {
         + Formatierung des Zähler-Werts (diese ändern wir nicht, müssen
           diese aber angeben, da sonst keine Zeilennummer ausgegeben wird)
     |);
-    $code .= $gen->cmd('renewcommand',
-        -p => '\theFancyVerbLine',
-        -p => '\scriptsize \arabic{FancyVerbLine}',
+    $code .= $gen->renewcommand('theFancyVerbLine',
+        -p => '\scriptsize\arabic{FancyVerbLine}',
         -nl => 2,
     );
     $code .= $gen->comment(-nl=>2,q|
@@ -1293,9 +1316,9 @@ sub latex {
     );
     $code .= $gen->comment(-nl=>2,q|
         ### hyperref: Hyperlinks in PDF ###
-        Dieses Paket soll laut Doku als letztes geladen werden.
-        Wir aktivieren farbigen Text (colorlinks=true) anstelle
-        von farbigen Boxen.
+        Dieses Paket soll laut Doku als letztes Paket geladen werden.
+        Wir aktivieren farbigen Text (colorlinks=true) anstelle von
+        farbigen Boxen.
     |);
     $code .= $gen->cmd('usepackage', # Als letztes Package inkludieren
         -p => 'hyperref',
@@ -1358,8 +1381,8 @@ sub latex {
         + Vertikaler Absatzabstand
         + nachlässiges Spacing erlaubt
     |);
-    $code .= $gen->len('parindent','0em');
-    $code .= $gen->len('parskip','1ex');
+    $code .= $gen->setlength('parindent','0em');
+    $code .= $gen->setlength('parskip',$self->latexParSkip);
     $code .= $gen->cmd('sloppy',
         -nl => 2,
     );

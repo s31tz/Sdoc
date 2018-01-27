@@ -19,6 +19,12 @@ Dies ist das Kapitel mit den ersten Tests.
 
 = Tabelle mit Segmenten
 
+* Test Ausrichtung
+
+# Neue Tabelle
+
+1. Test Ausrichtung
+
 %Table:
   Verschiedenes
   ---------------------
@@ -30,6 +36,8 @@ Dies ist das Kapitel mit den ersten Tests.
   M~c=\sqrt{a^2+b^2}~
   Q{Dies ist ein Zitat}
 .
+
+  Test Ausrichtung
 
 = Abschnitt mit Link im Titel: L{http://google.com}
 
