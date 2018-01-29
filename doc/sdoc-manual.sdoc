@@ -154,10 +154,11 @@ Dokument-Bock angegeben:
     copyComments=BOOL
     date=STRING
     language=german|english
-    latexDocumentClass=scrartcl|scrreprt'|scrbook|article|report|book
+    latexDocumentClass=scrartcl|scrreprt|scrbook|article|report|book
     latexFontSize=10pt|11pt|12pt
     latexGeometry=STRING
-    latexPaperSize=a4paper
+    latexPaperSize=PAPERSIZE
+    latexParSkip=LENGTH
     sectionNumberDepth=0|1|2|3|4|5
     smallerMonospacedFont=BOOL
     tableOfContents=BOOL
@@ -692,23 +693,47 @@ ausgerichteten Kolumne belegen I{alle} (nichtleeren) Werte die letzte
 Zeichenpositon. Bei einer zentrierten Kolumne sind die Werte weder
 eindeutig links noch rechts ausgerichtet.
 
-=== Mehrzeilige Werte
+=== Titelzeile
 
-Sowohl die Kolumnen-Titel als auch die Kolumnen-Daten können mehrzeilig
-sein. Ist dies der Fall, müssen auch die Daten-Zeilen mit einer
+Die Titelzeile ist optional. Sie kann auch weggelassen werden. Die
+Trennzeile für die Kolumnendefinition ist trotzdem erforderlich.
+
+  %Table:
+  ----- ------ ---------
+  A          1    AB
+  AB        12    CD
+  ABC      123    EF
+  ABCD    1234    GH
+  .
+
+produziert:
+
+%Table:
+----- ------ ---------
+A          1    AB
+AB        12    CD
+ABC      123    EF
+ABCD    1234    GH
+.
+
+=== Mehrzeilige Daten
+
+Sowohl die Kolumnentitel als auch die Kolumnendaten können mehrzeilig
+sein. Für die Kolumentitel gilt dies generell. Kommen in der Tabelle
+mehrzeilige Kolumnendaten vor, müssen I{alle} Datenzeilen mit einer
 Trennzeile voneinander getrennt werden.
 
 %Code:
   %Table:
     Right  Left   
-  Aligned  Aligned         Centered
-  -------  --------------  --------
-        1  Dies ist die       A
+  Aligned  Aligned       Centered
+  -------  ------------  --------
+        1  Dies ist die     A
            erste Zeile
 
-        2  Zweite Zeile       B
+        2  Zweite Zeile     B
 
-        3  Die dritte         C
+        3  Die dritte       C
            Zeile
   .
 .
@@ -717,14 +742,14 @@ produziert:
 
 %Table:
   Right  Left   
-Aligned  Aligned         Centered
--------  --------------  --------
-      1  Dies ist die       A
+Aligned  Aligned       Centered
+-------  ------------  --------
+      1  Dies ist die     A
          erste Zeile
 
-      2  Zweite Zeile       B
+      2  Zweite Zeile     B
 
-      3  Die dritte         C
+      3  Die dritte       C
          Zeile
 .
 
@@ -753,7 +778,17 @@ A          1    AB
 AB        12    CD
 .
 
+In der Beschriftung können die Segmente A, B, C, I, G, M, L, Q
+verwendet werden.
+
 === Linien
+
+Mittels des Attributs C{border} kann die Tabelle mit Linien versehen
+werden.
+
+====* Beispiele
+
+Keine Linien:
 
 %Table:
   border=0
@@ -766,6 +801,8 @@ AB        12    CD
   ABC      123    EF
 .
 
+Linie unter Titelzeile:
+
 %Table:
   border=t
   caption="border=t"
@@ -777,27 +814,7 @@ AB        12    CD
   ABC      123    EF
 .
 
-%Table:
-  border=v
-  caption="border=v"
-
-  Links Rechts Zentriert
-  ----- ------ ---------
-  A          1    AB
-  AB        12    CD
-  ABC      123    EF
-.
-
-%Table:
-  border=hv
-  caption="border=hv"
-
-  Links Rechts Zentriert
-  ----- ------ ---------
-  A          1    AB
-  AB        12    CD
-  ABC      123    EF
-.
+Linie unter Titel und ober- und unterhalb der Tabelle:
 
 %Table:
   border=tH
@@ -810,6 +827,8 @@ AB        12    CD
   ABC      123    EF
 .
 
+Horizontale Linien:
+
 %Table:
   border=hH
   caption="border=hH"
@@ -820,6 +839,21 @@ AB        12    CD
   AB        12    CD
   ABC      123    EF
 .
+
+Innere horizontale und vertikale Linien:
+
+%Table:
+  border=hv
+  caption="border=hv"
+
+  Links Rechts Zentriert
+  ----- ------ ---------
+  A          1    AB
+  AB        12    CD
+  ABC      123    EF
+.
+
+Linie unter Titel und um die Tabelle:
 
 %Table:
   border=tHV
@@ -832,6 +866,8 @@ AB        12    CD
   ABC      123    EF
 .
 
+Alle horizontalen Linien und vertikale Außenlinien:
+
 %Table:
   border=hHV
   caption="border=hHV"
@@ -842,6 +878,8 @@ AB        12    CD
   AB        12    CD
   ABC      123    EF
 .
+
+Alle Linien:
 
 %Table:
   border=hvHV
@@ -856,21 +894,39 @@ AB        12    CD
 
 === Segmente
 
-In den Zellen einer Tablle können Segmente (siehe Abschnitt
-L{+Syntax/Segment}) verwendet werden:
+In der Beschriftung (C{caption}) und allen Zellen einer Tabelle können
+alle Segmente (siehe Abschnitt L{+Syntax/Segment}) verwendet werden:
 
-  B{}, C{}, G{}, I{}, L{}, M{}, Q{}
+  A, B, C, G, I, L, M, Q
 
 === Eigenschaften
 
   %Table:
+    anchor=STRING
+    border=STRING
     caption=STRING
   TEXT
   .
 
+[anchor]:
+  Anker der Tabelle.
+
+[border]:
+  Legt fest, welche Linien in und um die Tabelle gezeichnet werden.
+
+  [t]:
+    Linie zwischen Titel und Daten.
+  [h]:
+    Horizontale Linien I{zwischen} den Zeilen. Impliziert t.
+  [v]:
+    Vertikale Linien I{zwischen} den Spalten.
+  [H]:
+    Horizontale Linien ober- und unterhalb der Tabelle.
+  [V]:
+    Vertikale Linien links und rechts von der Tabelle.
+
 [caption]:
-  Die Beschriftung der Tabelle. Diese erscheint unter oder über der
-  Tabelle.
+  Die Beschriftung der Tabelle. Diese erscheint unter der Tabelle.
 
 == Code (Code)
 

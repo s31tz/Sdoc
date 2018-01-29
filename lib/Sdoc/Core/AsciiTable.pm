@@ -416,6 +416,42 @@ sub alignments {
 
 # -----------------------------------------------------------------------------
 
+=head3 multiLine() - Tabelle ist MultiLine-Tabelle
+
+=head4 Synopsis
+
+    $bool = $tab->multiLine;
+
+=head4 Returns
+
+Boolean
+
+=head4 Description
+
+Liefere 1, wenn die Tabelle eine MultiLine-Tabelle ist, andernfalls 0.
+
+=head4 Example
+
+Tabelle:
+
+    Right Left    Centered
+
+    Aligned Aligned  Header
+    ------- ------- --------
+          1 Erste       A
+            Zeile
+    
+          2 Zweite      B
+            Zeile
+    
+          3 Dritte      C
+            Zeile
+
+Resultat:
+
+    $multiLine = $tab->multiLine;
+    # 1
+
 =head3 rows() - Liste der Zeilen
 
 =head4 Synopsis

@@ -727,7 +727,7 @@ sub latexText {
     # Ersetze die gewandelten Sdoc-Segmente durch LaTeX-Konstrukte
 
     my $r = sub {
-        my ($seg,$val) = @_;
+        my ($seg,$val,$arg) = @_;
 
         if ($seg eq 'A') {
             # Darf es eigentlich nicht geben. Entweder wurde A{} verwendet,
@@ -767,7 +767,8 @@ sub latexText {
             my ($name,$gph) = @{$self->graphicA->[$val]};
             if ($gph) {
                 my $type = $self->type;
-                if ($type =~ /^(BridgeHead|Item|Section)$/) {
+                if ($type =~ /^(BridgeHead|Item|Section)$/ ||
+                        $arg eq 'captionS') {
                     $code = '\protect';
                 }
                 $code .= $gph->latexIncludeGraphics($gen,0);
@@ -808,7 +809,7 @@ sub latexText {
                 );
                 if ($h->attribute eq '+') {
                     $code .= $doc->language eq 'german'?
-                        ' auf Seite ': ' on page ';
+                        ' auf Seite~': ' on page~';
                     $code .= $gen->cmd('pageref',
                         -p => $linkId,
                         -nl => 0,
@@ -850,7 +851,8 @@ sub latexText {
     my $val = ref $arg? $$arg: $self->get($arg);
     if (defined $val) {
         $val = $gen->protect($val); # Schütze reservierte LaTeX-Zeichen
-        1 while $val =~ s/([ABCGILMQ])\x01([^\x01\x02]*)\x02/$r->($1,$2)/e;
+        1 while $val =~
+            s/([ABCGILMQ])\x01([^\x01\x02]*)\x02/$r->($1,$2,$arg)/e;
     }
 
     return $val;

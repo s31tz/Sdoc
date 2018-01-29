@@ -141,7 +141,7 @@ sub new {
         graphicA => [],
         linkA => [],
         text => undef,
-        textS => undef, # Text mit geparsten Segmenten
+        textS => undef,
     );
     $self->setAttributes(%$attribH);
     $par->parseSegments($self,'text');

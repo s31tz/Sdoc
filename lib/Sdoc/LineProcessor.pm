@@ -389,7 +389,10 @@ sub parseSegments {
     my $node = shift;
     my $arg = shift; # $key -or- $ref
 
-    my $val = ref $arg? $$arg: $node->get($arg) // '';
+    my $val = ref $arg? $$arg: $node->get($arg);
+    if (!defined $val) {
+        return;
+    }
 
     my $markup = $self->markup;
     if ($markup eq 'sdoc') {

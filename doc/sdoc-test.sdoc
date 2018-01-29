@@ -13,19 +13,16 @@
 
 Dies ist der erste Teil.
 
-==- Erste Tests
+==- Segmente
 
-Dies ist das Kapitel mit den ersten Tests.
+In diesem Teil des Dokuments testen wir die Darstellung von
+Segmenten in verschiedenen Kontexten.
 
-= Tabelle mit Segmenten
-
-* Test Ausrichtung
-
-# Neue Tabelle
-
-1. Test Ausrichtung
+= Segment in Tabellenzelle
 
 %Table:
+  caption="Verschiedenes"
+
   Verschiedenes
   ---------------------
   B{Dies ist fett}
@@ -37,15 +34,29 @@ Dies ist das Kapitel mit den ersten Tests.
   Q{Dies ist ein Zitat}
 .
 
-  Test Ausrichtung
+= Segment in der Tabellenbeschriftung
 
-= Abschnitt mit Link im Titel: L{http://google.com}
+%Table:
+  caption="C{monospace}, I{kursiv}, B{fett}, Q{Zitat} \
+    L{http://google.com}, M~c=\sqrt{a^2+b^2}~, G{Invader}"
 
-= Abschnitt mit Formel im Titel: M~c=\sqrt{a^2+b^2}~
+Links Rechts Zentriert
+----- ------ ---------
+A          1    AB
+AB        12    CD
+.
 
-= Abschnitt mit Grafik im Titel: G{Invader}
+= Segment in Abschnittstitel
 
-= Definitionsliste mit Segmenten
+== Textauszeichung: B{fett}, C{monospace}, I{kursiv}, Q{Zitat}
+
+== Link im Titel: L{http://google.com}
+
+== Formel im Titel: M~c=\sqrt{a^2+b^2}~
+
+== Grafik im Titel: G{Invader}
+
+= Segment im Term einer Definitionsliste
 
 [C{Apfel}]:
 [B{Birne}]:
@@ -58,8 +69,14 @@ Dies ist das Kapitel mit den ersten Tests.
 [\G{Invader}]:
   Grafik im Term einer Definitionsliste geht unter LaTeX nicht.
 
+==- Sonstiges
+
 = Datei inkludieren
 
 %Include: load="+/sdoc-test-include.sdoc"
+
+==- Links
+
+Siehe Tabelle L{+Verschiedenes}.
 
 # eof

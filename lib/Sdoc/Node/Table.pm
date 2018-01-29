@@ -32,14 +32,51 @@ Tabellen-Knoten folgende zusätzliche Attribute:
 
 =over 4
 
+=item anchor => $anchor (Default: undef)
+
+Anker der Tabelle.
+
+=item anchorA => \@anchors (memoize)
+
+Anker-Pfad der Tabelle.
+
 =item asciiTable => $obj
 
 Referenz auf das Sdoc::Core::AsciiTable-Objekt.
 
+=item border => $str
+
+Legt fest, welche Linien in und um die Tabelle gezeichnet werden.
+Der Wert ist eine Kombination aus einem oder mehreren der
+folgenden Buchstaben.
+
+=over 4
+
+=item t
+
+Linie zwischen Titel und Daten.
+
+=item h
+
+Horizontale Linien I<zwischen> den Zeilen. Impliziert t.
+
+=item v
+
+Vertikale Linien I<zwischen> den Spalten.
+
+=item H
+
+Horizontale Linien ober- und unterhalb der Tabelle.
+
+=item V
+
+Vertikale Linien links und rechts von der Tabelle.
+
+=back
+
 =item caption => $text
 
-Beschriftung der Tabelle. Diese erscheint unter oder über der
-Tabelle.
+Beschriftung der Tabelle. Diese erscheint unter der Tabelle.
 
 =item formulaA => \@formulas
 
@@ -54,6 +91,11 @@ Array mit Informationen über die in Zellen vorkommenden Links
 
 Array mit Informationen über die in Zellen vorkommenden
 Inline-Grafiken (G-Segmente).
+
+=item linkId => $linkId
+
+Ist die Tabelle das Ziel eines Link, ist dies der Anker, der in
+das Zielformat eingesetzt wird.
 
 =item text => $text
 
@@ -126,14 +168,21 @@ sub new {
     # FIXME: Ausprobieren, ob G-, M-, L-Segmente in einer Tabelle
     # funktionieren
 
+    CORE::state $tableNumber = 0;
     my $self = $class->SUPER::new('Table',$variant,$root,$parent,
+        anchor => undef,
         asciiTable => undef,
         border => 'hHV',
+        caption => undef,
+        captionS => undef,
         formulaA => [],
         graphicA => [],
         linkA => [],
-        caption => undef,
+        linkId => undef,
+        number => ++$tableNumber,
         text => undef,
+        # memoize
+        anchorA => undef,
     );
     $self->setAttributes(%$attribH);
 
@@ -151,9 +200,57 @@ sub new {
             $par->parseSegments($self,\$row->[$i]);
         }
     }
+    if ($atb->multiLine) {
+        $self->set(border=>'hvHV');
+    }
     $self->set(asciiTable=>$atb);
 
+    # Segmente in caption parsen
+    $par->parseSegments($self,'caption');
+
     return $self;
+}
+
+# -----------------------------------------------------------------------------
+
+=head2 Anker
+
+=head3 anchor() - Anker der Tabelle
+
+=head4 Synopsis
+
+    $anchor = $tab->anchor;
+
+=head4 Returns
+
+Anker (String)
+
+=head4 Description
+
+Liefere den Wert des Attributs C<anchor>. Falls dieses keinen Wert
+hat, liefere den Wert des Attributs C<caption>. Falls dieses auch
+keinen Wert hat, liefere (sprachabhängig) "Tabelle N" oder
+"Table N".
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub anchor {
+    my $self = shift;
+
+    my $doc = $self->root;
+
+    my $anchor = $self->get('anchor');
+    if (!defined $anchor) {
+        $anchor = $self->caption;
+        if (!defined $anchor) {
+            $anchor = $doc->language eq 'german'? 'Tabelle': 'Table';
+            $anchor .= ' '.$self->number;
+        }
+    }
+    
+    return $anchor;
 }
 
 # -----------------------------------------------------------------------------
@@ -219,6 +316,8 @@ sub latex {
 
     my $code;
 
+    # Anker
+
     # Linie oberhalb der Tabelle
 
     if (index($border,'H') >= 0) {
@@ -244,16 +343,30 @@ sub latex {
             # Funktioniert nicht. Warum? s. renewcommand Node::Document
             # $line .= $cell->($self,$gen,$titleA->[$i],$alignA->[$i]);
         }
-        # $code .= $line.' \\\\ '.$gen->cmd('hline');
-        # $code .= $gen->cmd('endfirsthead');
-        # $code .= $gen->cmd('hline');
-        $code .= "$line \\\\";
+        $code .= "\\rowcolor{light-gray} $line \\\\";
         if ($border =~ /[th]/) {
             $code .= ' '.$gen->cmd('hline',-nl=>0);
         }
         $code .= "\n";
-        $code .= $gen->cmd('endhead');
+        if (my $linkId = $self->linkId) {
+            $code .= $gen->cmd('label',-p=>$linkId);
+        }
+        $code .= $gen->cmd('endfirsthead');
+        $code .= $gen->cmd('multicolumn',
+            -p => $atb->width,
+            -p => 'r',
+            -p => $gen->cmd('emph',-nl=>0,-p=>$doc->language eq 'german'?
+                'Fortsetzung': 'Continued'),
+            -nl => 0,
+        );
+        $code .= " \\\\ \\hline\n";
+        $code .= "\\rowcolor{light-gray} $line \\\\";
+        if ($border =~ /[th]/) {
+            $code .= ' '.$gen->cmd('hline',-nl=>0);
+        }
+        $code .= "\n";
     }
+    $code .= $gen->cmd('endhead');
     
     # Definition Zwischenfußzeile 
     
@@ -273,9 +386,8 @@ sub latex {
     if (index($border,'H') >= 0) {
        $code .= $gen->cmd('hline');
     }
-    if (my $caption = $self->caption) {
+    if (my $caption = $self->latexText($gen,'captionS')) {
         # Tabellenunterschrift
-        # $code .= $gen->cmd('\\',-o=>'-1ex');
         $code .= $gen->cmd('caption',-p=>$caption);
     }
     $code .= $gen->cmd('endlastfoot');

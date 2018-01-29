@@ -1310,10 +1310,20 @@ sub latex {
         Wir nutzen diese Möglichkeiten in Paket hyperref.
     |);
     $code .= $gen->cmd('usepackage',
-        -o => 'dvipsnames',
+        -o => 'dvipsnames,table',
         -p => 'xcolor',
         -nl => 2,
     );
+    $code .= $gen->cmd('definecolor',
+        -p => 'light-gray',
+        -p => 'HTML',
+        -p => 'e5e5e5',
+    );
+    #$code .= $gen->cmd('rowcolors',
+    #    -p => '1',
+    #    -p => 'white',
+    #    -p => 'light-gray',
+    #);
     $code .= $gen->comment(-nl=>2,q|
         ### hyperref: Hyperlinks in PDF ###
         Dieses Paket soll laut Doku als letztes Paket geladen werden.
