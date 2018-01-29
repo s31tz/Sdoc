@@ -1200,6 +1200,12 @@ sub latex {
         -p => 'makecell',
         -nl => 2,
     );
+    $code .= $gen->cmd('newcommand',
+        -p => '\mlCell',
+        -o => 3,
+        -p => '{\setlength{\fboxsep}{0pt}\colorbox{#1}{\makecell[#2]{#3}}}',
+        -nl => 2,
+    );
     # Funktioniert nicht. Warum?
     # $code .= $gen->renewcommand('theadfont',
     #     -p => '\itshape\small',
@@ -1312,18 +1318,17 @@ sub latex {
     $code .= $gen->cmd('usepackage',
         -o => 'dvipsnames,table',
         -p => 'xcolor',
-        -nl => 2,
     );
     $code .= $gen->cmd('definecolor',
-        -p => 'light-gray',
+        -p => 'titleColor',
         -p => 'HTML',
         -p => 'e5e5e5',
     );
-    #$code .= $gen->cmd('rowcolors',
-    #    -p => '1',
-    #    -p => 'white',
-    #    -p => 'light-gray',
-    #);
+    $code .= $gen->cmd('definecolor',
+        -p => 'dataColor',
+        -p => 'HTML',
+        -p => 'ffffff',
+    );
     $code .= $gen->comment(-nl=>2,q|
         ### hyperref: Hyperlinks in PDF ###
         Dieses Paket soll laut Doku als letztes Paket geladen werden.

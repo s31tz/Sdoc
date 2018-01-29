@@ -299,19 +299,34 @@ sub latex {
     # Hilfsfunktion zum Erzeugen einer Zelle
 
     my $cell = sub {
-        my ($self,$gen,$val,$align) = @_;
+        my ($self,$gen,$type,$val,$align) = @_;
 
+        $val = $self->latexText($gen,\$val);
         if ($val =~ tr/\n//) {
-            $val = $self->latexText($gen,\$val);
             $val =~ s/\n/\\\\/g;
-            return $gen->cmd('makecell',
-                -o => $align,
+            
+            my ($color,$align);
+            if ($type eq 't') {
+                $color = 'titleColor';
+                $align .= 'b';
+            }
+            else {
+                $color = 'dataColor';
+                $align .= 't';
+            }
+
+            $val = $gen->cmd('mlCell',
+                -p => $color,
+                -p => $align,
                 -p => $val,
                 -nl => 0,
             );
         }
-
-        return $self->latexText($gen,\$val);
+        if ($type eq 't') {
+            # FIXME: Wie geht es besser?
+            $val = '\textsf{\textbf{'.$val.'}}';
+        }
+        return $val;
     };
 
     my $code;
@@ -332,18 +347,10 @@ sub latex {
             if ($line) {
                 $line .= ' & ';
             }
-            # FIXME: Fonteinstellung eleganter machen
-            $line .= $gen->cmd('textsf',
-                -p => $gen->cmd('textbf',
-                    -p => $cell->($self,$gen,$titleA->[$i],$alignA->[$i].'b'),
-                    -nl => 0,
-                ),
-                -nl => 0,
-            );
-            # Funktioniert nicht. Warum? s. renewcommand Node::Document
-            # $line .= $cell->($self,$gen,$titleA->[$i],$alignA->[$i]);
+            $line .= $cell->($self,$gen,'t',$titleA->[$i],$alignA->[$i]),
         }
-        $code .= "\\rowcolor{light-gray} $line \\\\";
+        $line = "\\rowcolor{titleColor} $line";
+        $code .= "$line \\\\";
         if ($border =~ /[th]/) {
             $code .= ' '.$gen->cmd('hline',-nl=>0);
         }
@@ -360,7 +367,7 @@ sub latex {
             -nl => 0,
         );
         $code .= " \\\\ \\hline\n";
-        $code .= "\\rowcolor{light-gray} $line \\\\";
+        $code .= "$line \\\\";
         if ($border =~ /[th]/) {
             $code .= ' '.$gen->cmd('hline',-nl=>0);
         }
@@ -400,9 +407,9 @@ sub latex {
             if ($line) {
                 $line .= ' & ';
             }
-            $line .= $cell->($self,$gen,$row->[$i],$alignA->[$i].'t');
+            $line .= $cell->($self,$gen,'d',$row->[$i],$alignA->[$i]);
         }
-        $code .= $line;
+        $code .= "\\rowcolor{dataColor} $line";
         if ($row != $rowA->[-1]) {
             $code .= ' \\\\';
         }

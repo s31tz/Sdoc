@@ -725,31 +725,30 @@ Trennzeile voneinander getrennt werden.
 
 %Code:
   %Table:
-    Right  Left   
-  Aligned  Aligned       Centered
-  -------  ------------  --------
-        1  Dies ist die     A
+     Nach  Nach
+   Rechts  Links         Zentriert
+  -------  ------------  ---------
+        1  Dies ist die      A
            erste Zeile
 
-        2  Zweite Zeile     B
+        2  Zweite Zeile      B
 
-        3  Die dritte       C
+        3  Die dritte        C
            Zeile
-  .
 .
 
 produziert:
 
 %Table:
-  Right  Left   
-Aligned  Aligned       Centered
--------  ------------  --------
-      1  Dies ist die     A
+   Nach  Nach
+ Rechts  Links         Zentriert
+-------  ------------  ---------
+      1  Dies ist die      A
          erste Zeile
 
-      2  Zweite Zeile     B
+      2  Zweite Zeile      B
 
-      3  Die dritte       C
+      3  Die dritte        C
          Zeile
 .
 

@@ -181,7 +181,6 @@ sub new {
     my $tabLineLength;  # Logische Breite einer ASCII-Tabellenzeile
 
     my $fh = Sdoc::Core::FileHandle->new('<',\$str);
-    $fh->setEncoding('utf-8');
     while (<$fh>) {
         chomp;
         if (/^[- ]*$/) { # Bindestrich-Zeile, Whitespace-Zeile, Leerzeile
