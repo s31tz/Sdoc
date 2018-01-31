@@ -4,10 +4,10 @@ use base qw/Sdoc::Core::Hash/;
 use strict;
 use warnings;
 
-our $VERSION = 1.123;
+our $VERSION = 1.124;
 
-use Scalar::Util ();
 use Sdoc::Core::Option;
+use Scalar::Util ();
 use Sdoc::Core::Unindent;
 
 # -----------------------------------------------------------------------------
@@ -54,7 +54,7 @@ L<https://www.namsu.de/Extra/pakete/Babel_V2017.html>
 
 =head4 Synopsis
 
-    $ltx = $class->new;
+    $l = $class->new;
 
 =head4 Description
 
@@ -74,11 +74,112 @@ sub new {
 
 =head2 Elementare Konstruktion
 
+=head3 cn() - Erzeuge LaTeX Codezeile
+
+=head4 Synopsis
+
+    $code = $l->cn($fmt,@args,@opts);
+
+=head4 Options
+
+=over 4
+
+=item -nl => $n (Default: 1)
+
+Beende den Code mit $n Zeilenumbrüchen.
+
+=back
+
+=head4 Description
+
+Erzeuge eine LaTeX Codezeile und liefere das Resultat zurück.
+
+=head4 Example
+
+B<Makro mit Option und Parameter>
+
+    $l->cn('\documentclass[%s]{%s}','12pt','article');
+
+produziert
+
+    \documentclass[12pt]{article}\n
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub cn {
+    my $self = shift;
+    my $fmt = shift;
+    # @_: @args,@opts
+
+    # Optionen
+
+    my $nl = 1;
+
+    Sdoc::Core::Option->extract(\@_,
+        -nl => \$nl,
+    );
+
+    # Codezeile erstellen
+
+    my $cmd = sprintf $fmt,@_;
+    $cmd .= ("\n" x $nl);
+
+    return $cmd;
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 cx() - Erzeuge LaTeX Code ohne NL
+
+=head4 Synopsis
+
+    $code = $l->cx($fmt,@args,@opts);
+
+=head4 Options
+
+=over 4
+
+=item -nl => $n (Default: 0)
+
+Beende den Code mit $n Zeilenumbrüchen.
+
+=back
+
+=head4 Description
+
+Erzeuge eine LaTeX Codezeile ohne Newline am Ende und liefere das
+Resultat zurück.
+
+=head4 Example
+
+B<Makro mit Option und Parameter>
+
+    $l->cx('\thead[%sb]{%s}','c','Ein Text');
+
+produziert
+
+    \thead[cb]{Ein Text}
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub cx {
+    my $self = shift;
+    my $fmt = shift;
+    # @_: @args,@opts
+    return $self->cn($fmt,-nl=>0,@_);
+}
+
+# -----------------------------------------------------------------------------
+
 =head3 cmd() - Erzeuge LaTeX-Kommando
 
 =head4 Synopsis
 
-    $code = $ltx->cmd($name,@args);
+    $code = $l->cmd($name,@args);
 
 =head4 Options
 
@@ -115,7 +216,7 @@ zurück.
 
 B<Kommando ohne Parameter oder Optionen>
 
-    $ltx->cmd('LaTeX');
+    $l->cmd('LaTeX');
 
 produziert
 
@@ -123,7 +224,7 @@ produziert
 
 B<Kommando mit leerer Parameterliste>
 
-    $ltx->cmd('LaTeX',-p=>'');
+    $l->cmd('LaTeX',-p=>'');
 
 produziert
 
@@ -131,7 +232,7 @@ produziert
 
 B<Kommando mit Parameter>
 
-    $ltx->cmd('documentclass',
+    $l->cmd('documentclass',
         -p => 'article',
     );
 
@@ -141,7 +242,7 @@ produziert
 
 B<Kommando mit Parameter und Option>
 
-    $ltx->cmd('documentclass',
+    $l->cmd('documentclass',
         -o => '12pt',
         -p => 'article',
     );
@@ -152,7 +253,7 @@ produziert
 
 B<Kommando mit Parameter und mehreren Optionen (Variante 1)>
 
-    $ltx->cmd('documentclass',
+    $l->cmd('documentclass',
         -o => 'a4wide,12pt',
         -p => 'article',
     );
@@ -163,7 +264,7 @@ produziert
 
 B<Kommando mit Parameter und mehreren Optionen (Variante 2)>
 
-    $ltx->cmd('documentclass',
+    $l->cmd('documentclass',
         -o => ['a4wide','12pt'],
         -p => 'article',
     );
@@ -245,7 +346,7 @@ sub cmd {
 
 =head4 Synopsis
 
-    $code = $ltx->comment($text,@opt);
+    $code = $l->comment($text,@opt);
 
 =head4 Options
 
@@ -270,7 +371,7 @@ Code zurück.
 
 B<Kommentar erzeugen>
 
-    $ltx->comment("Dies ist\nein Kommentar");
+    $l->comment("Dies ist\nein Kommentar");
 
 produziert
 
@@ -314,7 +415,7 @@ sub comment {
 
 =head4 Synopsis
 
-    $code = $ltx->protect($text);
+    $code = $l->protect($text);
 
 =head4 Description
 
@@ -328,7 +429,7 @@ L<https://www.namsu.de/Extra/strukturen/Sonderzeichen.html>
 
 B<Dollarzeichen>
 
-    $ltx->protect('Der Text $text wird geschützt.');
+    $l->protect('Der Text $text wird geschützt.');
 
 produziert
 
@@ -370,11 +471,11 @@ sub protect {
 
 =head4 Synopsis
 
-    $code = $ltx->renewcommand($name,@args);
+    $code = $l->renewcommand($name,@args);
 
 =head4 Options
 
-Siehe Methode $ltx->cmd().
+Siehe Methode $l->cmd().
 
 =head4 Description
 
@@ -383,7 +484,7 @@ LaTeX-Code zurück.
 
 =head4 Examples
 
-    $ltx->renewcommand('cellalign',-p=>'lt');
+    $l->renewcommand('cellalign',-p=>'lt');
 
 produziert
 
@@ -407,11 +508,11 @@ sub renewcommand {
 
 =head4 Synopsis
 
-    $code = $ltx->setlength($name,$length,@args);
+    $code = $l->setlength($name,$length,@args);
 
 =head4 Options
 
-Siehe Methode $ltx->cmd().
+Siehe Methode $l->cmd().
 
 =head4 Description
 
@@ -422,7 +523,7 @@ Code zurück.
 
 B<Paragraph-Einrückung entfernen>
 
-    $ltx->setlength('parindent','0em');
+    $l->setlength('parindent','0em');
 
 produziert
 
@@ -449,11 +550,11 @@ sub setlength {
 
 =head4 Synopsis
 
-    $code = $ltx->env($name,$body,@args);
+    $code = $l->env($name,$body,@args);
 
 =head4 Options
 
-Siehe Methode $ltx->cmd(). Weitere Optionen:
+Siehe Methode $l->cmd(). Weitere Optionen:
 
 =over 4
 
@@ -475,7 +576,7 @@ zurück.
 
 B<Document-Umgebung mit Text>
 
-    $ltx->env('document','Dies ist ein Text.');
+    $l->env('document','Dies ist ein Text.');
 
 produziert
 
@@ -531,7 +632,7 @@ sub env {
 
 =head4 Synopsis
 
-    $code = $ltx->section($sectionName,$title);
+    $code = $l->section($sectionName,$title);
 
 =head4 Arguments
 
@@ -567,7 +668,7 @@ zurück.
 
 B<Ein Abschnitt der Ebene 1>
 
-    $ltx->section('subsection','Ein Abschnitt');
+    $l->section('subsection','Ein Abschnitt');
 
 produziert
 
@@ -609,7 +710,7 @@ sub section {
 
 =head1 VERSION
 
-1.123
+1.124
 
 =head1 AUTHOR
 

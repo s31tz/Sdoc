@@ -3,11 +3,11 @@ use base qw/Sdoc::Node/;
 
 use strict;
 use warnings;
-use utf8;
 
 our $VERSION = 0.01;
 
 use Sdoc::Core::AsciiTable;
+use Sdoc::Core::LaTeX::LongTable;
 
 # -----------------------------------------------------------------------------
 
@@ -230,7 +230,8 @@ Anker (String)
 Liefere den Wert des Attributs C<anchor>. Falls dieses keinen Wert
 hat, liefere den Wert des Attributs C<caption>. Falls dieses auch
 keinen Wert hat, liefere (sprachabhängig) "Tabelle N" oder
-"Table N".
+"Table N". Letzteres ist kein guter Anker, da dieser sich ändert,
+wenn sich etwas an der Tabellenreihenfolge ändert.
 
 =cut
 
@@ -284,149 +285,16 @@ LaTeX-Code (String)
 sub latex {
     my ($self,$gen) = @_;
 
-    # Dokument-Knoten
-    my $doc = $self->root;
-
-    # Information über Tabelle
-
     my $atb = $self->asciiTable;
-    my $titleA = $atb->titles;
-    my $alignA = $atb->alignments;
-    my $rowA = $atb->rows;
-    my $multiLine = $atb->multiLine;
-    my $border = $self->border // '';
-
-    # Hilfsfunktion zum Erzeugen einer Zelle
-
-    my $cell = sub {
-        my ($self,$gen,$type,$val,$align) = @_;
-
-        $val = $self->latexText($gen,\$val);
-        if ($val =~ tr/\n//) {
-            $val =~ s/\n/\\\\/g;
-            
-            my ($color,$align);
-            if ($type eq 't') {
-                $color = 'titleColor';
-                $align .= 'b';
-            }
-            else {
-                $color = 'dataColor';
-                $align .= 't';
-            }
-
-            $val = $gen->cmd('mlCell',
-                -p => $color,
-                -p => $align,
-                -p => $val,
-                -nl => 0,
-            );
-        }
-        if ($type eq 't') {
-            # FIXME: Wie geht es besser?
-            $val = '\textsf{\textbf{'.$val.'}}';
-        }
-        return $val;
-    };
-
-    my $code;
-
-    # Anker
-
-    # Linie oberhalb der Tabelle
-
-    if (index($border,'H') >= 0) {
-       $code .= $gen->cmd('hline');
-    }
-
-    # Titelbereich
-
-    if (@$titleA) {
-        my $line;
-        for (my $i = 0; $i < @$titleA; $i++) {
-            if ($line) {
-                $line .= ' & ';
-            }
-            $line .= $cell->($self,$gen,'t',$titleA->[$i],$alignA->[$i]),
-        }
-        $line = "\\rowcolor{titleColor} $line";
-        $code .= "$line \\\\";
-        if ($border =~ /[th]/) {
-            $code .= ' '.$gen->cmd('hline',-nl=>0);
-        }
-        $code .= "\n";
-        if (my $linkId = $self->linkId) {
-            $code .= $gen->cmd('label',-p=>$linkId);
-        }
-        $code .= $gen->cmd('endfirsthead');
-        $code .= $gen->cmd('multicolumn',
-            -p => $atb->width,
-            -p => 'r',
-            -p => $gen->cmd('emph',-nl=>0,-p=>$doc->language eq 'german'?
-                'Fortsetzung': 'Continued'),
-            -nl => 0,
-        );
-        $code .= " \\\\ \\hline\n";
-        $code .= "$line \\\\";
-        if ($border =~ /[th]/) {
-            $code .= ' '.$gen->cmd('hline',-nl=>0);
-        }
-        $code .= "\n";
-    }
-    $code .= $gen->cmd('endhead');
-    
-    # Definition Zwischenfußzeile 
-    
-    if (index($border,'H') >= 0) {
-       $code .= $gen->cmd('hline');
-    }
-    $code .= $gen->cmd('multicolumn',
-        -p => $atb->width,
-        -p => 'r',
-        -p => $gen->cmd('emph',-nl=>0,-p=>$doc->language eq 'german'?
-            'Fortsetzung nächste Seite': 'Continued next page'),
-    );
-    $code .= $gen->cmd('endfoot');
-
-    # Definition letzte Fußzeile
-
-    if (index($border,'H') >= 0) {
-       $code .= $gen->cmd('hline');
-    }
-    if (my $caption = $self->latexText($gen,'captionS')) {
-        # Tabellenunterschrift
-        $code .= $gen->cmd('caption',-p=>$caption);
-    }
-    $code .= $gen->cmd('endlastfoot');
-
-    # Zeilen
-
-    for my $row (@$rowA) {
-        my $line;
-        for (my $i = 0; $i < @$row; $i++) {
-            if ($line) {
-                $line .= ' & ';
-            }
-            $line .= $cell->($self,$gen,'d',$row->[$i],$alignA->[$i]);
-        }
-        $code .= "\\rowcolor{dataColor} $line";
-        if ($row != $rowA->[-1]) {
-            $code .= ' \\\\';
-        }
-        if (index($border,'h') >= 0 && $row != $rowA->[-1]) {
-            $code .= ' '.$gen->cmd('hline',-nl=>0);
-        }
-        $code .= "\n";
-    }
-
-    my $colSpec = join index($border,'v') >= 0? '|': '',@$alignA;
-    if (index($border,'V') >= 0) {
-        $colSpec = "|$colSpec|";
-    }
-
-    return $gen->env('longtable',$code,
-        -p => $colSpec,
-        -nl => 2,
+    return Sdoc::Core::LaTeX::LongTable->latex($gen,
+        alignments => scalar $atb->alignments,
+        border => $self->border,
+        caption => $self->caption,
+        multiLine => $atb->multiLine,
+        rows => scalar $atb->rows,
+        titleColor => 'e5e5e5',
+        titleWrapper => '\textsf{\textbf{%s}}',
+        titles => scalar $atb->titles,
     );
 }
 

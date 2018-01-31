@@ -8,7 +8,7 @@ use strict;
 use warnings;
 use utf8;
 
-our $VERSION = 1.123;
+our $VERSION = 1.124;
 
 use Sdoc::Core::Option;
 use Sdoc::Core::FileHandle;
@@ -1851,7 +1851,7 @@ sub symlinkRelative {
 
 =head1 VERSION
 
-1.123
+1.124
 
 =head1 AUTHOR
 
