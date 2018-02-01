@@ -693,7 +693,7 @@ ausgerichteten Kolumne belegen I{alle} (nichtleeren) Werte die letzte
 Zeichenpositon. Bei einer zentrierten Kolumne sind die Werte weder
 eindeutig links noch rechts ausgerichtet.
 
-=== Titelzeile
+=== Ohne Titelzeile
 
 Die Titelzeile ist optional. Sie kann auch weggelassen werden. Die
 Trennzeile für die Kolumnendefinition ist trotzdem erforderlich.
@@ -735,6 +735,7 @@ Trennzeile voneinander getrennt werden.
 
         3  Die dritte        C
            Zeile
+  .
 .
 
 produziert:
@@ -751,6 +752,26 @@ produziert:
       3  Die dritte        C
          Zeile
 .
+
+Bei Tabellen mit mehrzeiligen Kolumnendaten werden per Default,
+d.h. wenn für C{border} nichts anderes definiert ist, zusätzlich die
+Kolumnen mit senkrechten Linien getrennt.
+
+Damit die ASCII-Darstellung besser lesbar ist, können die Trennzeilen
+zwischen den Datenzeilen auch mit Bindestrichen geschrieben werden:
+
+  %Table:
+     Nach  Nach
+   Rechts  Links         Zentriert
+  -------  ------------  ---------
+        1  Dies ist die      A
+           erste Zeile
+  -------  ------------  ---------
+        2  Zweite Zeile      B
+  -------  ------------  ---------
+        3  Die dritte        C
+           Zeile
+  .
 
 === Beschriftung
 

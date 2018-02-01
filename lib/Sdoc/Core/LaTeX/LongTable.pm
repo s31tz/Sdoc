@@ -27,6 +27,7 @@ Der Code
     
     my $tab = Sdoc::Core::LaTeX::LongTable->new(
         alignments => ['l','r','c'],
+        caption => 'Ein Test',
         titles => ['Links','Rechts','Zentriert'],
         rows => [
             ['A',1,'AB'],
@@ -52,6 +53,7 @@ produziert
     \hline
     \multicolumn{3}{r}{\emph{weiter}} \
     \endfoot
+    \caption{Ein Test}
     \endlastfoot
     A & 1 & AB \\ \hline
     AB & 2 & CD \\ \hline
@@ -59,7 +61,7 @@ produziert
     ABCD & 4 & GH \\ \hline
     \end{longtable}
 
-was in etwa so aussieht
+was im LaTeX-Dokument in etwa so aussieht
 
     +--------------------------+
     | Links  Rechts  Zentriert |
@@ -72,6 +74,8 @@ was in etwa so aussieht
     +--------------------------+
     | ABCD     1234     GH     |
     +--------------------------+
+    
+        Tabelle 1: Ein Test
 
 =head1 METHODS
 

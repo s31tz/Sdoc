@@ -286,6 +286,7 @@ sub latex {
     my ($self,$gen) = @_;
 
     my $atb = $self->asciiTable;
+
     return Sdoc::Core::LaTeX::LongTable->latex($gen,
         alignments => scalar $atb->alignments,
         border => $self->border,
