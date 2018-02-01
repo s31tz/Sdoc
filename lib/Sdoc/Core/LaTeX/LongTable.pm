@@ -106,6 +106,11 @@ Liste der Kolumnen-Ausrichtungen. Mögliche Werte je Kolumne: 'l',
 Linien in und um die Tabelle. Der Wert ist eine Zeichenkette, die
 sich aus den Zeichen 't', 'h', 'v', 'H', 'V' zusammensetzt.
 
+=item callbackArguments => \@arr (Default: [])
+
+Liste von zusätzlichen Argumenten, die an die Funktionen
+C<rowCallback> und C<titleCallback> übergeben werden.
+
 =item caption => $str
 
 Unterschrift zur Tabelle.
@@ -195,6 +200,7 @@ sub new {
         align => undef,
         alignments => [],
         border => undef,
+        callbackArguments => [],
         caption => undef,
         label => undef,
         language => 'german',
@@ -250,10 +256,10 @@ sub latex {
 
     my $self = ref $this? $this: $this->new(@_);
 
-    my ($align,$alignA,$border,$caption,$label,$language,$multiLine,$rowA,
-        $rowCb,$titleColor,$titleWrapper,$titleA,$titleCb) =
-        $self->get(qw/align alignments border caption label language
-        multiLine rows rowCallback titleColor titleWrapper titles
+    my ($align,$alignA,$border,$cbArguments,$caption,$label,$language,
+        $multiLine,$rowA,$rowCb,$titleColor,$titleWrapper,$titleA,$titleCb) =
+        $self->get(qw/align alignments border callbackArguments caption label
+        language multiLine rows rowCallback titleColor titleWrapper titles
         titleCallback/);
 
     if (!@$titleA && !@$rowA) {
@@ -285,7 +291,7 @@ sub latex {
     if (@$titleA) {
         my @arr;
         for (my $i = 0; $i < @$titleA; $i++) {
-             my $val = $titleCb->($self,$l,$titleA->[$i],$i);
+             my $val = $titleCb->($self,$l,$titleA->[$i],$i,@$cbArguments);
              if ($multiLine) {
                  $val =~ s|\n|\\\\|g;
                  $val = $l->cx('\makecell[%sb]{%s}',$alignA->[$i],$val);
@@ -343,7 +349,7 @@ sub latex {
     # Body
 
     for (my $i = 0; $i < @$rowA; $i++) {
-        my @arr = $rowCb->($self,$l,$rowA->[$i],$i);
+        my @arr = $rowCb->($self,$l,$rowA->[$i],$i,@$cbArguments);
         if ($multiLine) {
             for (my $j = 0; $j < @arr; $j++) {
                  if ($arr[$j] =~ s|\n|\\\\|g) {

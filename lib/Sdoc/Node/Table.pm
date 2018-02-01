@@ -101,6 +101,10 @@ das Zielformat eingesetzt wird.
 
 Quelltext der Tabelle.
 
+=item titleColor => $rgb (Default: 'e8e8e8')
+
+Farbe der Titelzeile.
+
 =back
 
 =head1 METHODS
@@ -181,6 +185,7 @@ sub new {
         linkId => undef,
         number => ++$tableNumber,
         text => undef,
+        titleColor => 'e8e8e8',
         # memoize
         anchorA => undef,
     );
@@ -290,12 +295,25 @@ sub latex {
     return Sdoc::Core::LaTeX::LongTable->latex($gen,
         alignments => scalar $atb->alignments,
         border => $self->border,
-        caption => $self->caption,
+        callbackArguments => [$self],
+        caption => $self->latexText($gen,'caption'),
         multiLine => $atb->multiLine,
         rows => scalar $atb->rows,
-        titleColor => 'e5e5e5',
+        rowCallback => sub {
+            my ($self,$gen,$row,$n,$node) = @_;
+            my @row;
+            for my $val (@$row) {
+                push @row,$node->latexText($gen,\$val);
+            }
+            return @row;
+        },
+        titleColor => $self->titleColor,
         titleWrapper => '\textsf{\textbf{%s}}',
         titles => scalar $atb->titles,
+        titleCallback => sub {
+            my ($self,$gen,$title,$n,$node) = @_;
+            return $node->latexText($gen,\$title);
+        },
     );
 }
 
