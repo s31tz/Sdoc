@@ -53,6 +53,7 @@ produziert
     \hline
     \multicolumn{3}{r}{\emph{weiter}} \
     \endfoot
+    \captionsetup{skip=1ex}
     \caption{Ein Test}
     \endlastfoot
     A & 1 & AB \\ \hline
@@ -342,6 +343,7 @@ sub latex {
     # \endlastfoot
 
     if ($caption) {
+        $body .= $l->cn('\captionsetup{skip=1ex}');
         $body .= $l->cn('\caption{%s}',$caption);
     }
     $body .= "\\endlastfoot\n";

@@ -61,8 +61,7 @@ expandiert.
 =item indent => $bool (Default: I<kontextabhängig>)
 
 Rücke den Text ein. Im Falle von Zeilennummern (C<ln=N>) oder
-Syntax-Highlighting (C<lang=LANGUAGE>) wird per Default I<nicht>
-eingerückt. Sonst wird per Default eingerückt. Durch explizite
+wird I<nicht> eingerückt. Sonst wird eingerückt. Durch explizite
 Setzung des Attributs kann der jeweilige Default überschrieben
 werden.
 
@@ -179,7 +178,7 @@ sub new {
         load => undef,
         lang => undef,
         ln => 0,
-        indent => $attribH->{'lang'} || $attribH->{'ln'}? 0: 1,
+        indent => $attribH->{'ln'}? 0: 1,
         text => undef,
     );
     $self->setAttributes(%$attribH);
@@ -264,6 +263,7 @@ LaTeX-Code (String)
 sub latex {
     my ($self,$gen) = @_;
 
+    my $root = $self->root;
     my $text = $self->text;
 
     my @opt;
@@ -274,7 +274,7 @@ sub latex {
         push @opt,'linenos',"firstnumber=$ln","xleftmargin=\\lnwidth$c$i";
     }
     elsif ($indent) {
-        push @opt,'xleftmargin=1.3em';
+        push @opt,sprintf 'xleftmargin=%sem',$root->indentation;
     }
 
     if (my $lang = $self->lang) {

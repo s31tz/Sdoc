@@ -33,10 +33,9 @@ Inhaltsverzeichnis-Knoten folgende zusätzliche Attribute:
 
 Horizontale Ausrichtung des Bildes.
 
-=item file => $path
+=item caption => $text
 
-Pfad der Bilddatei. Beginnt der Pfad mit C<+/>, wird das
-Pluszeichen zum Pfad des Dokumentverzeichnisses expandiert.
+Beschriftung der Grafik. Diese erscheint unter der Grafik.
 
 =item definition => $bool (Default: I<kontextabhängig>)
 
@@ -44,6 +43,11 @@ Wenn gesetzt, stellt der Grafik-Block lediglich eine Definition dar,
 d.h. die Grafik wird nicht an dieser Stelle angezeigt, sondern an
 anderer Stelle von einem G-Segment referenziert. Ist Attribut
 C<name> definiert, ist der Default 1, andernfalls 0.
+
+=item file => $path
+
+Pfad der Bilddatei. Beginnt der Pfad mit C<+/>, wird das
+Pluszeichen zum Pfad des Dokumentverzeichnisses expandiert.
 
 =item latexOptions => $str
 
@@ -132,9 +136,14 @@ sub new {
 
     my $self = $class->SUPER::new('Graphic',$variant,$root,$parent,
         align => 'left',
-        file => undef,
+        caption => undef,
+        captionS => undef,
         definition => undef,
+        file => undef,
+        formulaA => [],
+        graphicA => [],
         latexOptions => undef,
+        linkA => [],
         name => undef,
         scale => undef,
         useCount => 0,
@@ -146,6 +155,9 @@ sub new {
     if (!defined $self->definition) {
         $self->set(definition=>$self->name? 1: 0);
     }
+
+    # Segmente in caption parsen
+    $par->parseSegments($self,'caption');
 
     return $self;
 }
@@ -181,16 +193,46 @@ LaTeX-Code (String)
 sub latex {
     my ($self,$gen) = @_;
 
-    # Wenn der Grafik-Knoten als Deklaration gekennzeichnet ist
-    # (definition=1), generieren wir keinen Code.
+    my $root = $self->root;
 
     my $code = '';
-    if (!$self->definition) {
+    if ($self->definition) {
+        # Wenn der Grafik-Knoten als Deklaration gekennzeichnet ist
+        # (definition=1), generieren wir keinen Code.
+        $code = '';
+    }
+    elsif (1) { # ($self->latexFloat) {
+        $code .= $gen->cn('\begin{figure}[h]');
+        my $align = $self->align;
+        if ($align eq 'left') {
+            $code .= $gen->cx('\hspace*{%sem}',$root->indentation);
+        }
+        elsif ($align eq 'center') {
+            $code .= '\centering';
+        }
+        $code .= $self->latexIncludeGraphics($gen,1);
+        if (my $caption = $self->latexText($gen,'captionS')) {
+            $code .= $gen->cn('\captionsetup{skip=1.5ex}');
+            $code .= $gen->cn('\caption{%s}',$caption);
+        }
+        $code .= $gen->cn('\vspace*{-2ex}');
+        $code .= $gen->cn('\end{figure}');
+        $code .= "\n";
+    }
+    else {
+        my $indent = $root->indentation;
+
         if (my $align = $self->align) {
+            $code .= $gen->cn('\vspace*{-0.5ex}');
             if ($align eq 'left') {
-                $code .= $gen->cmd('hspace*',-p=>'1.3em',-nl=>0);
+                $code .= $gen->cmd('hspace*',-p=>$indent.'em',-nl=>0);
             }
             $code .= $self->latexIncludeGraphics($gen,1);
+            if (my $caption = $self->latexText($gen,'captionS')) {
+                $code .= $gen->cn('\vspace*{0.3ex}');
+                $code .= $gen->cn('\captionof{figure}{%s}',$caption);
+            }
+            $code .= $gen->cn('\vspace*{-1.3ex}');
 
             $code = $gen->env($align eq 'center'? $align: "flush$align",
                 $code,
@@ -198,10 +240,11 @@ sub latex {
             );
         }
         else {
-            $code = '\hspace*{1.3em}'.$self->latexIncludeGraphics($gen,2);
+            $code = $gen->cx('\hspace*{%sem}',$indent).
+                $self->latexIncludeGraphics($gen,2);
         }
     }
-
+    
     return $code;
 }
 

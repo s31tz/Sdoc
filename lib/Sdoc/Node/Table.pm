@@ -176,7 +176,7 @@ sub new {
     my $self = $class->SUPER::new('Table',$variant,$root,$parent,
         anchor => undef,
         asciiTable => undef,
-        border => 'hHV',
+        border => undef,
         caption => undef,
         captionS => undef,
         formulaA => [],
@@ -204,9 +204,6 @@ sub new {
         for (my $i = 0; $i < @$row; $i++) {
             $par->parseSegments($self,\$row->[$i]);
         }
-    }
-    if ($atb->multiLine) {
-        $self->set(border=>'hvHV');
     }
     $self->set(asciiTable=>$atb);
 
@@ -292,11 +289,16 @@ sub latex {
 
     my $atb = $self->asciiTable;
 
+    my $border = $self->border;
+    if (!defined $border) {
+        $border = $atb->multiLine? 'hvHV': 'hHV';
+    }
+
     return Sdoc::Core::LaTeX::LongTable->latex($gen,
         alignments => scalar $atb->alignments,
-        border => $self->border,
+        border => $border,
         callbackArguments => [$self],
-        caption => $self->latexText($gen,'caption'),
+        caption => $self->latexText($gen,'captionS'),
         multiLine => $atb->multiLine,
         rows => scalar $atb->rows,
         rowCallback => sub {
@@ -314,7 +316,7 @@ sub latex {
             my ($self,$gen,$title,$n,$node) = @_;
             return $node->latexText($gen,\$title);
         },
-    );
+    )."\n";
 }
 
 # -----------------------------------------------------------------------------

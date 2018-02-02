@@ -767,11 +767,15 @@ sub latexText {
             my ($name,$gph) = @{$self->graphicA->[$val]};
             if ($gph) {
                 my $type = $self->type;
-                if ($type =~ /^(BridgeHead|Item|Section)$/ ||
+                if ($type =~ /^(BridgeHead|Section)$/ ||
                         $arg eq 'captionS') {
                     $code = '\protect';
                 }
                 $code .= $gph->latexIncludeGraphics($gen,0);
+                if ($type eq 'Item' && $code =~ tr/[//) {
+                    # Im Definitionsterm müssen wir Group-Klammern setzen
+                    $code = "{$code}";
+                }
             }
             else {
                 $code = sprintf 'G\{%s\}',$name;

@@ -3,6 +3,7 @@
   author="L{http://google.com}, M~c=\sqrt{a^2+b^2}~, G{Invader}"
   date="now"
   latexDocumentClass="scrreprt"
+# indentation=3
 
 %Graphic:
   name="Invader"
@@ -66,8 +67,60 @@ AB        12    CD
 [L{http://google.com}]:
 [M~c=sqrt{a^2+b^2}~]:
 [Q{In Anführungszeichen}]:
-[\G{Invader}]:
-  Grafik im Term einer Definitionsliste geht unter LaTeX nicht.
+[G{Invader}]:
+
+==- Horizontale Ausrichtung
+
+XXXX Ein trennender Satz
+
+* Apfel
+* Birne
+* Pflaume
+
+XXXX Ein trennender Satz
+
+%Graphic:
+  file="+/sdoc-graphic-illusion"
+  scale=0.4
+  caption="Ein Test"
+
+XXXX Ein trennender Satz
+
+1. Einkaufen
+2. Kochen
+3. Putzen
+
+XXXX Ein trennender Satz
+
+%Table:
+  caption="Ein Test"
+
+Links Rechts Zentriert
+----- ------ ---------
+A          1    AB
+AB        12    CD
+ABC      123    EF
+ABCD    1234    GH
+.
+
+XXXX Ein trennender Satz
+
+%Code: lang=Perl
+  my $dh = DirHandle->new($dir);
+  while (my $entry = $dh->next) {
+      say $entry;
+  }
+  $dh->close;
+.
+
+XXXX Ein trennender Satz
+
+%Code: lang=Perl
+  XXXXXXXXXXXXXXX
+  YYYYYYYYYYYYYYY
+.
+
+XXXX Ein trennender Satz
 
 ==- Sonstiges
 

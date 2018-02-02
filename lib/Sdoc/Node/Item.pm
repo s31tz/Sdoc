@@ -174,6 +174,7 @@ sub new {
     my $self = $class->SUPER::new('Item',$variant,$root,$parent,
         childA => [],
         formulaA => [],
+        graphicA => [],
         key => undef,
         keyS => undef,
         linkA => [],

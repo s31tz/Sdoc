@@ -87,7 +87,7 @@ sub main {
     $srcFile = 'doc/sdoc-test.sdoc';
     $destFile = 'doc/sdoc-test.pdf';
     if (Sdoc::Core::Path->newer($srcFile,$destFile) || $createManual) {
-        $sh->exec("sdoc pdf $srcFile --output=$destFile");
+        $sh->exec("sdoc pdf $srcFile --output=$destFile --shell-escape");
     }
 
     return;

@@ -156,6 +156,8 @@ LaTeX-Code (String)
 sub latex {
     my ($self,$gen) = @_;
 
+    my $root = $self->root;
+
     # Abbildung der Sdoc-Listentypen auf die LaTeX-Listentypen
 
     my $listType = $self->listType;
@@ -174,9 +176,17 @@ sub latex {
     my $childs = $self->generateChilds('latex',$gen);
     $childs =~ s/\n{2,}$/\n/;
 
+    my @opt;
+    if ($listType eq 'itemize') {
+        push @opt,sprintf 'leftmargin=%sem',0.8+$root->indentation;
+    }
+    elsif ($listType eq 'enumerate') {
+        push @opt,sprintf 'leftmargin=%sem',1.15+$root->indentation;
+    }
+
     return $gen->env($listType,
         $childs,
-        -o => $listType eq 'itemize'? 'leftmargin=2.2em': undef,
+        -o => \@opt,
         -nl => 2,
     );
 }

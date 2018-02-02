@@ -15,7 +15,7 @@ use Sdoc::Core::FileHandle;
 
 =head1 NAME
 
-Sdoc::Core::AsciiTable - ASCII-Tabelle
+Sdoc::Core::AsciiTable - ASCII-Tabelle parsen
 
 =head1 BASE CLASS
 
@@ -27,9 +27,7 @@ Ein Objekt der Klasse repräsentiert eine Tabelle, die in Form
 eines ASCII-Texts gegeben ist. Diese Darstellung wird an den
 Konstruktor übergeben, von der Klasse geparst und inhaltlich
 analysiert. Die Klasse stellt Methoden zur Verfügung, um die
-Eigenschaften der Tabelle abzufragen. Außerdem existieren
-Methoden, um die Tabelle auf Basis dieser Information in andere
-Darstellungen zu überführen.
+Eigenschaften der Tabelle abzufragen.
 
 =head2 Aufbau einer ASCII-Tabelle
 
@@ -121,12 +119,12 @@ Generell gilt ferner:
 
 =item *
 
-Ist die Tabelle mit Leerzeichen eingerückt, wird diese
-Einrückung entfernt.
+Ist die Tabelle eingerückt, wird diese Einrückung entfernt. Die
+Einrückung muss aus Leerzeichen bestehen.
 
 =item *
 
-Leerzeien vor und nach der Tabelle werden entfernt.
+Leerzeien oberhalb und unterhalb der Tabelle werden entfernt.
 
 =back
 

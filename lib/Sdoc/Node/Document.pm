@@ -81,6 +81,10 @@ C<title>, C<author>, C<date>.
 Hash der Grafik-Knoten. Schlüssel des Hash ist der Name des
 Grafik-Knotens.
 
+=item indentation => $x (Default: 1.3)
+
+Einrückung für List-, Graphic-, Code-, Table-Blöcke.
+
 =item language => $language (Default: 'german')
 
 Sprache, in der das Dokument verfasst ist.
@@ -257,6 +261,7 @@ sub new {
         dateS => undef,
         formulaA => [],
         graphicA => [],
+        indentation => 1.3,
         language => 'german',
         linkA => [],
         latexDocumentClass => 'scrartcl',
@@ -1112,6 +1117,8 @@ LaTeX-Code (String)
 sub latex {
     my ($self,$gen) = @_;
 
+    my $indent = $self->indentation;
+
     # Dokumentklasse mit Optionen
 
     my $code .= $gen->comment(-nl=>2,q|
@@ -1178,7 +1185,11 @@ sub latex {
     );
     $code .= $gen->cmd('setlength',
         -p => '\LTleft',
-        -p => '1.3em',
+        -p => "${indent}em",
+    );
+    $code .= $gen->cmd('setlength',
+        -p => '\LTpost',
+        -p => "0.4ex",
         -nl => 2,
     );
     $code .= $gen->comment(-nl=>2,q|
@@ -1223,27 +1234,30 @@ sub latex {
     $code .= $gen->cmd('usepackage',
         -p => 'etoolbox',
     );
-    $code .= $gen->cmd('makeatletter');
-    $code .= $gen->cmd('preto',
-        -p => '\@verbatim',
-        -p => '\topsep=0.5ex \partopsep=1ex',
-    );
-    $code .= $gen->cmd('makeatother',
-        -nl => 2,
-    );
+    $gen->cn('\BeforeBeginEnvironment{minted}{\bigskip}');
+    $gen->cn('\AfterEndEnvironment{minted}{\bigskip}',-nl=>2);
+
+    #$code .= $gen->cmd('makeatletter');
+    #$code .= $gen->cmd('preto',
+    #    -p => '\@verbatim',
+    #    -p => '\topsep=0.7ex\partopsep=1.2ex',
+    #);
+    #$code .= $gen->cmd('makeatother',
+    #    -nl => 2,
+    #);
     $code .= $gen->comment(-nl=>2,q|
         ### caption: Verbesserte Beschriftungen ###
         + hypcap: Setzt Anker auf *Anfang* der Gleitumgebung
-        + singlelinecheck=off,margin=1.3em: Linksbndig, unsere Einrücktiefe
+        + singlelinecheck=off,margin=X.Xem: Linksbündig, Einrücktiefe
     |);
     $code .= $gen->cmd('usepackage',
-        -o => 'hypcap,singlelinecheck=off,margin=1.3em,font={sf,small}'.
-            ',labelsep=colon,labelfont=bf,skip=1ex',
+        -o => "hypcap,singlelinecheck=off,margin=${indent}em,font={sf,small}".
+            ',labelsep=colon,labelfont=bf,skip=1.5ex',
         -p => 'caption',
         -nl => 2,
     );
     $code .= $gen->comment(-nl=>2,q|
-        ### enumitem: Layout von enumerate, itemize, description ###
+        ### enumitem: Besser konfigurierbare Listen ###
     |);
     $code .= $gen->cmd('usepackage',
         -p => 'enumitem',
