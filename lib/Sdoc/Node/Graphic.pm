@@ -49,6 +49,10 @@ C<name> definiert, ist der Default 1, andernfalls 0.
 Pfad der Bilddatei. Beginnt der Pfad mit C<+/>, wird das
 Pluszeichen zum Pfad des Dokumentverzeichnisses expandiert.
 
+=item latexFloat => $bool (Default: 0)
+
+Setze die Grafik in eine LaTeX C<figure> Umgebung.
+
 =item latexOptions => $str
 
 LaTeX-spezifische Optionen, die als direkt an das LaTeX-Makro
@@ -142,6 +146,7 @@ sub new {
         file => undef,
         formulaA => [],
         graphicA => [],
+        latexFloat => 0,
         latexOptions => undef,
         linkA => [],
         name => undef,
@@ -201,7 +206,7 @@ sub latex {
         # (definition=1), generieren wir keinen Code.
         $code = '';
     }
-    elsif (1) { # ($self->latexFloat) {
+    elsif ($self->latexFloat) {
         $code .= $gen->cn('\begin{figure}[h]');
         my $align = $self->align;
         if ($align eq 'left') {

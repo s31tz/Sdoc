@@ -83,7 +83,8 @@ Grafik-Knotens.
 
 =item indentation => $x (Default: 1.3)
 
-Einrückung für List-, Graphic-, Code-, Table-Blöcke.
+Einrückung für List-, Graphic-, Code-, Table-Blöcke vom linken
+Rand. Einheit ist C<em>, die aber nicht angegeben wird.
 
 =item language => $language (Default: 'german')
 

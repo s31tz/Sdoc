@@ -143,6 +143,8 @@ Dokument kompakter und lesbarer zu halten. In Abschnitt L{+Beispiel in
 Block-Syntax} ist das Beispiel aus Abschnitt L{+Beispiel/Sdoc}
 vollständig in Block-Syntax wiedergegeben.
 
+---PageBreak---
+
 == Dokument (Document)
 
 Information über das Dokument wird in einem - optionalen -
@@ -153,12 +155,14 @@ Dokument-Bock angegeben:
     author=STRING
     copyComments=BOOL
     date=STRING
+    indentation=FLOAT
     language=german|english
     latexDocumentClass=scrartcl|scrreprt|scrbook|article|report|book
     latexFontSize=10pt|11pt|12pt
     latexGeometry=STRING
     latexPaperSize=PAPERSIZE
     latexParSkip=LENGTH
+    quiet=BOOL
     sectionNumberDepth=0|1|2|3|4|5
     smallerMonospacedFont=BOOL
     tableOfContents=BOOL
@@ -178,11 +182,11 @@ Defaultwerte (siehe Abschnitt L{Eigenschaften}).
 
 === Segmente
 
-In Titel (C{title}), Autor (C{author}) und Datum (C{date})des
+In Titel (C{title}), Autor (C{author}) und Datum (C{date}) des
 Dokuments können Segmente (siehe Abschnitt L{+Syntax/Segment})
 verwendet werden:
 
-  A{}, B{}, C{}, G{}, I{}, L{}, M{}, Q{}
+  A, B, C, G, I, L, M, Q
 
 === Eigenschaften
 
@@ -191,6 +195,11 @@ verwendet werden:
   
 [author]:
   Der Autor des Dokuments.
+
+[copyComments]:
+  Kopiere Sdoc-Kommentare in den Quelltext des Zielformats. Dies ist
+  z.B. nützlich, um eine Stelle im Quelltext des Zielformats zu
+  finden, die aus einem bestimmten Sdoc-Konstrukt hervorgegangen ist.
 
 [date]:
   Das Datum des Dokuments. Formatelemente der Funktion strftime(3)
@@ -203,10 +212,9 @@ verwendet werden:
 
   Ist kein Wert angegeben, erscheint kein Datum im Dokumenttitel.
 
-[copyComments]:
-  Kopiere Sdoc-Kommentare in den Quelltext des Zielformats. Dies ist
-  z.B. nützlich, um eine Stelle im Quelltext des Zielformats zu
-  finden, die aus einem bestimmten Sdoc-Konstrukt hervorgegangen ist.
+[indentation]:
+  (Default: 1.3) Einrückung für List-, Graphic-, Code-, Table-Blöcke
+  vom linken Rand. Einheit ist C{em}, die aber nicht angegeben wird.
 
 [language]:
   (Default: german) Die Sprache, in der das Dokument verfasst ist. In
@@ -226,7 +234,13 @@ verwendet werden:
   Definition der Seitengeometrie mittels des LaTeX-Pakets C{geometry}.
 
 [latexPaperSize]:
-  Papiergröße für LaTeX.
+  (Default: 'a4paper') Papiergröße für LaTeX.
+
+[latexParSkip]:
+  (Default: '0.5ex') Vertikaler Abstand zwischen Absätzen.
+
+[quiet]:
+  (Default: 0) Gib keine Warnungen aus.
 
 [sectionNumberDepth]:
   (Default: 3) Die Abschnittsebene, bis zu welcher Abschnitte
@@ -242,6 +256,8 @@ verwendet werden:
 
 [title]:
   Der Titel des Dokuments.
+
+---PageBreak---
 
 == Inhaltsverzeichnis (TableOfContents)
 
@@ -268,6 +284,8 @@ dies nicht statt und das Dokument erhält kein Inhaltsverzeichnis.
   (Default: 3) Tiefe, bis zu welcher Abschnitte ins Inhaltsverzeichnis
   aufgenommen werden. Mögliche Werte: 0, 1, 2, 3, 4, 5. 0 = kein
   Inhaltsverzeichnis.
+
+---PageBreak---
 
 == Abschnitt (Section)
 
@@ -364,6 +382,8 @@ L{+Syntax/Segment}) verwendet werden:
 [title]:
   Titel des Abschnitts.
 
+---PageBreak---
+
 == Zwischenüberschrift (BridgeHead)
 
 Ein Abschnitt wird vom Inhaltsverzeichnis ausgeschlossen und damit
@@ -407,6 +427,8 @@ L{+Syntax/Segment}) verwendet werden:
 [title]:
   Titel der Zwischenüberschrift.
 
+---PageBreak---
+
 == Seitenumbruch (PageBreak)
 
 Ein Seitenumbruch wird erzeugt durch eine Zeile mit dem Inhalt
@@ -431,6 +453,8 @@ Bedeutung bzw. wenn die Online-Fassung gedruckt wird.
   %PageBreak:
 
 Der Seitenumbruch hat keine Eigenschaften.
+
+---PageBreak---
 
 == Paragraph (Paragraph)
 
@@ -464,6 +488,8 @@ L{+Syntax/Segment}) verwendet werden:
 
 Ein Paragraph hat keine Eigenschaften.
 
+---PageBreak---
+
 == Abbildung (Graphic)
 
 Eine Abbildung ist ein freistehendes Bild zwischen zwei Paragraphen
@@ -487,11 +513,12 @@ L{+G - Inline-Grafik}.
   %Graphic:
     align=left|center|right
     caption=STRING
-    file=PATH
     definition=BOOL
+    file=PATH
+    latexFloat=BOOL
     latexOptions=STRING
     name=STRING
-    scale=X
+    scale=FLOAT
 
 [align]:
   (Default: 'left') Horizontale Ausrichtung des Bildes. Mögliche
@@ -510,6 +537,9 @@ L{+G - Inline-Grafik}.
   Pfad der Bilddatei. Beginnt der Pfad mit C{+/}, wird das
   Pluszeichen zum Pfad des Dokumentverzeichnisses expandiert.
 
+[latexFloat]:
+  (Default: 0) Setze die Grafik in eine LaTeX C{figure} Umgebung.
+
 [latexOptions]:
   LaTeX-spezifische Optionen, die direkt an das LaTeX-Makro
   C{\includegraphics} übergeben werden.
@@ -523,6 +553,8 @@ L{+G - Inline-Grafik}.
   Skalierungsfaktor. Im Falle von LaTeX wird dieser zu den
   C{latexOptions} hinzugefügt, sofern dort kein Skalierungsfaktor
   angegeben ist.
+
+---PageBreak---
 
 == Aufzählung (List)
 
@@ -562,7 +594,7 @@ produziert:
 === Definitionsliste
 
 Eine Definitionsliste (oder I{definition list}) ist eine Abfolge von
-Punkten, deren erste Zeile jeweils aus einem Term in eckigen Klammern
+Punkten, deren erste Zeile jeweils mit einem Term in eckigen Klammern
 gefolgt von einem Doppelpunkt C{[TERM]:} beginnt.
 
   [255 239 213]:
@@ -580,6 +612,51 @@ produziert:
   RosyBrown
 [255 218 185]:
   PeachPuff
+
+Im Term der Liste sind Segmente zulässig. Die folgende Definitonsliste
+ist nicht schön, zeigt aber alle Möglichkeiten.
+
+    [C{monospace}]:
+      Der Term ist C{monospace}.
+    [B{fett}]:
+      Der Term ist in B{fetter} Schrift.
+    [I{kursiv}]:
+      Der Term ist in I{kursiver} Schrift. (Kursive Schrift wird unter
+      KOMA im Term nicht dargestellt, unter den klassischen
+      LaTeX-Dokumentklassen schon)
+    [L{http://google.com}]:
+      Der Term ist ein Verweis (auf eine Website).
+    [M~c=sqrt{a^2+b^2}~]:
+      Der Term ist eine mathematische Formel.
+    [Q{Zitat}]:
+      Der Term ist in Anführungsstriche gesetzt.
+    [G{InvaderItem}]:
+      Der Term ist eine Grafik.
+
+produziert:
+
+[C{monospace}]:
+  Der Term ist C{monospace}.
+[B{fett}]:
+  Der Term ist in B{fetter} Schrift.
+[I{kursiv}]:
+  Der Term ist in I{kursiver} Schrift. (Kursive Schrift wird unter
+  KOMA im Term nicht dargestellt, unter den klassischen
+  LaTeX-Dokumentklassen schon)
+[L{http://google.com}]:
+  Der Term ist ein Verweis (auf eine Website).
+[M~c=sqrt{a^2+b^2}~]:
+  Der Term ist eine mathematische Formel.
+[Q{Zitat}]:
+  Der Term ist in Anführungsstriche gesetzt.
+[G{InvaderItem}]:
+  Der Term ist eine Grafik.
+
+%Graphic:
+  name="InvaderItem"
+  file="+/sdoc-graphic-invader"
+  scale=0.025
+  definition=1
 
 === Verschachtelung von Listen
 
@@ -636,6 +713,8 @@ L{+Syntax/Segment}) verwendet werden:
 [key]:
   Stern (*) im Falle einer Punktliste. Nummer im Falle einer
   Nummerierungsliste. Zeichenkette im Falle einer Definitionsliste.
+
+---PageBreak---
 
 == Tabelle (Table)
 
@@ -805,49 +884,6 @@ AB        12    CD
 In der Beschriftung können die Segmente A, B, C, I, G, M, L, Q
 verwendet werden.
 
-=== Textauszeichungen
-
-In den Zellen der Tabelle - sowohl Titelzellen als auch Datenzellen -
-können die Segmente A, B, C, I, G, M, L, Q angewendet werden.
-
-  %Table:
-    caption="Segmente"
-
-  L{Segmente}
-  ---------------------
-  B{Dies ist fett}
-  C{Dies ist monospace}
-  G{Invader}
-  I{Dies ist kursiv}
-  L{http://google.com}
-  M~c=\sqrt{a^2+b^2}~
-  Q{Dies ist ein Zitat}
-  .
-
-  %Link:
-    name="Segmente"
-    regex="Syntax/Segment"
-
-produziert:
-
-%Table:
-  caption="Segmente"
-
-L{Segmente}
----------------------
-B{Dies ist fett}
-C{Dies ist monospace}
-G{Invader}
-I{Dies ist kursiv}
-L{http://google.com}
-M~c=\sqrt{a^2+b^2}~
-Q{Dies ist ein Zitat}
-.
-
-%Link:
-  name="Segmente"
-  regex="Syntax/Segment"
-
 === Titelfarbe
 
 Die Titelfarbe kann mittels des Attributs C{titleColor} gesetzt werden:
@@ -988,10 +1024,65 @@ Alle Linien:
 
 === Segmente
 
-In der Beschriftung (C{caption}) und allen Zellen einer Tabelle können
-alle Segmente (siehe Abschnitt L{+Syntax/Segment}) verwendet werden:
+In den Zellen der Tabelle - sowohl im Titel als auch in den Daten -,
+sowie in der Bildunterschrift (C{caption}) können alle Segmente (siehe
+Abschnitt L{+Syntax/Segment}) verwendet werden:
 
   A, B, C, G, I, L, M, Q
+
+Das folgende Beispiel zeigt sämtliche Möglichkeiten.
+
+  %Table:
+    caption="Segmente: A{TabelleSegmente} B{fett}, C{mono}, G{InvaderList}, \\
+      I{kursiv}, L{http://google.com}, M~c=\sqrt{a^2+b^2}~, Q{Zitat}"
+
+  L{Segmente}
+  ---------------------
+  B{Dies ist fett}
+  C{Dies ist monospace}
+  G{InvaderList}
+  I{Dies ist kursiv}
+  L{http://google.com}
+  M~c=\sqrt{a^2+b^2}~
+  Q{Dies ist ein Zitat}
+  .
+
+  %Graphic:
+    name="InvaderList"
+    file="+/sdoc-graphic-invader"
+    scale=0.03
+    definition=1
+
+  %Link:
+    name="Segmente"
+    regex="Syntax/Segment"
+
+produziert:
+
+%Table:
+  caption="Segmente: A{TabelleSegmente} B{fett}, C{mono}, G{InvaderList}, \
+    I{kursiv}, L{http://google.com}, M~c=\sqrt{a^2+b^2}~, Q{Zitat}"
+
+L{Segmente}
+---------------------
+B{Dies ist fett}
+C{Dies ist monospace}
+G{InvaderList}
+I{Dies ist kursiv}
+L{http://google.com}
+M~c=\sqrt{a^2+b^2}~
+Q{Dies ist ein Zitat}
+.
+
+%Graphic:
+  name="InvaderList"
+  file="+/sdoc-graphic-invader"
+  scale=0.03
+  definition=1
+
+%Link:
+  name="Segmente"
+  regex="Syntax/Segment"
 
 === Eigenschaften
 
@@ -1041,6 +1132,8 @@ der Tabelle.
   \setlength{\LTleft}{1.3em}
   \setlength{\LTpost}{0.4ex}
 .
+
+---PageBreak---
 
 == Code (Code)
 
@@ -1301,6 +1394,8 @@ C{filter} und C{load} - so weit angegeben - ist:
   Start-Zeilennummer ist C{N}. Das Attribut C{indent} wird auf den
   Default 0 gesetzt.
 
+---PageBreak---
+
 == Verweis (Link)
 
 Ein Verweis referenziert ein I{internes} oder I{externes} Ziel. Ein
@@ -1358,6 +1453,8 @@ gebildet.
 [url]:
   URL eines externen Dokuments.
 
+---PageBreak---
+
 == Datei laden (Include)
 
 Durch einen Include-Block kann der Inhalt einer Datei zum Dokument
@@ -1379,6 +1476,8 @@ produziert:
   Lade Datei PATH und füge dessen Inhalt in das Dokument ein. Beginnt
   der Pfad mit C{+/}, wird das Pluszeichen zum Pfad des
   Dokumentverzeichnisses expandiert.
+
+---PageBreak---
 
 == Kommentar (Comment)
 
@@ -1419,6 +1518,8 @@ In Block-Syntax kann ein Kommentar auch geschrieben werden als
   .
 
 Ein Kommentar hat keine Eigenschaften.
+
+---PageBreak---
 
 == Segment
 
@@ -1592,6 +1693,8 @@ B{So geht es I{auch}!}
 
 I{Näheres in Abschnitt L{Dokument}}
 
+---PageBreak---
+
 == Beispiel in Block-Syntax
 
 Hier das Beispiel aus Abschnitt L{+Beispiel/Sdoc} ohne Wiki-Syntax,
@@ -1599,6 +1702,8 @@ also ausschließlich in Block-Syntax. Der Quelltext wird dadurch
 deutlich länger und ist weniger gut lesbar.
 
 %Code: load="+/sdoc-example-block-syntax.sdoc" ln=1
+
+---PageBreak---
 
 = Sonstiges
 

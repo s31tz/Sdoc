@@ -63,7 +63,7 @@ AB        12    CD
 [B{Birne}]:
 [I{Pflaume}]:
   Kursivschrift wird unter KOMA nicht dargestellt, unter
-  den LaTeX-Dokumentklassen schon.
+  den klassischen LaTeX-Dokumentklassen schon.
 [L{http://google.com}]:
 [M~c=sqrt{a^2+b^2}~]:
 [Q{In Anführungszeichen}]:
