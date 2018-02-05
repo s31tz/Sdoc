@@ -134,14 +134,14 @@ LaTeX-Code (String)
 # -----------------------------------------------------------------------------
 
 sub latex {
-    my ($self,$gen) = @_;
+    my ($self,$l) = @_;
 
     if ($self->maxDepth == 0) {
         # Kein Inhaltsverzeichnis
         return '';
     }
 
-    return $self->root->latexTableOfContents($gen);
+    return $self->root->latexTableOfContents($l);
 }
 
 # -----------------------------------------------------------------------------

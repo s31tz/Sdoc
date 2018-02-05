@@ -261,7 +261,7 @@ LaTeX-Code (String)
 # -----------------------------------------------------------------------------
 
 sub latex {
-    my ($self,$gen) = @_;
+    my ($self,$l) = @_;
 
     my $root = $self->root;
     my $text = $self->text;
@@ -280,7 +280,7 @@ sub latex {
     if (my $lang = $self->lang) {
         # Minted-Umgebung
 
-        return $gen->env('minted',$text,
+        return $l->env('minted',$text,
             -o => \@opt,
             -p => lc $lang,
             -indent => 0,
@@ -290,7 +290,7 @@ sub latex {
 
     # Verbatim-Umgebung
 
-    return $gen->env('Verbatim',$text,
+    return $l->env('Verbatim',$text,
         -o => \@opt,
         -indent => 0,
         -nl => 2,

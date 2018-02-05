@@ -221,11 +221,11 @@ LaTeX-Code (String)
 # -----------------------------------------------------------------------------
 
 sub latex {
-    my ($self,$gen) = @_;
+    my ($self,$l) = @_;
 
-    return $gen->section(
-        $self->latexLevelToSectionName($gen,$self->level),
-        $self->latexText($gen,'titleS'),
+    return $l->section(
+        $self->latexLevelToSectionName($l,$self->level),
+        $self->latexText($l,'titleS'),
         -label => $self->linkId,
         -toc => 0,
     );

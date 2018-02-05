@@ -154,7 +154,7 @@ LaTeX-Code (String)
 # -----------------------------------------------------------------------------
 
 sub latex {
-    my ($self,$gen) = @_;
+    my ($self,$l) = @_;
 
     my $root = $self->root;
 
@@ -173,7 +173,7 @@ sub latex {
     # Sdoc::Node::Code) aufeinander abgestimmt sind. Die Angabe
     # leftmargin setzt das LaTeX-Paket enumitem voraus.
 
-    my $childs = $self->generateChilds('latex',$gen);
+    my $childs = $self->generateChilds('latex',$l);
     $childs =~ s/\n{2,}$/\n/;
 
     my @opt;
@@ -184,7 +184,7 @@ sub latex {
         push @opt,sprintf 'leftmargin=%sem',1.15+$root->indentation;
     }
 
-    return $gen->env($listType,
+    return $l->env($listType,
         $childs,
         -o => \@opt,
         -nl => 2,

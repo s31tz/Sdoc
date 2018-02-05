@@ -23,7 +23,7 @@ L<Sdoc::Core::Hash>
 Der Code
 
     use Sdoc::Core::LaTeX::LongTable;
-    use Sdoc::Core::LaTeX::Generator;
+    use Sdoc::Core::LaTeX::Code;
     
     my $tab = Sdoc::Core::LaTeX::LongTable->new(
         alignments => ['l','r','c'],
@@ -37,7 +37,7 @@ Der Code
         ],
     );
     
-    my $l = Sdoc::Core::LaTeX::Generator->new;
+    my $l = Sdoc::Core::LaTeX::Code->new;
     my $code = $tab->latex($l);
 
 produziert
@@ -295,21 +295,21 @@ sub latex {
              my $val = $titleCb->($self,$l,$titleA->[$i],$i,@$cbArguments);
              if ($multiLine) {
                  $val =~ s|\n|\\\\|g;
-                 $val = $l->cx('\makecell[%sb]{%s}',$alignA->[$i],$val);
+                 $val = $l->ci('\makecell[%sb]{%s}',$alignA->[$i],$val);
                  if ($titleColor) {
                      # Hack, damit der gesamte Hintergrund farbig wird.
                      # Ist nur bei \makecell nötig.
-                     $val = $l->cx('{\setlength{\fboxsep}{0pt}'.
+                     $val = $l->ci('{\setlength{\fboxsep}{0pt}'.
                          '\colorbox[HTML]{%s}{%s}}',$titleColor,$val);
                  }
              }
              if ($titleWrapper) {
-                 $val = $l->cx($titleWrapper,$val);
+                 $val = $l->ci($titleWrapper,$val);
              }
              push @arr,$val;
         }
         if ($titleColor) {
-            $titleLine .= $l->cx('\rowcolor[HTML]{%s} ',$titleColor);
+            $titleLine .= $l->ci('\rowcolor[HTML]{%s} ',$titleColor);
         }
         $titleLine .= join(' & ',@arr).' \\\\';
         $titleLine .= $tBorder? ' \hline': '';
@@ -318,33 +318,33 @@ sub latex {
     
     # \firsthead
 
-    $body .= $HBorder? $l->cn('\hline'): '';
+    $body .= $HBorder? $l->c('\hline'): '';
     $body .= $titleLine; # Leer, wenn kein Titel
     if ($label) {
-        $body .= $l->cn('\label{%s}',$label);
+        $body .= $l->c('\label{%s}',$label);
     }
-    $body .= $l->cn('\endfirsthead');
+    $body .= $l->c('\endfirsthead');
     
     # \endhead
         
     my $msg = $language eq 'german'? 'Fortsetzung': 'Continuation';
-    $body .= $l->cn('\multicolumn{%s}{r}{\\emph{%s}} \\\\',$width,$msg);
-    $body .= $HBorder? $l->cn('\hline'): '';
+    $body .= $l->c('\multicolumn{%s}{r}{\\emph{%s}} \\\\',$width,$msg);
+    $body .= $HBorder? $l->c('\hline'): '';
     $body .= $titleLine; # leer, wenn kein Titel
-    $body .= $l->cn('\endhead');
+    $body .= $l->c('\endhead');
 
     # \endfoot
 
-    $body .= $HBorder? $l->cn('\hline'): '';
+    $body .= $HBorder? $l->c('\hline'): '';
     $msg = $language eq 'german'? 'weiter': 'next';
-    $body .= $l->cn('\multicolumn{%s}{r}{\\emph{%s}} \\\\',$width,$msg);
-    $body .= $l->cn('\endfoot');
+    $body .= $l->c('\multicolumn{%s}{r}{\\emph{%s}} \\\\',$width,$msg);
+    $body .= $l->c('\endfoot');
 
     # \endlastfoot
 
     if ($caption) {
-        $body .= $l->cn('\captionsetup{skip=1ex}');
-        $body .= $l->cn('\caption{%s}',$caption);
+        $body .= $l->c('\captionsetup{skip=1ex}');
+        $body .= $l->c('\caption{%s}',$caption);
     }
     $body .= "\\endlastfoot\n";
 
@@ -355,7 +355,7 @@ sub latex {
         if ($multiLine) {
             for (my $j = 0; $j < @arr; $j++) {
                  if ($arr[$j] =~ s|\n|\\\\|g) {
-                     $arr[$j] = $l->cx('\makecell[%st]{%s}',
+                     $arr[$j] = $l->ci('\makecell[%st]{%s}',
                          $alignA->[$j],$arr[$j]);
                  }
             }

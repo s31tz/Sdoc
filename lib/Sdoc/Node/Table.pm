@@ -285,7 +285,7 @@ LaTeX-Code (String)
 # -----------------------------------------------------------------------------
 
 sub latex {
-    my ($self,$gen) = @_;
+    my ($self,$l) = @_;
 
     my $atb = $self->asciiTable;
 
@@ -294,18 +294,19 @@ sub latex {
         $border = $atb->multiLine? 'hvHV': 'hHV';
     }
 
-    return Sdoc::Core::LaTeX::LongTable->latex($gen,
+    return Sdoc::Core::LaTeX::LongTable->latex($l,
         alignments => scalar $atb->alignments,
         border => $border,
         callbackArguments => [$self],
-        caption => $self->latexText($gen,'captionS'),
+        caption => $self->latexText($l,'captionS'),
+        label => $self->linkId,
         multiLine => $atb->multiLine,
         rows => scalar $atb->rows,
         rowCallback => sub {
-            my ($self,$gen,$row,$n,$node) = @_;
+            my ($self,$l,$row,$n,$node) = @_;
             my @row;
             for my $val (@$row) {
-                push @row,$node->latexText($gen,\$val);
+                push @row,$node->latexText($l,\$val);
             }
             return @row;
         },
@@ -313,8 +314,8 @@ sub latex {
         titleWrapper => '\textsf{\textbf{%s}}',
         titles => scalar $atb->titles,
         titleCallback => sub {
-            my ($self,$gen,$title,$n,$node) = @_;
-            return $node->latexText($gen,\$title);
+            my ($self,$l,$title,$n,$node) = @_;
+            return $node->latexText($l,\$title);
         },
     )."\n";
 }

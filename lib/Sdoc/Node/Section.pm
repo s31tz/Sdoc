@@ -270,7 +270,7 @@ LaTeX-Code (String)
 # -----------------------------------------------------------------------------
 
 sub latex {
-    my ($self,$gen) = @_;
+    my ($self,$l) = @_;
 
     # Prüfe, ob die Abschnittsüberschrift im Inhaltsverzeichnis
     # unterdrückt werden soll. Dies ist der Fall, ein
@@ -294,16 +294,16 @@ sub latex {
     # Beginnen mit dem Abschnitt die Appendizes?
 
     if ($self->isAppendix) {
-        $code .= $gen->cmd('appendix');
+        $code .= $l->c('\appendix');
     }
 
-    $code .= $gen->section(
-        $self->latexLevelToSectionName($gen,$self->level),
-        $self->latexText($gen,'titleS'),
+    $code .= $l->section(
+        $self->latexLevelToSectionName($l,$self->level),
+        $self->latexText($l,'titleS'),
         -label => $self->linkId,
         -toc => $toc,
     );
-    $code .= $self->generateChilds('latex',$gen);
+    $code .= $self->generateChilds('latex',$l);
 
     return $code;
 }

@@ -158,14 +158,14 @@ LaTeX-Code (String)
 # -----------------------------------------------------------------------------
 
 sub latex {
-    my ($self,$gen) = @_;
+    my ($self,$l) = @_;
 
     if (!$self->root->copyComments) {
         # Keine Kommentare ins Zielformat übernehmen
         return '';
     }
 
-    return $gen->comment($self->text,-nl=>2);
+    return $l->comment($self->text,-nl=>2);
 }
 
 # -----------------------------------------------------------------------------

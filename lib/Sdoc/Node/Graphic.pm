@@ -33,6 +33,14 @@ Inhaltsverzeichnis-Knoten folgende zusätzliche Attribute:
 
 Horizontale Ausrichtung des Bildes.
 
+=item anchor => $anchor (Default: undef)
+
+Anker der Grafik.
+
+=item anchorA => \@anchors (memoize)
+
+Anker-Pfad der Grafik.
+
 =item caption => $text
 
 Beschriftung der Grafik. Diese erscheint unter der Grafik.
@@ -57,6 +65,11 @@ Setze die Grafik in eine LaTeX C<figure> Umgebung.
 
 LaTeX-spezifische Optionen, die als direkt an das LaTeX-Makro
 C<\includegraphics> übergeben werden.
+
+=item linkId => $linkId
+
+Die Grafik ist Ziel eines Link. Dies ist der Anker für das
+Zielformat.
 
 =item name => $name
 
@@ -140,6 +153,7 @@ sub new {
 
     my $self = $class->SUPER::new('Graphic',$variant,$root,$parent,
         align => 'left',
+        anchor => undef,
         caption => undef,
         captionS => undef,
         definition => undef,
@@ -149,9 +163,12 @@ sub new {
         latexFloat => 0,
         latexOptions => undef,
         linkA => [],
+        linkId => undef,
         name => undef,
         scale => undef,
         useCount => 0,
+        # memoize
+        anchorA => undef,
     );
     $self->setAttributes(%$attribH);
 
@@ -165,6 +182,34 @@ sub new {
     $par->parseSegments($self,'caption');
 
     return $self;
+}
+
+# -----------------------------------------------------------------------------
+
+=head2 Anker
+
+=head3 anchor() - Anker des Abschnitts
+
+=head4 Synopsis
+
+    $anchor = $sec->anchor;
+
+=head4 Returns
+
+Anker (String)
+
+=head4 Description
+
+Liefere den Wert des Attributs C<anchor>. Falls dies keinen Wert hat,
+liefere den Wert des Attributs C<caption>.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub anchor {
+    my $self = shift;
+    return $self->get('anchor') || $self->caption;
 }
 
 # -----------------------------------------------------------------------------
@@ -196,7 +241,7 @@ LaTeX-Code (String)
 # -----------------------------------------------------------------------------
 
 sub latex {
-    my ($self,$gen) = @_;
+    my ($self,$l) = @_;
 
     my $root = $self->root;
 
@@ -207,46 +252,52 @@ sub latex {
         $code = '';
     }
     elsif ($self->latexFloat) {
-        $code .= $gen->cn('\begin{figure}[h]');
+        $code .= $l->c('\begin{figure}[h]');
         my $align = $self->align;
         if ($align eq 'left') {
-            $code .= $gen->cx('\hspace*{%sem}',$root->indentation);
+            $code .= $l->ci('\hspace*{%sem}',$root->indentation);
         }
         elsif ($align eq 'center') {
             $code .= '\centering';
         }
-        $code .= $self->latexIncludeGraphics($gen,1);
-        if (my $caption = $self->latexText($gen,'captionS')) {
-            $code .= $gen->cn('\captionsetup{skip=1.5ex}');
-            $code .= $gen->cn('\caption{%s}',$caption);
+        $code .= $self->latexIncludeGraphics($l,1);
+        if (my $caption = $self->latexText($l,'captionS')) {
+            $code .= $l->ci('\captionsetup{skip=1.5ex}');
+            $code .= $l->c('\caption{%s}',$caption);
         }
-        $code .= $gen->cn('\vspace*{-2ex}');
-        $code .= $gen->cn('\end{figure}');
+        if (my $linkId = $self->linkId) {
+            $code .= $l->c('\label{%s}',$linkId);
+        }
+        $code .= $l->c('\vspace*{-2ex}');
+        $code .= $l->c('\end{figure}');
         $code .= "\n";
     }
     else {
         my $indent = $root->indentation;
 
         if (my $align = $self->align) {
-            $code .= $gen->cn('\vspace*{-0.5ex}');
+            $code .= $l->c('\vspace*{-0.5ex}');
+            if (my $linkId = $self->linkId) {
+                $code .= $l->c('\label{%s}',$linkId);
+            }
             if ($align eq 'left') {
-                $code .= $gen->cmd('hspace*',-p=>$indent.'em',-nl=>0);
+                $code .= $l->ci('\hspace*{%sem}',$indent);
             }
-            $code .= $self->latexIncludeGraphics($gen,1);
-            if (my $caption = $self->latexText($gen,'captionS')) {
-                $code .= $gen->cn('\vspace*{0.3ex}');
-                $code .= $gen->cn('\captionof{figure}{%s}',$caption);
+            $code .= $self->latexIncludeGraphics($l,1);
+            if (my $caption = $self->latexText($l,'captionS')) {
+                $code .= $l->c('\vspace*{0.3ex}');
+                $code .= $l->c('\captionof{figure}{%s}',$caption);
             }
-            $code .= $gen->cn('\vspace*{-1.3ex}');
+            $code .= $l->c('\vspace*{-1.3ex}');
 
-            $code = $gen->env($align eq 'center'? $align: "flush$align",
+            $code = $l->env($align eq 'center'? $align: "flush$align",
                 $code,
                 -nl=>2,
             );
         }
         else {
-            $code = $gen->cx('\hspace*{%sem}',$indent).
-                $self->latexIncludeGraphics($gen,2);
+            $code = $l->ci('\hspace*{%sem}',$indent).
+                $self->latexIncludeGraphics($l,2);
         }
     }
     
@@ -284,7 +335,7 @@ LaTeX-Code (String)
 # -----------------------------------------------------------------------------
 
 sub latexIncludeGraphics {
-    my ($self,$gen,$n) = @_;
+    my ($self,$l,$n) = @_;
 
     # Optionen. Wir fügen scale=$scale zu den includegraphics-Optionen
     # hinzu, wenn dort noch kein Skalierungsfaktor angegeben ist.
@@ -294,9 +345,9 @@ sub latexIncludeGraphics {
         push @opt,"scale=$scale";
     }
 
-    return $gen->cmd('includegraphics',
-        -o => \@opt,
-        -p => $self->root->expandPlus($self->file),
+    return $l->c('\includegraphics[%s]{%s}',
+        \@opt,
+        $self->root->expandPlus($self->file),
         -nl => $n,
     );
 }

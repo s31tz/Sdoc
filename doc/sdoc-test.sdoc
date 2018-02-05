@@ -82,7 +82,7 @@ XXXX Ein trennender Satz
 %Graphic:
   file="+/sdoc-graphic-illusion"
   scale=0.4
-  caption="Ein Test"
+  caption="Test-Grafik"
 
 XXXX Ein trennender Satz
 
@@ -93,7 +93,7 @@ XXXX Ein trennender Satz
 XXXX Ein trennender Satz
 
 %Table:
-  caption="Ein Test"
+  caption="Test-Tabelle"
 
 Links Rechts Zentriert
 ----- ------ ---------
@@ -131,5 +131,6 @@ XXXX Ein trennender Satz
 ==- Links
 
 Siehe Tabelle L{+Verschiedenes}.
+Siehe Grafik L{+Test-Grafik}.
 
 # eof

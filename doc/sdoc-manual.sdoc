@@ -508,10 +508,18 @@ produziert:
 Für eine Grafik, die I{im Textfluss} erscheinen soll, siehe Abschnitt
 L{+G - Inline-Grafik}.
 
+=== Segmente
+
+In der Beschriftung (C{caption} einer Abbildung können alle Segmente (siehe
+Abschnitt L{+Syntax/Segment}) verwendet werden:
+
+  A, B, C, G, I, L, M, Q
+
 === Eigenschaften
 
   %Graphic:
     align=left|center|right
+    anchor=STRING
     caption=STRING
     definition=BOOL
     file=PATH
@@ -523,6 +531,9 @@ L{+G - Inline-Grafik}.
 [align]:
   (Default: 'left') Horizontale Ausrichtung des Bildes. Mögliche
   Werte: 'left', 'center', 'right'.
+
+[anchor]:
+  Anker der Grafik.
 
 [caption]:
   Beschriftung der Grafik. Diese erscheint unter der Grafik.

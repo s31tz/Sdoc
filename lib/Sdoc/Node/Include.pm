@@ -167,8 +167,8 @@ LaTeX-Code (String)
 # -----------------------------------------------------------------------------
 
 sub latex {
-    my ($self,$gen) = @_;
-    return $self->generateChilds('latex',$gen);
+    my ($self,$l) = @_;
+    return $self->generateChilds('latex',$l);
 }
 
 # -----------------------------------------------------------------------------

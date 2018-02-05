@@ -7,7 +7,7 @@ use warnings;
 our $VERSION = 0.01;
 
 use Scalar::Util ();
-use Sdoc::Core::LaTeX::Generator;
+use Sdoc::Core::LaTeX::Code;
 use Sdoc::Core::AnsiColor;
 use Sdoc::Core::TreeFormatter;
 
@@ -572,7 +572,7 @@ sub generate {
         return $self->tree;
     }
     elsif ($format eq 'latex') {
-        my $gen = Sdoc::Core::LaTeX::Generator->new;
+        my $gen = Sdoc::Core::LaTeX::Code->new;
         return $self->latex($gen);
     }
 
@@ -720,7 +720,7 @@ expandiert und die LaTeX-Metazeichen geschützt wurden. Dieser Wert
 # -----------------------------------------------------------------------------
 
 sub latexText {
-    my ($self,$gen,$arg) = @_;
+    my ($self,$l,$arg) = @_;
 
     my $doc = $self->root;
 
@@ -771,11 +771,11 @@ sub latexText {
                         $arg eq 'captionS') {
                     $code = '\protect';
                 }
-                $code .= $gph->latexIncludeGraphics($gen,0);
-                if ($type eq 'Item' && $code =~ tr/[//) {
-                    # Im Definitionsterm müssen wir Group-Klammern setzen
-                    $code = "{$code}";
-                }
+                $code .= $gph->latexIncludeGraphics($l,0);
+                #if ($type eq 'Item' && $code =~ tr/[//) {
+                #    # Im Definitionsterm müssen wir Group-Klammern setzen
+                #    $code = "{$code}";
+                #}
             }
             else {
                 $code = sprintf 'G\{%s\}',$name;
@@ -797,27 +797,17 @@ sub latexText {
             my ($linkText,$h) = @{$self->linkA->[$val]};
             if ($h->type eq 'external') {
                 # $dest und $text sind identisch
-                $code = $gen->cmd('href',
-                    -p => $h->destText,
-                    -p => $h->text,
-                    -nl=>0,
-                );
+                $code = $l->ci('\href{%s}{%s}',$h->destText,$h->text);
             }
             elsif ($h->type eq 'internal') {
                 my $linkId = $h->destNode->linkId;
 
-                $code = $gen->cmd('hyperref',
-                    -o => $linkId,
-                    -p => $gen->protect($h->text),
-                    -nl => 0,
-                );
+                $code = $l->ci('\hyperref[%s]{%s}',$linkId,
+                    $l->protect($h->text));
                 if ($h->attribute eq '+') {
                     $code .= $doc->language eq 'german'?
                         ' auf Seite~': ' on page~';
-                    $code .= $gen->cmd('pageref',
-                        -p => $linkId,
-                        -nl => 0,
-                    );
+                    $code .= $l->ci('\pageref{%s}',$linkId);
                 }
             }
             elsif ($h->type eq 'unresolved') {
@@ -854,7 +844,7 @@ sub latexText {
 
     my $val = ref $arg? $$arg: $self->get($arg);
     if (defined $val) {
-        $val = $gen->protect($val); # Schütze reservierte LaTeX-Zeichen
+        $val = $l->protect($val); # Schütze reservierte LaTeX-Zeichen
         1 while $val =~
             s/([ABCGILMQ])\x01([^\x01\x02]*)\x02/$r->($1,$2,$arg)/e;
     }
@@ -895,14 +885,12 @@ wir dafür hier eine eigene Methode.
 # -----------------------------------------------------------------------------
 
 sub latexTableOfContents {
-    my ($self,$gen) = @_;
+    my ($self,$l) = @_;
 
-    my $code .= $gen->comment(-nl=>2,q|
+    my $code .= $l->comment(-nl=>2,q|
         ### Inhaltsverzeichnis ###
     |);
-    my $tmp = $gen->cmd('hypersetup',-p=>'hidelinks',-nl=>0);
-    $tmp .= $gen->cmd('tableofcontents',-nl=>0);
-    $code .= "{$tmp}\n\n";
+    $code .= $l->c('{\hypersetup{hidelinks}\tableofcontents}');
 
     return $code;
 }
@@ -942,7 +930,7 @@ Liefere den LaTeX Abschnittsnamen zur Sdoc Abschnittsebene.
 # -----------------------------------------------------------------------------
 
 sub latexLevelToSectionName {
-    my ($self,$gen,$level) = @_;
+    my ($self,$l,$level) = @_;
 
     my $name;
     if ($level == -1) {

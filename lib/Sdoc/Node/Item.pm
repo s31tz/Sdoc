@@ -262,21 +262,20 @@ LaTeX-Code (String)
 # -----------------------------------------------------------------------------
 
 sub latex {
-    my ($self,$gen) = @_;
+    my ($self,$l) = @_;
 
     my $code;
     
     my $listType = $self->parent->listType;
     if ($listType eq 'description') {
-        $code .= $gen->cmd('item',
-            -o => $self->latexText($gen,'keyS'),
-        );
+        # [{}] weil sonst Probleme bei Macros mit Optionen (\includegraphics)
+        $code .= $l->c('\item[{%s}]',$self->latexText($l,'keyS'));
     }
     else {
-        $code .= $gen->cmd('item');
+        $code .= $l->c('\item');
     }
 
-    $code .= $self->generateChilds('latex',$gen);
+    $code .= $self->generateChilds('latex',$l);
     
     return $code;
 }
