@@ -275,32 +275,37 @@ sub latex {
     else {
         my $indent = $root->indentation;
 
-        if (my $align = $self->align) {
-            $code .= $l->c('\vspace*{-0.5ex}');
-            if (my $linkId = $self->linkId) {
-                $code .= $l->c('\label{%s}',$linkId);
-            }
-            if ($align eq 'left') {
-                $code .= $l->ci('\hspace*{%sem}',$indent);
-            }
-            $code .= $self->latexIncludeGraphics($l,1);
-            if (my $caption = $self->latexText($l,'captionS')) {
-                $code .= $l->c('\vspace*{0.3ex}');
-                $code .= $l->c('\captionof{figure}{%s}',$caption);
-            }
-            $code .= $l->c('\vspace*{-1.3ex}');
+        $code .= $l->c('\vspace*{-0.5ex}');
+        if (my $linkId = $self->linkId) {
+            $code .= $l->c('\label{%s}',$linkId);
+        }
 
-            $code = $l->env($align eq 'center'? $align: "flush$align",
-                $code,
-                -nl=>2,
-            );
+        # Align: left
+
+        my $align = $self->align;
+        if ($align eq 'left') {
+            $code .= $l->ci('\hspace*{%sem}',$indent);
         }
-        else {
-            $code = $l->ci('\hspace*{%sem}',$indent).
-                $self->latexIncludeGraphics($l,2);
+
+        # Grafik
+        $code .= $self->latexIncludeGraphics($l,1);
+
+        # Bildunterschrift
+
+        if (my $caption = $self->latexText($l,'captionS')) {
+            # $code .= $l->c('\vspace*{-0.1ex}');
+            $code .= $l->c('\captionof{figure}{%s}',$caption);
         }
+        $code .= $l->c('\vspace*{-1.3ex}');
+
+        # Align: center, right
+
+        $code = $l->env($align eq 'center'? $align: "flush$align",
+            $code,
+            -nl=>2,
+        );
     }
-    
+
     return $code;
 }
 

@@ -1132,12 +1132,12 @@ sub latex {
 
     # Packages
     
-    $code .= $l->comment(-nl=>2,q|
+    $code .= $l->comment(q|
         ### inputenc: Zeichensatz der LaTeX-Quelldatei ###
     |);
     $code .= $l->c('\usepackage[utf8]{inputenc}',-nl=>2);
 
-    $code .= $l->comment(-nl=>2,q|
+    $code .= $l->comment(q|
         ### babel: Sprache, in der der Text verfasst ist ###
         + Trennregeln
         + Spachspezifische Bezeichnungen wie "Inhaltsverzeichnis" etc.
@@ -1148,44 +1148,48 @@ sub latex {
     }
     $code .= $l->c('\usepackage[%s]{babel}',$language,-nl=>2);
 
-    $code .= $l->comment(-nl=>2,q|
+    $code .= $l->comment(q|
         ### geometry: Einstellen der Seitenmaße ###
     |);
     $code .= $l->c('\usepackage{geometry}');
     if (my $geometry = $self->latexGeometry) {
         $code .= $l->c('\geometry{%s}',$geometry);
+        $code .= "\n";
     }
-    $code .= "\n";
     
-    $code .= $l->comment(-nl=>2,q|
+    $code .= $l->comment(q|
         ### graphicx: Inkludieren von Grafikdateien ###
     |);
     $code .= $l->c('\usepackage{graphicx}',-nl=>2);
 
-    $code .= $l->comment(-nl=>2,q|
+    $code .= $l->comment(q|
         ### longtable: Darstellen von Tabellen ###
         + \LTleft - Default-Linkseinrückung von Tabellen
+        + \LTpost - Weniger Whitespace nach der Tabelle
     |);
     $code .= $l->c('\usepackage{longtable}');
     $code .= $l->c('\setlength{\LTleft}{%sem}',$indent);
     $code .= $l->c('\setlength{\LTpost}{0.4ex}',-nl=>2);
 
-    $code .= $l->comment(-nl=>2,q|
+    $code .= $l->comment(q|
         ### array:  Erweiterungen für array- und tabular-Umgebung ###
         * Zusätzliche Höhe für Tabellenzeilen
     |);
     $code .= $l->c('\usepackage{array}');
-    $code .= $l->c('\setlength{\extrarowheight}{2pt}');
+    $code .= $l->c('\setlength{\extrarowheight}{2pt}',-nl=>2);
 
-    $code .= $l->comment(-nl=>2,q|
-        ### makecell: Spezielle Tabellenköpfe und mehrzeilige Zellen ###
+    $code .= $l->comment(q|
+        ### makecell: Für mehrzeilige Tabellenzellen ###
     |);
     $code .= $l->c('\usepackage{makecell}',-nl=>2);
     
-    $code .= $l->comment(-nl=>2,q|
+    $code .= $l->comment(q|
         ### caption: Verbesserte Beschriftungen ###
         + hypcap: Setzt Anker auf *Anfang* der Gleitumgebung
         + singlelinecheck=off,margin=X.Xem: Linksbündig, Einrücktiefe
+        + font={sf,small}: Serifenloser, kleinerer Font
+        + labelsep=colon,labelfont=bf: Label "Bild X.Y.:" fett hervorheben
+        + skip=1.5ex: Abstand zw. Objekt und Beschriftung
     |);
     @opt = (
         'hypcap',
@@ -1198,26 +1202,27 @@ sub latex {
     );
     $code .= $l->c('\usepackage[%s]{caption}',\@opt,-nl=>2);
 
-    $code .= $l->comment(-nl=>2,q|
-        ### enumitem: Besser konfigurierbare Listen ###
+    $code .= $l->comment(q|
+        ### enumitem: Bessere Listen (itemize, enumerate, description) ###
+        + itemize, enumerate, description
     |);
     $code .= $l->c('\usepackage{enumitem}',-nl=>2);
 
-    $code .= $l->comment(-nl=>2,q|
+    $code .= $l->comment(q|
         ### minted: Syntax-Highlighting von Quellcode ###
     |);
     $code .= $l->c('\usepackage{minted}',-nl=>2);
-    
-    $code .= $l->comment(-nl=>2,q|
+
+    $code .= $l->comment(q|
         Style für das Highlighting von Perl. Für andere Sprachen kann ein
         anderer Style eingestellt werden. Erweiterung hier.
     |);
     $code .= $l->c('\usemintedstyle[perl]{default}',-nl=>2);
 
-    $code .= $l->comment(-nl=>2,q|
+    $code .= $l->comment(q|
         Globale Einstellungen für das Paket minted:
-        + Größe des Font in Verbatim- und minted-Umgebungen
         + Breite des Leerraums zwischen Zeilennummer und Quelltext
+        + Größe des Font in Verbatim- und minted-Umgebungen (optional)
     |);
     @opt = ('numbersep=0.8em');
     if ($self->smallerMonospacedFont) {
@@ -1225,16 +1230,25 @@ sub latex {
     }
     $code .= $l->c('\fvset{%s}',\@opt,-nl=>2);
 
-    $code .= $l->comment(-nl=>2,q|
+    $code .= $l->comment(q|
+        Vertikalen Abstand über und -unterhalb der fancyvrb
+        Verbatim-Umgebung einstellen (gehört alles zu fancyvrb)
+    |);
+    $code .= $l->c('\makeatletter');
+    $code .= $l->c('\FV@AddToHook{\FV@ListParameterHook}{\topsep=%sex'.
+        '\partopsep=%sex\parskip=0ex}',0.7,0.7);
+    $code .= $l->c('\makeatother',-nl=>2);
+
+    $code .= $l->comment(q|
         Anpassung des Aussehens der Zeilennummer:
         + Größe des Zeilennummer-Font
         + Formatierung des Zähler-Werts (diese ändern wir nicht, müssen
-          diese aber angeben, da sonst keine Zeilennummer ausgegeben wird)
+          sie aber mit angeben, da sonst keine Zeilennummer ausgegeben wird)
     |);
     $code .= $l->c('\renewcommand{\theFancyVerbLine}'.
         '{\scriptsize\arabic{FancyVerbLine}}',-nl=>2);
 
-    $code .= $l->comment(-nl=>2,q|
+    $code .= $l->comment(q|
         Wir definieren 8 Längen für die Zeilennummern-Breiten 1 bis 4
         mit und ohne Einrückung.  Eine dieser Längen wählen wir, wenn
         wir einen Code-Abschnitt mit Zeilennummern generieren.
@@ -1251,16 +1265,17 @@ sub latex {
             $code .= $l->c('\addtolength{%s}{%s}',$name,$indent);
         }
     }
+    $code .= "\n";
 
-    $code .= $l->comment(-preNl=>1,-nl=>2,q|
+    $code .= $l->comment(q|
         ### xcolor: Erweiterte Farbangaben ###
-        +  mehr Farbnamen (durch Option dvipsnames)
+        Wir nutzen diese Möglichkeiten in Paket hyperref und longtable.
+        + mehr Farbnamen (durch Option dvipsnames)
         + Angabe von RGB-Werten
-        Wir nutzen diese Möglichkeiten in Paket hyperref.
     |);
     $code .= $l->c('\usepackage[table,dvipsnames]{xcolor}',-nl=>2);
     
-    $code .= $l->comment(-nl=>2,q|
+    $code .= $l->comment(q|
         ### hyperref: Hyperlinks in PDF ###
         Dieses Paket soll laut Doku als letztes Paket geladen werden.
         Wir aktivieren farbigen Text (colorlinks=true) anstelle von
@@ -1269,7 +1284,7 @@ sub latex {
     # Laut Doku als letztes Package inkludieren
     $code .= $l->c('\usepackage{hyperref}',-nl=>2);
 
-    $code .= $l->comment(-nl=>2,q|
+    $code .= $l->comment(q|
         Wir aktivieren farbigen Text (colorlinks=true) anstelle
         von farbigen Boxen. Treten weiter Linktypen auf, erweitern
         wird dies hier.
@@ -1283,10 +1298,10 @@ sub latex {
 
     # Sonstiges
 
-    $code .= $l->comment(-nl=>2,q|
+    $code .= $l->comment(q|
         ### secNumDepth: Tiefe der Abschnittsnumerierung ###
     |);
-    $code .= $l->comment(-nl=>2,q|
+    $code .= $l->comment(q|
         Tiefe, bis zu der Abschnitte numeriert werden. Default seitens
         LaTeX: 3. -2 schaltet die Numerierung ab.
     |);
@@ -1299,14 +1314,12 @@ sub latex {
     }
     $code .= $l->c('\setcounter{secnumdepth}{%s}',$secNumDepth,-nl=>2);
     
-    $code .= $l->comment(-nl=>2,q|
-        Tiefe, bis zu der Abschnitte in das Inhaltsverzeichnis
-        aufgenommen werden. Default seitens LaTeX: 3.
-    |);
     my $toc = $self->tableOfContentsNode;
     if ($toc) {
-        $code .= $l->comment(-nl=>2,q|
+        $code .= $l->comment(q|
             ### tocDepth: Tiefe des Inhaltsverzeichnisses ###
+            Tiefe, bis zu der Abschnitte in das Inhaltsverzeichnis
+            aufgenommen werden. Default seitens LaTeX: 3.
         |);
         my $tocDepth = $toc->maxDepth;
         if ($documentClass =~ /book/) {
@@ -1315,25 +1328,26 @@ sub latex {
         elsif ($documentClass =~ /rep/) {
             $tocDepth -= 1;
         }
-        $code .= $l->c('\setcounter{tocdepth}{%s}',$tocDepth);
+        $code .= $l->c('\setcounter{tocdepth}{%s}',$tocDepth,-nl=>2);
     }
-    $code .= $l->comment(-nl=>2,q|
+    $code .= $l->comment(q|
+        ### Paragraph ###
         + Keine Absatz-Einrückung
         + Vertikaler Absatzabstand
-        + nachlässiges Spacing erlaubt
     |);
     $code .= $l->c('\setlength{\parindent}{0em}');
-    $code .= $l->c('\setlength{\parskip}{%s}',$self->latexParSkip);
+    $code .= $l->c('\setlength{\parskip}{%s}',$self->latexParSkip,-nl=>2);
+
+    $code .= $l->comment(q|
+        ### Sonstiges ###
+        + nachlässiges Spacing erlaubt
+    |);
     $code .= $l->c('\sloppy',-nl=>2);
 
     if ($documentClass =~ /^scr/) {
-        $code .= $l->comment(-nl=>2,q|
-            Umdefinition des Spacing von \paragraph
+        $code .= $l->comment(q|
+            ### Umdefinition von \paragraph ###
         |);
-        @opt = (
-            'afterskip=0.5ex',
-            'beforeskip=-1.5ex',
-        );
         $code .= $l->c('\RedeclareSectionCommand[%s]{paragraph}',
              ['afterskip=0.5ex','beforeskip=-1.5ex'],-nl=>2);
     }
@@ -1347,9 +1361,9 @@ sub latex {
         $date = '\today';
     }
 
-    my $body;
+    my $body = "\n";
     if ($title || $author || $date) {
-        $body .= $l->comment(-nl=>2,q|
+        $body .= $l->comment(q|
             ### Titel ###
         |);
         $body .= $l->c('\title{%s}',$title);

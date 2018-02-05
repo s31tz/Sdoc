@@ -131,7 +131,7 @@ LaTeX-Code (String)
 
 sub latex {
     my ($self,$l) = @_;
-    return $l->c('\newpage');
+    return $l->c('\newpage',-nl=>2);
 }
 
 # -----------------------------------------------------------------------------

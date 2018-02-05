@@ -887,10 +887,10 @@ wir dafür hier eine eigene Methode.
 sub latexTableOfContents {
     my ($self,$l) = @_;
 
-    my $code .= $l->comment(-nl=>2,q|
+    my $code .= $l->comment(q|
         ### Inhaltsverzeichnis ###
     |);
-    $code .= $l->c('{\hypersetup{hidelinks}\tableofcontents}');
+    $code .= $l->c('{\hypersetup{hidelinks}\tableofcontents}',-nl=>2);
 
     return $code;
 }
