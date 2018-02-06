@@ -71,8 +71,8 @@ Codezeile mit sprintf Formatelementen.
 
 =item @args
 
-Argumente, die in den Formatstring eingesetzt werden. Kommt unter
-den Argumenten eine Arrayreferenz vor, wird diese zu einem
+Argumente, die für die Formatelemente in $fmt eingesetzt
+werden. Kommt eine Arrayreferenz vor, wird diese zu einem
 kommaseparierten String expandiert.
 
 =back
@@ -242,7 +242,7 @@ sub ci {
 
 # -----------------------------------------------------------------------------
 
-=head3 macro() - Erzeuge ein TeX macro mit Argumenten
+=head3 macro() - Erzeuge TeX Macro
 
 =head4 Synopsis
 
@@ -254,36 +254,38 @@ sub ci {
 
 =item -nl => $n (Default: 1)
 
-Füge $n Zeilenumbrüche am Ende hinzu.
+I<Newline>, füge $n Zeilenumbrüche am Ende hinzu.
 
 =item -o => $options
 
 =item -o => \@options
 
-Füge eine Optionsliste [...] hinzu. Ein Array wird in eine
+Füge eine Option/Optionsliste [...] hinzu. Ein Array wird in eine
 kommaseparierte Liste von Werten übersetzt.
 
 =item -p => $parameters
 
 =item -p => \@parameters
 
-Füge eine Parameterliste {...} hinzu. Ein Array wird in eine
-kommaseparierte Liste von Werten übersetzt.
+Füge einen Parameter/eine Parameterliste {...} hinzu. Ein Array
+wird in eine kommaseparierte Liste von Werten übersetzt.
 
-=item -preNl => $n (Default: 0)
+=item -pnl => $n (Default: 0)
 
-Setze $n Zeilenumbrüche an den Anfang.
+I<Preceeding newline>, setze $n Zeilenumbrüche an den Anfang.
 
 =back
 
 =head4 Description
 
-Erzeuge ein TeX-Kommando und liefere den resultierenden Code
-zurück.
+Erzeuge ein TeX Macro und liefere den resultierenden Code
+zurück. Diese Methode zeichnet sich gegenüber den Methoden $t->c()
+und $t->ci() dadurch aus, dass undefinierte/leere Optionen und
+Parameter vollständig weggelassen werden.
 
 =head4 Examples
 
-B<Kommando ohne Parameter oder Optionen>
+B<Macro ohne Argumente>
 
     $t->macro('\LaTeX');
 
@@ -291,7 +293,15 @@ produziert
 
     \LaTeX
 
-B<Kommando mit leerer Parameterliste>
+B<Kommando mit undefiniertem Argument>
+
+    $t->macro('\LaTeX',-p=>undef);
+
+produziert
+
+    \LaTeX
+
+B<Macro mit Leerstring-Argument >
 
     $t->macro('\LaTeX',-p=>'');
 
@@ -299,17 +309,16 @@ produziert
 
     \LaTeX{}
 
-B<Kommando mit Parameter>
+B<Macro mit leerer Optionsliste und Parameter>
 
-    $t->macro('\documentclass',
-        -p => 'article',
-    );
+    @opt = ();
+    $t->macro('\documentclass',-o=>\@opt,-p=>'article');
 
 produziert
 
     \documentclass{article}
 
-B<Kommando mit Parameter und Option>
+B<Macro mit Opton und Parameter>
 
     $t->macro('\documentclass',
         -o => '12pt',
@@ -320,7 +329,7 @@ produziert
 
     \documentclass[12pt]{article}
 
-B<Kommando mit Parameter und mehreren Optionen (Variante 1)>
+B<Macro mit Parameter und mehreren Optionen (Variante 1)>
 
     $t->macro('\documentclass',
         -o => 'a4wide,12pt',
@@ -331,10 +340,11 @@ produziert
 
     \documentclass[a4wide,12pt]{article}
 
-B<Kommando mit Parameter und mehreren Optionen (Variante 2)>
+B<Macro mit Parameter und mehreren Optionen (Variante 2)>
 
+    @opt = ('a4wide','12pt');
     $t->macro('\documentclass',
-        -o => ['a4wide','12pt'],
+        -o => \@opt,
         -p => 'article',
     );
 
@@ -352,14 +362,7 @@ sub macro {
     # @_: @args
 
     my $nl = 1;
-    my $preNl = 0;
-
-    if (substr($name,0,1) ne '\\') {
-        $self->throw(
-            q~TEX-00001: Missing initial backslash~,
-            Macro => $name,
-        );
-    }
+    my $pnl = 0;
 
     my $cmd = $name;
     while (@_) {
@@ -375,7 +378,7 @@ sub macro {
             }
             else {
                 $self->throw(
-                    q~LATEX-00001: Illegal reference type~,
+                    q~TEX-00001: Unexpected reference~,
                     RefType => $refType,
                 );
             }
@@ -384,12 +387,12 @@ sub macro {
         # Behandele Parameter und Optionen
 
         if ($opt eq '-p') {
-            # Eine Parameter-Angabe wird immer gesetzt, ggf. leer
+            # Ein Parameter-Wert wird immer gesetzt, ggf. leer
             $val //= '';
             $cmd .= "{$val}";
         }
-        elsif ($opt eq '-preNl') {
-            $preNl = $val;
+        elsif ($opt eq '-pnl') {
+            $pnl = $val;
         }
         elsif ($opt eq '-o') {
             # Eine Options-Angabe entfällt, wenn leer
@@ -408,12 +411,7 @@ sub macro {
         }
     }
 
-    # Behandele Zeilenumbruch
-
-    $cmd = ("\n" x $preNl).$cmd;
-    $cmd .= ("\n" x $nl);
-
-    return $cmd;
+    return ("\n" x $pnl).$cmd.("\n" x $nl);
 }
 
 # -----------------------------------------------------------------------------
@@ -432,7 +430,7 @@ sub macro {
 
 Füge $n Zeilenumbrüche am Ende hinzu.
 
-=item -preNl => $n (Default: 0)
+=item -pnl => $n (Default: 0)
 
 Setze $n Zeilenumbrüche an den Anfang.
 
@@ -465,11 +463,11 @@ sub comment {
     # Optionen
 
     my $nl = 1;
-    my $preNl = 0;
+    my $pnl = 0;
 
     Sdoc::Core::Option->extract(\@_,
         -nl => \$nl,
-        -preNl => \$preNl,
+        -pnl => \$pnl,
     );
 
     # Argumente
@@ -479,7 +477,7 @@ sub comment {
 
     $text = Sdoc::Core::Unindent->trim($text);
     $text =~ s/^/% /mg;
-    $text = ("\n" x $preNl).$text;
+    $text = ("\n" x $pnl).$text;
     $text .= ("\n" x $nl);
     
     return $text;

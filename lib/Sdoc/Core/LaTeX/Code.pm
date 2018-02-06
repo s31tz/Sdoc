@@ -161,11 +161,11 @@ sub env {
 
     my $indent = 0;
     my $nl = 1;
-    my $preNl = 0;
+    my $pnl = 0;
 
     Sdoc::Core::Option->extract(-mode=>'sloppy',\@_,
         -nl => \$nl,
-        -preNl => \$preNl,
+        -pnl => \$pnl,
         -indent => \$indent,
     );
 
@@ -182,7 +182,7 @@ sub env {
         $body =~ s/^/$indent/gm;
     }
     
-    my $code = $self->macro('\begin',-p=>$name,-preNl=>$preNl,@_);
+    my $code = $self->macro('\begin',-p=>$name,-pnl=>$pnl,@_);
     $code .= $body;
     $code .= $self->macro('\end',-p=>$name,-nl=>$nl);
 
