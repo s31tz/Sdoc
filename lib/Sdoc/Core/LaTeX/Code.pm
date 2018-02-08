@@ -133,7 +133,8 @@ sollte in dem Fall mit C<< -indent => 0 >> abgeschaltet werden.
 =head4 Description
 
 Erzeuge eine LaTeX-Umgebung und liefere den resultierenden Code
-zurück.
+zurück. Body $body und @args können in beliebiger Reihenfolge
+auftreten.
 
 =head4 Examples
 
@@ -154,20 +155,30 @@ produziert
 sub env {
     my $self = shift;
     my $name = shift;
-    my $body = shift;
-    # @_: @args
+    # @_: $body,@args
 
     # Optionen, die hier sonderbehandelt werden
 
     my $indent = 0;
     my $nl = 1;
-    my $pnl = 0;
 
     Sdoc::Core::Option->extract(-mode=>'sloppy',\@_,
         -nl => \$nl,
-        -pnl => \$pnl,
         -indent => \$indent,
     );
+
+    # Body ermitteln. Wir fügen alle Argumente ohne Option
+    # zu dem Body zusammen.
+
+    my $body;
+    for (my $i = 0; $i < @_; $i++) {
+        if (defined($_[$i]) && $_[$i] =~ /^-(o|p|pnl)$/) {
+            # Optionen, die wir weiterleiten, übergehen
+            $i++;
+            next;
+        }
+        $body .= splice @_,$i--,1;
+    }
 
     # Umgebung erzeugen
 
@@ -182,7 +193,7 @@ sub env {
         $body =~ s/^/$indent/gm;
     }
     
-    my $code = $self->macro('\begin',-p=>$name,-pnl=>$pnl,@_);
+    my $code = $self->macro('\begin',-p=>$name,@_);
     $code .= $body;
     $code .= $self->macro('\end',-p=>$name,-nl=>$nl);
 

@@ -85,6 +85,10 @@ kommaseparierten String expandiert.
 
 Beende den Code mit $n Zeilenumbrüchen.
 
+=item -pnl => $n (Default: 0)
+
+Beginne den Code mit $n Zeilenumbrüchen.
+
 =back
 
 =head4 Returns
@@ -129,41 +133,28 @@ sub c {
     my $fmt = shift;
     # @_: @args,@opts
 
-    if (!defined $fmt) {
-        warn "WARNING: Format undefined: @_\n";
-    }
-
     # Optionen
 
     my $nl = 1;
+    my $pnl = 0;
 
     Sdoc::Core::Option->extract(\@_,
         -nl => \$nl,
+        -pnl => \$pnl,
     );
 
     # Arrayreferenz zu kommasepariertem String expandieren
 
     for (@_) {
-        if (!defined) {
-            warn "WARNING: Macro with undefined argument: @_\n";
-        }
-
         my $type = Scalar::Util::reftype($_);
         if (defined($type) && $type eq 'ARRAY') {
             $_ = join ',',@$_;
         }
     }
 
-    # Codezeile erzeugen
+    # Codezeile erzeugen und zurückliefern
 
-    if ($fmt =~ tr/%// > @_) {
-        warn "WARNING: Missing argument: $fmt | @_\n";
-    }
-
-    my $cmd = sprintf $fmt,@_;
-    $cmd .= ("\n" x $nl);
-
-    return $cmd;
+    return ("\n" x $pnl).sprintf($fmt,@_).("\n" x $nl);
 }
 
 # -----------------------------------------------------------------------------

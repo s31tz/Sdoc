@@ -510,8 +510,8 @@ L{+G - Inline-Grafik}.
 
 === Segmente
 
-In der Beschriftung (C{caption} einer Abbildung können alle Segmente (siehe
-Abschnitt L{+Syntax/Segment}) verwendet werden:
+In der Beschriftung (C{caption}) einer Abbildung können alle Segmente
+(siehe Abschnitt L{+Syntax/Segment}) verwendet werden:
 
   A, B, C, G, I, L, M, Q
 
