@@ -82,6 +82,11 @@ Beschriftung der Tabelle. Diese erscheint unter der Tabelle.
 
 Array mit den in Zellen vorkommenden Formeln (M-Segmente).
 
+=item noIndentation => $bool (Default: 0)
+
+Rücke die Tabelle nicht ein. Das Attribut ist nur bei C<< align =>
+'left' >> von Bedeutung.
+
 =item linkA => \@links
 
 Array mit Informationen über die in Zellen vorkommenden Links
@@ -183,6 +188,7 @@ sub new {
         graphicA => [],
         linkA => [],
         linkId => undef,
+        noIndentation => 0,
         number => ++$tableNumber,
         text => undef,
         titleColor => 'e8e8e8',
@@ -287,6 +293,8 @@ LaTeX-Code (String)
 sub latex {
     my ($self,$l) = @_;
 
+    my $root = $self->root;
+
     my $atb = $self->asciiTable;
 
     my $border = $self->border;
@@ -295,12 +303,15 @@ sub latex {
     }
 
     return Sdoc::Core::LaTeX::LongTable->latex($l,
+        align => 'l',
         alignments => scalar $atb->alignments,
         border => $border,
         callbackArguments => [$self],
         caption => $self->latexText($l,'captionS'),
+        indent => $self->noIndentation? undef: $root->indentation.'em',
         label => $self->linkId,
         multiLine => $atb->multiLine,
+        # postVSpace => '-1.5ex',
         rows => scalar $atb->rows,
         rowCallback => sub {
             my ($self,$l,$row,$n,$node) = @_;

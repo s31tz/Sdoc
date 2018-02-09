@@ -722,7 +722,7 @@ expandiert und die LaTeX-Metazeichen geschützt wurden. Dieser Wert
 sub latexText {
     my ($self,$l,$arg) = @_;
 
-    my $doc = $self->root;
+    my $root = $self->root;
 
     # Ersetze die gewandelten Sdoc-Segmente durch LaTeX-Konstrukte
 
@@ -741,7 +741,7 @@ sub latexText {
         }
         elsif ($seg eq 'C') {
             if ($self->type eq 'Paragraph') {
-                if ($self->root->smallerMonospacedFont) {
+                if ($root->smallerMonospacedFont) {
                     return sprintf '\texttt{\small %s}',$val;
                 }
                 return sprintf '\texttt{%s}',$val;
@@ -763,19 +763,26 @@ sub latexText {
                 # unverändert.
                 return sprintf 'G\{%s\}',$val;
             }
-
             my ($name,$gph) = @{$self->graphicA->[$val]};
             if ($gph) {
                 my $type = $self->type;
                 if ($type =~ /^(BridgeHead|Section)$/ ||
                         $arg eq 'captionS') {
-                    $code = '\protect';
+                    $code .= '\protect';
                 }
-                $code .= $gph->latexIncludeGraphics($l,0);
-                #if ($type eq 'Item' && $code =~ tr/[//) {
-                #    # Im Definitionsterm müssen wir Group-Klammern setzen
-                #    $code = "{$code}";
-                #}
+                my @opt = split /,/,$gph->latexOptions // '';
+                if (my $scale = $gph->scale) {
+                    push @opt,"scale=$scale";
+                }
+                $code .= $l->c('\includegraphics[%s]{%s}',
+                    \@opt,
+                    $root->expandPlus($gph->file),
+                    -nl => 0,
+                );
+                if ($type eq 'Item' && $code =~ tr/[//) {
+                    # Im Definitionsterm müssen wir Group-Klammern setzen
+                    $code = "{$code}";
+                }
             }
             else {
                 $code = sprintf 'G\{%s\}',$name;
@@ -805,7 +812,7 @@ sub latexText {
                 $code = $l->ci('\hyperref[%s]{%s}',$linkId,
                     $l->protect($h->text));
                 if ($h->attribute eq '+') {
-                    $code .= $doc->language eq 'german'?
+                    $code .= $root->language eq 'german'?
                         ' auf Seite~': ' on page~';
                     $code .= $l->ci('\pageref{%s}',$linkId);
                 }
@@ -886,13 +893,7 @@ wir dafür hier eine eigene Methode.
 
 sub latexTableOfContents {
     my ($self,$l) = @_;
-
-    my $code .= $l->comment(q|
-        ### Inhaltsverzeichnis ###
-    |);
-    $code .= $l->c('{\hypersetup{hidelinks}\tableofcontents}',-nl=>2);
-
-    return $code;
+    return $l->c('{\hypersetup{hidelinks}\tableofcontents}',-nl=>2);
 }
 
 # -----------------------------------------------------------------------------

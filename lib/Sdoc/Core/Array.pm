@@ -7,7 +7,7 @@ use utf8;
 
 our $VERSION = 1.124;
 
-use Sdoc::Core::Perl;
+use Sdoc::Core::Reference;
 use Sdoc::Core::Math;
 
 # -----------------------------------------------------------------------------
@@ -504,7 +504,7 @@ sub select {
     my $test = CORE::shift;
 
     my @arr;
-    if (Sdoc::Core::Perl->isCodeRef($test)) {
+    if (Sdoc::Core::Reference->isCodeRef($test)) {
         for (@$arr) {
             CORE::push @arr,$_ if $test->($_);
         }

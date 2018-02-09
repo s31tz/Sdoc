@@ -6,6 +6,8 @@ use warnings;
 
 our $VERSION = 0.01;
 
+use Sdoc::Core::LaTeX::Figure;
+
 # -----------------------------------------------------------------------------
 
 =encoding utf8
@@ -35,15 +37,24 @@ Horizontale Ausrichtung des Bildes.
 
 =item anchor => $anchor (Default: undef)
 
-Anker der Grafik.
+Anker der Abbildung.
 
 =item anchorA => \@anchors (memoize)
 
 Anker-Pfad der Grafik.
 
+=item border => $bool (Default: 0)
+
+Zeichne einen Rahmen um die Abbildung.
+
+=item borderMargin => $length (Default: '0mm')
+
+Zeichne den Rahmen (Attribut C<border>) mit dem angegebenen
+Abstand um die Abbildung.
+
 =item caption => $text
 
-Beschriftung der Grafik. Diese erscheint unter der Grafik.
+Beschriftung der Abbldung. Diese erscheint unter der Abbildung.
 
 =item definition => $bool (Default: I<kontextabhängig>)
 
@@ -56,10 +67,6 @@ C<name> definiert, ist der Default 1, andernfalls 0.
 
 Pfad der Bilddatei. Beginnt der Pfad mit C<+/>, wird das
 Pluszeichen zum Pfad des Dokumentverzeichnisses expandiert.
-
-=item latexFloat => $bool (Default: 0)
-
-Setze die Grafik in eine LaTeX C<figure> Umgebung.
 
 =item latexOptions => $str
 
@@ -76,6 +83,11 @@ Zielformat.
 Name der Grafik. Ein Name muss angegeben sein, wenn die Grafik von
 einem G-Segment referenziert wird. Ist ein Name gesetzt, ist der
 Default für das Attribut C<definition> 1, sonst 0.
+
+=item noIndentation => $bool (Default: 0)
+
+Rücke die Grafik nicht ein. Das Attribut ist nur bei C<< align =>
+'left' >> von Bedeutung.
 
 =item scale => $factor
 
@@ -154,13 +166,15 @@ sub new {
     my $self = $class->SUPER::new('Graphic',$variant,$root,$parent,
         align => 'left',
         anchor => undef,
+        border => 0,
+        borderMargin => '0mm',
         caption => undef,
         captionS => undef,
         definition => undef,
         file => undef,
         formulaA => [],
         graphicA => [],
-        latexFloat => 0,
+        noIndentation => 0,
         latexOptions => undef,
         linkA => [],
         linkId => undef,
@@ -245,116 +259,22 @@ sub latex {
 
     my $root = $self->root;
 
-    my $code = '';
     if ($self->definition) {
-        # Wenn der Grafik-Knoten als Deklaration gekennzeichnet ist
-        # (definition=1), generieren wir keinen Code.
-        $code = '';
-    }
-    elsif ($self->latexFloat) {
-        $code .= $l->c('\begin{figure}[h]');
-        my $align = $self->align;
-        if ($align eq 'left') {
-            $code .= $l->ci('\hspace*{%sem}',$root->indentation);
-        }
-        elsif ($align eq 'center') {
-            $code .= '\centering';
-        }
-        $code .= $self->latexIncludeGraphics($l,1);
-        if (my $caption = $self->latexText($l,'captionS')) {
-            $code .= $l->ci('\captionsetup{skip=1.5ex}');
-            $code .= $l->c('\caption{%s}',$caption);
-        }
-        if (my $linkId = $self->linkId) {
-            $code .= $l->c('\label{%s}',$linkId);
-        }
-        $code .= $l->c('\vspace*{-2ex}');
-        $code .= $l->c('\end{figure}');
-        $code .= "\n";
-    }
-    else {
-        my $indent = $root->indentation;
-
-        $code .= $l->c('\vspace*{-0.5ex}');
-        if (my $linkId = $self->linkId) {
-            $code .= $l->c('\label{%s}',$linkId);
-        }
-
-        # Align: left
-
-        my $align = $self->align;
-        if ($align eq 'left') {
-            $code .= $l->ci('\hspace*{%sem}',$indent);
-        }
-
-        # Grafik
-        $code .= $self->latexIncludeGraphics($l,1);
-
-        # Bildunterschrift
-
-        if (my $caption = $self->latexText($l,'captionS')) {
-            # $code .= $l->c('\vspace*{-0.1ex}');
-            $code .= $l->c('\captionof{figure}{%s}',$caption);
-        }
-        $code .= $l->c('\vspace*{-1.3ex}');
-
-        # Align: center, right
-
-        $code = $l->env($align eq 'center'? $align: "flush$align",
-            $code,
-            -nl=>2,
-        );
+        return '';
     }
 
-    return $code;
-}
-
-# -----------------------------------------------------------------------------
-
-=head3 latexIncludeGraphics() - Generiere LaTeX-Code für \includegraphics
-
-=head4 Synopsis
-
-    $code = $gph->latexIncludeGraphics($gen,$n);
-
-=head4 Arguments
-
-=over 4
-
-=item $gen
-
-Generator für das Zielformat.
-
-=item $n
-
-Anzahl der Zeilenumbrüche am Ende des Konstrukts.
-
-=back
-
-=head4 Returns
-
-LaTeX-Code (String)
-
-=cut
-
-# -----------------------------------------------------------------------------
-
-sub latexIncludeGraphics {
-    my ($self,$l,$n) = @_;
-
-    # Optionen. Wir fügen scale=$scale zu den includegraphics-Optionen
-    # hinzu, wenn dort noch kein Skalierungsfaktor angegeben ist.
-
-    my @opt = split /,/,$self->latexOptions // '';
-    if ((my $scale = $self->scale) && !grep(/scale/,@opt)) {
-        push @opt,"scale=$scale";
-    }
-
-    return $l->c('\includegraphics[%s]{%s}',
-        \@opt,
-        $self->root->expandPlus($self->file),
-        -nl => $n,
-    );
+    return Sdoc::Core::LaTeX::Figure->latex($l,
+        align => substr($self->align,0,1),
+        border => $self->border,
+        borderMargin => $self->borderMargin,
+        caption => $self->latexText($l,'captionS'),
+        file => $root->expandPlus($self->file),
+        indent => $self->noIndentation? undef: $root->indentation.'em',
+        label => $self->linkId,
+        options => $self->latexOptions,
+        # postVSpace => '-1.5ex',
+        scale => $self->scale,
+    )."\n";
 }
 
 # -----------------------------------------------------------------------------

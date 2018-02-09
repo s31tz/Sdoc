@@ -53,7 +53,6 @@ produziert
     \hline
     \multicolumn{3}{r}{\emph{weiter}} \
     \endfoot
-    \captionsetup{skip=1ex}
     \caption{Ein Test}
     \endlastfoot
     A & 1 & AB \\ \hline
@@ -92,10 +91,10 @@ was im LaTeX-Dokument in etwa so aussieht
 
 =over 4
 
-=item align => $align
+=item align => $align (Default: 'c')
 
 Horizontale Ausrichtung der Tabelle auf der Seite. Mögliche Werte:
-'l', 'r', 'c'.
+'l', 'c'.
 
 =item alignments => \@alignments (Default: [])
 
@@ -115,6 +114,11 @@ C<rowCallback> und C<titleCallback> übergeben werden.
 =item caption => $str
 
 Unterschrift zur Tabelle.
+
+=item indent => $length
+
+Einrückung der Tabelle vom linken Rand. Die Option C<align> darf
+dann nicht gesetzt sein, auch nicht auf 'l'.
 
 =item label => $str
 
@@ -198,14 +202,16 @@ sub new {
     # @_: @keyval
 
     my $self = $class->SUPER::new(
-        align => undef,
+        align => 'c',
         alignments => [],
         border => undef,
         callbackArguments => [],
         caption => undef,
+        indent => undef,
         label => undef,
         language => 'german',
         multiLine => undef,
+        postVSpace => undef,
         rows => [],
         rowCallback => sub {
             my ($self,$l,$row,$n) = @_;
@@ -257,11 +263,11 @@ sub latex {
 
     my $self = ref $this? $this: $this->new(@_);
 
-    my ($align,$alignA,$border,$cbArguments,$caption,$label,$language,
-        $multiLine,$rowA,$rowCb,$titleColor,$titleWrapper,$titleA,$titleCb) =
-        $self->get(qw/align alignments border callbackArguments caption label
-        language multiLine rows rowCallback titleColor titleWrapper titles
-        titleCallback/);
+    my ($align,$alignA,$border,$cbArguments,$caption,$indent,$label,$language,
+        $multiLine,$postVSpace,$rowA,$rowCb,$titleColor,$titleWrapper,
+        $titleA,$titleCb) = $self->get(qw/align alignments border
+        callbackArguments caption indent label language multiLine postVSpace
+        rows rowCallback titleColor titleWrapper titles titleCallback/);
 
     if (!@$titleA && !@$rowA) {
         return '';
@@ -343,7 +349,16 @@ sub latex {
     # \endlastfoot
 
     if ($caption) {
-        $body .= $l->c('\captionsetup{skip=1ex}');
+        my @opt;
+        if ($align ne 'c') {
+            push @opt,'singlelinecheck=off';
+            if ($indent) {
+                push @opt,"margin=$indent";
+            }
+        }
+        if (@opt) {
+            $body .= $l->c('\captionsetup{%s}',\@opt);
+        }
         $body .= $l->c('\caption{%s}',$caption);
     }
     $body .= "\\endlastfoot\n";
@@ -367,6 +382,14 @@ sub latex {
         $body .= $line;
     }
 
+    # Einrückung
+
+    my $code;
+    if ($align ne 'c' && $indent) {
+        $code .= $l->c('\setlength{\LTleft}{%s}',$indent);
+        $align = undef; # darf nicht gesetzt werden, wenn \LTleft
+    }
+
     # Environment
 
     my $colSpec = join $vBorder? '|': '',@$alignA;
@@ -374,10 +397,16 @@ sub latex {
         $colSpec = "|$colSpec|";
     }
 
-    return $l->env('longtable',$body,
+    $code .= $l->env('longtable',$body,
         -o => $align,
         -p => $colSpec,
     );
+
+    if (my $postVSpace = $self->postVSpace) {
+        $code .= $l->c('\vspace{%s}','--',$postVSpace);
+    }
+
+    return $code;
 }
 
 # -----------------------------------------------------------------------------

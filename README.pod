@@ -2,7 +2,7 @@
 
 =head1 NAME
 
-Sdoc - Sprache für Druck- und Online-Dokumente
+Sdoc - Metasprache für Druck- und Online-Dokumente
 
 =head1 DESCRIPTION
 
@@ -17,9 +17,6 @@ Die Druck-Fassung wird von LaTeX gesetzt und besitzt eine entsprechend
 hohe Qualität für die Wiedergabe auf Papier. In einem PDF-Viewer kann
 die Druck-Fassung auch interaktiv genutzt werden, da sie mit
 Hyperlinks versehen ist.
-
-B<HINWEIS: Sdoc befindet sich aktuell in Entwicklung und ist für einen
-ernsthaften Einsatz noch nicht geeignet.>
 
 =head1 AUTHOR
 

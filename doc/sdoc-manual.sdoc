@@ -38,14 +38,17 @@ Abschnitt L{+Dieses Dokument übersetzen} beschrieben.
 
 == Sdoc
 
-%Code: load="+/sdoc-example.sdoc" filter="grep -av geometry" ln=1
+%Code: load="+/sdoc-example.sdoc" filter="grep -avi geometry" ln=1
 
 == PDF
 
 %Graphic:
-  file="+/sdoc-example"
-  latexOptions="clip,trim=0cm 0.5cm 0cm 0cm,width=1.0\textwidth"
   align="center"
+  border=1
+  borderMargin=2mm
+  file="+/sdoc-example"
+  noIndentation=1
+  latexOptions="clip,trim=0cm 3.9cm 0cm 0cm,width=0.95\textwidth"
 
 ---PageBreak---
 
@@ -194,7 +197,8 @@ verwendet werden:
   Anker des Dokuments.
   
 [author]:
-  Der Autor des Dokuments.
+  Der Autor des Dokuments. Wenn gesetzt, wird eine Titelseite bzw.
+  ein Titelabschnitt erzeugt.
 
 [copyComments]:
   Kopiere Sdoc-Kommentare in den Quelltext des Zielformats. Dies ist
@@ -202,8 +206,9 @@ verwendet werden:
   finden, die aus einem bestimmten Sdoc-Konstrukt hervorgegangen ist.
 
 [date]:
-  Das Datum des Dokuments. Formatelemente der Funktion strftime(3)
-  werden expandiert. Spezielle Wert sind:
+  Das Datum des Dokuments. Wenn gesetzt, wird eine Titelseite bzw.
+  ein Titelabschnitt erzeugt. Formatelemente von strftime werden
+  expandiert. Spezielle Werte:
 
   ['today']:
     Wird unter LaTeX ersetzt zu: C{\today}, sonst C{%d. %B %Y}
@@ -255,7 +260,8 @@ verwendet werden:
   keinen TableOfContents-Block enthält.
 
 [title]:
-  Der Titel des Dokuments.
+  Der Titel des Dokuments. Wenn gesetzt, wird eine Titelseite bzw.
+  ein Titelabschnitt erzeugt.
 
 ---PageBreak---
 
@@ -497,13 +503,48 @@ oder anderen Block-Elementen.
 
   %Graphic:
     file="+/sdoc-graphic-illusion"
-    scale=0.5
+    scale=0.2
 
 produziert:
 
 %Graphic:
   file="+/sdoc-graphic-illusion"
-  scale=0.5
+  scale=0.2
+
+Per Default wird die Abbildung linksseitig mit der Einrückung
+C{indentation} (siehe Abschnitt L{+Dokument}) gesetzt. Die Einrückung
+wird weggelassen wenn das Attribut C{noIndentation=1} gesetzt ist.
+Mit C{align=center} kann die Abbildung auch mittig gesetzt werden.
+
+  %Graphic:
+    align=center
+    file="+/sdoc-graphic-illusion"
+    scale=0.2
+
+produziert:
+
+%Graphic:
+  align=center
+  file="+/sdoc-graphic-illusion"
+  scale=0.2
+
+Eine Abbildung kann durch Setzen des Attributs C{caption} mit einer
+Beschriftung versehen werden. Das Setzen des Attributs C{border}
+auf 1, fügt einen Rahmen hinzu.
+
+  %Graphic:
+    file="+/sdoc-graphic-illusion"
+    scale=0.2
+    caption=Illusion
+    border=1
+
+produziert:
+
+%Graphic:
+  file="+/sdoc-graphic-illusion"
+  scale=0.2
+  caption=Illusion
+    border=1
 
 Für eine Grafik, die I{im Textfluss} erscheinen soll, siehe Abschnitt
 L{+G - Inline-Grafik}.
@@ -520,12 +561,14 @@ In der Beschriftung (C{caption}) einer Abbildung können alle Segmente
   %Graphic:
     align=left|center|right
     anchor=STRING
+    border=BOOL
+    borderMargin=LENGTH
     caption=STRING
     definition=BOOL
     file=PATH
-    latexFloat=BOOL
     latexOptions=STRING
     name=STRING
+    noIndentation=BOOL
     scale=FLOAT
 
 [align]:
@@ -534,6 +577,13 @@ In der Beschriftung (C{caption}) einer Abbildung können alle Segmente
 
 [anchor]:
   Anker der Grafik.
+
+[border]:
+  (Default: 0) Zeichne einen Rahmen um die Abbildung.
+
+[borderMargin]:
+  (Default: 0mm) Zeichne den Rahmen (Attribut C{border}) mit dem
+  angegebenen Abstand um die Abbildung.
 
 [caption]:
   Beschriftung der Grafik. Diese erscheint unter der Grafik.
@@ -548,9 +598,6 @@ In der Beschriftung (C{caption}) einer Abbildung können alle Segmente
   Pfad der Bilddatei. Beginnt der Pfad mit C{+/}, wird das
   Pluszeichen zum Pfad des Dokumentverzeichnisses expandiert.
 
-[latexFloat]:
-  (Default: 0) Setze die Grafik in eine LaTeX C{figure} Umgebung.
-
 [latexOptions]:
   LaTeX-spezifische Optionen, die direkt an das LaTeX-Makro
   C{\includegraphics} übergeben werden.
@@ -559,6 +606,10 @@ In der Beschriftung (C{caption}) einer Abbildung können alle Segmente
   Name der Grafik. Ein Name muss angegeben sein, wenn die Grafik von
   einem G-Segment referenziert wird. Ist ein Name gesetzt, ist der
   Default für das Attribut C{definition} 1, sonst 0.
+
+[noIndentation]:
+  Rücke die Grafik nicht ein. Das Attribut ist nur bei C{align=left}
+  von Bedeutung.
 
 [scale]:
   Skalierungsfaktor. Im Falle von LaTeX wird dieser zu den
@@ -1126,6 +1177,10 @@ Q{Dies ist ein Zitat}
 [caption]:
   Die Beschriftung der Tabelle. Diese erscheint unter der Tabelle.
 
+[noIndentation]:
+  Rücke die Grafik nicht ein. Das Attribut ist nur bei C{align=left}
+  von Bedeutung.
+
 [titleColor=RGB]:
   (Default: 'e8e8e8') Die Farbe der Titelzeile. Der Wert wird als RGB-Wert
   angegeben.
@@ -1135,14 +1190,7 @@ Q{Dies ist ein Zitat}
 In LaTeX ist die Tabelle als C{longtable} realisiert. Diese setzen
 wir, abweichend vom Default-Setup, linksbündig mit einer Einrückung,
 so dass sie mit anderen Konstrukten wie L{List}, L{Code}, L{Graphic}
-gleichtief eingerückt ist. Ferner reduzieren wir den Leerraum nach
-der Tabelle.
-
-%Code: lang=Latex
-  \usepackage{longtable}
-  \setlength{\LTleft}{1.3em}
-  \setlength{\LTpost}{0.4ex}
-.
+gleichtief eingerückt ist.
 
 ---PageBreak---
 
