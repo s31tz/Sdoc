@@ -3,7 +3,7 @@
   author="L{http://google.com}, M~c=\sqrt{a^2+b^2}~, G{Invader}"
   date="now"
   latexDocumentClass="scrreprt"
-# indentation=3
+  latexShowFrames=1
 
 %Graphic:
   name="Invader"

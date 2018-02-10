@@ -476,6 +476,67 @@ sub comment {
 
 # -----------------------------------------------------------------------------
 
+=head3 modifyLength() - Wende Berechnung auf Länge an
+
+=head4 Synopsis
+
+    $newLength = $l->modifyLength($length,$expr);
+
+=head4 Arguments
+
+=over 4
+
+=item $length
+
+Eine einfache TeX-Länge. Beispiel: '1ex'.
+
+=item $expr
+
+Ein arithmetischer Ausdruck, der auf den Zahlenwert der Länge
+angewendet wird. Beispiel: '*2' (multipliziere Länge mit 2).
+
+=back
+
+=head4 Returns
+
+TeX-Länge (String)
+
+=head4 Description
+
+Wende den arithmetischen Ausdruck $expr auf TeX-Länge $length an
+und liefere das Resultat zurück. Leerstring oder C<undef> werden
+unverändert geliefert.
+
+=head4 Example
+
+    $l->modifyLength('1.5ex','*1.5');
+    # 2.25ex
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub modifyLength {
+    my ($self,$length,$expr) = @_;
+
+    if (defined($length) && $length ne '') {
+        my ($len,$unit) = $length =~ /^([\d.]+)([a-z]+)$/;
+        my $expr = "$len$expr";
+        $len = eval $expr;
+        if ($@) {
+            $self->throw(
+                q~TEX-00001: Illegal expression~,
+                Expression => $expr,
+            );
+        }
+        $length = "$len$unit";
+    }
+
+    return $length;
+}
+
+# -----------------------------------------------------------------------------
+
 =head1 VERSION
 
 1.124

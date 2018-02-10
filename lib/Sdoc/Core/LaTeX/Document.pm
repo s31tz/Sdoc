@@ -127,11 +127,11 @@ Die Elemente sind Schlüssel/Wert-Paare der Art:
 
 Die Größe des Papiers, die die das Dokument gesetzt wird.
 
-=item parindent => $length (Default: undef)
+=item parIndent => $length (Default: undef)
 
 Tiefe der Absatzeinrückung.
 
-=item parskip => $length (Default: undef)
+=item parSkip => $length (Default: undef)
 
 Vertikaler Abstand zwischen Absätzen.
 
@@ -190,8 +190,8 @@ sub new {
         language => 'ngerman',
         packages => [],
         paperSize => 'a4paper',
-        parindent => '0em',
-        parskip => '0.5ex',
+        parIndent => '0em',
+        parSkip => '0.5ex',
         preamble => '', # kann Skalar oder Array-Referenz sein
         preComment => undef,
         secNumDepth => undef,
@@ -231,10 +231,10 @@ sub latex {
     my $self = ref $this? $this: $this->new(@_);
 
     my ($author,$body,$compactCode,$date,$documentClass,$encoding,$fontSize,
-        $geometry,$language,$packageA,$paperSize,$parindent,$parskip,
+        $geometry,$language,$packageA,$paperSize,$parIndent,$parSkip,
         $preamble,$preComment,$secNumDepth,$title,$tocDepth) =
         $self->get(qw/author body compactCode date documentClass encoding
-        fontSize geometry language packages paperSize parindent parskip
+        fontSize geometry language packages paperSize parIndent parSkip
         preamble preComment secNumDepth title tocDepth/);
 
     my @pnl = $compactCode? (): (-pnl=>1);
@@ -331,11 +331,11 @@ sub latex {
 
     # Paragraph-Eigenschaften
 
-    if ($parindent) {
-        $code .= $l->c('\setlength{\parindent}{%s}',$parindent,@pnl);
+    if ($parIndent) {
+        $code .= $l->c('\setlength{\parindent}{%s}',$parIndent,@pnl);
     }
-    if ($parskip) {
-        $code .= $l->c('\setlength{\parskip}{%s}',$parskip);
+    if ($parSkip) {
+        $code .= $l->c('\setlength{\parskip}{%s}',$parSkip);
     }
 
     # Dokument-Rumpf

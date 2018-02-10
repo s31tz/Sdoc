@@ -311,7 +311,7 @@ sub latex {
         indent => $self->noIndentation? undef: $root->indentation.'em',
         label => $self->linkId,
         multiLine => $atb->multiLine,
-        # postVSpace => '-1.5ex',
+        postVSpace => $l->modifyLength($root->latexParSkip,'*-2'),
         rows => scalar $atb->rows,
         rowCallback => sub {
             my ($self,$l,$row,$n,$node) = @_;

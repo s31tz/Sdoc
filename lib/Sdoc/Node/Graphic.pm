@@ -272,7 +272,7 @@ sub latex {
         indent => $self->noIndentation? undef: $root->indentation.'em',
         label => $self->linkId,
         options => $self->latexOptions,
-        # postVSpace => '-1.5ex',
+        postVSpace => $l->modifyLength($root->latexParSkip,'*-2'),
         scale => $self->scale,
     )."\n";
 }

@@ -2,11 +2,6 @@
   title="Sdoc"
   author="Frank Seitz, L{http://fseitz.de/}"
   date="today"
-  sectionNumberDepth=3
-  latexFontSize=10pt
-  latexDocumentClass=scrartcl
-  latexPaperSize=a4paper
-  latexParSkip=0.5ex
 
 %TableOfContents:
   maxDepth=4
@@ -165,6 +160,7 @@ Dokument-Bock angegeben:
     latexGeometry=STRING
     latexPaperSize=PAPERSIZE
     latexParSkip=LENGTH
+    latexShowFrames=BOOL
     quiet=BOOL
     sectionNumberDepth=0|1|2|3|4|5
     smallerMonospacedFont=BOOL
@@ -243,6 +239,10 @@ verwendet werden:
 
 [latexParSkip]:
   (Default: '0.5ex') Vertikaler Abstand zwischen Absätzen.
+
+[latexShowFrames]:
+  (Default: 0) Zeichne den Text-, Kopfzeilen-, Fußzeilen- und
+  Kommentarbereich in die Seiten ein. Dies ist eine Debugging-Option.
 
 [quiet]:
   (Default: 0) Gib keine Warnungen aus.
