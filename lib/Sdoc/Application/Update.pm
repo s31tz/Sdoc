@@ -4,7 +4,7 @@ use base qw/Sdoc::Core::Program/;
 use strict;
 use warnings;
 
-our $VERSION = 0.01;
+our $VERSION = 3.00;
 
 use Sdoc::Core::Shell;
 use Sdoc::Core::Path;
@@ -97,7 +97,7 @@ sub main {
 
 =head1 VERSION
 
-0.01
+3.00
 
 =head1 AUTHOR
 

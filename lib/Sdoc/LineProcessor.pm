@@ -4,7 +4,7 @@ use base qw/Sdoc::Core::LineProcessor/;
 use strict;
 use warnings;
 
-our $VERSION = 0.01;
+our $VERSION = 3.00;
 
 use Sdoc::Core::LineProcessor::Line;
 use Sdoc::Core::Option;
@@ -596,7 +596,7 @@ sub sectionLevel {
 
 =head1 VERSION
 
-0.01
+3.00
 
 =head1 AUTHOR
 

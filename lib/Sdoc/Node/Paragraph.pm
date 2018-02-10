@@ -4,7 +4,7 @@ use base qw/Sdoc::Node/;
 use strict;
 use warnings;
 
-our $VERSION = 0.01;
+our $VERSION = 3.00;
 
 # -----------------------------------------------------------------------------
 
@@ -186,7 +186,7 @@ sub latex {
 
 =head1 VERSION
 
-0.01
+3.00
 
 =head1 AUTHOR
 

@@ -4,7 +4,7 @@ use base qw/Sdoc::Core::Object/;
 use strict;
 use warnings;
 
-our $VERSION = 0.01;
+our $VERSION = 3.00;
 
 use Sdoc::Node::BridgeHead;
 use Sdoc::Node::Code;
@@ -180,7 +180,7 @@ sub parse {
 
 =head1 VERSION
 
-0.01
+3.00
 
 =head1 AUTHOR
 

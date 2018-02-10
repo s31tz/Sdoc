@@ -4,7 +4,7 @@ use base qw/Sdoc::Core::Hash/;
 use strict;
 use warnings;
 
-our $VERSION = 0.01;
+our $VERSION = 3.00;
 
 use Scalar::Util ();
 use Sdoc::Core::LaTeX::Code;
@@ -968,7 +968,7 @@ sub latexLevelToSectionName {
 
 =head1 VERSION
 
-0.01
+3.00
 
 =head1 AUTHOR
 
