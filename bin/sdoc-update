@@ -9,6 +9,8 @@ use Sdoc::Core::Program;
 
 # -----------------------------------------------------------------------------
 
+=encoding utf8
+
 =head1 NAME
 
 sdoc-update - Aktualisiere Sdoc Exportverzeichnis
@@ -20,6 +22,11 @@ sdoc-update [OPTIONS] DIR
 =head1 OPTIONS
 
 =over 4
+
+=item --force[=BOOL] (Default: 0)
+
+Forciere die Aktualisierung unabhängig von tatsächlichen
+Änderungen.
 
 =item --help|-h
 

@@ -45,6 +45,7 @@ sub main {
     # Optionen und Argumente
 
     my ($error,$opt,$argA) = $self->options(
+        -force => 0,
         -help => 0,
     );
     if ($error) {
@@ -70,7 +71,7 @@ sub main {
 
     my $srcFile = 'doc/sdoc-example.sdoc';
     my $destFile = 'doc/sdoc-example.pdf';
-    if (Sdoc::Core::Path->newer($srcFile,$destFile)) {
+    if ($opt->force || Sdoc::Core::Path->newer($srcFile,$destFile)) {
         $sh->exec("sdoc pdf $srcFile --output=$destFile --shell-escape");
         $sh->exec("mv $destFile $destFile.tmp");
         $sh->exec("pdfcrop $destFile.tmp $destFile");
@@ -86,7 +87,7 @@ sub main {
 
     $srcFile = 'doc/sdoc-test.sdoc';
     $destFile = 'doc/sdoc-test.pdf';
-    if (Sdoc::Core::Path->newer($srcFile,$destFile) || $createManual) {
+    if ($opt->force || Sdoc::Core::Path->newer($srcFile,$destFile)) {
         $sh->exec("sdoc pdf $srcFile --output=$destFile --shell-escape");
     }
 

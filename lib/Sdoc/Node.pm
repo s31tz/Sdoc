@@ -809,13 +809,14 @@ sub latexText {
             elsif ($h->type eq 'internal') {
                 my $linkId = $h->destNode->linkId;
 
-                $code = $l->ci('\hyperref[%s]{%s}',$linkId,
-                    $l->protect($h->text));
                 if ($h->attribute eq '+') {
-                    $code .= $root->language eq 'german'?
-                        ' auf Seite~': ' on page~';
-                    $code .= $l->ci('\pageref{%s}',$linkId);
+                    $code .= $l->ci('\ref{%s} - ',$linkId);
                 }
+                $code .= $l->ci('\hyperref[%s]{%s}',$linkId,
+                    $l->protect($h->text));
+                #$code .= $root->language eq 'german'?
+                #    ' auf Seite~': ' on page~';
+                $code .= $l->ci('\vpageref{%s}',$linkId);
             }
             elsif ($h->type eq 'unresolved') {
                 $code = sprintf 'L\{%s\}',$linkText;

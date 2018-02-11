@@ -1,7 +1,8 @@
 %Document:
-  title="Sdoc"
+  title="Sdoc Handbuch"
   author="Frank Seitz, L{http://fseitz.de/}"
   date="today"
+  latexShowFrames=0
 
 %TableOfContents:
   maxDepth=4
@@ -16,7 +17,7 @@ Dokumenten. Ein Dokument, das in Sdoc geschrieben ist, kann portabel
 in eine Online-Fassung (HTML) und in eine Druck-Fassung (PDF)
 übersetzt werden.
 
-Die Online-Fassung ist für die Wiedergabe in einem Browser vorgesehen.
+Die Online-Fassung ist für die Wiedergabe in einem Browser gedacht.
 Das Aussehen kann via CSS gestaltet werden.
 
 Die Druck-Fassung wird von LaTeX gesetzt und besitzt eine entsprechend
@@ -24,8 +25,9 @@ hohe Qualität für die Wiedergabe auf Papier. In einem PDF-Viewer kann
 die Druck-Fassung auch interaktiv genutzt werden, da sie mit
 Hyperlinks versehen ist.
 
-Dieses Dokument ist in Sdoc geschrieben. Wie es übersetzt wird, ist in
-Abschnitt L{+Dieses Dokument übersetzen} beschrieben.
+Dieses Dokument ist selbst in Sdoc geschrieben. Wie es übersetzt,
+angezeigt und anderweitig verarbeitet werden kann, ist in Abschnitt
+L{+Dieses Dokument übersetzen} beschrieben.
 
 ---PageBreak---
 
@@ -43,7 +45,7 @@ Abschnitt L{+Dieses Dokument übersetzen} beschrieben.
   borderMargin=2mm
   file="+/sdoc-example"
   noIndentation=1
-  latexOptions="clip,trim=0cm 3.9cm 0cm 0cm,width=0.95\textwidth"
+  latexOptions="clip,trim=0cm 3cm 0cm 0cm,width=0.965\textwidth"
 
 ---PageBreak---
 
@@ -158,6 +160,7 @@ Dokument-Bock angegeben:
     latexDocumentClass=scrartcl|scrreprt|scrbook|article|report|book
     latexFontSize=10pt|11pt|12pt
     latexGeometry=STRING
+    latexHeader=BOOL
     latexPaperSize=PAPERSIZE
     latexParSkip=LENGTH
     latexShowFrames=BOOL
@@ -177,7 +180,7 @@ Angaben generiert.
 
 Enthält das Dokument keinen Dokument-Block, wird kein
 Dokument-Vorspann generiert und alle Attribute erhalten ihre
-Defaultwerte (siehe Abschnitt L{Eigenschaften}).
+Defaultwerte (siehe Abschnitt L{+Eigenschaften}).
 
 === Segmente
 
@@ -233,6 +236,9 @@ verwendet werden:
 
 [latexGeometry]:
   Definition der Seitengeometrie mittels des LaTeX-Pakets C{geometry}.
+
+[latexHeader]:
+  Erzeuge Kopf- und Fußzeilen.
 
 [latexPaperSize]:
   (Default: 'a4paper') Papiergröße für LaTeX.
@@ -1036,7 +1042,8 @@ Innere horizontale und vertikale Linien:
 
 %Table:
   border=hv
-  caption="border=hv"
+  caption="border=hv, titleColor=0"
+  titleColor=0
 
   Links Rechts Zentriert
   ----- ------ ---------
@@ -1652,7 +1659,7 @@ Ich sagte, du sollst das I{nicht} essen.
 
 L{Dokument}
 
-====* Beispiel: Interner Link mit Seitenzahl
+====* Beispiel: Interner Link mit Abschnitts-, Bild-, Tabellennnummer
 
   L{+Dokument}
 
@@ -1764,48 +1771,151 @@ deutlich länger und ist weniger gut lesbar.
 
 ---PageBreak---
 
-= Sonstiges
+= Verweise
 
-== Reservierte Zeichen
+Ein Verweis (Link) referenziert eine andere Stelle im selben Dokument
+(I{interner} Verweis) oder eine Ressource, die sich außerhalb des
+Dokuments befindet (I{externer} Verweis).
 
-Damit Zeichen mit einer Sonderbedeutung im Text richtig wiedergegeben
-werden, müssen diese - je nach Zielformat - gewandelt werden.
+== Einen Verweis setzen
 
-=== LaTeX
+In Sdoc wird ein Verweis, gleichgültig, ob intern oder extern, durch
+ein L-Segment gesetzt:
+
+  ... L{TEXT} ...
+
+Die Punkte stellen hierbei irgendeinen umgebenden Kontext dar. Der
+Verweis-Text C{TEXT} ist der Text, der im Zieldokument erscheint und
+für den Leser als Verweis kenntlich gemacht wird. Der Text kann auch
+umbrochen sein, sich also über mehr als eine Zeile erstrecken:
+
+  ... L{Dies ist ein
+  längerer Verweis-Text} ...
+
+Der Text zwischen den geschweiften Klammern eines L-Segments kann
+beliebige Zeichen enthalten. Lediglich die Zeichen ({) (öffnende
+geschweifte Klammer) und (}) (schließende geschweifte Klammer) müssen
+- wie bei allen Segmenten - durch einen Backslash (\) geschützt
+werden, sofern sie nicht zu einem eingebetteten Segment gehören.
+
+Der Verweis-Text wird intern vor der Ermittelung des Verweis-Ziels
+kanonisiert:
+
+1. Einleitende Verweis-Attribute werden entfernt (siehe Abschnitt
+   L{+Verweis-Attribute}).
+1. Zeilenumbrüche werden durch Leerzeichen ersetzt.
+2. Leerzeichen am Anfang und am Ende werden entfernt.
+2. Folgen von zwei und mehr Leerzeichen werden auf I{ein}
+   Leerzeichen reduziert.
+
+Beispeil: Der Verweis-Text des L-Segments
+
+  ... siehe Abschnitt L{+Schachtelung
+  von  Segmenten} für weitere ...
+
+wird intern kanonisiert zum Verweis-Text
+
+  Schachelung von Segmenten
+
+Das Segment-Attribut C{+} am Anfang wurde entfernt sowie der
+Zeilenumbruch und die I{zwei} Leerzeichen zwischen Q{von} und
+Q{Segmenten} wurden durch jeweils ein Leerzeichen ersetzt.
+
+== Darstellung eines Verweises
+
+  ... <Objekt-Nr> <Verweis-Text> <Seitenangabe> ...
+       (otional)     (immer)   (nur Druckfassung)
+
+== Verweis-Attribute
+
+=== +
+
+Wird ein interner Verweis mit einem Pluszeichen (+) eingeleitet,
+bedeutet dies, dass im Zieldokument dem Verweis-Text die Nummer des
+referenzierten Objekts (Abschnitt, Bild, Tabelle) voran gestellt wird,
+sofern vorhanden. Der Verweis
+
+  ... siehe Abschnitt L{Einen Verweis setzen} ...
+
+erscheint im Zieldokument als
+
+... siehe Abschnitt L{Einen Verweis setzen} ...
+
+wohingegen der Verweis
+
+  ... siehe Abschnitt L{+Einen Verweis setzen} ...
+
+erscheint als
+
+... siehe Abschnitt L{+Einen Verweis setzen} ...
+
+In der Druck-Fassung eines Dokuments folgt auf den Verweis-Text
+grundsätzlich die Angabe der Seite, auf der das Verweis-Ziel zu finden
+ist. In der Online-Fassung, die nicht seitenbasiert ist, gibt es diese
+Seitenangabe natürlich nicht.
+
+---PageBreak---
+
+= Formate
+
+== LaTeX
+
+=== Reservierte Zeichen
 
 In LaTeX gibt es besonders viele reservierte Zeichen. Die folgende
-Liste umfasst alle Zeichen, die bei LaTeX/PDF als Zielformat im
-Fließtext besonders behandelt werden. Sie sollten in einem PDF korrekt
-dargestellt werden, einmal ohne und einmal mit einem Leerzeichen vor
-dem betreffenden Zeichen.
+Liste umfasst alle Eingabezeichen, die im Falle von LaTeX oder PDF als
+Zielformat von Sdoc gewandelt werden müssen. Sie sollten in einem PDF
+in den Spalten Q{ohne WS} und Q{mit WS} korrekt dargestellt werden,
+einmal ohne und einmal mit Whitespace vor dem betreffenden Zeichen.
 
-Backslash: \xxx, \ xxx
+%Table:
+  caption="LaTeX Sonderzeichen"
+  Zeichen                  LaTeX               ohne WS  mit WS
+  -----------------------  ------------------  -------  ------
+  Backslash                \textbackslash{}      \x      \ x
+  Dach                     \textasciicircum{}    ^x      ^ x
+  Dollar                   \$                    $x      $ x
+  Geschweifte Klammer auf  \{                    {x      { x
+  Geschweifte Klammer zu   \}                    }x      } x
+  Größer                   \textgreater{}        >0      > 0
+  Kaufmanns-Und            \&                    &x      & x
+  Kleiner                  \textless{}           <0      < 0
+  Lattenkreuz              \#                    #x      # x
+  Pipe                     \textbar{}            |x      | x
+  Prozent                  \%                    %x      % x
+  Tilde                    \textasciitilde{}     ~x      ~ x
+  Unterstrich              \_                    _x      _ x
+.
 
-Größer: >0, > 0
+Es werden außerdem folgende Zeichenketten übersetzt:
 
-Kleiner: <0, < 0
+%Table:
+  caption="Speziell behandelte Zeichenketten"
+  Zeichenkette             LaTeX               ohne WS    mit WS
+  -----------------------  ------------------  --------  ---------
+  LaTeX                    \LaTeX               LaTeXx    LaTeX x
+  TeX                      \TeX                 TeXx      TeX x
+.
 
-Tilde: ~x, ~ x
+=== Paket C{varioref}
 
-Dollar: $x, $ x
+Wir verwenden das Paket C{varioref}, um Q{schlaue} Seitenverweise zu
+erzeugen. In Standard-LaTeX wird ein Seitenverweis mit C{\pageref}
+erzeugt. Dieser Seitenverweis beschränkt sich auf die
+Seitennummer. Dies wirkt ein wenig absurd, wenn das Verweisziel auf
+der gleichen Seite liegt. Wir verwenden als Ersatz das Makro
+C{\vpageref} aus dem Paket C{varioref}. Dieses liefert keine
+Seitennummer, sondern eine komplette Formulierung wie z.B. Q{auf Seite
+45}, abhängig von der Spracheinstellung, die über das Paket C{babel}
+für das Dokument vorgenommen wurde. Das Makro erkennt, ob das
+Verweisziel auf der gleichen, der vorherigen oder der nächsten Seite
+liegt und erzeugt eine entsprechend schlaue Formulierung wie Q{auf
+dieser Seite} (siehe Abschnitt L{+Beispiel/PDF} und den zugehörigen
+Sdoc-Quelltext in Abschnitt L{+Beispiel/Sdoc}).
 
-Unterstrich: _x, _ x
+---PageBreak---
 
-Prozent: %x, % x
-
-Geschweifte Klammern: {x, { x, }x, } x
-
-Caret: ^x, ^ x
-
-Hash: #x, # x
-
-Kaufmanns-Und: &x, & x
-
-Pipe: |x, | x
-
-Latex-Symbol: LaTeX, LaTeX x
-
-Tex-Symbol: TeX, TeX x
+= Sonstiges
 
 == Warnungen
 
@@ -1868,6 +1978,8 @@ Warnungen auftreten. Diese werden nach stderr geschrieben.
 Vorschau auf das PDF-Dokument:
 
   $ sdoc pdf sdoc-manual.sdoc --preview
+
+---PageBreak---
 
 = Programmierung
 
