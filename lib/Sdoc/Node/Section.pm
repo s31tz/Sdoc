@@ -215,7 +215,7 @@ sub new {
 
 # -----------------------------------------------------------------------------
 
-=head2 Anker
+=head2 Verweise
 
 =head3 anchor() - Anker des Abschnitts
 
@@ -239,6 +239,31 @@ liefere den Wert des Attributs C<title>.
 sub anchor {
     my $self = shift;
     return $self->get('anchor') || $self->title;
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 latexLinkText() - Verweis-Text
+
+=head4 Synopsis
+
+    $linkText = $sec->latexLinkText($l);
+
+=head4 Returns
+
+Text (String)
+
+=head4 Description
+
+Liefere den Verweis-Text als fertigen LaTeX-Code.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub latexLinkText {
+    my ($self,$l) = @_;
+    return $self->latexText($l,'titleS');
 }
 
 # -----------------------------------------------------------------------------

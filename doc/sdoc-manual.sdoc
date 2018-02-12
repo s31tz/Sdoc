@@ -13,7 +13,7 @@
 
 Dieses Dokument beschreibt die Syntax und den Gebrauch der
 Auszeichnungsprache Sdoc. Sdoc ist eine Metasprache zum Verfassen von
-Dokumenten. Ein Dokument, das in Sdoc geschrieben ist, kann portabel
+Dokumenten. Ein Dokument, das in Sdoc geschrieben wurde, kann portabel
 in eine Online-Fassung (HTML) und in eine Druck-Fassung (PDF)
 übersetzt werden.
 
@@ -26,8 +26,8 @@ die Druck-Fassung auch interaktiv genutzt werden, da sie mit
 Hyperlinks versehen ist.
 
 Dieses Dokument ist selbst in Sdoc geschrieben. Wie es übersetzt,
-angezeigt und anderweitig verarbeitet werden kann, ist in Abschnitt
-L{+Dieses Dokument übersetzen} beschrieben.
+angezeigt und verarbeitet werden kann, ist in Abschnitt L{+Dieses
+Dokument übersetzen} beschrieben.
 
 ---PageBreak---
 
@@ -509,13 +509,13 @@ oder anderen Block-Elementen.
 
   %Graphic:
     file="+/sdoc-graphic-illusion"
-    scale=0.2
+    scale=0.25
 
 produziert:
 
 %Graphic:
   file="+/sdoc-graphic-illusion"
-  scale=0.2
+  scale=0.25
 
 Per Default wird die Abbildung linksseitig mit der Einrückung
 C{indentation} (siehe Abschnitt L{+Dokument}) gesetzt. Die Einrückung
@@ -525,14 +525,14 @@ Mit C{align=center} kann die Abbildung auch mittig gesetzt werden.
   %Graphic:
     align=center
     file="+/sdoc-graphic-illusion"
-    scale=0.2
+    scale=0.25
 
 produziert:
 
 %Graphic:
   align=center
   file="+/sdoc-graphic-illusion"
-  scale=0.2
+  scale=0.25
 
 Eine Abbildung kann durch Setzen des Attributs C{caption} mit einer
 Beschriftung versehen werden. Das Setzen des Attributs C{border}
@@ -540,7 +540,7 @@ auf 1, fügt einen Rahmen hinzu.
 
   %Graphic:
     file="+/sdoc-graphic-illusion"
-    scale=0.2
+    scale=0.25
     caption=Illusion
     border=1
 
@@ -548,7 +548,7 @@ produziert:
 
 %Graphic:
   file="+/sdoc-graphic-illusion"
-  scale=0.2
+  scale=0.25
   caption=Illusion
     border=1
 
@@ -1821,6 +1821,13 @@ Das Segment-Attribut C{+} am Anfang wurde entfernt sowie der
 Zeilenumbruch und die I{zwei} Leerzeichen zwischen Q{von} und
 Q{Segmenten} wurden durch jeweils ein Leerzeichen ersetzt.
 
+== Referenzierbare Objekte
+
+* BridgeHead
+* Graphic
+* Section
+* Table
+
 == Darstellung eines Verweises
 
   ... <Objekt-Nr> <Verweis-Text> <Seitenangabe> ...
@@ -1831,9 +1838,9 @@ Q{Segmenten} wurden durch jeweils ein Leerzeichen ersetzt.
 === +
 
 Wird ein interner Verweis mit einem Pluszeichen (+) eingeleitet,
-bedeutet dies, dass im Zieldokument dem Verweis-Text die Nummer des
-referenzierten Objekts (Abschnitt, Bild, Tabelle) voran gestellt wird,
-sofern vorhanden. Der Verweis
+bedeutet dies, dass der Verweis-Text vom referenzierten Objekt
+genommen und ihm die Nummer des Objekts (Abschnitt, Bild, Tabelle)
+voran gestellt wird, sofern vorhanden. Der Verweis
 
   ... siehe Abschnitt L{Einen Verweis setzen} ...
 
@@ -1848,6 +1855,10 @@ wohingegen der Verweis
 erscheint als
 
 ... siehe Abschnitt L{+Einen Verweis setzen} ...
+
+wobei der Verweis-Text auch abweichen kann, je nachdem, ob der Text
+mit dem Text des referenzierten Objekts übereinstimmt (was hier nicht
+der Fall ist).
 
 In der Druck-Fassung eines Dokuments folgt auf den Verweis-Text
 grundsätzlich die Angabe der Seite, auf der das Verweis-Ziel zu finden
@@ -1864,9 +1875,9 @@ Seitenangabe natürlich nicht.
 
 In LaTeX gibt es besonders viele reservierte Zeichen. Die folgende
 Liste umfasst alle Eingabezeichen, die im Falle von LaTeX oder PDF als
-Zielformat von Sdoc gewandelt werden müssen. Sie sollten in einem PDF
-in den Spalten Q{ohne WS} und Q{mit WS} korrekt dargestellt werden,
-einmal ohne und einmal mit Whitespace vor dem betreffenden Zeichen.
+Zielformat von Sdoc gewandelt werden. Sie sollten in einem PDF in den
+Spalten Q{ohne WS} und Q{mit WS} korrekt dargestellt werden, einmal
+ohne und einmal mit Whitespace nach dem betreffenden Zeichen.
 
 %Table:
   caption="LaTeX Sonderzeichen"
@@ -1893,11 +1904,88 @@ Es werden außerdem folgende Zeichenketten übersetzt:
   caption="Speziell behandelte Zeichenketten"
   Zeichenkette             LaTeX               ohne WS    mit WS
   -----------------------  ------------------  --------  ---------
-  LaTeX                    \LaTeX               LaTeXx    LaTeX x
-  TeX                      \TeX                 TeXx      TeX x
+  LaTeX                    \LaTeX{}             LaTeXx    LaTeX x
+  TeX                      \TeX{}               TeXx      TeX x
 .
 
+=== Paket C{array}
+
+CTAN: L{https://ctan.org/pkg/array}
+
+=== Paket C{babel}
+
+CTAN: L{https://ctan.org/pkg/babel}
+
+=== Paket C{caption}
+
+CTAN: L{https://ctan.org/pkg/caption}
+
+=== Paket C{fancyhdr}
+
+CTAN: L{https://ctan.org/pkg/fancyhdr}
+
+=== Paket C{float}
+
+CTAN: L{https://ctan.org/pkg/float}
+
+=== Paket C{fontenc}
+
+CTAN: L{https://ctan.org/pkg/fontenc}
+
+=== Paket C{geometry}
+
+CTAN: L{https://ctan.org/pkg/geometry}
+
+=== Paket C{enumitem}
+
+CTAN: L{https://ctan.org/pkg/enumitem}
+
+=== Paket C{graphicx}
+
+CTAN: L{https://ctan.org/pkg/graphicx}
+
+=== Paket C{hyperref}
+
+CTAN: L{https://ctan.org/pkg/hyperref}
+
+=== Paket C{inputenc}
+
+CTAN: L{https://ctan.org/pkg/inputenc}
+
+=== Paket C{lmodern}
+
+Wir verwenden das Paket C{lmodern}, weil es statt der klassischen
+C{Computer Modern} Schriften die qualitiv besseren C{Latin Modern}
+Schriften auswählt. Dies sind die Schriften der drei Schriftfamilien
+Q{roman}, Q{sans-serif} und C{typewriter}.
+
+=== Paket C{longtable}
+
+CTAN: L{https://ctan.org/pkg/longtable}
+
+=== Paket C{makecell}
+
+CTAN: L{https://ctan.org/pkg/makecell}
+
+=== Paket C{microtype}
+
+CTAN: L{https://ctan.org/pkg/microtype}
+
+Wir verwenden das Paket C{microtype}, um den Zeilenumbruch durch
+Anwendung von mikrotypografischen Methoden zu verbessern. Hierzu zählt
+ein optischer Randausgleich, sowie Wort- und Zeichendehnung.
+
+=== Paket C{minted}
+
+CTAN: L{https://ctan.org/pkg/minted}
+
+=== Paket C{showframe}
+
+CTAN: L{https://ctan.org/pkg/showframe}
+
 === Paket C{varioref}
+
+CTAN: L{https://ctan.org/pkg/varioref}
 
 Wir verwenden das Paket C{varioref}, um Q{schlaue} Seitenverweise zu
 erzeugen. In Standard-LaTeX wird ein Seitenverweis mit C{\pageref}
@@ -1912,6 +2000,10 @@ Verweisziel auf der gleichen, der vorherigen oder der nächsten Seite
 liegt und erzeugt eine entsprechend schlaue Formulierung wie Q{auf
 dieser Seite} (siehe Abschnitt L{+Beispiel/PDF} und den zugehörigen
 Sdoc-Quelltext in Abschnitt L{+Beispiel/Sdoc}).
+
+=== Paket C{xcolor}
+
+CTAN: L{https://ctan.org/pkg/xcolor}
 
 ---PageBreak---
 

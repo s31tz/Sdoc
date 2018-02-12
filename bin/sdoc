@@ -82,6 +82,10 @@ Wandele nach LaTeX und sieh das Ergebnis im Pager an:
 
     $ sdoc latex INPUT.sdoc --preview
 
+Wandele Sdoc2 nach Sdoc3:
+
+    $ sdoc convert INPUT.sdoc
+
 =head1 PROGRAM CLASS
 
 L<Sdoc::Application>

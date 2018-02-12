@@ -6,9 +6,9 @@ use warnings;
 
 our $VERSION = 3.00;
 
+use Sdoc::Core::Path;
 use Sdoc::Core::AnsiColor;
 use Sdoc::Document;
-use Sdoc::Core::Path;
 use Sdoc::Core::FileHandle;
 use Sdoc::Core::Shell;
 use File::Temp ();
@@ -69,14 +69,49 @@ sub main {
     my $format = shift @$argA;
     my $file = shift @$argA;
 
+    my $output = $opt->output;
+
+    if ($format eq 'convert') {
+        my $str = Sdoc::Core::Path->read($file,-decode=>'utf-8');
+
+        # Quelltext entfernen
+        $str =~ s|^= SOURCE.*|# eof\n|ms;
+
+        # utf8_attribut entfernen
+        $str =~ s|^( +)utf8=.*|$1sectionNumberDepth=0|m;
+
+        # Links umschreiben
+        $str =~ s|U\{"([^"]+)",target=.*\}|L{$1}|sg;
+        $str =~ s|U\{"[^"]+",text="(.+?)".*?\}
+            |L{https://metacpan.org/pod/$1}|sxg;
+        $str =~ s/l\{(.*?)\}/L{$1}/sg;
+
+        $str =~ s/highlight=(\S+)/lang=$1 indent=0/g;
+
+        $str =~ s/K\{(.*?)\}/$1/sg;
+
+        $str =~ s/\s*M\{(.*?)\}//sg;
+
+        $str =~ s|^ +(%Code:.*?)^ +\.$|$1.|smg;
+
+        $str =~ s| "([^"]+)"| Q{$1}|mg;
+
+        if ($output) {
+            Sdoc::Core::Path->write($output,$str);
+        }
+        else {
+            print $str;
+        }
+
+        return;
+    }
+
     my $a = Sdoc::Core::AnsiColor->new(1);
     my $doc = Sdoc::Document->parse($file,
         -quiet => $opt->quiet,
         -shellEscape => $opt->shellEscape,
     );
 
-    my $output = $opt->output;
-    
     my $str = '';
     if ($format eq 'validate') {
         # Wir begnügen uns mit dem Parsen des Dokuments

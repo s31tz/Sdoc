@@ -978,12 +978,19 @@ sub findDestNodes {
         if ($node == $srcNode) {
             next;
         }
-        my $path = $node->anchorPathAsString;
-        if ($path =~ m|($regex)(?!.*/)|) {
-            push @hits,[$node,
-                0,
-                scalar @{$node->anchorPathAsArray},
-            ];
+
+        # (*) Wir stellen sicher, dass der Regex wenigstens
+        # einen Teil des terminalen Knotens matcht
+
+        my @arr = split /$regex/,$node->anchorPathAsString,-1;
+        if (@arr >= 2) {
+            my $pathA = $node->anchorPathAsArray;
+            if (length($arr[-1]) < length($pathA->[-1])) { # (*)
+                push @hits,[$node,
+                    0,
+                    scalar @$pathA,
+                ];
+            }
         }
     }
 
@@ -1133,9 +1140,9 @@ sub latex {
     my $geometry = $self->latexGeometry;
     my $paperSize = $self->latexPaperSize;
     my $fontSize = $self->latexFontSize;
-    my $title = $self->latexText($l,'titleS');
-    my $author = $self->latexText($l,'authorS');
-    my $date = $self->latexText($l,'dateS');
+    my $title = $self->latexText($l,'titleS') // '';
+    my $author = $self->latexText($l,'authorS') // '';
+    my $date = $self->latexText($l,'dateS') // '';
     my $header = $self->latexHeader;
     my $smallerMonospacedFont = $self->smallerMonospacedFont;
     my $showFrames = $self->latexShowFrames;
@@ -1176,16 +1183,16 @@ sub latex {
             enumitem => 1, # Ersatz für itemize, enumerate, description
             float => 1, # besseres Float Environment
             graphicx => 1, # Grafiken
+            xcolor => [ # Farben
+                'table',
+                'dvipsnames',
+            ],
             longtable => 1, # umbrechbare Tabellen
             array => 1, # Erweiterung array-Umgebung
             makecell => 1, # mehrzeilige Kolumnen in Tabellen
             caption => 1, # bessere Beschriftung von Bildern/Tabellen
             varioref => 1, # intelligente Verweise
             minted => 1, # Syntax Highlighting
-            xcolor => [ # Farben
-                'table',
-                'dvipsnames',
-            ],
             hyperref => 1, # Verlinkung (laut Doku als letztes Paket laden)
             showframe => $showFrames, # Kennzeichnung Seitenbereiche
         ],
@@ -1224,11 +1231,11 @@ sub latex {
             # kann ein anderer Style eingestellt werden. Erweiterung hier.
             $l->c('\usemintedstyle[perl]{default}'),
             # * Vertikaler Abstand über und -unterhalb der fancyvrb Umgebung
-            $l->c('\makeatletter'),
-            $l->c('\FV@AddToHook{\FV@ListParameterHook}{%s}',
-                '\topsep=0.7ex\partopsep=0.7ex\parskip=0ex',
-            ),
-            $l->c('\makeatother'),
+            #$l->c('\makeatletter'),
+            #$l->c('\FV@AddToHook{\FV@ListParameterHook}{%s}',
+            #    '\topsep=0.7ex\partopsep=0.7ex\parskip=0ex',
+            #),
+            #$l->c('\makeatother'),
             # * Größe des Zeilennummer-Font
             # * Formatierung des Zähler-Werts (diese ändern wir nicht,
             #   müssen sie aber mit angeben, da sonst keine Zeilennummer

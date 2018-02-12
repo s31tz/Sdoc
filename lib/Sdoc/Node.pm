@@ -807,15 +807,18 @@ sub latexText {
                 $code = $l->ci('\href{%s}{%s}',$h->destText,$h->text);
             }
             elsif ($h->type eq 'internal') {
-                my $linkId = $h->destNode->linkId;
+                my $destNode = $h->destNode;
+                my $linkId = $destNode->linkId;
 
                 if ($h->attribute eq '+') {
                     $code .= $l->ci('\ref{%s} - ',$linkId);
+                    $code .= $l->ci('\hyperref[%s]{%s} ',$linkId,
+                        $destNode->latexLinkText($l));
                 }
-                $code .= $l->ci('\hyperref[%s]{%s}',$linkId,
-                    $l->protect($h->text));
-                #$code .= $root->language eq 'german'?
-                #    ' auf Seite~': ' on page~';
+                else {
+                    $code .= $l->ci('\hyperref[%s]{%s} ',$linkId,
+                        $l->protect($h->text));
+                }
                 $code .= $l->ci('\vpageref{%s}',$linkId);
             }
             elsif ($h->type eq 'unresolved') {
