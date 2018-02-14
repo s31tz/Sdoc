@@ -3,6 +3,7 @@
   author="Frank Seitz, L{http://fseitz.de/}"
   date="today"
   latexShowFrames=0
+# latexDocumentClass=scrreprt
 
 %TableOfContents:
   maxDepth=4

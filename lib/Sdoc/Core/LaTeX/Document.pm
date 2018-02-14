@@ -365,6 +365,8 @@ sub latex {
         $tmp .= $l->c('\author{%s}',$author);
         $tmp .= $l->c('\date{%s}',$date);
         $tmp .= $l->c('\maketitle');
+        # Keine Zeilennummer auf Titelseite
+        $tmp .= $l->c('\thispagestyle{empty}');
         $body = $tmp.$body;
     }
 
