@@ -804,7 +804,8 @@ sub latexText {
             my ($linkText,$h) = @{$self->linkA->[$val]};
             if ($h->type eq 'external') {
                 # $dest und $text sind identisch
-                $code = $l->ci('\href{%s}{%s}',$h->destText,$h->text);
+                $code = $l->ci('\href{%s}{%s}',$l->protect($h->destText),
+                    $l->protect($h->text));
             }
             elsif ($h->type eq 'internal') {
                 my $destNode = $h->destNode;
@@ -822,7 +823,7 @@ sub latexText {
                 $code .= $l->ci('\vpageref{%s}',$linkId);
             }
             elsif ($h->type eq 'unresolved') {
-                $code = sprintf 'L\{%s\}',$linkText;
+                $code = sprintf 'L\{%s\}',$l->protect($linkText);
             }
 
             return $code;

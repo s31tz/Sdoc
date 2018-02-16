@@ -102,6 +102,10 @@ Die Dokumentklasse.
 
 Das Input-Encoding.
 
+=item fontEncoding => $font (Default: 'T1')
+
+Das Font-Encoding.
+
 =item fontSize => $fontSize (Default: undef)
 
 Die Größe des Hauptfont. Mogliche Werte für die Standard LaTeX
@@ -185,6 +189,7 @@ sub new {
         date => undef,
         documentClass => 'scrartcl',
         encoding => 'utf8',
+        fontEncoding => 'T1',
         fontSize => undef,
         geometry => undef,
         language => 'ngerman',
@@ -230,12 +235,12 @@ sub latex {
 
     my $self = ref $this? $this: $this->new(@_);
 
-    my ($author,$body,$compactCode,$date,$documentClass,$encoding,$fontSize,
-        $geometry,$language,$packageA,$paperSize,$parIndent,$parSkip,
-        $preamble,$preComment,$secNumDepth,$title,$tocDepth) =
-        $self->get(qw/author body compactCode date documentClass encoding
-        fontSize geometry language packages paperSize parIndent parSkip
-        preamble preComment secNumDepth title tocDepth/);
+    my ($author,$body,$compactCode,$date,$documentClass,$encoding,
+        $fontEncoding,$fontSize,$geometry,$language,$packageA,$paperSize,
+        $parIndent,$parSkip,$preamble,$preComment,$secNumDepth,$title,
+        $tocDepth) = $self->get(qw/author body compactCode date documentClass
+        encoding fontEncoding fontSize geometry language packages paperSize
+        parIndent parSkip preamble preComment secNumDepth title tocDepth/);
 
     my @pnl = $compactCode? (): (-pnl=>1);
 
@@ -267,9 +272,12 @@ sub latex {
     # Packages
 
     # Font encoding
-    $code .= $l->c('\usepackage[T1]{fontenc}',@pnl);
-    $code .= $l->c('\usepackage{lmodern}',@pnl);
 
+    if ($fontEncoding) {
+        $code .= $l->c('\usepackage[%s]{fontenc}',$fontEncoding,@pnl);
+        $code .= $l->c('\usepackage{lmodern}',@pnl);
+    }
+    
     # Input encoding
 
     if ($encoding) {

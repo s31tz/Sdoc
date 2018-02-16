@@ -161,7 +161,7 @@ Dokument-Bock angegeben:
     latexDocumentClass=scrartcl|scrreprt|scrbook|article|report|book
     latexFontSize=10pt|11pt|12pt
     latexGeometry=STRING
-    latexHeader=BOOL
+    latexHeadings=BOOL
     latexPaperSize=PAPERSIZE
     latexParSkip=LENGTH
     latexShowFrames=BOOL
@@ -238,7 +238,7 @@ verwendet werden:
 [latexGeometry]:
   Definition der Seitengeometrie mittels des LaTeX-Pakets C{geometry}.
 
-[latexHeader]:
+[latexHeadings]:
   Erzeuge Kopf- und Fußzeilen.
 
 [latexPaperSize]:
@@ -1921,9 +1921,9 @@ CTAN: L{https://ctan.org/pkg/babel}
 
 CTAN: L{https://ctan.org/pkg/caption}
 
-=== Paket C{fancyhdr}
-
-CTAN: L{https://ctan.org/pkg/fancyhdr}
+# === Paket C{fancyhdr}
+# 
+# CTAN: L{https://ctan.org/pkg/fancyhdr}
 
 === Paket C{float}
 
@@ -1979,6 +1979,14 @@ ein optischer Randausgleich, sowie Wort- und Zeichendehnung.
 === Paket C{minted}
 
 CTAN: L{https://ctan.org/pkg/minted}
+
+# === Paket C{scrbase}
+#
+# CTAN: L{https://ctan.org/pkg/scrbase}
+
+=== Paket C{scrlayer-scrpage}
+
+CTAN: L{https://ctan.org/pkg/scrlayer-scrpage}
 
 === Paket C{showframe}
 

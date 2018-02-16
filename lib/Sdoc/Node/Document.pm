@@ -117,7 +117,7 @@ Größe des LaTeX-Font. Mögliche Werte: '10pt', '11pt', '12pt'.
 
 Einstellungen des LaTeX-Pakets C<geometry>.
 
-=item latexHeader => $bool (Default: 1)
+=item latexHeadings => $bool (Default: 1)
 
 Erzeuge Kopf- und Fußzeilen.
 
@@ -277,7 +277,7 @@ sub new {
         latexDocumentClass => 'scrartcl',
         latexFontSize => '10pt',
         latexGeometry => undef,
-        latexHeader => 1,
+        latexHeadings => 1,
         latexPaperSize => 'a4paper',
         latexParSkip => '1ex',
         latexShowFrames => 0,
@@ -1143,7 +1143,7 @@ sub latex {
     my $title = $self->latexText($l,'titleS') // '';
     my $author = $self->latexText($l,'authorS') // '';
     my $date = $self->latexText($l,'dateS') // '';
-    my $header = $self->latexHeader;
+    my $header = $self->latexHeadings;
     my $smallerMonospacedFont = $self->smallerMonospacedFont;
     my $showFrames = $self->latexShowFrames;
     my $parSkip = $self->latexParSkip;
@@ -1210,7 +1210,7 @@ sub latex {
             #!! fancyhdr
             #Sdoc::Core::Concat->catIf($header,sub {
             #    $l->c('\pagestyle{fancy}'),
-            #    $l->c('\lhead{\textit{\MakeUppercase{\textit{\leftmark}}}}'),
+            #    $l->c('\lhead{\MakeUppercase{\textit{\leftmark}}}'),
             #    $l->c('\rhead{\ifstr{\leftmark}'.
             #        '{\rightmark}{}{\textit{\rightmark}}}'),
             #    $l->c('\renewcommand{\footrulewidth}{0.4pt}'),
