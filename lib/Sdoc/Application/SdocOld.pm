@@ -1,4 +1,4 @@
-package Sdoc::Application;
+package Sdoc::Application::SdocOld;
 use base qw/Sdoc::Core::Program/;
 
 use strict;
@@ -21,7 +21,7 @@ use File::Temp ();
 
 =head1 NAME
 
-Sdoc::Application
+Sdoc::Application::SdocOld
 
 =head1 BASE CLASS
 
@@ -52,12 +52,17 @@ sub main {
     # Default-Konfiguration, wenn die Konfigurationsdatei nicht
     # existiert.
 
+    my $pdfViewerDefault = 'evince';
+    my $shellEscapeDefault = 0;
+    my $workDirDefault = '/tmp/sdoc/%U/%D';
+
     my $conf = Sdoc::Core::Config->new('~/.sdoc.conf',
         -create => q|
             # Sdoc configuration
 
-            pdfViewer => 'evince',
-            shellEscape => 0,
+            pdfViewer => $pdfViewerDefault,
+            shellEscape => $shellEscapeDefault,
+            workDir => $workDirDefault,
 
             # eof
         |,
@@ -70,7 +75,9 @@ sub main {
         -output => undef,
         -preview => 0,
         -quiet => 1,
-        -shellEscape => $conf->get('shellEscape'),
+        -pdfViewer => $conf->try('pdfViewer') // $pdfViewerDefault,
+        -shellEscape => $conf->try('shellEscape') // $shellEscapeDefault,
+        -workDir => $conf->try('workDir') // $workDirDefault,
         -verbose => 0,
         -help => 0,
     );
@@ -99,12 +106,15 @@ sub main {
 
         # Erzeuge Arbeitsverzeichnis
         
-        my $tmpDir = sprintf '/tmp/sdoc/%s/%s',$self->user,$basename;
-        Sdoc::Core::Path->mkdir($tmpDir,-recursive=>1);
+        my $workDir = $opt->workDir;
+        $workDir =~ s/%U/$self->user/eg;
+        $workDir =~ s/%D/$basename/g;
+        $workDir = Sdoc::Core::Path->expandTilde($workDir);
+        Sdoc::Core::Path->mkdir($workDir,-recursive=>1);
 
         # Erzeuge LaTeX-Datei
 
-        my $latexFile = sprintf '%s/%s.tex',$tmpDir,$basename;
+        my $latexFile = sprintf '%s/%s.tex',$workDir,$basename;
         my $fh = Sdoc::Core::FileHandle->new('>',$latexFile);
         $fh->setEncoding('utf-8');
         $fh->print($doc->generate('latex'));
@@ -113,7 +123,7 @@ sub main {
         # Übersetze LaTeX-Datei nach PDF
 
         my $sh = Sdoc::Core::Shell->new(quiet=>$opt->quiet);
-        $sh->cd($tmpDir);
+        $sh->cd($workDir);
 
         my $c = Sdoc::Core::CommandLine->new('latexmk -pdf');
         $c->addLongOption(
@@ -125,9 +135,7 @@ sub main {
         $sh->exec($c->command);
 
         # Zeige PDF-Datei an
-
-        my $pdfFile = "$basename.pdf";
-        $sh->exec("evince $pdfFile");
+        $sh->exec(sprintf '%s %s.pdf',$opt->pdfViewer,$basename);
 
         return;
     }

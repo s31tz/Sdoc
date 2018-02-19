@@ -1,0 +1,114 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+
+our $VERSION = 3.00;
+
+use Sdoc::Core::Program;
+
+# -----------------------------------------------------------------------------
+
+=encoding utf8
+
+=head1 NAME
+
+sdoc-Old - Prozessiere Sdoc-Dokument
+
+=head1 USAGE
+
+sdoc-Old [OPTIONS] FILE.sdoc
+
+sdoc-Old [OPTIONS] latex INPUT.sdoc
+
+sdoc-Old [OPTIONS] pdf INPUT.sdoc
+
+sdoc-Old [OPTIONS] tree INPUT.sdoc
+
+sdoc-Old [OPTIONS] links INPUT.sdoc
+
+sdoc-Old [OPTIONS] anchors INPUT.sdoc
+
+sdoc-Old [OPTIONS] validate INPUT.sdoc
+
+=head1 OPTIONS
+
+=over 4
+
+=item --cleanup[=BOOL] (Default: 1)
+
+Entferne temporäre Dateien.
+
+=item --output=FILE
+
+Schreibe das Ergebnis nicht nach STDOUT, sondern in Datei FILE.
+
+=item --preview[=BOOL] (Default: 0)
+
+Zeige das Konvertierungsergebnis im Viewer an.
+
+=item --quiet[=BOOL] (Default: 0)
+
+Gib keine Warnungen aus.
+
+=item --shell-escape[=BOOL] (Default: 0)
+
+Muss als Option angegeben werden, wenn externe Programme aufgerufen
+werden müssen, um das Dokument zu übersetzen.
+
+=item --verbose[=BOOL] (Default: 0)
+
+Gib Laufzeitinformationen aus, z.B. die Logausgabe von C<pdflatex>.
+
+=item --help|-h
+
+Diese Hilfe.
+
+=back
+
+=head1 EXAMPLES
+
+Wandele nach PDF und zeige das Ergebnis im PDF-Viewer an:
+
+    $ sdoc-Old INPUT.sdoc
+
+Wandele nach PDF und speichere das Ergebnis in eine Datei:
+
+    $ sdoc-Old pdf INPUT.sdoc --output=OUTPUT.pdf
+
+Wandele nach LaTeX und schreibe den Code nach STDOUT:
+
+    $ sdoc-Old latex INPUT.sdoc
+
+Wandele nach LaTeX und sieh das Ergebnis im Pager an:
+
+    $ sdoc-Old latex INPUT.sdoc --preview
+
+Wandele Sdoc2 nach Sdoc3:
+
+    $ sdoc-Old convert INPUT.sdoc
+
+=head1 PROGRAM CLASS
+
+L<Sdoc::Application::SdocOld>
+
+=head1 AUTHOR
+
+Frank Seitz, L<http://fseitz.de/>
+
+=head1 COPYRIGHT
+
+Copyright (C) 2018 Frank Seitz
+
+=head1 LICENSE
+
+This code is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+exit Sdoc::Core::Program->run('Sdoc::Application::SdocOld')->exitCode;
+
+# eof
