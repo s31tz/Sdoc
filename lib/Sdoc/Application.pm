@@ -6,11 +6,13 @@ use warnings;
 
 our $VERSION = 3.00;
 
+use Sdoc::Core::Config;
 use Sdoc::Core::Path;
-use Sdoc::Core::AnsiColor;
 use Sdoc::Document;
 use Sdoc::Core::FileHandle;
 use Sdoc::Core::Shell;
+use Sdoc::Core::CommandLine;
+use Sdoc::Core::AnsiColor;
 use File::Temp ();
 
 # -----------------------------------------------------------------------------
@@ -46,14 +48,29 @@ Führe das Hauptprogramm aus.
 sub main {
     my $self = shift;
 
+    # Konfigurationsdatei lesen. Wir erzeugen eine
+    # Default-Konfiguration, wenn die Konfigurationsdatei nicht
+    # existiert.
+
+    my $conf = Sdoc::Core::Config->new('~/.sdoc.conf',
+        -create => q|
+            # Sdoc configuration
+
+            pdfViewer => 'evince',
+            shellEscape => 0,
+
+            # eof
+        |,
+    );
+
     # Optionen und Argumente
 
     my ($error,$opt,$argA) = $self->options(
         -cleanup => 1,
         -output => undef,
         -preview => 0,
-        -quiet => 0,
-        -shellEscape => 0,
+        -quiet => 1,
+        -shellEscape => $conf->get('shellEscape'),
         -verbose => 0,
         -help => 0,
     );
@@ -63,9 +80,58 @@ sub main {
     elsif ($opt->help) {
         $self->help;
     }
-    elsif (@$argA < 2) {
+    elsif (!@$argA) {
         $self->help(11,'ERROR: Wrong number of arguments');
     }
+
+    if (@$argA == 1) {
+        # Sdoc-Datei in PDF wandeln und anzeigen
+
+        my $file = shift @$argA;
+        my $basename = Sdoc::Core::Path->basename($file);
+
+        # Übersetze Sdoc-Datei in LaTeX-Datei
+
+        my $doc = Sdoc::Document->parse($file,
+            -quiet => $opt->quiet,
+            -shellEscape => $opt->shellEscape,
+        );
+
+        # Erzeuge Arbeitsverzeichnis
+        
+        my $tmpDir = sprintf '/tmp/sdoc/%s/%s',$self->user,$basename;
+        Sdoc::Core::Path->mkdir($tmpDir,-recursive=>1);
+
+        # Erzeuge LaTeX-Datei
+
+        my $latexFile = sprintf '%s/%s.tex',$tmpDir,$basename;
+        my $fh = Sdoc::Core::FileHandle->new('>',$latexFile);
+        $fh->setEncoding('utf-8');
+        $fh->print($doc->generate('latex'));
+        $fh->close;
+
+        # Übersetze LaTeX-Datei nach PDF
+
+        my $sh = Sdoc::Core::Shell->new(quiet=>$opt->quiet);
+        $sh->cd($tmpDir);
+
+        my $c = Sdoc::Core::CommandLine->new('latexmk -pdf');
+        $c->addLongOption(
+            $opt->shellEscape? (-pdflatex => 'pdflatex --shell-escape %O %S'):
+                (-pdflatex => 'pdflatex %O %S')
+        );
+        $c->addArgument($latexFile);
+
+        $sh->exec($c->command);
+
+        # Zeige PDF-Datei an
+
+        my $pdfFile = "$basename.pdf";
+        $sh->exec("evince $pdfFile");
+
+        return;
+    }
+
     my $format = shift @$argA;
     my $file = shift @$argA;
 

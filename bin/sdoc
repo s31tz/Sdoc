@@ -17,6 +17,8 @@ sdoc - Prozessiere Sdoc-Dokument
 
 =head1 USAGE
 
+sdoc [OPTIONS] FILE.sdoc
+
 sdoc [OPTIONS] latex INPUT.sdoc
 
 sdoc [OPTIONS] pdf INPUT.sdoc
@@ -66,9 +68,9 @@ Diese Hilfe.
 
 =head1 EXAMPLES
 
-Wandele nach PDF und sieh das Ergebnis im Pager an:
+Wandele nach PDF und zeige das Ergebnis im PDF-Viewer an:
 
-    $ sdoc pdf INPUT.sdoc --preview
+    $ sdoc INPUT.sdoc
 
 Wandele nach PDF und speichere das Ergebnis in eine Datei:
 

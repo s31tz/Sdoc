@@ -46,7 +46,7 @@ Dokument übersetzen} beschrieben.
   borderMargin=2mm
   file="+/sdoc-example"
   noIndentation=1
-  latexOptions="clip,trim=0cm 3cm 0cm 0cm,width=0.965\textwidth"
+  latexOptions="clip,trim=0cm 0cm 0cm 0cm,width=0.965\textwidth"
 
 ---PageBreak---
 

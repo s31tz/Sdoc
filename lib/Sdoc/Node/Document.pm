@@ -1218,7 +1218,7 @@ sub latex {
             #}),
             Sdoc::Core::Concat->catIf($header,sub {
                 $l->c('\KOMAoptions{automark,autooneside=false'.
-                    ',headsepline,footsepline}'),
+                    ',headsepline}'), # footsepline
                 $l->c('\pagestyle{scrheadings}'),
                 $l->c('\automark[subsection]{section}'),
                 $l->c('\ihead{\MakeUppercase{\leftmark}}'),
