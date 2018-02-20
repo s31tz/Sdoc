@@ -17,13 +17,25 @@ sdoc - Prozessiere Sdoc-Dokument
 
 =head1 USAGE
 
-sdoc [OPTIONS] FILE.sdoc
+sdoc [OPTIONS] [pdf] INPUT.sdoc [OUTPUT.pdf]
+
+sdoc [OPTIONS] validate INPUT.sdoc
+
+sdoc [OPTIONS] anchors INPUT.sdoc
+
+sdoc [OPTIONS] links INPUT.sdoc
+
+sdoc [OPTIONS] tree INPUT.sdoc [OUTPUT]
 
 =head1 OPTIONS
 
 =over 4
 
-=item --pdf-viewer=NAME/PATH (Default: siehe ~/.sdoc.conf)
+=item --ansi-color[=BOOL] (Default: siehe ~/.sdoc.conf)
+
+Kennzeichne die Ausgabe mit ANSI Colercodes.
+
+=item --pdf-viewer=PROGRAM (Default: siehe ~/.sdoc.conf)
 
 Viewer zum Anzeigen des erzeugten PDF.
 
@@ -32,13 +44,25 @@ Viewer zum Anzeigen des erzeugten PDF.
 Muss als Option angegeben werden, wenn externe Programme aufgerufen
 werden müssen, um das Dokument zu übersetzen.
 
-=item --verbose[=BOOL] (Default: 0)
+=item --text-viewer=PROGRAM (Default: siehe ~/.sdoc.conf)
+
+Viewer zum Anzeigen von Text im Terminal (z.B. 'less -R').
+
+=item --verbose[=BOOL] (Default: siehe ~/.sdoc.conf)
 
 Gib Laufzeitinformationen aus.
 
 =item --work-dir=DIR (Default: siehe ~/.sdoc.conf)
 
-Arbeitsverzeichns.
+Wurzelverzeichnis des Verzeichnisbaums, in dem die Sdoc-Quelle übersetzt
+werden, da LaTeX viele temporäre Dateien erzeugt. Der Pfad Dir kann
+die Platzhalter enthalten
+
+    %U - der Name des aufrufenden Benutzers
+    %D - der Basisname (Dateiname ohne Pfad und Extension) des
+         Sdoc-Dokuments
+
+Der anfängliche Default ist C</tmp/sdoc/%U/%D>.
 
 =item --help|-h
 
@@ -46,11 +70,34 @@ Diese Hilfe.
 
 =back
 
+=head1 DESCRIPTION
+
+Prozessiere Eingabedatei FILE.sdoc gemäß den angegebenen Optionen.
+
+=head1 REQUIREMENTS
+
+Das Programm nutzt C<latexmk> zum Übersetzen von LaTeX nach PDF.
+
 =head1 FILES
 
 =over 4
 
-=item x
+=item ~/.sdoc.conf
+
+Konfigurationsdatei mit den Defaults für die meisten
+Programmoptionen. Diese können mit den auf der Kommandozeile
+angegebenen Optionen überschrieben werden. Aufbau der Datei:
+
+    # Sdoc configuration
+    
+    ansiColor => 1,
+    pdfViewer => 'evince',
+    shellEscape => 0,
+    textViewer => 'less -R',
+    verbose => 0,
+    workDir => '/tmp/sdoc/%U/%D',
+    
+    # eof
 
 =back
 
@@ -59,6 +106,42 @@ Diese Hilfe.
 Wandele nach PDF und zeige das Ergebnis im PDF-Viewer an:
 
     $ sdoc INPUT.sdoc
+
+Wandele nach PDF und schreibe das Ergebnis in eine Datei:
+
+    $ sdoc INPUT.sdoc OUTPUT.pdf
+
+Wandele nach LaTeX und zeige das Ergebnis im Text-Viewer an:
+
+    $ sdoc INPUT.sdoc
+
+Wandele nach LaTeX und schreibe das Ergebnis in eine Datei:
+
+    $ sdoc INPUT.sdoc OUTPUT.tex
+
+Wandele nach LaTeX und schreibe das Ergebnis nach STDOUT:
+
+    $ sdoc INPUT.sdoc -
+
+Validiere das Dokument, d.h. prüfe die Sdoc-Datei auf Korrektheit:
+
+    $ sdoc validate INPUT.sdoc
+
+Zeige die Liste der Anker, also die möglichen Ziele eines Verweises:
+
+    $ sdoc anchors INPUT.sdoc
+
+Zeige die Liste der internen und externen Verweise:
+
+    $ sdoc links INPUT.sdoc
+
+Zeige den Parsingbaum des Dokuments im Pager an:
+
+    $ sdoc tree INPUT.sdoc
+
+Schreibe den Parsingbaum des Dokuments in eine Datei:
+
+    $ sdoc tree INPUT.sdoc >OUTPUT.txt
 
 =head1 PROGRAM CLASS
 

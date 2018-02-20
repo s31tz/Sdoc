@@ -208,6 +208,7 @@ sub copy {
         $class->mkdir($destDir,-recursive=>1);
     }
 
+
     my $fh2 = Sdoc::Core::FileHandle->new('>',$destPath);
     while (<$fh1>) {
         print $fh2 $_ or $class->throw(

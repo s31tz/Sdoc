@@ -538,7 +538,7 @@ sub getCounts {
 
 =head4 Synopsis
 
-    $code = $node->generate($format);
+    $code = $node->generate($format,@args);
 
 =head4 Arguments
 
@@ -566,10 +566,12 @@ gesamte Dokument.
 # -----------------------------------------------------------------------------
 
 sub generate {
-    my ($self,$format) = @_;
+    my $self = shift;
+    my $format = shift;
+    # @_: @args
 
     if ($format eq 'tree') {
-        return $self->tree;
+        return $self->tree(@_);
     }
     elsif ($format eq 'latex') {
         my $gen = Sdoc::Core::LaTeX::Code->new;
@@ -637,7 +639,17 @@ sub generateChilds {
 
 =head4 Synopsis
 
-    $str = $node->tree;
+    $str = $node->tree($ansiColor);
+
+=head4 Arguments
+
+=over 4
+
+=item $ansiColor (Default: 1)
+
+Wenn gesetzt, erzeuge die Baumdarstellung mit ANSI Colorcodes.
+
+=back
 
 =head4 Returns
 
@@ -656,8 +668,9 @@ für das gesamte Dokument.
 
 sub tree {
     my $self = shift;
+    my $ansiColor = shift // 1;
 
-    my $a = Sdoc::Core::AnsiColor->new(1);
+    my $a = Sdoc::Core::AnsiColor->new($ansiColor);
 
     my $pairA = $self->nodeHierarchy;
     return Sdoc::Core::TreeFormatter->new($pairA)->asText(
