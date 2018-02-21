@@ -3,7 +3,6 @@
   author="Frank Seitz, L{http://fseitz.de/}"
   date="today"
   latexShowFrames=0
-# latexDocumentClass=scrreprt
 
 %TableOfContents:
   maxDepth=4
@@ -159,6 +158,7 @@ Dokument-Bock angegeben:
     indentation=FLOAT
     language=german|english
     latexDocumentClass=scrartcl|scrreprt|scrbook|article|report|book
+    latexDocumentOptions=STRING
     latexFontSize=10pt|11pt|12pt
     latexGeometry=STRING
     latexHeadings=BOOL
@@ -230,6 +230,10 @@ verwendet werden:
 [latexDocumentClass]:
   LaTeX-Dokumentklasse. Werte: 'scrartcl', 'scrreprt', 'scrbook',
   'article', 'report', 'book', ...
+
+[latexDocumentOptions]:
+  Kommaseparierte Liste von LaTeX
+  Dokumentklassen-Optionen. Z.B. 'twoside'.
 
 [latexFontSize]:
   (Default: '10pt') Die Größe des LaTeX-Font. Mögliche Werte: '10pt',

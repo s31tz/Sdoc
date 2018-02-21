@@ -200,6 +200,7 @@ sub main {
                 (-pdflatex => 'pdflatex %O %S')
             );
             $c->addArgument($latexFile);
+            $c->addString('</dev/null');
 
             $sh->exec($c->command);
 

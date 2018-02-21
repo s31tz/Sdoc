@@ -7,6 +7,7 @@ use warnings;
 our $VERSION = 1.124;
 
 use Sdoc::Core::Reference;
+use Sdoc::Core::Unindent;
 use POSIX ();
 
 # -----------------------------------------------------------------------------
@@ -120,6 +121,10 @@ Seitenmaße.
 
 Die Sprache, in der das Dokument verfasst ist.
 
+=item options => $str | \@arr
+
+Dukument-Optionen.
+
 =item packages => \@arr (Default: [])
 
 Liste der Packages, die zusätzlich geladen werden sollen.
@@ -193,6 +198,7 @@ sub new {
         fontSize => undef,
         geometry => undef,
         language => 'ngerman',
+        options => undef,
         packages => [],
         paperSize => 'a4paper',
         parIndent => '0em',
@@ -236,11 +242,12 @@ sub latex {
     my $self = ref $this? $this: $this->new(@_);
 
     my ($author,$body,$compactCode,$date,$documentClass,$encoding,
-        $fontEncoding,$fontSize,$geometry,$language,$packageA,$paperSize,
-        $parIndent,$parSkip,$preamble,$preComment,$secNumDepth,$title,
-        $tocDepth) = $self->get(qw/author body compactCode date documentClass
-        encoding fontEncoding fontSize geometry language packages paperSize
-        parIndent parSkip preamble preComment secNumDepth title tocDepth/);
+        $fontEncoding,$fontSize,$geometry,$language,$options,$packageA,
+        $paperSize,$parIndent,$parSkip,$preamble,$preComment,$secNumDepth,
+        $title,$tocDepth) = $self->get(qw/author body compactCode date
+        documentClass encoding fontEncoding fontSize geometry language
+        options packages paperSize parIndent parSkip preamble preComment
+        secNumDepth title tocDepth/);
 
     my @pnl = $compactCode? (): (-pnl=>1);
 
@@ -263,6 +270,14 @@ sub latex {
     }
     if ($fontSize) {
         push @opt,$fontSize;
+    }
+    if ($options) {
+        if (Sdoc::Core::Reference->isArrayRef($options)) {
+            push @opt,@$options;
+        }
+        else {
+            push @opt,split /,/,$options;
+        }
     }
     $code .= $l->macro('\documentclass',
         -o => \@opt,
@@ -299,6 +314,9 @@ sub latex {
         }
     }
 
+    # Mikro-Typografie (autom. Korrektur von Leerraum am Rand)
+    $code .= $l->c('\usepackage{microtype}',@pnl);
+
     # Pakete
 
     for (my $i = 0; $i < @$packageA; $i += 2) {
@@ -321,13 +339,6 @@ sub latex {
         );
     }
 
-    # Dokument-Vorspann
-
-    if (Sdoc::Core::Reference->isArrayRef($preamble)) {
-        $preamble = join '',@$preamble;
-    }
-    $code .= $preamble;
-
     # Abschnittskonfiguration
 
     if (defined $secNumDepth) {
@@ -345,6 +356,13 @@ sub latex {
     if ($parSkip) {
         $code .= $l->c('\setlength{\parskip}{%s}',$parSkip);
     }
+
+    # Dokument-Vorspann
+
+    if (Sdoc::Core::Reference->isArrayRef($preamble)) {
+        $preamble = join '',@$preamble;
+    }
+    $code .= $preamble;
 
     # Dokument-Rumpf
 
@@ -377,6 +395,7 @@ sub latex {
         $tmp .= $l->c('\thispagestyle{empty}');
         $body = $tmp.$body;
     }
+    $body = Sdoc::Core::Unindent->trimNl($body);
 
     # Umgebung
     $code .= $l->env('document',$body,@pnl);

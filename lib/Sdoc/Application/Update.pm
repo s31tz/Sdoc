@@ -72,7 +72,7 @@ sub main {
     my $srcFile = 'doc/sdoc-example.sdoc';
     my $destFile = 'doc/sdoc-example.pdf';
     if ($opt->force || Sdoc::Core::Path->newer($srcFile,$destFile)) {
-        $sh->exec("sdoc pdf $srcFile --output=$destFile --shell-escape");
+        $sh->exec("sdoc pdf $srcFile $destFile --shell-escape");
         $sh->exec("mv $destFile $destFile.tmp");
         $sh->exec("pdfcrop $destFile.tmp $destFile");
         $sh->exec("rm $destFile.tmp");
@@ -82,13 +82,13 @@ sub main {
     $srcFile = 'doc/sdoc-manual.sdoc';
     $destFile = 'doc/sdoc-manual.pdf';
     if (Sdoc::Core::Path->newer($srcFile,$destFile) || $createManual) {
-        $sh->exec("sdoc pdf $srcFile --output=$destFile --shell-escape");
+        $sh->exec("sdoc pdf $srcFile $destFile --shell-escape");
     }
 
     $srcFile = 'doc/sdoc-test.sdoc';
     $destFile = 'doc/sdoc-test.pdf';
     if ($opt->force || Sdoc::Core::Path->newer($srcFile,$destFile)) {
-        $sh->exec("sdoc pdf $srcFile --output=$destFile --shell-escape");
+        $sh->exec("sdoc pdf $srcFile $destFile --shell-escape");
     }
 
     return;
