@@ -787,9 +787,9 @@ sub latexText {
                 if (my $scale = $gph->scale) {
                     push @opt,"scale=$scale";
                 }
-                $code .= $l->c('\includegraphics[%s]{%s}',
-                    \@opt,
-                    $root->expandPlus($gph->file),
+                $code .= $l->macro('\includegraphics',
+                    -o => \@opt,
+                    -p => $root->expandPlus($gph->file),
                     -nl => 0,
                 );
                 if ($type eq 'Item' && $code =~ tr/[//) {
@@ -816,7 +816,7 @@ sub latexText {
 
             my ($linkText,$h) = @{$self->linkA->[$val]};
             if ($h->type eq 'external') {
-                # $dest und $text sind identisch
+                # destText und text sind identisch
                 $code = $l->ci('\href{%s}{%s}',$l->protect($h->destText),
                     $l->protect($h->text));
             }

@@ -76,6 +76,7 @@ sub main {
 
     my ($error,$opt,$argA) = $self->options(
         -ansiColor => $conf->try('ansiColor') // $ansiColorDefault,
+        -convert => 0,
         -pdfViewer => $conf->try('pdfViewer') // $pdfViewerDefault,
         -shellEscape => $conf->try('shellEscape') // $shellEscapeDefault,
         -textViewer => $conf->try('textViewer') // $textViewerDefault,
@@ -110,14 +111,19 @@ sub main {
     # Ausgabe in ANSI Farben
     my $a = Sdoc::Core::AnsiColor->new($opt->ansiColor);
 
+    # Sdoc-Datei von Sdoc2 nach Sdoc3 wandeln
+
     if ($op eq 'convert') {
-        my $workDir = $self->workDir($opt,$basename);
-        my $sdoc3File = sprintf '%s/%s.txt',$workDir,$basename;
-        my $code = Sdoc::Core::Path->read($sdocFile,-decode=>'utf-8');
-        $code = Sdoc::Document->sdoc2ToSdoc3($code);
-        Sdoc::Core::Path->write($sdoc3File,$code,-encode=>'utf-8');
+        # Wandelung als alleiniger Vorgang
+
+        my $sdoc3File = $self->sdoc2ToSdoc3($sdocFile,$opt);
         $self->showResult($sdoc3File,$output,$opt->textViewer);
         return;
+    }
+
+    if ($opt->convert) {
+        # Wandelung vor der Weiterverarbeitung
+        $sdocFile = $self->sdoc2ToSdoc3($sdocFile,$opt);
     }
 
     # Parse Sdoc-Datei
@@ -171,7 +177,7 @@ sub main {
     elsif ($op eq 'tree') {
         my $str = $doc->generate('tree',$opt->ansiColor);
         if (-t STDOUT) {
-            my $workDir = $self->workDir($opt,$basename);
+            my $workDir = $self->workDir($basename,$opt);
             my $treeFile = sprintf '%s/tree.txt',$workDir;
             Sdoc::Core::Path->write($treeFile,$str,-encode=>'utf-8');
             
@@ -185,7 +191,7 @@ sub main {
     }
     elsif ($op eq 'latex' || $op eq 'pdf') {
         # Ermittele/erzeuge Arbeitsverzeichnis
-        my $workDir = $self->workDir($opt,$basename);
+        my $workDir = $self->workDir($basename,$opt);
 
         # Erzeuge LaTeX-Datei
 
@@ -240,7 +246,7 @@ sub main {
 
 =head4 Synopsis
 
-    $workDir = $prg->workDir($opt,$name);
+    $workDir = $prg->workDir($name,$opt);
 
 =head4 Description
 
@@ -252,7 +258,7 @@ Formate. Existiert das Verzeichnis nicht, erzeuge es.
 # -----------------------------------------------------------------------------
 
 sub workDir {
-    my ($self,$opt,$name) = @_;
+    my ($self,$name,$opt) = @_;
 
     my $workDir = $opt->workDir;
     if ($workDir =~ m|(.*)/%U|) {
@@ -266,6 +272,36 @@ sub workDir {
     Sdoc::Core::Path->mkdir($workDir,-recursive=>1);
 
     return $workDir;
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 sdoc2ToSdoc3() - Wandele Sdoc2 Datei nach Sdoc3-Datei
+
+=head4 Synopsis
+
+    $sdoc3File = $prg->sdoc2ToSdoc3($sdoc2File,$opt);
+
+=head4 Description
+
+Wandele Sdoc2-Datei $sdoc2File im Arbeitsverzeichnis in eine
+Sdoc3-Datei und liefere den Pfad der erzeugten Sdoc3-Datei zurück.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub sdoc2ToSdoc3 {
+    my ($self,$sdoc2File,$opt) = @_;
+
+    my $basename = Sdoc::Core::Path->basename($sdoc2File);
+    my $workDir = $self->workDir($basename,$opt);
+    my $code = Sdoc::Core::Path->read($sdoc2File,-decode=>'utf-8');
+    $code = Sdoc::Document->sdoc2ToSdoc3($code);
+    my $sdoc3File = sprintf '%s/%s.sdoc3',$workDir,$basename;
+    Sdoc::Core::Path->write($sdoc3File,$code,-encode=>'utf-8');
+
+    return $sdoc3File;
 }
 
 # -----------------------------------------------------------------------------

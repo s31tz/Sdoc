@@ -225,6 +225,19 @@ Wandele Sdoc2-Code in Sdoc3-Code und liefere das Resultat zurück.
 sub sdoc2ToSdoc3 {
     my ($class,$code) = @_;
 
+    my $segmentL = sub {
+        my $content = shift;
+        if ($content !~ /"/) {
+            return "L{$content}";
+        }
+        my $code = "U{$content}";
+        warn "WARNING: Can't convert: $code\n";
+        return $code;
+    };
+
+    # HACK Blog-Artikel
+    $code =~ s|IMGDIR|/home/fs2/opt/blog/image|m;
+
     # %Document
     
     $code =~ s|^( +)utf8=.*\n||m;
@@ -232,8 +245,11 @@ sub sdoc2ToSdoc3 {
 
     # %Figure
 
-    $code =~ s|%Figure:|%Graphic:|m;
-    
+    $code =~ s|%Figure:|%Graphic:|;
+    $code =~ s|url=|link=|;
+
+    # L-Segment
+    $code =~ s/U\{([^}]+)\}/$segmentL->($1)/eg;
 
     return $code;
 }

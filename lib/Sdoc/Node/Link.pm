@@ -31,7 +31,8 @@ Inhaltsverzeichnis-Knoten folgende zusätzliche Attribute:
 
 =item name => $name (Default: undef)
 
-Name der Link-Definition.
+Name der Link-Definition. Mehrere Namen können mit | getrennt
+definiert werden. Beispiel: C<name="Sdoc|Sdoc Homepage">
 
 =item file => $path (Default: undef)
 

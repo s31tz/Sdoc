@@ -99,6 +99,11 @@ Skalierungsfaktor. Im Falle von LaTeX wird dieser zu den
 C<latexOptions> hinzugefügt, sofern dort kein Skalierungsfaktor
 angegeben ist.
 
+=item link => $url
+
+Versieh die Grafik mit einem Verweis. Hier ist aktuell nur ein
+Verweis auf externe Ressource, also ein URL erlaubt.
+
 =item useCount => $n
 
 Die Anzahl der G-Segmente im Text, die diesen Grafik-Knoten
@@ -185,6 +190,7 @@ sub new {
         height => undef,
         noIndentation => 0,
         latexOptions => undef,
+        link => undef,
         linkA => [],
         linkId => undef,
         name => undef,
@@ -310,6 +316,7 @@ sub latex {
         options => $self->latexOptions,
         postVSpace => $l->modifyLength($root->latexParSkip,'*-2'),
         scale => $self->scale,
+        url => $self->link,
         width => $self->width,
     )."\n";
 }

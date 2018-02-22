@@ -104,6 +104,10 @@ Wert) oder abgezogen (negativer Wert) wird.
 
 Skalierungsfaktor.
 
+=item url => $url
+
+Versieh das Bild mit einem Verweis auf eine externe Ressource.
+
 =item width => $width
 
 Breite, auf die das Bild skaliert wird.
@@ -140,6 +144,7 @@ sub new {
         position => 'H',
         postVSpace => undef,
         scale => undef,
+        url => undef,
         width => undef,
     );
     $self->set(@_);
@@ -175,9 +180,9 @@ sub latex {
     my $self = ref $this? $this: $this->new(@_);
 
     my ($align,$border,$borderMargin,$caption,$file,$height,$indent,$label,
-        $options,$position,$postVSpace,$scale,$width) = $self->get(qw/align
-        border borderMargin caption file height indent label options position
-        postVSpace scale width/);
+        $options,$position,$postVSpace,$scale,$url,$width) =
+        $self->get(qw/align border borderMargin caption file height indent
+        label options position postVSpace scale url width/);
 
     if (!$file) {
         return '';
@@ -196,10 +201,10 @@ sub latex {
         push @opt,"scale=$scale";
     }
     if ($width) {
-        push @opt,"width=$width";
+        push @opt,"width=${width}px"; # FIXME
     }
     if ($height) {
-        push @opt,"height=$height";
+        push @opt,"height=${height}px"; # FIXME
     }
 
     my $body;
@@ -209,17 +214,19 @@ sub latex {
     elsif ($indent) {
         $body .= $l->ci('\hspace*{%s}',$indent);
     }
+
     my $tmp = $l->macro('\includegraphics',
         -o => \@opt,
         -p => $file,
         -nl => 0,
     );
     if ($border) {
-        $body .= $l->c('{\fboxsep%s\fbox{%s}}',$borderMargin,$tmp);
+        $tmp = $l->ci('{\fboxsep%s\fbox{%s}}',$borderMargin,$tmp);
     }
-    else {
-        $body .= "$tmp\n";
+    if ($url) {
+        $tmp = $l->ci('\href{%s}{%s}',$url,$tmp);
     }
+    $body .= "$tmp\n";
 
     if ($caption) {
         my @opt;

@@ -521,7 +521,11 @@ sub linkNode {
         my %h;
         for my $node ($self->nodes) {
             if ($node->type eq 'Link') {
-                $h{$node->name} = $node;
+                # Das Namens-Attribut kann mehrere Namen mit |
+                # getrennt definieren
+                for my $name (split /\|/,$node->name) {
+                    $h{$name} = $node;
+                }
             }
         }
 
@@ -1265,22 +1269,60 @@ sub latex {
     my (@packages,@preamble);
     if ($h->sections && $headings) {
         push @packages,
-            'scrlayer-scrpage' => 1, # KOMA headings
             lastpage => 1, # für Seitenangabe
         ; 
         push @preamble,
-            $l->comment('scrlayer-scrpage'),
             # Hilfsmakro \nolink zur Unterdrückung eines Link
+            $l->comment('no link'),
             $l->c('\newcommand*{\nolink}[1]{'.
                 '{\protect\NoHyper#1\protect\endNoHyper}}'),
-            $l->c('\KOMAoptions{automark,autooneside=false,headsepline}'),
-            $l->c('\pagestyle{scrheadings}'),
-            $l->c('\automark[subsection]{section}'),
-            $l->c('\ihead{\MakeUppercase{\leftmark}}'),
-            $l->c('\chead{}'),
-            $l->c('\ohead{\ifstr{\leftmark}{\rightmark}{}{\rightmark}}'),
-            $l->c('\cfoot{\emph{\thepage/\nolink{\pageref{LastPage}}}}'),
         ;
+
+        # MEMO: Für eine Trennlinie über der Fußzeile die Zeilen
+        # unten einkommentieren.
+
+        if (1) {
+            # Für Kopf- und Fußzeilen scrlayer-scrpage nutzen
+
+            push @packages,
+                'scrlayer-scrpage' => 1, # KOMA headings
+            ; 
+            push @preamble,
+                # Für eine Linie über der Fußzeile zu den KOMAoptions
+                # 'footsepline' hinzufügen und '\ModifyLayer[addvoffset=
+                # -LENGTH]{scrheadings.foot.above.line}'
+
+                $l->comment('scrlayer-scrpage'),
+                $l->c('\KOMAoptions{automark,autooneside=false,headsepline}'),
+                $l->c('\pagestyle{scrheadings}'),
+                $l->c('\automark[subsection]{section}'),
+                $l->c('\ihead{\MakeUppercase{\leftfirstmark}}'),
+                $l->c('\chead{}'),
+                $l->c('\ohead{\ifstr{\leftfirstmark}{\rightfirstmark}{}'.
+                    '{\rightfirstmark}}'),
+                #$l->c('\KOMAoptions{footsepline}'),
+                #$l->c('\ModifyLayer[addvoffset=-0.5ex]'.
+                #    '{scrheadings.foot.above.line}'),
+                $l->c('\cfoot{\emph{\thepage/\nolink{\pageref{LastPage}}}}'),
+            ;
+        }
+        else {
+            # Für Kopf- und Fußzeilen fancyhdr nutzen
+
+            push @packages,
+                fancyhdr => 1, # bessere Kopf- und Fußzeilen
+                scrbase => 1, # KOMA-Script Hilfsklasse mit \ifstr (s.u.)
+            ; 
+            push @preamble,
+                $l->comment('fancyhdr'),
+                $l->c('\pagestyle{fancy}'),
+                $l->c('\lhead{\MakeUppercase{\textit{\leftmark}}}'),
+                $l->c('\rhead{\ifstr{\leftmark}'.
+                    '{\rightmark}{}{\textit{\rightmark}}}'),
+                # $l->c('\renewcommand{\footrulewidth}{0.4pt}'),
+                $l->c('\cfoot{\thepage/\nolink{\pageref{LastPage}}}'),
+            ;
+        }
     }
     if ($h->lists) {
         push @packages,

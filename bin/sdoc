@@ -37,6 +37,11 @@ sdoc [OPTIONS] convert INPUT.sdoc2 [OUTPUT.sdoc3]
 
 Kennzeichne die Ausgabe mit ANSI Colercodes.
 
+=item --convert[=BOOL] (Default: 0)
+
+Konvertiere die Eingabedatei vor der Verarbeitung von Sdoc2 nach
+Sdoc3.
+
 =item --pdf-viewer=PROGRAM (Default: siehe ~/.sdoc.conf)
 
 Viewer zum Anzeigen des erzeugten PDF.
@@ -112,6 +117,11 @@ Wandele nach PDF und zeige das Ergebnis im PDF-Viewer an:
 Wandele nach PDF und schreibe das Ergebnis in eine Datei:
 
     $ sdoc INPUT.sdoc OUTPUT.pdf
+
+Wandele Eingabedatei zuerst von Sdoc2 nach Sdoc3 und dann
+nach PDF und zeige das Ergebnis im PDF-Viewer an:
+
+    $ sdoc --convert INPUT.sdoc
 
 Wandele nach LaTeX und zeige das Ergebnis im Text-Viewer an:
 

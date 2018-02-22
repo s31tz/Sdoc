@@ -578,6 +578,7 @@ In der Beschriftung (C{caption}) einer Abbildung können alle Segmente
     definition=BOOL
     file=PATH
     latexOptions=STRING
+    link=URL
     name=STRING
     noIndentation=BOOL
     scale=FLOAT
@@ -612,6 +613,10 @@ In der Beschriftung (C{caption}) einer Abbildung können alle Segmente
 [latexOptions]:
   LaTeX-spezifische Optionen, die direkt an das LaTeX-Makro
   C{\includegraphics} übergeben werden.
+
+[link]:
+  Versieh das Bild mit einem Verweis. Hier ist aktuell nur ein
+  Verweis auf externe Ressource, also ein URL erlaubt.
 
 [name]:
   Name der Grafik. Ein Name muss angegeben sein, wenn die Grafik von
@@ -1513,7 +1518,8 @@ gebildet.
     url=URL
 
 [name]:
-  Name der Link-Definiton.
+  Name der Link-Definiton. Mehrere Namen können mit | getrennt
+  definiert werden. Beispiel: C{name="Sdoc|Sdoc Homepage"}
 
 [file]:
   Pfad einer lokalen Datei.
