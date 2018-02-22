@@ -94,7 +94,7 @@ sub main {
     }
 
     my $op = 'pdf';
-    if ($argA->[0] =~ /^(anchors|latex|links|pdf|tree|validate)$/) {
+    if ($argA->[0] =~ /^(anchors|convert|latex|links|pdf|tree|validate)$/) {
         $op = shift @$argA;
     }
     my $sdocFile = shift @$argA;
@@ -109,6 +109,16 @@ sub main {
 
     # Ausgabe in ANSI Farben
     my $a = Sdoc::Core::AnsiColor->new($opt->ansiColor);
+
+    if ($op eq 'convert') {
+        my $workDir = $self->workDir($opt,$basename);
+        my $sdoc3File = sprintf '%s/%s.txt',$workDir,$basename;
+        my $code = Sdoc::Core::Path->read($sdocFile,-decode=>'utf-8');
+        $code = Sdoc::Document->sdoc2ToSdoc3($code);
+        Sdoc::Core::Path->write($sdoc3File,$code,-encode=>'utf-8');
+        $self->showResult($sdoc3File,$output,$opt->textViewer);
+        return;
+    }
 
     # Parse Sdoc-Datei
 
@@ -245,6 +255,11 @@ sub workDir {
     my ($self,$opt,$name) = @_;
 
     my $workDir = $opt->workDir;
+    if ($workDir =~ m|(.*)/%U|) {
+        # Das Eltern-Verzeichnis des User-Verzeichnisses
+        # muss für alle schreibbar sein
+        Sdoc::Core::Path->mkdir($1,-forceMode=>01777);
+    }
     $workDir =~ s/%U/$self->user/eg;
     $workDir =~ s/%D/$name/g;
     $workDir = Sdoc::Core::Path->expandTilde($workDir);

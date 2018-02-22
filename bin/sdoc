@@ -27,6 +27,8 @@ sdoc [OPTIONS] links INPUT.sdoc
 
 sdoc [OPTIONS] tree INPUT.sdoc [OUTPUT]
 
+sdoc [OPTIONS] convert INPUT.sdoc2 [OUTPUT.sdoc3]
+
 =head1 OPTIONS
 
 =over 4
@@ -142,6 +144,10 @@ Zeige den Parsingbaum des Dokuments im Pager an:
 Schreibe den Parsingbaum des Dokuments in eine Datei:
 
     $ sdoc tree INPUT.sdoc >OUTPUT.txt
+
+Konvertiere eine Sdoc2-Datei in eine Sdoc3-Datei:
+
+    $ sdoc convert INPUT.sdoc2 OUTPUT.sdoc3
 
 =head1 PROGRAM CLASS
 

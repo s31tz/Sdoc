@@ -57,7 +57,8 @@ Mit diesem Abschnitt beginnen die Appendizes.
 
 =item level => $n
 
-Tiefe des Abschnitts in der Abschnittshierarchie, beginnend mit 1.
+Tiefe des Abschnitts in der Abschnittshierarchie. Werte: =- -1,
+==- 0, = 1, == 2, === 3, ==== 4.
 
 =item linkA => \@links
 

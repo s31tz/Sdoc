@@ -68,6 +68,10 @@ C<name> definiert, ist der Default 1, andernfalls 0.
 Pfad der Bilddatei. Beginnt der Pfad mit C<+/>, wird das
 Pluszeichen zum Pfad des Dokumentverzeichnisses expandiert.
 
+=item height => $height
+
+Höhe, auf die das Bild skaliert wird.
+
 =item latexOptions => $str
 
 LaTeX-spezifische Optionen, die als direkt an das LaTeX-Makro
@@ -100,6 +104,10 @@ angegeben ist.
 Die Anzahl der G-Segmente im Text, die diesen Grafik-Knoten
 nutzen. Nach dem Parsen kann anhand dieses Zählers geprüft werden,
 ob jeder Grafik-Knoten mit C<definition=1> genutzt wird.
+
+=item width => $width
+
+Breite, auf die das Bild skaliert wird.
 
 =back
 
@@ -174,6 +182,7 @@ sub new {
         file => undef,
         formulaA => [],
         graphicA => [],
+        height => undef,
         noIndentation => 0,
         latexOptions => undef,
         linkA => [],
@@ -181,6 +190,7 @@ sub new {
         name => undef,
         scale => undef,
         useCount => 0,
+        width => undef,
         # memoize
         anchorA => undef,
     );
@@ -294,11 +304,13 @@ sub latex {
         borderMargin => $self->borderMargin,
         caption => $self->latexText($l,'captionS'),
         file => $root->expandPlus($self->file),
+        height => $self->height,
         indent => $self->noIndentation? undef: $root->indentation.'em',
         label => $self->linkId,
         options => $self->latexOptions,
         postVSpace => $l->modifyLength($root->latexParSkip,'*-2'),
         scale => $self->scale,
+        width => $self->width,
     )."\n";
 }
 

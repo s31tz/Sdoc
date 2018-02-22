@@ -194,6 +194,52 @@ sub parse {
 
 # -----------------------------------------------------------------------------
 
+=head3 sdoc2ToSdoc3() - Konvertiere Sdoc2-Code in Sdoc3-Code
+
+=head4 Synopsis
+
+    $code = $class->sdoc2ToSdoc3($code);
+
+=head4 Arguments
+
+=over 4
+
+=item $code (String)
+
+Sdoc2-Code
+
+=back
+
+=head4 Returns
+
+Sdoc3-Code (String)
+
+=head4 Description
+
+Wandele Sdoc2-Code in Sdoc3-Code und liefere das Resultat zurück.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub sdoc2ToSdoc3 {
+    my ($class,$code) = @_;
+
+    # %Document
+    
+    $code =~ s|^( +)utf8=.*\n||m;
+    $code =~ s|^( +)generateAnchors=.*\n||m;
+
+    # %Figure
+
+    $code =~ s|%Figure:|%Graphic:|m;
+    
+
+    return $code;
+}
+
+# -----------------------------------------------------------------------------
+
 =head1 VERSION
 
 3.00

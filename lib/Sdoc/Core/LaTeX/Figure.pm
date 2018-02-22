@@ -73,6 +73,10 @@ Beschriftung der Abbldung. Diese erscheint unter der Abbildung.
 
 Pfad der Bilddatei.
 
+=item height => $height
+
+Höhe, auf die das Bild skaliert wird.
+
 =item indent => $length
 
 Länge, mit der die Abbildung vom linken Rand eingerückt wird,
@@ -100,6 +104,10 @@ Wert) oder abgezogen (negativer Wert) wird.
 
 Skalierungsfaktor.
 
+=item width => $width
+
+Breite, auf die das Bild skaliert wird.
+
 =back
 
 =head4 Returns
@@ -125,12 +133,14 @@ sub new {
         borderMargin => '0mm',
         caption => undef,
         file => undef,
+        height => undef,
         indent => undef,
         label => undef,
         options => undef, # $str | \@opt
         position => 'H',
         postVSpace => undef,
         scale => undef,
+        width => undef,
     );
     $self->set(@_);
 
@@ -164,10 +174,10 @@ sub latex {
 
     my $self = ref $this? $this: $this->new(@_);
 
-    my ($align,$border,$borderMargin,$caption,$file,$indent,$label,$options,
-        $position,$postVSpace,$scale) = $self->get(qw/align border
-        borderMargin caption file indent label options position postVSpace
-        scale/);
+    my ($align,$border,$borderMargin,$caption,$file,$height,$indent,$label,
+        $options,$position,$postVSpace,$scale,$width) = $self->get(qw/align
+        border borderMargin caption file height indent label options position
+        postVSpace scale width/);
 
     if (!$file) {
         return '';
@@ -184,6 +194,12 @@ sub latex {
     }
     if ($scale) {
         push @opt,"scale=$scale";
+    }
+    if ($width) {
+        push @opt,"width=$width";
+    }
+    if ($height) {
+        push @opt,"height=$height";
     }
 
     my $body;
