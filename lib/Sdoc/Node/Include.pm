@@ -111,7 +111,7 @@ sub new {
     );
     $self->setAttributes(%$attribH);
 
-    if (my $file = $root->expandPlus($self->load)) {
+    if (my $file = $root->expandPath($self->load)) {
         my $lineA = $par->lines;
 
         # Datei lesen und dem Input hinzufügen

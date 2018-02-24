@@ -70,7 +70,8 @@ Pluszeichen zum Pfad des Dokumentverzeichnisses expandiert.
 
 =item height => $height
 
-Höhe, auf die das Bild skaliert wird.
+Höhe in Pixeln (ohne Angabe einer Einheit), auf die das Bild
+skaliert wird.
 
 =item latexOptions => $str
 
@@ -95,14 +96,15 @@ Rücke die Grafik nicht ein. Das Attribut ist nur bei C<< align =>
 
 =item scale => $factor
 
-Skalierungsfaktor. Im Falle von LaTeX wird dieser zu den
-C<latexOptions> hinzugefügt, sofern dort kein Skalierungsfaktor
-angegeben ist.
+Skalierungsfaktor. Der Skalierungsfaktor hat bei LaTeX
+Priorität gegenüber der Angabe von C<width> und C<height>.
 
 =item link => $url
 
-Versieh die Grafik mit einem Verweis. Hier ist aktuell nur ein
-Verweis auf externe Ressource, also ein URL erlaubt.
+Versieh die Grafik mit einem Verweis. Dies kann ein Verweis auf
+ein internes oder externes Ziel sein wie bei einem L-Segment (nur
+dass das Attribut den Link-Text als Wert hat ohne den
+Segment-Bezeichner und die geschweiften Klammern).
 
 =item useCount => $n
 
@@ -112,7 +114,8 @@ ob jeder Grafik-Knoten mit C<definition=1> genutzt wird.
 
 =item width => $width
 
-Breite, auf die das Bild skaliert wird.
+Breite in Pixeln (ohne Angabe einer Einheit), auf die das Bild
+skaliert wird.
 
 =back
 
@@ -191,6 +194,7 @@ sub new {
         noIndentation => 0,
         latexOptions => undef,
         link => undef,
+        linkN => undef,
         linkA => [],
         linkId => undef,
         name => undef,
@@ -207,6 +211,14 @@ sub new {
     if (!defined $self->definition) {
         $self->set(definition=>$self->name? 1: 0);
     }
+
+    # Bild-Link registrieren
+
+    if (my $val = $self->link) {
+        my $linkA = $self->linkA;
+        push @$linkA,[$val,undef];
+        $self->set(linkN=>$#$linkA);
+    }        
 
     # Segmente in caption parsen
     $par->parseSegments($self,'caption');
@@ -304,19 +316,37 @@ sub latex {
         return '';
     }
 
+    # Verlinkung des Bildes mit einem internen oder externen Ziel
+
+    my ($ref,$url);
+    my $n = $self->linkN;
+    if (defined $n) {
+        my $h = $self->linkA->[$n]->[1];
+        my $type = $h->type;
+        if ($type eq 'external') {
+            $url = $h->destText;
+        }
+        elsif ($type eq 'internal') {
+            $ref = $h->destNode->linkId;
+        }
+    }
+
+    # LaTeX-Code erzeugen
+
     return Sdoc::Core::LaTeX::Figure->latex($l,
         align => substr($self->align,0,1),
         border => $self->border,
         borderMargin => $self->borderMargin,
         caption => $self->latexText($l,'captionS'),
-        file => $root->expandPlus($self->file),
+        file => $root->expandPath($self->file),
         height => $self->height,
         indent => $self->noIndentation? undef: $root->indentation.'em',
         label => $self->linkId,
         options => $self->latexOptions,
         postVSpace => $l->modifyLength($root->latexParSkip,'*-2'),
+        ref => $ref,
         scale => $self->scale,
-        url => $self->link,
+        url => $url,
         width => $self->width,
     )."\n";
 }

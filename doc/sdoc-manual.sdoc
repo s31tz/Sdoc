@@ -240,7 +240,10 @@ verwendet werden:
   '11pt', '12pt'.
 
 [latexGeometry]:
-  Definition der Seitengeometrie mittels des LaTeX-Pakets C{geometry}.
+  (Default: 'height=22.5cm,bottom=3.8cm' bei a4paper) Definition der
+  Seitengeometrie mittels des LaTeX-Pakets C{geometry}. Damit können
+  gegenüber der Grundeinstellung abweichende Seitenmaße definiert
+  werden.
 
 [latexHeadings]:
   Erzeuge Kopf- und Fußzeilen.
@@ -577,11 +580,13 @@ In der Beschriftung (C{caption}) einer Abbildung können alle Segmente
     caption=STRING
     definition=BOOL
     file=PATH
+    height=INTEGER
     latexOptions=STRING
     link=URL
     name=STRING
     noIndentation=BOOL
     scale=FLOAT
+    with=INTEGER
 
 [align]:
   (Default: 'left') Horizontale Ausrichtung des Bildes. Mögliche
@@ -610,13 +615,19 @@ In der Beschriftung (C{caption}) einer Abbildung können alle Segmente
   Pfad der Bilddatei. Beginnt der Pfad mit C{+/}, wird das
   Pluszeichen zum Pfad des Dokumentverzeichnisses expandiert.
 
+[height]:
+  Höhe in Pixeln (ohne Angabe einer Einheit), auf die das Bild
+  skaliert wird.
+
 [latexOptions]:
   LaTeX-spezifische Optionen, die direkt an das LaTeX-Makro
   C{\includegraphics} übergeben werden.
 
 [link]:
-  Versieh das Bild mit einem Verweis. Hier ist aktuell nur ein
-  Verweis auf externe Ressource, also ein URL erlaubt.
+  Versieh das Bild mit einem Verweis. Dies kann ein Verweis auf ein
+  internes oder externes Ziel sein wie bei einem L-Segment (nur dass
+  das Attribut den Link-Text als Wert hat ohne den Segment-Bezeichner
+  und die geschweiften Klammern).
 
 [name]:
   Name der Grafik. Ein Name muss angegeben sein, wenn die Grafik von
@@ -628,9 +639,12 @@ In der Beschriftung (C{caption}) einer Abbildung können alle Segmente
   von Bedeutung.
 
 [scale]:
-  Skalierungsfaktor. Im Falle von LaTeX wird dieser zu den
-  C{latexOptions} hinzugefügt, sofern dort kein Skalierungsfaktor
-  angegeben ist.
+  Skalierungsfaktor. Der Skalierungsfaktor hat bei LaTeX Priorität
+  gegenüber der Angabe von C{width} und C{height}.
+
+[width]:
+  Breite in Pixeln (ohne Angabe einer Einheit), auf die das Bild
+  skaliert wird.
 
 ---PageBreak---
 

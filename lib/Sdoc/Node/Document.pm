@@ -8,6 +8,7 @@ our $VERSION = 3.00;
 
 use Sdoc::Core::Hash;
 use Digest::SHA ();
+use Sdoc::Core::Process;
 use Sdoc::Core::LaTeX::Document;
 
 # -----------------------------------------------------------------------------
@@ -1148,17 +1149,17 @@ sub findDestNodes {
 
 =head2 Pfade
 
-=head3 expandPlus() - Expandiere +/ zu Dokumentverzeichnis
+=head3 expandPath() - Expandiere Pfad
 
 =head4 Synopsis
 
-    $strExpanded = $doc->expandPlus($str);
+    $absPath = $doc->expandPath($path);
 
 =head4 Arguments
 
 =over 4
 
-=item $str
+=item $path
 
 Pfad oder Kommandozeile.
 
@@ -1170,20 +1171,22 @@ Expandierte Zeichenkette (String)
 
 =head4 Description
 
-Prüfe, ob $str die Zeichenkette C<+/> enthält. Wenn ja, ersetze an
-allen Stellen das Pluszeichen durch das Dokumentverzeichnis und
-liefere das Resultat zurück.
+Prüfe, ob $path die Zeichenkette C<+/> enthält. Wenn ja, ersetze an
+allen Stellen das Pluszeichen durch das Dokumentverzeichnis.
 
 =cut
 
 # -----------------------------------------------------------------------------
 
-sub expandPlus {
-    my ($self,$str) = @_;
+sub expandPath {
+    my ($self,$path) = @_;
 
-    if (defined($str) && $str =~ m|\+/|) {
-        # Wir setzen den Pfad des Dokumentverzeichnisses
-        # an den Anfang
+    if (!defined $path) {
+        return undef;
+    }
+
+    if ($path =~ m|\+/|) {
+        # Setze den Pfad des Dokumentverzeichnisses an den Anfang
 
         my $input = $self->root->input;
         # FIXME: Was tun, wenn der Input aus einem
@@ -1191,12 +1194,18 @@ sub expandPlus {
         if (!ref $input) {
             my ($dir) = $input =~ m|(.*)/|;
             if ($dir) {
-                $str =~ s|\+/|$dir/|g;
+                $path =~ s|\+/|$dir/|g;
             }
         }
     }
+    # FIXME: Funktioniert nicht, wenn ein Programm wie grep
+    #        aufgerufen wird
+    # if (substr($path,0,1) ne '/') {
+    #     # Mache Pfad zu absolutem Pfad
+    #     $path = sprintf '%s/%s',Sdoc::Core::Process->cwd,$path;
+    # }
 
-    return $str;
+    return $path;
 }
 
 # -----------------------------------------------------------------------------
@@ -1347,7 +1356,7 @@ sub latex {
             float => 1, # besseres Float Environment
         ;
     }
-    if ($h->tables || $h->links) {
+    if ($h->tables || $h->links || $toc) {
        push @packages,
             xcolor => [ # Farben
                 'table',
@@ -1459,6 +1468,7 @@ sub latex {
         documentClass => $documentClass,
         options => $documentOptions,
         paperSize => $paperSize,
+        geometry => $geometry,
         fontSize => $fontSize,
         title => $title,
         author => $author,

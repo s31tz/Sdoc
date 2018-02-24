@@ -113,9 +113,9 @@ Die Größe des Hauptfont. Mogliche Werte für die Standard LaTeX
 Dokumentklassen article etc.: '10pt', '11pt', '12pt'. Die
 KOMA-Script Klassen 'scrartcl' etc. erlauben weitere Fontgrößen.
 
-=item geometry => $str
+=item geometry => $str (Default: 'height=22.5cm,bottom=3.8cm' bei a4paper)
 
-Seitenmaße.
+Gegenüber der Grundeinstellung abweichende Seitenmaße.
 
 =item language => $language (Default: 'ngerman')
 
@@ -309,9 +309,6 @@ sub latex {
 
     if ($paperSize || $geometry) {
         $code .= $l->c('\usepackage{geometry}',@pnl);
-        if ($geometry) {
-            $code .= $l->c('\geometry{%s}',$geometry);
-        }
     }
 
     # Mikro-Typografie (autom. Korrektur von Leerraum am Rand)
@@ -337,6 +334,17 @@ sub latex {
             -p => $name,
             @pnl,
         );
+    }
+
+    # Abweichende Seitengeometrie
+
+    if ($geometry) {
+        $code .= $l->c('\geometry{%s}',$geometry);
+    }
+    elsif ($paperSize eq 'a4paper') {
+        # Default-Geometrie für A4 Papier
+        # MEMO: Bei Änderung auch die Tests und die Doku anpassen
+        $code .= $l->c('\geometry{height=22.5cm,bottom=3.8cm}');
     }
 
     # Abschnittskonfiguration

@@ -335,7 +335,7 @@ sub showResult {
     else {
         # Zeige Datei an
         Sdoc::Core::Shell->exec(sprintf('%s %s',$pager,$srcFile),
-            -quiet => $pager eq 'evince'? 1: 0,
+            -quiet => $pager =~ /evince|acroread/? 1: 0,
         );
     }
 

@@ -789,7 +789,7 @@ sub latexText {
                 }
                 $code .= $l->macro('\includegraphics',
                     -o => \@opt,
-                    -p => $root->expandPlus($gph->file),
+                    -p => $root->expandPath($gph->file),
                     -nl => 0,
                 );
                 if ($type eq 'Item' && $code =~ tr/[//) {

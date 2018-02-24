@@ -225,31 +225,49 @@ Wandele Sdoc2-Code in Sdoc3-Code und liefere das Resultat zurück.
 sub sdoc2ToSdoc3 {
     my ($class,$code) = @_;
 
-    my $segmentL = sub {
-        my $content = shift;
-        if ($content !~ /"/) {
-            return "L{$content}";
+    # Sonderfälle
+    $code =~ s|IMGDIR|/home/fs2/opt/blog/image|g;
+
+    # Blöcke konvertieren
+
+    my $subBlock = sub {
+        my ($name,$block) = @_;
+        # warn "---\n$block";
+        
+        if ($name eq 'Document') {
+            $block =~ s/ +generateAnchors=\S+\n?//;
+            $block =~ s/ +utf8=\S+\n?//;
         }
-        my $code = "U{$content}";
-        warn "WARNING: Can't convert: $code\n";
-        return $code;
+        elsif ($name eq 'Figure') {
+            $block =~ s/%Figure:/%Graphic:/;
+            $block =~ s/url=/link=/;
+        }
+
+        # warn "---\n$block";
+        return $block;
     };
 
-    # HACK Blog-Artikel
-    $code =~ s|IMGDIR|/home/fs2/opt/blog/image|m;
+    $code =~ s/(%([A-Za-z]+):(( +[A-Za-z\d]+=.*)?\n)+)/$subBlock->($2,$1)/eg;
 
-    # %Document
-    
-    $code =~ s|^( +)utf8=.*\n||m;
-    $code =~ s|^( +)generateAnchors=.*\n||m;
+    # Segmente konvertieren
 
-    # %Figure
+    my $subSegment = sub {
+        my ($name,$content) = @_;
 
-    $code =~ s|%Figure:|%Graphic:|;
-    $code =~ s|url=|link=|;
+        if ($name eq 'U') {
+            if ($content =~ tr/"// == 0) {
+                $content = sprintf '%s{%s}','L',$content;
+            }
+            else {
+                
+            }
+        }
+                
+        # warn "---\n$content\n";
+        return $content;
+    };
 
-    # L-Segment
-    $code =~ s/U\{([^}]+)\}/$segmentL->($1)/eg;
+    $code =~ s/(([GLlU])\{([^}]+)\})/$subSegment->($2,$3)/eg;
 
     return $code;
 }

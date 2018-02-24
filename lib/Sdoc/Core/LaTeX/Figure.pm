@@ -75,7 +75,7 @@ Pfad der Bilddatei.
 
 =item height => $height
 
-Höhe, auf die das Bild skaliert wird.
+Höhe (ohne Angabe einer Einheit), auf die das Bild skaliert wird.
 
 =item indent => $length
 
@@ -100,17 +100,24 @@ LaTeX-Package C<float>, das geladen werden muss.
 Vertikaler Leerraum, der nach der Abbildung hinzugefügt (positiver
 Wert) oder abgezogen (negativer Wert) wird.
 
+=item ref => $ref
+
+Versieh das Bild mit einem Verweis auf ein internes Ziel.
+
 =item scale => $factor
 
-Skalierungsfaktor.
+Skalierungsfaktor. Der Skalierungsfaktor hat Priorität gegenüber
+der Angabe von C<width> und C<height>.
 
 =item url => $url
 
 Versieh das Bild mit einem Verweis auf eine externe Ressource.
+Ist auch Attribut C<ref> gesetzt, hat dieses Priorität.
 
 =item width => $width
 
-Breite, auf die das Bild skaliert wird.
+Breite (ohne Angabe einer Einheit), auf die das Bild skaliert
+wird.
 
 =back
 
@@ -143,6 +150,7 @@ sub new {
         options => undef, # $str | \@opt
         position => 'H',
         postVSpace => undef,
+        ref => undef,
         scale => undef,
         url => undef,
         width => undef,
@@ -180,9 +188,9 @@ sub latex {
     my $self = ref $this? $this: $this->new(@_);
 
     my ($align,$border,$borderMargin,$caption,$file,$height,$indent,$label,
-        $options,$position,$postVSpace,$scale,$url,$width) =
+        $options,$position,$postVSpace,$ref,$scale,$url,$width) =
         $self->get(qw/align border borderMargin caption file height indent
-        label options position postVSpace scale url width/);
+        label options position postVSpace ref scale url width/);
 
     if (!$file) {
         return '';
@@ -198,13 +206,13 @@ sub latex {
         }
     }
     if ($scale) {
+        # $scale hat Priorität gegenüber width und height
         push @opt,"scale=$scale";
     }
-    if ($width) {
-        push @opt,"width=${width}px"; # FIXME
-    }
-    if ($height) {
-        push @opt,"height=${height}px"; # FIXME
+    elsif ($width && $height) {
+        # Fallback, wenn scale nicht angegeben ist
+        push @opt,"width=${width}px";
+        push @opt,"height=${height}px";
     }
 
     my $body;
@@ -223,7 +231,10 @@ sub latex {
     if ($border) {
         $tmp = $l->ci('{\fboxsep%s\fbox{%s}}',$borderMargin,$tmp);
     }
-    if ($url) {
+    if ($ref) {
+        $tmp = $l->ci('\hyperref[%s]{%s}',$ref,$tmp);
+    }
+    elsif ($url) {
         $tmp = $l->ci('\href{%s}{%s}',$url,$tmp);
     }
     $body .= "$tmp\n";

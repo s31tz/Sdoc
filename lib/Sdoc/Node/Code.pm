@@ -186,10 +186,10 @@ sub new {
     # Lies den Text aus einer Datei oder von einem Programm
 
     my $text;
-    if (my $file = $root->expandPlus($self->load)) {
+    if (my $file = $root->expandPath($self->load)) {
         $text = Sdoc::Core::Path->read($file,-decode=>'utf-8');
     }
-    elsif (my $cmd = $root->expandPlus($self->exec)) {
+    elsif (my $cmd = $root->expandPath($self->exec)) {
         $text = Sdoc::Core::Shell->exec($cmd,
             -capture => 'stdout+stderr',
         );
@@ -201,7 +201,7 @@ sub new {
 
     # Filtere den Text
 
-    if (my $cmd = $root->expandPlus($self->filter)) {
+    if (my $cmd = $root->expandPath($self->filter)) {
         my ($text) = Sdoc::Core::Ipc->filter($cmd,$self->text);
         chomp $text;
         $self->set(text=>$text);

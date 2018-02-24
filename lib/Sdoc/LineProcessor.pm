@@ -443,6 +443,7 @@ sub parseSegments {
                 }
             }
             elsif ($seg eq 'L') {
+                # Linktext kanonisieren
                 $val =~ s/[\n\t]/ /g;
                 $val =~ s/ {2,}/ /g;
 
