@@ -146,6 +146,7 @@ sub parse {
     my $par = Sdoc::LineProcessor->new($input,
         -encoding => 'utf-8',
         -lineContinuation => 'backslash',
+        -skip => qr/^#/,
     );
 
     # Instantiiere den Dokument-Knoten. Dieser bildet die

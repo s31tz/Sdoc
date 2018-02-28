@@ -56,13 +56,19 @@ Dokument übersetzen} beschrieben.
 === Kommentare
 
 In den Quelltext des Dokuments können Kommentarzeilen eingebettet
-werden. Diese werden nicht mit gesetzt, aber als Kommentare in den
-Quelltext des Zielformats übertragen. Eine Kommentarzeile beginnt mit
-einem (#) am I{Zeilenanfang}. Eine Einrückung ist nicht erlaubt.
+werden. Diese werden nicht mit gesetzt. Eine Kommentarzeile beginnt
+mit einem (#) am I{Zeilenanfang}. Eine Einrückung ist nicht erlaubt.
 
   # Dies ist ein Kommentar, der nicht im Zieldokument erscheint
 
-Siehe auch Abschnitt L{+Kommentar}.
+Daneben gibt es eine zweite Art von Kommentarzeile, die I{als
+Kommentar} in das Zieldokument übertragen wird (sofern das Zielformat
+Kommentare unterstützt). Diese Art von Kommentarzeile beginnt mit
+Prozent + Leerzeichen (% ) am Zeilenanfang.
+
+  % Dies ist ein Kommentar, der im Quelltext des Zieldokuments erscheint
+
+Weitere Information zu Kommentaren siehe Abschnitt L{+Kommentar}.
 
 %Link:
   name="Kommentar"
@@ -201,9 +207,10 @@ verwendet werden:
   ein Titelabschnitt erzeugt.
 
 [copyComments]:
-  Kopiere Sdoc-Kommentare in den Quelltext des Zielformats. Dies ist
-  z.B. nützlich, um eine Stelle im Quelltext des Zielformats zu
-  finden, die aus einem bestimmten Sdoc-Konstrukt hervorgegangen ist.
+  (Default: 1) Kopiere Sdoc-Kommentare in den Quelltext des
+  Zielformats. Dies ist z.B. nützlich, um eine Stelle im Quelltext des
+  Zielformats zu finden, die aus einem bestimmten Sdoc-Konstrukt
+  hervorgegangen ist.
 
 [date]:
   Das Datum des Dokuments. Wenn gesetzt, wird eine Titelseite bzw.
@@ -1572,43 +1579,57 @@ produziert:
 
 == Kommentar (Comment)
 
-In den Quelltext eines Sdoc-Dokuments können Kommentarzeilen
-eingebettet werden. Eine Kommentarzeile beginnt mit einem Hash (#) am
-I{Zeilenanfang}, eine Einrückung ist nicht erlaubt.
+Sdoc unterscheidet zwei Arten von Kommentaren:
 
-  # Dies ist ein Kommentar, der in den Quelltext des Zielformats
-  # übertragen wird, aber im Zieldokument nicht auftaucht
+1. Kommentare mit einem Hash (#) am Zeilenanfang
+2. Kommentare mit einem Prozentzeichen + Leerzeichen (% ) am Zeilenanfang
 
-Ist die Dokument-Eigenschaft C{copyComments=1} gesetzt, werden die
-Sdoc-Kommentare in das Zielformat übertragen, sofern das Zielformat
-Kommentare unterstützt. Unterstützt das Zielformat keine Kommentare,
-entfallen sie.
+=== #-Kommentare
 
-In den Quelltext des LaTeX-Dokuments wird der Kommentar
-beispielsweise übertragen als
+Kommentarzeilen, die mit einem Hash (#) beginnen, werden
+ignoriert. Sie können in jeder Zeile im Sdoc-Quelltext vorkommen. Sie
+sind für Quelltextnotizen nützlich oder zum Auskommentieren von
+Sdoc-Code. Beispiel:
 
-  % Dies ist ein Kommentar, der in den Quelltext des Zielformats
-  % übertragen wird, aber im Zieldokument nicht auftaucht
+  # Dies ist ein Kommentar
 
-Kommentare in das Zielformat zu übertragen kann z.B. nützlich sein, um
-eine Stelle im Quelltext des Zielformats zu finden, die aus einem
-bestimmten Sdoc-Konstrukt hervorgegangen ist, oder um Kennzeichen für
-eine Weiterverarbeitung zu setzen.
+=== %-Kommentare
 
-In Block-Syntax kann ein Kommentar auch geschrieben werden als
+Kommentarzeilen, die mit Prozentzeichen + Leerzeichen (% ) beginnen,
+werden als Kommentar-Blöcke in den Syntaxbaum übernommen. Sie sind,
+da sie eine eigene syntaktische Einheit bilden, nur I{zwischen}
+anderen Blöcken zulässig. Der Kommentar
+
+  % Dies ist ein Kommentar, der in den
+  % Quelltext des Zieldokuments übertragen wird
+
+kann äquivalent in Block-Schreibweise geschrieben werden als
 
   %Comment:
-  Dies ist ein Kommentar, der in den Quelltext des Zielformats
-  übertragen wird, aber im Zieldokument nicht auftaucht
+  Dies ist ein Kommentar, der in den
+  Quelltext des Zieldokuments übertragen wird
   .
 
-=== Eigenschaften
+%-Kommentare zeichnen sich dadurch aus, dass sie in den Quelltext
+I{des Zieldokuments} übertragen werden, sofern das Zielformat
+Kommentare unterstützt. Sie sind für Notizen, die im
+Zieldokument-Quelltext erscheinen sollen, oder für Markierungen, die
+das Debugging oder eine Weiterverarbeitung des Zieldokuments
+vereinfachen, nützlich.
+
+Das Übertragen von %-Kommentaren in den Ziel-Quelltext kann durch die
+Dokument-Eigenschaft C{copyComments=BOOL} gesteuert werden. Per
+Default ist C{copyComments=1} definiert, d.h. alle %-Kommentare werden
+übertragen. Wird C{copyComments=0} gesetzt, findet keine Übertragung
+statt.
+
+=== Eigenschaften eines %-Kommentars
 
   %Comment:
   TEXT
   .
 
-Ein Kommentar hat keine Eigenschaften.
+Ein %-Kommentar hat keine Eigenschaften.
 
 ---PageBreak---
 

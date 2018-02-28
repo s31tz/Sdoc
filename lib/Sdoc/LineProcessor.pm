@@ -163,7 +163,7 @@ sub nextType {
         $variant = 0;
     }
     elsif ($markup eq 'sdoc') {
-        if (substr($text,0,1) eq '#') {
+        if (substr($text,0,2) eq '% ') {
             $type = 'Comment';
             $variant = 1;
         }

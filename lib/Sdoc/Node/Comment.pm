@@ -103,7 +103,7 @@ sub new {
         my $text = '';
         while (@$lineA) {
             my $str = $lineA->[0]->text;
-            if (substr($str,0,1) ne '#') {
+            if (substr($str,0,2) ne '% ') {
                 last;
             }
             $text .= substr($str,1)."\n";

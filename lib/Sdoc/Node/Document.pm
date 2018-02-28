@@ -51,7 +51,7 @@ Autor des Dokuments nach Parsing der Segmente.
 
 Array der direkten Kind-Knoten.
 
-=item copyComments => $bool (Default: 0)
+=item copyComments => $bool (Default: 1)
 
 Kopiere Sdoc-Kommentare in den Quelltext des Zielformats. Dies
 ist z.B. nützlich, um eine Stelle im Quelltext des Zielformats zu
@@ -270,7 +270,7 @@ sub new {
         author => undef,
         authorS => undef,
         childA => [],
-        copyComments => 0,
+        copyComments => 1,
         date => undef,
         dateS => undef,
         formulaA => [],
