@@ -82,9 +82,9 @@ Beschriftung der Tabelle. Diese erscheint unter der Tabelle.
 
 Array mit den in Zellen vorkommenden Formeln (M-Segmente).
 
-=item noIndentation => $bool (Default: 0)
+=item identation => $bool (Default: 1)
 
-Rücke die Tabelle nicht ein. Das Attribut ist nur bei C<< align =>
+Rücke die Tabelle ein. Das Attribut ist nur bei C<< align =>
 'left' >> von Bedeutung.
 
 =item linkA => \@links
@@ -188,7 +188,7 @@ sub new {
         graphicA => [],
         linkA => [],
         linkId => undef,
-        noIndentation => 0,
+        indentation => 1,
         number => ++$tableNumber,
         text => undef,
         titleColor => 'e8e8e8',
@@ -333,7 +333,7 @@ sub latex {
         border => $border,
         callbackArguments => [$self],
         caption => $self->latexText($l,'captionS'),
-        indent => $self->noIndentation? undef: $root->indentation.'em',
+        indent => $self->indentation? $root->indentation.'em': undef,
         label => $self->linkId,
         multiLine => $atb->multiLine,
         postVSpace => $l->modifyLength($root->latexParSkip,'*-2'),

@@ -395,9 +395,9 @@ sub latex {
             }
             $date = POSIX::strftime($date,localtime);
         }
-        my $tmp .= $l->c('\title{%s}',$title);
-        $tmp .= $l->c('\author{%s}',$author);
-        $tmp .= $l->c('\date{%s}',$date);
+        my $tmp .= $l->c('\title{%s}',$title // '');
+        $tmp .= $l->c('\author{%s}',$author // '');
+        $tmp .= $l->c('\date{%s}',$date // '');
         $tmp .= $l->c('\maketitle');
         # Keine Zeilennummer auf Titelseite
         $tmp .= $l->c('\thispagestyle{empty}');

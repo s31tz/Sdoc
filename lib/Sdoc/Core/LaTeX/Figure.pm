@@ -82,6 +82,11 @@ Höhe (ohne Angabe einer Einheit), auf die das Bild skaliert wird.
 Länge, mit der die Abbildung vom linken Rand eingerückt wird,
 wenn sie links (Attribut C<align>) gesetzt wird.
 
+=item inline => $bool (Default: 0)
+
+Anstelle von Code für eine alleinstehende Abbildung wird Code
+für eine Inline-Grafik erzeugt.
+
 =item label => $str
 
 Anker der Abbildung.
@@ -100,9 +105,12 @@ LaTeX-Package C<float>, das geladen werden muss.
 Vertikaler Leerraum, der nach der Abbildung hinzugefügt (positiver
 Wert) oder abgezogen (negativer Wert) wird.
 
-=item ref => $ref
+=item link => $latex,
 
-Versieh das Bild mit einem Verweis auf ein internes Ziel.
+Versieh das Bild mit einem Verweis. Übergeben wird der fertige
+LaTeX-Code für den Verweis auf das interne bzw. externe Ziel.  Der
+Code muss %s an der Stelle enthalten, wo die Methode den Code für
+das Bild eingesetzen soll.
 
 =item scale => $factor
 
@@ -146,13 +154,13 @@ sub new {
         file => undef,
         height => undef,
         indent => undef,
+        inline => 0,
         label => undef,
+        link => undef,
         options => undef, # $str | \@opt
         position => 'H',
         postVSpace => undef,
-        ref => undef,
         scale => undef,
-        url => undef,
         width => undef,
     );
     $self->set(@_);
@@ -187,24 +195,16 @@ sub latex {
 
     my $self = ref $this? $this: $this->new(@_);
 
-    my ($align,$border,$borderMargin,$caption,$file,$height,$indent,$label,
-        $options,$position,$postVSpace,$ref,$scale,$url,$width) =
+    my ($align,$border,$borderMargin,$caption,$file,$height,$indent,$inline,
+        $label,$link,$options,$position,$postVSpace,$scale,$width) =
         $self->get(qw/align border borderMargin caption file height indent
-        label options position postVSpace ref scale url width/);
+        inline label link options position postVSpace scale width/);
 
     if (!$file) {
         return '';
     }
 
     my @opt;
-    if (defined $options) {
-        if (Sdoc::Core::Reference->isArrayRef($options)) {
-            @opt = @$options;
-        }
-        else {
-            @opt = split /,/,$options;
-        }
-    }
     if ($scale) {
         # $scale hat Priorität gegenüber width und height
         push @opt,"scale=$scale";
@@ -214,30 +214,44 @@ sub latex {
         push @opt,"width=${width}px";
         push @opt,"height=${height}px";
     }
-
-    my $body;
-    if ($align eq 'c') {
-        $body .= $l->c('\centering');
+    if (defined $options) {
+        if (Sdoc::Core::Reference->isArrayRef($options)) {
+            @opt = @$options;
+        }
+        else {
+            @opt = split /,/,$options;
+        }
     }
-    elsif ($indent) {
-        $body .= $l->ci('\hspace*{%s}',$indent);
-    }
 
-    my $tmp = $l->macro('\includegraphics',
+    my $code = $l->macro('\includegraphics',
         -o => \@opt,
         -p => $file,
         -nl => 0,
     );
     if ($border) {
-        $tmp = $l->ci('{\fboxsep%s\fbox{%s}}',$borderMargin,$tmp);
+        $code = $l->ci('{\fboxsep%s\fbox{%s}}',$borderMargin,$code);
     }
-    if ($ref) {
-        $tmp = $l->ci('\hyperref[%s]{%s}',$ref,$tmp);
+    if ($link) {
+        # $link muss %s enthalten
+        $code = sprintf $link,$code;
     }
-    elsif ($url) {
-        $tmp = $l->ci('\href{%s}{%s}',$url,$tmp);
+    if ($indent && $align ne 'c') {
+        $code = $l->ci('\hspace*{%s}',$indent).$code;
     }
-    $body .= "$tmp\n";
+
+    # Inline Abbildung
+
+    if ($inline) {
+        return $code;
+    }
+
+    # Alleinstehende Abbildung
+
+    if (!$inline) {
+        if ($align eq 'c') {
+            $code = $l->c('\centering').$code;
+        }
+    }
 
     if ($caption) {
         my @opt;
@@ -248,22 +262,22 @@ sub latex {
             }
         }
         if (@opt) {
-            $body .= $l->c('\captionsetup{%s}',\@opt);
+            $code .= $l->c('\captionsetup{%s}',\@opt);
         }
-        $body .= $l->c('\caption{%s}',$caption);
+        $code .= $l->c('\caption{%s}',$caption);
     }
     if ($label) {
-        $body .= $l->c('\label{%s}',$label);
+        $code .= $l->c('\label{%s}',$label);
     }
 
-    my $code = $l->env('figure',$body,
+    $code = $l->env('figure',$code,
         -o => $position,
     );
 
     if (my $postVSpace = $self->postVSpace) {
         $code .= $l->c('\vspace{%s}','--',$postVSpace);
     }
-
+    
     return $code;
 }
 

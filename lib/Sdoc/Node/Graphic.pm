@@ -89,10 +89,10 @@ Name der Grafik. Ein Name muss angegeben sein, wenn die Grafik von
 einem G-Segment referenziert wird. Ist ein Name gesetzt, ist der
 Default für das Attribut C<definition> 1, sonst 0.
 
-=item noIndentation => $bool (Default: 0)
+=item indentation => $bool
 
-Rücke die Grafik nicht ein. Das Attribut ist nur bei C<< align =>
-'left' >> von Bedeutung.
+Rücke die Grafik ein. Das Attribut ist nur bei C<< align =>
+'left' >> oder bei Inline-Grafiken von Bedeutung.
 
 =item scale => $factor
 
@@ -191,7 +191,7 @@ sub new {
         formulaA => [],
         graphicA => [],
         height => undef,
-        noIndentation => 0,
+        indentation => undef,
         latexOptions => undef,
         link => undef,
         linkN => undef,
@@ -268,7 +268,8 @@ Text (String)
 
 =head4 Description
 
-Liefere den Verweis-Text als fertigen LaTeX-Code.
+Liefere den Verweis-Text als fertigen LaTeX-Code. Dies ist der Text
+für einen Verweis, I<der die Abbildung referenziert>.
 
 =cut
 
@@ -277,6 +278,58 @@ Liefere den Verweis-Text als fertigen LaTeX-Code.
 sub latexLinkText {
     my ($self,$l) = @_;
     return $self->latexText($l,'captionS');
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 latexLinkCode() - LaTeX-Code für einen Verweis
+
+=head4 Synopsis
+
+    $latex = $gph->latexLinkCode($l);
+
+=head4 Returns
+
+LaTeX-Code
+
+=head4 Description
+
+Liefere den LaTeX-Code, wenn die Abbildung mit einem Verweis
+hinterlegt ist (Attribut C<link> ist gesetzt). An der Stelle,
+wo der LaTeX-Code für die Abbildung eingesetzt wird,
+enthält der Code das Formatelement %s.
+
+=head4 Examples
+
+LaTeX-Code für einen internen Verweis:
+
+    \hyperref[LINKID]{%s}
+
+LaTeX-Code für einen externen Verweis:
+
+    \href[URL]{%s}
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub latexLinkCode {
+    my ($self,$l) = @_;
+
+    my $code;
+    my $n = $self->linkN;
+    if (defined $n) {
+        my $h = $self->linkA->[$n]->[1];
+        my $type = $h->type;
+        if ($type eq 'external') {
+            $code = $l->ci('\href{%s}{%%s}',$l->protect($h->destText));
+        }
+        elsif ($type eq 'internal') {
+            $code = $l->ci('\hyperref[%s]{%%s}',$h->destNode->linkId);
+        }
+    }
+
+    return $code;
 }
 
 # -----------------------------------------------------------------------------
@@ -316,21 +369,6 @@ sub latex {
         return '';
     }
 
-    # Verlinkung des Bildes mit einem internen oder externen Ziel
-
-    my ($ref,$url);
-    my $n = $self->linkN;
-    if (defined $n) {
-        my $h = $self->linkA->[$n]->[1];
-        my $type = $h->type;
-        if ($type eq 'external') {
-            $url = $h->destText;
-        }
-        elsif ($type eq 'internal') {
-            $ref = $h->destNode->linkId;
-        }
-    }
-
     # LaTeX-Code erzeugen
 
     return Sdoc::Core::LaTeX::Figure->latex($l,
@@ -340,13 +378,12 @@ sub latex {
         caption => $self->latexText($l,'captionS'),
         file => $root->expandPath($self->file),
         height => $self->height,
-        indent => $self->noIndentation? undef: $root->indentation.'em',
+        indent => $self->indentation // 1? $root->indentation.'em': undef,
         label => $self->linkId,
+        link => $self->latexLinkCode($l),
         options => $self->latexOptions,
         postVSpace => $l->modifyLength($root->latexParSkip,'*-2'),
-        ref => $ref,
         scale => $self->scale,
-        url => $url,
         width => $self->width,
     )."\n";
 }

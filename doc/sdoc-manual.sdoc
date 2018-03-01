@@ -44,7 +44,7 @@ Dokument übersetzen} beschrieben.
   border=1
   borderMargin=2mm
   file="+/sdoc-example"
-  noIndentation=1
+  indentation=0
   latexOptions="clip,trim=0cm 0cm 0cm 0cm,width=0.965\textwidth"
 
 ---PageBreak---
@@ -195,7 +195,7 @@ In Titel (C{title}), Autor (C{author}) und Datum (C{date}) des
 Dokuments können Segmente (siehe Abschnitt L{+Syntax/Segment})
 verwendet werden:
 
-  A, B, C, G, I, L, M, Q
+  A, B, C, G, I, L, M, N, Q
 
 === Eigenschaften
 
@@ -382,7 +382,7 @@ es keinen Unterschied zwischen Abschnitten und Appendizes.
 Im Titel eines Abschnitts können Segmente (siehe Abschnitt
 L{+Syntax/Segment}) verwendet werden:
 
-  A{}, B{}, C{}, G{}, I{}, L{}, M{}, Q{}
+  A{}, B{}, C{}, G{}, I{}, L{}, M{}, N, Q{}
 
 === Eigenschaften
 
@@ -436,7 +436,7 @@ produziert:
 In einer Zwischenüberschrift können Segmente (siehe Abschnitt
 L{+Syntax/Segment}) verwendet werden:
 
-  A{}, B{}, C{}, G{}, I{}, L{}, M{}, Q{}
+  A{}, B{}, C{}, G{}, I{}, L{}, M{}, N, Q{}
 
 === Eigenschaften
 
@@ -505,7 +505,7 @@ etc.) endet.
 In einem Paragraph können Segmente (siehe Abschnitt
 L{+Syntax/Segment}) verwendet werden:
 
-  B{}, C{}, G{}, I{}, L{}, M{}, Q{}
+  B{}, C{}, G{}, I{}, L{}, M{}, N, Q{}
 
 === Eigenschaften
 
@@ -534,7 +534,7 @@ produziert:
 
 Per Default wird die Abbildung linksseitig mit der Einrückung
 C{indentation} (siehe Abschnitt L{+Dokument}) gesetzt. Die Einrückung
-wird weggelassen wenn das Attribut C{noIndentation=1} gesetzt ist.
+wird weggelassen wenn das Attribut C{indentation=0} gesetzt ist.
 Mit C{align=center} kann die Abbildung auch mittig gesetzt werden.
 
   %Graphic:
@@ -575,7 +575,7 @@ L{+G - Inline-Grafik}.
 In der Beschriftung (C{caption}) einer Abbildung können alle Segmente
 (siehe Abschnitt L{+Syntax/Segment}) verwendet werden:
 
-  A, B, C, G, I, L, M, Q
+  A, B, C, G, I, L, M, N, Q
 
 === Eigenschaften
 
@@ -591,7 +591,7 @@ In der Beschriftung (C{caption}) einer Abbildung können alle Segmente
     latexOptions=STRING
     link=URL
     name=STRING
-    noIndentation=BOOL
+    indentation=BOOL
     scale=FLOAT
     with=INTEGER
 
@@ -641,9 +641,9 @@ In der Beschriftung (C{caption}) einer Abbildung können alle Segmente
   einem G-Segment referenziert wird. Ist ein Name gesetzt, ist der
   Default für das Attribut C{definition} 1, sonst 0.
 
-[noIndentation]:
-  Rücke die Grafik nicht ein. Das Attribut ist nur bei C{align=left}
-  von Bedeutung.
+[indentation]:
+  Rücke die Grafik ein. Das Attribut ist nur bei C{align=left}
+  und bei Inline-Grafiken von Bedeutung.
 
 [scale]:
   Skalierungsfaktor. Der Skalierungsfaktor hat bei LaTeX Priorität
@@ -790,7 +790,7 @@ produziert:
 Im Term einer Definitonsliste können Segmente (siehe Abschnitt
 L{+Syntax/Segment}) verwendet werden:
 
-  B{}, C{}, G{}, I{}, L{}, M{}, Q{}
+  B{}, C{}, G{}, I{}, L{}, M{}, N, Q{}
 
 === Eigenschaften
 
@@ -1128,7 +1128,7 @@ In den Zellen der Tabelle - sowohl im Titel als auch in den Daten -,
 sowie in der Bildunterschrift (C{caption}) können alle Segmente (siehe
 Abschnitt L{+Syntax/Segment}) verwendet werden:
 
-  A, B, C, G, I, L, M, Q
+  A, B, C, G, I, L, M, N, Q
 
 Das folgende Beispiel zeigt sämtliche Möglichkeiten.
 
@@ -1215,8 +1215,8 @@ Q{Dies ist ein Zitat}
 [caption]:
   Die Beschriftung der Tabelle. Diese erscheint unter der Tabelle.
 
-[noIndentation]:
-  Rücke die Grafik nicht ein. Das Attribut ist nur bei C{align=left}
+[indentation]:
+  Rücke die Tabelle ein. Das Attribut ist nur bei C{align=left}
   von Bedeutung.
 
 [titleColor=RGB]:
@@ -1745,6 +1745,21 @@ Begrenzungszeichen des Segments C{\M~~} die Tilde (~).
 produziert:
 
 Satz des Pythagoras: M~c=\sqrt{a^2+b^2}~
+
+===! N - Zeilenumbruch (newline)
+
+Die Zeichenkette C{~\N~} forciert einen Zeilenumbruch.
+
+Im Falle von LaTeX ist Vorsicht geboten. An manchen Stellen sind keine
+Zeilenumbrüche erlaubt oder, wie z.B. im Dokumenten-Titel, können
+nicht mehrere Zeilenumbrüche aufeinander folgen. Fehlermeldung in
+diesen Situationen: Q{LaTeX Error: There's no line here to end}).
+
+  Dies ist~N~ein Test.
+
+produziert:
+
+Dies ist~N~ein Test.
 
 ===! Q - Anführungszeichen (quote)
 

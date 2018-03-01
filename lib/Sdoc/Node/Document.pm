@@ -148,6 +148,11 @@ C<title>, C<author>, C<date>.
 Hash der Link-Knoten. Schlüssel des Hash ist der Name des
 Link-Knotens.
 
+=item linkId => $linkId
+
+Der Dokumentanfang ist Ziel eines Link. Dies ist der Anker für
+das Zielformat.
+
 =item nodeA => \@nodes (memoize)
 
 Liste aller Knoten des Dokument-Baums.
@@ -277,7 +282,6 @@ sub new {
         graphicA => [],
         indentation => 1.3,
         language => 'german',
-        linkA => [],
         latexDocumentClass => 'scrartcl',
         latexDocumentOptions => undef,
         latexFontSize => '10pt',
@@ -286,6 +290,8 @@ sub new {
         latexPaperSize => 'a4paper',
         latexParSkip => '1ex',
         latexShowFrames => 0,
+        linkA => [],
+        linkId => undef,
         sectionNumberDepth => 3,
         tableOfContents => 1,
         title => undef,

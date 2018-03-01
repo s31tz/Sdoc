@@ -252,23 +252,82 @@ sub sdoc2ToSdoc3 {
 
     # Segmente konvertieren
 
-    my $subSegment = sub {
-        my ($name,$content) = @_;
+    my $links = '';
+    my $gCount = 0;
+    my $graphics = '';
 
-        if ($name eq 'U') {
-            if ($content =~ tr/"// == 0) {
-                $content = sprintf '%s{%s}','L',$content;
+    my $subSegment = sub {
+        my ($segment,$content) = @_;
+
+        # Zeilenfortsetzungen auflösen
+        (my $line = $content) =~ s/\\\n\s*//g;
+
+        warn sprintf "---IN---\n%s{%s}\n",$segment,$line;
+
+        # Argument und Optionen auflösen
+
+        my ($arg,%opt);
+        if ($line =~ s/^"(.*?)"//) {
+            $arg = $1;
+            %opt = $line =~ /(\w+)="(.*?)"/g;
+        }
+        else {
+            $arg = $line;
+        }
+
+        # Segmente umschreiben
+
+        my $text;
+        if ($segment eq 'U') {
+            if (my $name = $opt{'text'}) {
+                $text = sprintf '%s{%s}','L',$name;
+                if ($links) {
+                    $links .= "\n";
+                }
+                $links .= qq|%Link:\n  name="$opt{'text'}"\n  url="$arg"\n|;
             }
             else {
-                
+                $text = sprintf '%s{%s}','L',$arg;
             }
         }
-                
-        # warn "---\n$content\n";
-        return $content;
+        elsif ($segment eq 'G') {
+            my $name = sprintf 'Graphic%s',++$gCount;
+
+            $text = sprintf '%s{%s}','G',$name;
+
+            if ($graphics) {
+                $graphics .= "\n";
+            }
+            $graphics .= sprintf qq|%%Graphic:\n  name="%s"\n  file="%s"\n|,
+                $name,$arg;
+            for my $key (sort keys %opt) {
+                $graphics .= sprintf qq|  %s="%s"\n|,$key,$opt{$key};
+            }
+        }
+        else {
+            # Keine Änderung
+            $text = sprintf '%s{%s}',$segment,$content;
+        }
+        
+        if ($text) {
+            warn sprintf "---OUT---\n%s\n",$text;
+        }
+
+        return $text;
     };
 
     $code =~ s/(([GLlU])\{([^}]+)\})/$subSegment->($2,$3)/eg;
+
+    if ($graphics) {
+        warn "---GRAPHICS---\n$graphics";
+        $code =~ s/\s*\n# eof\n\s*$/\n/;
+        $code .= "\n$graphics\n# eof\n";
+    }
+    if ($links) {
+        warn "---LINKS---\n$links";
+        $code =~ s/\s*\n# eof\n\s*$/\n/;
+        $code .= "\n$links\n# eof\n";
+    }
 
     return $code;
 }

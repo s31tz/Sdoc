@@ -494,7 +494,10 @@ sub parseSegments {
             return "$seg\x01$val\x02";
         };
 
-        # Behandele Formel-Segmente mit ~ als Begrenzer
+        # Behandele Newline-Segmente
+        $val =~ s/~N~/$sub->('N','')/eg;
+
+        # Behandele Formel-Segmente (mit ~ als Begrenzer)
         $val =~ s/(?<!\\)M~(([^~]|\\~)*)(?<!\\)~/$sub->('M',$1)/eg;
 
         # Ersetze Segment-Klammern { und } durch \x01 und \x02 von
@@ -528,7 +531,8 @@ sub parseSegments {
         # sollten im Text nur außerhalb von Segementen vorkommen.
 
         $val =~ s/\\([ABCGILQ]\{)/$1/g;
-        $val =~ s/\\(M~)/$1/g;
+        $val =~ s/\\M~/M~/g;
+        $val =~ s/~\\N~/~N~/g;
     }
     else {
         $self->throw;

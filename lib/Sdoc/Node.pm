@@ -10,6 +10,7 @@ use Scalar::Util ();
 use Sdoc::Core::LaTeX::Code;
 use Sdoc::Core::AnsiColor;
 use Sdoc::Core::TreeFormatter;
+use Sdoc::Core::LaTeX::Figure;
 
 # -----------------------------------------------------------------------------
 
@@ -129,6 +130,37 @@ sub new {
     $InstantiatedNodes++;
 
     return $self;
+}
+
+# -----------------------------------------------------------------------------
+
+=head2 Navigation
+
+=head3 nextNode() - Liefere nächsten Knoten
+
+=head4 Synopsis
+
+    $nextNode = $node->nextNode;
+
+=head4 Returns
+
+Knoten-Objekt oder C<undef>
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub nextNode {
+    my $self = shift;
+
+    my $childA = $self->parent->childs;
+    for (my $i = 0; $i < @$childA; $i++) {
+         if ($self == $childA->[$i]) {
+             return $childA->[$i+1];
+         }
+    }
+
+    $self->throw;
 }
 
 # -----------------------------------------------------------------------------
@@ -783,15 +815,22 @@ sub latexText {
                         $arg eq 'captionS') {
                     $code .= '\protect';
                 }
-                my @opt = split /,/,$gph->latexOptions // '';
-                if (my $scale = $gph->scale) {
-                    push @opt,"scale=$scale";
-                }
-                $code .= $l->macro('\includegraphics',
-                    -o => \@opt,
-                    -p => $root->expandPath($gph->file),
-                    -nl => 0,
+                
+                $code .= Sdoc::Core::LaTeX::Figure->latex($l,
+                    inline => 1,
+                    align => 'l',
+                    border => $gph->border,
+                    borderMargin => $gph->borderMargin,
+                    file => $root->expandPath($gph->file),
+                    height => $gph->height,
+                    indent => $gph->indentation // 0?
+                        $root->indentation.'em': undef,
+                    link => $gph->latexLinkCode($l),
+                    options => $gph->latexOptions,
+                    scale => $gph->scale,
+                    width => $gph->width,
                 );
+                
                 if ($type eq 'Item' && $code =~ tr/[//) {
                     # Im Definitionsterm müssen wir Group-Klammern setzen
                     $code = "{$code}";
@@ -853,6 +892,9 @@ sub latexText {
             # Wir übergeben die Formel an den LaTeX Mathe-Modus
             return sprintf '\(%s\)',$self->formulaA->[$val];
         }
+        elsif ($seg eq 'N') {
+            return '\\\\';
+        }
         elsif ($seg eq 'Q') {
             return "``$val''";
         }
@@ -871,47 +913,10 @@ sub latexText {
     if (defined $val) {
         $val = $l->protect($val); # Schütze reservierte LaTeX-Zeichen
         1 while $val =~
-            s/([ABCGILMQ])\x01([^\x01\x02]*)\x02/$r->($1,$2,$arg)/e;
+            s/([ABCGILMNQ])\x01([^\x01\x02]*)\x02/$r->($1,$2,$arg)/e;
     }
 
     return $val;
-}
-
-# -----------------------------------------------------------------------------
-
-=head3 latexTableOfContents() - LaTeX-Code für Inhaltsverzeichnis
-
-=head4 Synopsis
-
-    $code = $node->latexTableOfContents($gen);
-
-=head4 Arguments
-
-=over 4
-
-=item $gen
-
-Generator für das Zielformat.
-
-=back
-
-=head4 Returns
-
-LaTeX-Code (String)
-
-=head4 Description
-
-Liefere den LaTeX-Code für das Inhaltsverzeichnis. Das
-Inhaltsverzeichnis wird von zwei Stellen aus erzeugt, daher haben
-wir dafür hier eine eigene Methode.
-
-=cut
-
-# -----------------------------------------------------------------------------
-
-sub latexTableOfContents {
-    my ($self,$l) = @_;
-    return $l->c('{\hypersetup{hidelinks}\tableofcontents}',-nl=>2);
 }
 
 # -----------------------------------------------------------------------------
