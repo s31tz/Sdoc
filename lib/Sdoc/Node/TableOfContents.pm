@@ -142,14 +142,13 @@ sub latex {
     }
 
     my $code = $l->c('{\hypersetup{hidelinks}\tableofcontents}');
-    if (my $node = $self->nextNode) {
-        # Wenn der nächste Knoten kein Abschnitt oder eine Abbildung
-        # ist, fügen wir vertikalen Leerraum hinzu, da der Inhalt
-        # sonst direkt unter dem Inhaltsverzeichnis "klebt".
+    if (my $nextNode = $self->nextNode) {
+        # Wenn der nächste Knoten kein Abschnitt ist, fügen wir
+        # vertikalen Leerraum hinzu, da der Inhalt sonst direkt unter
+        # dem Inhaltsverzeichnis "klebt".
 
-        my $type = $node->type;
-        if ($node && !($type eq 'Section' || $type eq 'BridgeHead')) {
-                # || ($type eq 'Graphic' && !$node->definition))) {
+        my $type = $nextNode->type;
+        if (!($type eq 'Section' || $type eq 'BridgeHead')) {
             $code .= $l->c('\vspace{5.5ex}');
         }
     }

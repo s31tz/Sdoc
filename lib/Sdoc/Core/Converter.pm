@@ -77,13 +77,15 @@ sub umlautToAscii {
 
     my $ref = ref $arg? $arg: \$arg;
 
-    $$ref =~ s/ä/ae/g;
-    $$ref =~ s/ö/oe/g;
-    $$ref =~ s/ü/ue/g;
-    $$ref =~ s/Ä/Ae/g;
-    $$ref =~ s/Ö/Oe/g;
-    $$ref =~ s/Ü/Ue/g;
-    $$ref =~ s/ß/ss/g;
+    if (defined $$ref) {
+        $$ref =~ s/ä/ae/g;
+        $$ref =~ s/ö/oe/g;
+        $$ref =~ s/ü/ue/g;
+        $$ref =~ s/Ä/Ae/g;
+        $$ref =~ s/Ö/Oe/g;
+        $$ref =~ s/Ü/Ue/g;
+        $$ref =~ s/ß/ss/g;
+    }
 
     return ref $arg? (): $$ref;
 }

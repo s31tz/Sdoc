@@ -39,7 +39,8 @@ L<Sdoc::Core::Object>
 
 Liefere die Anzahl der CPUs des Systems. Diese Methode ist nicht
 portabel, sie basiert auf /proc/cpuinfo des Linux-Kernels bzw.
-dem dem Kommando 'sysctl -n hw.ncpu' von FreeBSD.
+dem dem Kommando 'sysctl -n hw.ncpu' von FreeBSD. Im Falle eines
+unbekannten Systems liefert die Methode 1.
 
 =cut
 
@@ -55,7 +56,7 @@ sub numberOfCpus {
             $n = Sdoc::Core::Shell->exec('sysctl -n hw.ncpu',-capture=>'stdout');
             chomp $n;
         }
-        else {
+        elsif ($^O eq 'linux') {
             my $fh = Sdoc::Core::FileHandle->new('<','/proc/cpuinfo');
             while (<$fh>) {
                 if (/^processor/) {
@@ -63,6 +64,10 @@ sub numberOfCpus {
                 }
             }
             $fh->close;
+        }
+        else {
+            # Default
+            $n = 1;
         }
     }
 
