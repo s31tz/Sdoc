@@ -7,6 +7,7 @@ use warnings;
 our $VERSION = 3.00;
 
 use Scalar::Util ();
+use Sdoc::Core::Html::Tag;
 use Sdoc::Core::LaTeX::Code;
 use Sdoc::Core::AnsiColor;
 use Sdoc::Core::TreeFormatter;
@@ -605,6 +606,10 @@ sub generate {
     if ($format eq 'tree') {
         return $self->tree(@_);
     }
+    elsif ($format eq 'html') {
+        my $gen = Sdoc::Core::Html::Tag->new;
+        return $self->html($gen);
+    }
     elsif ($format eq 'latex') {
         my $gen = Sdoc::Core::LaTeX::Code->new;
         return $self->latex($gen);
@@ -724,12 +729,12 @@ sub tree {
 
 # -----------------------------------------------------------------------------
 
-=head3 latexText() - Attributwert als fertiger LaTeX-Code
+=head3 expandText() - Expandiere Segmente in Text
 
 =head4 Synopsis
 
-    $code = $node->latexText($gen,$key);
-    $code = $node->latexText($gen,\$str);
+    $code = $node->expandText($gen,$key);
+    $code = $node->expandText($gen,\$str);
 
 =head4 Arguments
 
@@ -751,172 +756,363 @@ Wert.
 
 =head4 Returns
 
-LaTeX-Code (String)
+Quelltext des Zielformats (String)
 
 =head4 Description
 
 Liefere den Wert des Knoten-Attributs $key, nachdem alle Segmente
-expandiert und die LaTeX-Metazeichen geschützt wurden. Dieser Wert
-(Text) kann ohne weitere Änderungen in einen LaTeX-Quelltext
-übernommen werden.
+expandiert und die Metazeichen des jeweiligen Zielformats
+geschützt wurden. Dieser Wert (Text) kann ohne weitere Änderungen
+in einen Quelltext des Zielformats übernommen werden.
 
 =cut
 
 # -----------------------------------------------------------------------------
 
-sub latexText {
-    my ($self,$l,$arg) = @_;
-
-    my $root = $self->root;
-
-    # Ersetze die gewandelten Sdoc-Segmente durch LaTeX-Konstrukte
-
-    my $r = sub {
-        my ($seg,$val,$arg) = @_;
-
-        if ($seg eq 'A') {
-            # Darf es eigentlich nicht geben. Entweder wurde A{} verwendet,
-            # wo es nicht vorgesehen ist, oder A{} wurde in einem Block
-            # mehr als einmal verwendet. Entsprechende Warnungen
-            # wurden an anderer Stelle erzeugt.
-            return sprintf 'A\{%s\}',$val;
-        }
-        elsif ($seg eq 'B') {
-            return sprintf '\textbf{%s}',$val;
-        }
-        elsif ($seg eq 'C') {
-            if ($self->type eq 'Paragraph') {
-                if ($root->smallerMonospacedFont) {
-                    return sprintf '\texttt{\small %s}',$val;
-                }
-                return sprintf '\texttt{%s}',$val;
-            }
-            else {
-                return sprintf '\texttt{%s}',$val;
-            }
-        }
-        elsif ($seg eq 'I') {
-            return sprintf '\textit{%s}',$val;
-        }
-        elsif ($seg eq 'G') {
-            my $code;
-
-            if ($val !~ /^\d+$/) {
-                # G hat als Wert keinen Index, also ist G{} auf
-                # diesem Knoten kein erwartetes Segment. Siehe auch
-                # Methode parseSegments(). Wir liefern den Text
-                # unverändert.
-                return sprintf 'G\{%s\}',$val;
-            }
-            my ($name,$gph) = @{$self->graphicA->[$val]};
-            if ($gph) {
-                my $type = $self->type;
-                if ($type =~ /^(BridgeHead|Section)$/ ||
-                        $arg eq 'captionS') {
-                    $code .= '\protect';
-                }
-                
-                $code .= Sdoc::Core::LaTeX::Figure->latex($l,
-                    inline => 1,
-                    align => 'l',
-                    border => $gph->border,
-                    borderMargin => $gph->borderMargin,
-                    file => $root->expandPath($gph->file),
-                    height => $gph->height,
-                    indent => $gph->indentation // 0?
-                        $root->indentation.'em': undef,
-                    link => $gph->latexLinkCode($l),
-                    options => $gph->latexOptions,
-                    scale => $gph->scale,
-                    width => $gph->width,
-                );
-                
-                if ($type eq 'Item' && $code =~ tr/[//) {
-                    # Im Definitionsterm müssen wir Group-Klammern setzen
-                    $code = "{$code}";
-                }
-            }
-            else {
-                $code = sprintf 'G\{%s\}',$name;
-            }
-
-            return $code;
-        }
-        elsif ($seg eq 'L') {
-            my $code;
-
-            if ($val !~ /^\d+$/) {
-                # L hat als Wert keinen Index, also ist L{} auf
-                # diesem Knoten kein erwartetes Segment. Siehe auch
-                # Methode parseSegments(). Wir liefern den Text
-                # unverändert.
-                return sprintf 'L\{%s\}',$val;
-            }
-
-            my ($linkText,$h) = @{$self->linkA->[$val]};
-            if ($h->type eq 'external') {
-                # destText und text sind identisch
-                $code = $l->ci('\href{%s}{%s}',$l->protect($h->destText),
-                    $l->protect($h->text));
-            }
-            elsif ($h->type eq 'internal') {
-                my $destNode = $h->destNode;
-                my $linkId = $destNode->linkId;
-
-                if ($h->attribute eq '+') {
-                    $code .= $l->ci('\ref{%s} - ',$linkId);
-                    $code .= $l->ci('\hyperref[%s]{%s} ',$linkId,
-                        $destNode->latexLinkText($l));
-                }
-                else {
-                    $code .= $l->ci('\hyperref[%s]{%s} ',$linkId,
-                        $l->protect($h->text));
-                }
-                $code .= $l->ci('\vpageref{%s}',$linkId);
-            }
-            elsif ($h->type eq 'unresolved') {
-                $code = sprintf 'L\{%s\}',$l->protect($linkText);
-            }
-
-            return $code;
-        }
-        elsif ($seg eq 'M') {
-            if ($val !~ /^\d+$/) {
-                # M hat als Wert keinen Index, also ist M{} auf
-                # diesem Knoten kein erwartetes Segment. Siehe auch
-                # Methode parseSegments(). Wir liefern das
-                # Segment als Text.
-                return sprintf 'M\textasciitilde{}%s\textasciitilde{}',$val;
-            }
-
-            # Wir übergeben die Formel an den LaTeX Mathe-Modus
-            return sprintf '\(%s\)',$self->formulaA->[$val];
-        }
-        elsif ($seg eq 'N') {
-            return '\\\\';
-        }
-        elsif ($seg eq 'Q') {
-            return "``$val''";
-        }
-        else {
-            $self->throw(
-                q~SDOC-00001: Unknown segment~,
-                Segment => $seg,
-                Code => "$seg\{$val\}",
-                Input => $self->input,
-                Line => $self->lineNum,
-            );
-        }
-    };
+sub expandText {
+    my ($self,$gen,$arg) = @_;
 
     my $val = ref $arg? $$arg: $self->get($arg);
     if (defined $val) {
-        $val = $l->protect($val); # Schütze reservierte LaTeX-Zeichen
+        # Schütze reservierte Zeichen
+        $val = $gen->protect($val);
+
+        # Ermittele Zielformat-spezifische Methode
+
+        my $meth = 'unknown';
+        if ($gen->isa('Prty::Html::Tag')) {
+            $meth = 'expandToHtml';
+        }
+        elsif ($gen->isa('Prty::LaTeX::Code')) {
+            $meth = 'expandToLatex';
+        }
+
+        # Expandiere Segmente mittels Zielformat-spezifischer Methode
+
         1 while $val =~
-            s/([ABCGILMNQ])\x01([^\x01\x02]*)\x02/$r->($1,$2,$arg)/e;
+            s/([ABCGILMNQ])\x01([^\x01\x02]*)\x02/$self->$meth($gen,$1,$2)/e;
     }
 
     return $val;
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 expandToHtml() - Expandiere Segmente zu HTML-Code
+
+=head4 Synopsis
+
+    $code = $node->expandToHtml($gen,$segment,$val);
+
+=head4 Arguments
+
+=over 4
+
+=item $gen
+
+Generator für HTML
+
+=item $segment
+
+Segment-Bezeichner (ein Buchstabe)
+
+=item $val
+
+Wert innerhalb der Segment-Klammern.
+
+=back
+
+=head4 Returns
+
+HTML-Code (String)
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub expandToHtml {
+    my ($self,$h,$seg,$val) = @_;
+
+    my $root = $self->root;
+
+    if ($seg eq 'A') {
+        # Darf es eigentlich nicht geben. Entweder wurde A{} verwendet,
+        # wo es nicht vorgesehen ist, oder A{} wurde in einem Block
+        # mehr als einmal verwendet. Entsprechende Warnungen
+        # wurden an anderer Stelle erzeugt.
+        return sprintf 'A\{%s\}',$val;
+    }
+    elsif ($seg eq 'B') {
+        return $h->tag('b',$val);
+    }
+    elsif ($seg eq 'C') {
+        if ($self->type eq 'Paragraph' && $root->smallerMonospacedFont) {
+            return $h->tag('tt',
+                style => 'font-size: smaller',
+                $val
+            );
+        }
+        return $h->tag('tt',
+            $val
+        );
+    }
+    elsif ($seg eq 'I') {
+        return $h->tag('i',$val);
+    }
+    elsif ($seg eq 'G') {
+        my $code;
+
+        if ($val !~ /^\d+$/) {
+            # G hat als Wert keinen Index, also ist G{} auf
+            # diesem Knoten kein erwartetes Segment. Siehe auch
+            # Methode parseSegments(). Wir liefern den Text
+            # unverändert.
+            return sprintf 'G\{%s\}',$val;
+        }
+        my ($name,$gph) = @{$self->graphicA->[$val]};
+        if ($gph) {
+            $code .= Sdoc::Core::LaTeX::Figure->latex($h,
+                inline => 1,
+                border => $gph->border,
+                borderMargin => $gph->borderMargin,
+                file => $root->expandPath($gph->file),
+                height => $gph->height,
+                indent => $gph->indentation // 0?
+                    $root->indentation.'em': undef,
+                link => $gph->latexLinkCode($h),
+                options => $gph->latexOptions,
+                scale => $gph->scale,
+                width => $gph->width,
+            );
+        }
+        else {
+            $code = sprintf 'G\{%s\}',$name;
+        }
+
+        return $code;
+    }
+    elsif ($seg eq 'L') {
+        my $code;
+
+        if ($val !~ /^\d+$/) {
+            # L hat als Wert keinen Index, also ist L{} auf
+            # diesem Knoten kein erwartetes Segment. Siehe auch
+            # Methode parseSegments(). Wir liefern den Text
+            # unverändert.
+            return sprintf 'L\{%s\}',$val;
+        }
+
+        my ($linkText,$obj) = @{$self->linkA->[$val]};
+        if ($obj->type eq 'external') {
+            $code = $h->tag('a',
+                href => $obj->destText,
+                $h->protect($obj->text),
+            );
+        }
+        elsif ($obj->type eq 'internal') {
+            my $destNode = $obj->destNode;
+            my $linkId = $destNode->linkId;
+
+            if ($h->attribute eq '+') {
+                $code = $h->tag('a',
+                    href => "#$linkId",
+                    $destNode->linkText($h),
+                );
+            }
+            else {
+                $code = $h->tag('a',
+                    href => "#$linkId",
+                    $h->protect($obj->text),
+                );
+            }
+        }
+        elsif ($h->type eq 'unresolved') {
+            $code = sprintf 'L\{%s\}',$h->protect($linkText);
+        }
+
+        return $code;
+    }
+    elsif ($seg eq 'M') {
+        if ($val !~ /^\d+$/) {
+            # M hat als Wert keinen Index, also ist M{} auf
+            # diesem Knoten kein erwartetes Segment. Siehe auch
+            # Methode parseSegments(). Wir liefern das
+            # Segment als Text.
+            return sprintf 'M\textasciitilde{}%s\textasciitilde{}',$val;
+        }
+
+        # Wir übergeben die Formel an den LaTeX Mathe-Modus
+        return sprintf '\(%s\)',$self->formulaA->[$val];
+    }
+    elsif ($seg eq 'N') {
+        return '\\\\';
+    }
+    elsif ($seg eq 'Q') {
+        return "``$val''";
+    }
+
+    $self->throw(
+        q~SDOC-00001: Unknown segment~,
+        Segment => $seg,
+        Code => "$seg\{$val\}",
+        Input => $self->input,
+        Line => $self->lineNum,
+    );
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 expandToLatex() - Expandiere Segmente zu LaTeX-Code
+
+=head4 Synopsis
+
+    $code = $node->expandToLatex($gen,$segment,$val);
+
+=head4 Arguments
+
+=over 4
+
+=item $gen
+
+Generator für LaTeX.
+
+=item $segment
+
+Segment-Bezeichner (ein Buchstabe)
+
+=item $val
+
+Wert innerhalb der Segment-Klammern.
+
+=back
+
+=head4 Returns
+
+LaTeX-Code (String)
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub expandToLatex {
+    my ($self,$l,$seg,$val) = @_;
+
+    my $root = $self->root;
+
+    if ($seg eq 'A') {
+        # Darf es eigentlich nicht geben. Entweder wurde A{} verwendet,
+        # wo es nicht vorgesehen ist, oder A{} wurde in einem Block
+        # mehr als einmal verwendet. Entsprechende Warnungen
+        # wurden an anderer Stelle erzeugt.
+        return sprintf 'A\{%s\}',$val;
+    }
+    elsif ($seg eq 'B') {
+        return sprintf '\textbf{%s}',$val;
+    }
+    elsif ($seg eq 'C') {
+        if ($self->type eq 'Paragraph' && $root->smallerMonospacedFont) {
+            return sprintf '\texttt{\small %s}',$val;
+        }
+        return sprintf '\texttt{%s}',$val;
+    }
+    elsif ($seg eq 'I') {
+        return sprintf '\textit{%s}',$val;
+    }
+    elsif ($seg eq 'G') {
+        my $code;
+
+        if ($val !~ /^\d+$/) {
+            # G hat als Wert keinen Index, also ist G{} auf
+            # diesem Knoten kein erwartetes Segment. Siehe auch
+            # Methode parseSegments(). Wir liefern den Text
+            # unverändert.
+            return sprintf 'G\{%s\}',$val;
+        }
+        my ($name,$gph) = @{$self->graphicA->[$val]};
+        if ($gph) {
+            $code .= Sdoc::Core::LaTeX::Figure->latex($l,
+                inline => 1,
+                border => $gph->border,
+                borderMargin => $gph->borderMargin,
+                file => $root->expandPath($gph->file),
+                height => $gph->height,
+                indent => $gph->indentation // 0?
+                    $root->indentation.'em': undef,
+                link => $gph->latexLinkCode($l),
+                options => $gph->latexOptions,
+                scale => $gph->scale,
+                width => $gph->width,
+            );
+        }
+        else {
+            $code = sprintf 'G\{%s\}',$name;
+        }
+
+        return $code;
+    }
+    elsif ($seg eq 'L') {
+        my $code;
+
+        if ($val !~ /^\d+$/) {
+            # L hat als Wert keinen Index, also ist L{} auf
+            # diesem Knoten kein erwartetes Segment. Siehe auch
+            # Methode parseSegments(). Wir liefern den Text
+            # unverändert.
+            return sprintf 'L\{%s\}',$val;
+        }
+
+        my ($linkText,$h) = @{$self->linkA->[$val]};
+        if ($h->type eq 'external') {
+            $code = $l->ci('\href{%s}{%s}',$l->protect($h->destText),
+                $l->protect($h->text));
+        }
+        elsif ($h->type eq 'internal') {
+            my $destNode = $h->destNode;
+            my $linkId = $destNode->linkId;
+
+            if ($h->attribute eq '+') {
+                $code .= $l->ci('\ref{%s} - ',$linkId);
+                $code .= $l->ci('\hyperref[%s]{%s} ',$linkId,
+                    $destNode->linkText($l));
+            }
+            else {
+                $code .= $l->ci('\hyperref[%s]{%s} ',$linkId,
+                    $l->protect($h->text));
+            }
+            $code .= $l->ci('\vpageref{%s}',$linkId);
+        }
+        elsif ($h->type eq 'unresolved') {
+            $code = sprintf 'L\{%s\}',$l->protect($linkText);
+        }
+
+        return $code;
+    }
+    elsif ($seg eq 'M') {
+        if ($val !~ /^\d+$/) {
+            # M hat als Wert keinen Index, also ist M{} auf
+            # diesem Knoten kein erwartetes Segment. Siehe auch
+            # Methode parseSegments(). Wir liefern das
+            # Segment als Text.
+            return sprintf 'M\textasciitilde{}%s\textasciitilde{}',$val;
+        }
+
+        # Wir übergeben die Formel an den LaTeX Mathe-Modus
+        return sprintf '\(%s\)',$self->formulaA->[$val];
+    }
+    elsif ($seg eq 'N') {
+        return '\\\\';
+    }
+    elsif ($seg eq 'Q') {
+        return "``$val''";
+    }
+
+    $self->throw(
+        q~SDOC-00001: Unknown segment~,
+        Segment => $seg,
+        Code => "$seg\{$val\}",
+        Input => $self->input,
+        Line => $self->lineNum,
+    );
 }
 
 # -----------------------------------------------------------------------------
@@ -985,6 +1181,32 @@ sub latexLevelToSectionName {
     }
 
     return $name;
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 html() - Default-Implementierung für Format html
+
+=head4 Synopsis
+
+    $str = $node->html;
+
+=head4 Returns
+
+Leerstring (String)
+
+=head4 Description
+
+Diese Methode wird von Knotenklassen genutzt, die (noch) keine
+HTML-Repräsentation erzeugen.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub html {
+    my $self = shift;
+    return '';
 }
 
 # -----------------------------------------------------------------------------

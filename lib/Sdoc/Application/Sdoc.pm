@@ -95,7 +95,8 @@ sub main {
     }
 
     my $op = 'pdf';
-    if ($argA->[0] =~ /^(anchors|convert|latex|links|pdf|tree|validate)$/) {
+    if ($argA->[0] =~ /^(anchors|convert|html|latex|links|pdf|tree|
+            validate)$/x) {
         $op = shift @$argA;
     }
     my $sdocFile = shift @$argA;
@@ -189,6 +190,26 @@ sub main {
             print $str;
         }
     }
+    elsif ($op eq 'html') {
+        # Ermittele/erzeuge Arbeitsverzeichnis
+        my $workDir = $self->workDir($basename,$opt);
+
+        # Erzeuge LaTeX-Datei
+
+        my $htmlFile = sprintf '%s/%s.html',$workDir,$basename;
+        my $fh = Sdoc::Core::FileHandle->new('>',$htmlFile);
+        $fh->setEncoding('utf-8');
+        $fh->print($doc->generate('html'));
+        $fh->close;
+
+        # Wechsele in Arbeitsverzeichnis
+
+        my $sh = Sdoc::Core::Shell->new(quiet=>!$opt->verbose);
+        $sh->cd($workDir);
+
+        # Zeige/kopiere Ergebnis
+        $self->showResult("$basename.html",$output,$opt->textViewer);
+    }
     elsif ($op eq 'latex' || $op eq 'pdf') {
         # Ermittele/erzeuge Arbeitsverzeichnis
         my $workDir = $self->workDir($basename,$opt);
@@ -201,9 +222,13 @@ sub main {
         $fh->print($doc->generate('latex'));
         $fh->close;
 
+        # Wechsele in Arbeitsverzeichnis
+
         my $sh = Sdoc::Core::Shell->new(quiet=>!$opt->verbose);
         $sh->cd($workDir);
 
+        # Zeige/kopiere Ergebnis
+        
         if ($op eq 'latex') {
             $self->showResult("$basename.tex",$output,$opt->textViewer);
         }
@@ -222,6 +247,12 @@ sub main {
 
             $self->showResult("$basename.pdf",$output,$opt->pdfViewer);
         }
+    }
+    else {
+        $self->throw(
+            q~SDOC-00001: Unknown format/operation~,
+            Operation => $op,
+        );
     }
 
     # Prüfe, ob alle Knoten destrukturiert werden, wenn der

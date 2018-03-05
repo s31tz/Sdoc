@@ -269,7 +269,7 @@ sub latex {
     my $listType = $self->parent->listType;
     if ($listType eq 'description') {
         # [{}] weil sonst Probleme bei Macros mit Optionen (\includegraphics)
-        $code .= $l->c('\item[{%s}]',$self->latexText($l,'keyS'));
+        $code .= $l->c('\item[{%s}]',$self->expandText($l,'keyS'));
     }
     else {
         $code .= $l->c('\item');

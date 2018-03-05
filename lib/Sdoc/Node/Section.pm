@@ -244,11 +244,11 @@ sub anchor {
 
 # -----------------------------------------------------------------------------
 
-=head3 latexLinkText() - Verweis-Text
+=head3 linkText() - Verweis-Text
 
 =head4 Synopsis
 
-    $linkText = $sec->latexLinkText($l);
+    $linkText = $sec->linkText($gen);
 
 =head4 Returns
 
@@ -256,20 +256,85 @@ Text (String)
 
 =head4 Description
 
-Liefere den Verweis-Text als fertigen LaTeX-Code.
+Liefere den Verweis-Text als fertigen Zielcode.
 
 =cut
 
 # -----------------------------------------------------------------------------
 
-sub latexLinkText {
-    my ($self,$l) = @_;
-    return $self->latexText($l,'titleS');
+sub linkText {
+    my ($self,$gen) = @_;
+    return $self->expandText($gen,'titleS');
 }
 
 # -----------------------------------------------------------------------------
 
 =head2 Formate
+
+=head3 html() - Generiere HTML-Code
+
+=head4 Synopsis
+
+    $code = $gph->html($gen);
+
+=head4 Arguments
+
+=over 4
+
+=item $gen
+
+Generator für HTML.
+
+=back
+
+=head4 Returns
+
+HTML-Code (String)
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub html {
+    my ($self,$h) = @_;
+return '';
+    # Prüfe, ob die Abschnittsüberschrift im Inhaltsverzeichnis
+    # unterdrückt werden soll. Dies ist der Fall, wenn ein
+    # *übergeordneter* Abschnitt seine untergeordneten
+    # Abschnittsüberschriften blockiert hat (=!).
+
+    my $toc = 1;
+    my $node = $self;
+    while ($node = $node->parent) {
+        if ($node->type ne 'Section') {
+            last;
+        }
+        elsif ($node->tocStop) {
+            $toc = 0;
+            last;
+        }
+    }
+
+    my $code;
+
+    # Beginnen mit dem Abschnitt die Appendizes?
+
+    if ($self->isAppendix) {
+        # $code .= $h->c('\appendix');
+    }
+
+    $code .= $h->section(
+        $self->latexLevelToSectionName($h,$self->level),
+        $self->expandText($h,'titleS'),
+        -label => $self->linkId,
+        -toc => $toc,
+    );
+    # $code .= $self->generateChilds('html',$h);
+
+    return $code;
+}
+
+# -----------------------------------------------------------------------------
 
 =head3 latex() - Generiere LaTeX-Code
 
@@ -299,7 +364,7 @@ sub latex {
     my ($self,$l) = @_;
 
     # Prüfe, ob die Abschnittsüberschrift im Inhaltsverzeichnis
-    # unterdrückt werden soll. Dies ist der Fall, ein
+    # unterdrückt werden soll. Dies ist der Fall, wenn ein
     # *übergeordneter* Abschnitt seine untergeordneten
     # Abschnittsüberschriften blockiert hat (=!).
 
@@ -325,7 +390,7 @@ sub latex {
 
     $code .= $l->section(
         $self->latexLevelToSectionName($l,$self->level),
-        $self->latexText($l,'titleS'),
+        $self->expandText($l,'titleS'),
         -label => $self->linkId,
         -toc => $toc,
     );

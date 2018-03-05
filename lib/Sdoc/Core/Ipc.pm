@@ -4,7 +4,7 @@ use base qw/Sdoc::Core::Object/;
 use strict;
 use warnings;
 
-our $VERSION = 1.124;
+our $VERSION = 1.125;
 
 use Sdoc::Core::Option;
 use Sdoc::Core::Shell;
@@ -106,7 +106,7 @@ sub filter {
 
 =head1 VERSION
 
-1.124
+1.125
 
 =head1 AUTHOR
 

@@ -4,7 +4,7 @@ use base qw/Sdoc::Core::Hash/;
 use strict;
 use warnings;
 
-our $VERSION = 1.124;
+our $VERSION = 1.125;
 
 use Sdoc::Core::Unindent;
 use Sdoc::Core::FileHandle;
@@ -25,7 +25,7 @@ L<Sdoc::Core::Hash>
 
 Ein Objekt der Klasse repräsentiert eine Tabelle, die in Form
 eines ASCII-Texts gegeben ist. Diese Darstellung wird an den
-Konstruktor übergeben, von der Klasse geparst und inhaltlich
+Konstruktor übergeben, von diesem geparst und inhaltlich
 analysiert. Die Klasse stellt Methoden zur Verfügung, um die
 Eigenschaften der Tabelle abzufragen.
 
@@ -591,7 +591,7 @@ sub asText {
 
 =head1 VERSION
 
-1.124
+1.125
 
 =head1 AUTHOR
 

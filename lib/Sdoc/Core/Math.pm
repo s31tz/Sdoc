@@ -4,7 +4,7 @@ use base qw/Sdoc::Core::Object/;
 use strict;
 use warnings;
 
-our $VERSION = 1.124;
+our $VERSION = 1.125;
 
 use 5.010;
 use Sdoc::Core::Formatter;
@@ -646,7 +646,7 @@ sub spikeValue {
 
 =head1 VERSION
 
-1.124
+1.125
 
 =head1 AUTHOR
 

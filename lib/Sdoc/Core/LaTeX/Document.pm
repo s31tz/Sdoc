@@ -4,7 +4,7 @@ use base qw/Sdoc::Core::Hash/;
 use strict;
 use warnings;
 
-our $VERSION = 1.124;
+our $VERSION = 1.125;
 
 use Sdoc::Core::Reference;
 use Sdoc::Core::Unindent;
@@ -34,16 +34,18 @@ Der Code
     );
     
     my $l = Sdoc::Core::LaTeX::Code->new;
-    my $code = $tab->latex($l);
+    my $code = $doc->latex($l);
 
 produziert
 
     \documentclass[ngerman,a4paper]{scrartcl}
     \usepackage[T1]{fontenc}
-    \usepackage[utf8]{inputenc}
     \usepackage{lmodern}
+    \usepackage[utf8]{inputenc}
     \usepackage{babel}
     \usepackage{geometry}
+    \usepackage{microtype}
+    \geometry{height=22.5cm,bottom=3.8cm}
     \setlength{\parindent}{0em}
     \setlength{\parskip}{0.5ex}
     \begin{document}
@@ -163,6 +165,12 @@ LaTeX: 3. -2 schaltet die Numerierung ab.
 Der Titel des Dokuments. Wenn gesetzt, wird eine Titelseite bzw.
 ein Titelabschnitt erzeugt.
 
+=item titlePageStyle => $pageStyle
+
+Seitenstil der ersten Seite. Mögliche Werte: 'empty' (Kopf-
+und Fußzeile leer), 'plain' (nur Fuß mit Seitennummer), 'headings'
+(Kopf mit Abschnittstiteln, Fuß mit Seitennummer).
+
 =item tocDepth => $n
 
 Tiefe, bis zu der Abschnitte in das Inhaltsverzeichnis aufgenommen
@@ -200,6 +208,7 @@ sub new {
         language => 'ngerman',
         options => undef,
         packages => [],
+        titlePageStyle => undef,
         paperSize => 'a4paper',
         parIndent => '0em',
         parSkip => '0.5ex',
@@ -243,11 +252,11 @@ sub latex {
 
     my ($author,$body,$compactCode,$date,$documentClass,$encoding,
         $fontEncoding,$fontSize,$geometry,$language,$options,$packageA,
-        $paperSize,$parIndent,$parSkip,$preamble,$preComment,$secNumDepth,
-        $title,$tocDepth) = $self->get(qw/author body compactCode date
-        documentClass encoding fontEncoding fontSize geometry language
-        options packages paperSize parIndent parSkip preamble preComment
-        secNumDepth title tocDepth/);
+        $titlePageStyle,$paperSize,$parIndent,$parSkip,$preamble,$preComment,
+        $secNumDepth,$title,$tocDepth) = $self->get(qw/author body
+        compactCode date documentClass encoding fontEncoding fontSize
+        geometry language options packages titlePageStyle paperSize parIndent
+        parSkip preamble preComment secNumDepth title tocDepth/);
 
     my @pnl = $compactCode? (): (-pnl=>1);
 
@@ -399,8 +408,9 @@ sub latex {
         $tmp .= $l->c('\author{%s}',$author // '');
         $tmp .= $l->c('\date{%s}',$date // '');
         $tmp .= $l->c('\maketitle');
-        # Keine Zeilennummer auf Titelseite
-        $tmp .= $l->c('\thispagestyle{empty}');
+        if ($titlePageStyle) {
+            $tmp .= $l->c('\thispagestyle{%s}',$titlePageStyle);
+        }
         $body = $tmp.$body;
     }
     $body = Sdoc::Core::Unindent->trimNl($body);
@@ -421,7 +431,7 @@ sub latex {
 
 =head1 VERSION
 
-1.124
+1.125
 
 =head1 AUTHOR
 

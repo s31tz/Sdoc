@@ -4,7 +4,7 @@ use base qw/Sdoc::Core::TeX::Code/;
 use strict;
 use warnings;
 
-our $VERSION = 1.124;
+our $VERSION = 1.125;
 
 use Sdoc::Core::Option;
 
@@ -284,7 +284,7 @@ sub section {
 
 =head1 VERSION
 
-1.124
+1.125
 
 =head1 AUTHOR
 

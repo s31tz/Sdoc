@@ -17,6 +17,7 @@ use Sdoc::Node::Link;
 use Sdoc::Node::List;
 use Sdoc::Node::PageBreak;
 use Sdoc::Node::Paragraph;
+use Sdoc::Node::Quote;
 use Sdoc::Node::Section;
 use Sdoc::Node::Table;
 use Sdoc::Node::TableOfContents;

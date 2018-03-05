@@ -4,7 +4,7 @@ use base qw/Sdoc::Core::Object/;
 use strict;
 use warnings;
 
-our $VERSION = 1.124;
+our $VERSION = 1.125;
 
 use Cwd ();
 use Sdoc::Core::System;
@@ -191,7 +191,7 @@ sub homeDir {
 
 =head1 VERSION
 
-1.124
+1.125
 
 =head1 AUTHOR
 

@@ -194,11 +194,11 @@ sub anchor {
 
 # -----------------------------------------------------------------------------
 
-=head3 latexLinkText() - Verweis-Text
+=head3 linkText() - Verweis-Text
 
 =head4 Synopsis
 
-    $linkText = $brh->latexLinkText($l);
+    $linkText = $brh->linkText($gen);
 
 =head4 Returns
 
@@ -206,15 +206,15 @@ Text (String)
 
 =head4 Description
 
-Liefere den Verweis-Text als fertigen LaTeX-Code.
+Liefere den Verweis-Text als fertigen Zielcode.
 
 =cut
 
 # -----------------------------------------------------------------------------
 
-sub latexLinkText {
-    my ($self,$l) = @_;
-    return $self->latexText($l,'titleS');
+sub linkText {
+    my ($self,$gen) = @_;
+    return $self->expandText($gen,'titleS');
 }
 
 # -----------------------------------------------------------------------------
@@ -250,7 +250,7 @@ sub latex {
 
     return $l->section(
         $self->latexLevelToSectionName($l,$self->level),
-        $self->latexText($l,'titleS'),
+        $self->expandText($l,'titleS'),
         -label => $self->linkId,
         -toc => 0,
     );

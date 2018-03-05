@@ -2,6 +2,7 @@
   title="Ein Beispieldokument"
   author="Nico Laus"
   date="today"
+  latexPageStyle="empty"
 
 %Section:
   level=1

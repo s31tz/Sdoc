@@ -264,11 +264,11 @@ sub anchor {
 
 # -----------------------------------------------------------------------------
 
-=head3 latexLinkText() - Verweis-Text
+=head3 linkText() - Verweis-Text
 
 =head4 Synopsis
 
-    $linkText = $tab->latexLinkText($l);
+    $linkText = $tab->linkText($gen);
 
 =head4 Returns
 
@@ -276,15 +276,15 @@ Text (String)
 
 =head4 Description
 
-Liefere den Verweis-Text als fertigen LaTeX-Code.
+Liefere den Verweis-Text als fertigen Zielcode.
 
 =cut
 
 # -----------------------------------------------------------------------------
 
-sub latexLinkText {
-    my ($self,$l) = @_;
-    return $self->latexText($l,'captionS');
+sub linkText {
+    my ($self,$gen) = @_;
+    return $self->expandText($gen,'captionS');
 }
 
 # -----------------------------------------------------------------------------
@@ -332,7 +332,7 @@ sub latex {
         alignments => scalar $atb->alignments,
         border => $border,
         callbackArguments => [$self],
-        caption => $self->latexText($l,'captionS'),
+        caption => $self->expandText($l,'captionS'),
         indent => $self->indentation? $root->indentation.'em': undef,
         label => $self->linkId,
         multiLine => $atb->multiLine,
@@ -342,7 +342,7 @@ sub latex {
             my ($self,$l,$row,$n,$node) = @_;
             my @row;
             for my $val (@$row) {
-                push @row,$node->latexText($l,\$val);
+                push @row,$node->expandText($l,\$val);
             }
             return @row;
         },
@@ -351,7 +351,7 @@ sub latex {
         titles => scalar $atb->titles,
         titleCallback => sub {
             my ($self,$l,$title,$n,$node) = @_;
-            return $node->latexText($l,\$title);
+            return $node->expandText($l,\$title);
         },
     )."\n";
 }

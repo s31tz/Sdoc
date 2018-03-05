@@ -4,7 +4,7 @@ use base qw/Sdoc::Core::Hash/;
 use strict;
 use warnings;
 
-our $VERSION = 1.124;
+our $VERSION = 1.125;
 
 use Sdoc::Core::Reference;
 
@@ -147,7 +147,7 @@ sub new {
     # @_: @keyval
 
     my $self = $class->SUPER::new(
-        align => 'c',
+        align => undef,
         border => 0,
         borderMargin => '0mm',
         caption => undef,
@@ -200,6 +200,8 @@ sub latex {
         $self->get(qw/align border borderMargin caption file height indent
         inline label link options position postVSpace scale width/);
 
+    $align //= $inline? '': 'c';
+
     if (!$file) {
         return '';
     }
@@ -223,7 +225,11 @@ sub latex {
         }
     }
 
-    my $code = $l->macro('\includegraphics',
+    my $code;
+    if ($inline) {
+        $code .= $l->ci('\protect');
+    }
+    $code .= $l->macro('\includegraphics',
         -o => \@opt,
         -p => $file,
         -nl => 0,
@@ -239,10 +245,10 @@ sub latex {
         $code = $l->ci('\hspace*{%s}',$indent).$code;
     }
 
-    # Inline Abbildung
+    # Abbildung inline
 
     if ($inline) {
-        return $code;
+        return "{$code}";
     }
 
     # Alleinstehende Abbildung
@@ -285,7 +291,7 @@ sub latex {
 
 =head1 VERSION
 
-1.124
+1.125
 
 =head1 AUTHOR
 

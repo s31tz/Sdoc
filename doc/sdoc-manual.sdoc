@@ -167,7 +167,7 @@ Dokument-Bock angegeben:
     latexDocumentOptions=STRING
     latexFontSize=10pt|11pt|12pt
     latexGeometry=STRING
-    latexHeadings=BOOL
+    latexPageStyle=TITLEPAGE,OTHERPAGES
     latexPaperSize=PAPERSIZE
     latexParSkip=LENGTH
     latexShowFrames=BOOL
@@ -252,8 +252,19 @@ verwendet werden:
   gegenüber der Grundeinstellung abweichende Seitenmaße definiert
   werden.
 
-[latexHeadings]:
-  Erzeuge Kopf- und Fußzeilen.
+[latexPageStyle]:
+  Definiere den Seitenstil der Titelseite und der sonstigen Seiten.
+  Der Seitenstil legt fest, was im Kopf und im Fuß der Seite erscheint.
+  Zur Verfügung stehen die Seitenstil-Bezeichnungen 'empty' (Kopf-
+  und Fußzeile leer), 'plain' (nur Fuß mit Seitennummer), 'headings'
+  (Kopf mit Abschnittstiteln, Fuß mit Seitennummer). Ist lediglich ein
+  Seitenstil angegeben, gilt dieser für alle Seiten. Beispiel:
+
+    latexPageStyle="empty"
+
+  ist identisch zu
+
+    latexPageStyle="empty,empty"
 
 [latexPaperSize]:
   (Default: 'a4paper') Papiergröße für LaTeX.
@@ -1577,6 +1588,31 @@ produziert:
 
 ---PageBreak---
 
+== Zitat (Quote)
+
+Ein Abschnitt mit Größerzeichen plus Leerzeichen am
+Zeilenanfang wird als Zitat-Block gesetzt
+
+  > Es ist verdammt schwer, einen Menschen zu nehmen,
+  > wie er ist, wenn er sich anders gibt, als er ist.
+  > (Ernst Ferstl)
+
+produziert:
+
+> Es ist verdammt schwer, einen Menschen zu nehmen,
+> wie er ist, wenn er sich anders gibt, als er ist.
+> (Ernst Ferstl)
+
+=== Eigenschaften
+
+  %Quote:
+  TEXT
+  .
+
+Ein Zitat-Block hat keine Eigenschaften.
+
+---PageBreak---
+
 == Kommentar (Comment)
 
 Sdoc unterscheidet zwei Arten von Kommentaren:
@@ -2044,6 +2080,14 @@ CTAN: L{https://ctan.org/pkg/minted}
 #
 # CTAN: L{https://ctan.org/pkg/scrbase}
 
+=== Paket C{quoting}
+
+CTAN: L{https://ctan.org/pkg/quoting}
+
+Wir verwenden das Paket C{quoting} für Zitate, da es eine einfache
+Kontrolle über den Font, die Einrückung und den vertikalen Leerraum
+über und unter Zitatabschnitten bietet.
+
 === Paket C{scrlayer-scrpage}
 
 CTAN: L{https://ctan.org/pkg/scrlayer-scrpage}
@@ -2212,7 +2256,7 @@ wir in folgenden Schritten vor:
    Segment-Typs, kopieren diesen und passen ihn an.
 
 2. Wir erweitern die Methode(n) C{<%Sdoc::Node>%::FORMATText()}
-   (z.B. latexText()), so dass sie den FORMAT-spezifischen
+   (z.B. expandText()), so dass sie den FORMAT-spezifischen
    Code neuen Segment-Typ erzeugen.
 
 == Knoten-Eigenschaft hinzufügen

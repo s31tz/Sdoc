@@ -1,4 +1,4 @@
-package Sdoc::Node::Paragraph;
+package Sdoc::Node::Quote;
 use base qw/Sdoc::Node/;
 
 use strict;
@@ -6,13 +6,15 @@ use warnings;
 
 our $VERSION = 3.00;
 
+use Sdoc::Core::Unindent;
+
 # -----------------------------------------------------------------------------
 
 =encoding utf8
 
 =head1 NAME
 
-Sdoc::Node::Paragraph - Paragraph-Knoten
+Sdoc::Node::Quote - Zitat-Knoten
 
 =head1 BASE CLASS
 
@@ -20,12 +22,12 @@ L<Sdoc::Node>
 
 =head1 DESCRIPTION
 
-Ein Objekt der Klasse repräsentiert einen Paragraphen.
+Ein Objekt der Klasse repräsentiert ein Zitat.
 
 =head1 ATTRIBUTES
 
 Über die Attribute der Basisklasse hinaus besitzt ein
-Paragraph-Knoten folgende zusätzliche Attribute:
+Zitat-Knoten folgende zusätzliche Attribute:
 
 =over 4
 
@@ -45,7 +47,7 @@ L-Segmenten (Links).
 
 =item text => $text
 
-Text des Paragraphen.
+Text des Zitats.
 
 =item textS => $textS
 
@@ -57,11 +59,11 @@ Text des Paragraphen mit geparsten Segmenten.
 
 =head2 Konstruktor
 
-=head3 new() - Instantiiere Paragraph-Knoten
+=head3 new() - Instantiiere Zitat-Knoten
 
 =head4 Synopsis
 
-    $par = $class->new($par,$variant,$root,$parent);
+    $com = $class->new($par,$variant,$root,$parent);
 
 =head4 Arguments
 
@@ -87,7 +89,7 @@ Eltern-Knoten.
 
 =head4 Returns
 
-Paragraph-Knoten (Object)
+Zitat-Knoten (Object)
 
 =cut
 
@@ -103,14 +105,14 @@ sub new {
 
     my $attribH;
     if ($variant == 0) {
-        # %Paragraph:
+        # %Comment:
         #   KEY=VAL
         # TEXT
         # .
         $attribH = $par->readBlock('text');
     }
     elsif ($markup eq 'sdoc') {
-        # TEXT
+        # # TEXT
 
         my $lineA = $par->lines;
         my $input = $lineA->[0]->input;
@@ -118,13 +120,14 @@ sub new {
 
         my $text = '';
         while (@$lineA) {
-            my $line = $lineA->[0];
-            if ($line->isEmpty || $par->nextType ne 'Paragraph') {
+            my $str = $lineA->[0]->text;
+            if (substr($str,0,2) ne '> ') {
                 last;
             }
-            $text .= $line->textNl;
+            $text .= substr($str,1)."\n";
             shift @$lineA;
         }
+        $text = Sdoc::Core::Unindent->string($text);
         chomp $text;
 
         $attribH = {
@@ -136,7 +139,7 @@ sub new {
 
     # Objekt instantiieren
 
-    my $self = $class->SUPER::new('Paragraph',$variant,$root,$parent,
+    my $self = $class->SUPER::new('Quote',$variant,$root,$parent,
         formulaA => [],
         graphicA => [],
         linkA => [],
@@ -153,45 +156,11 @@ sub new {
 
 =head2 Formate
 
-=head3 html() - Generiere HTML-Code
-
-=head4 Synopsis
-
-    $code = $par->html($gen);
-
-=head4 Arguments
-
-=over 4
-
-=item $gen
-
-Generator für HTML.
-
-=back
-
-=head4 Returns
-
-LaTeX-Code (String)
-
-=cut
-
-# -----------------------------------------------------------------------------
-
-sub html {
-    my ($self,$h) = @_;
-
-    return $h->tag('p',
-        $self->expandText($h,'textS')
-    );
-}
-
-# -----------------------------------------------------------------------------
-
 =head3 latex() - Generiere LaTeX-Code
 
 =head4 Synopsis
 
-    $code = $par->latex($gen);
+    $code = $com->latex($gen);
 
 =head4 Arguments
 
@@ -213,7 +182,12 @@ LaTeX-Code (String)
 
 sub latex {
     my ($self,$l) = @_;
-    return $self->expandText($l,'textS')."\n\n";
+
+    # Quote-Umgebung
+
+    return $l->env('quoting',$self->expandText($l,'textS'),
+        -nl => 2,
+    );
 }
 
 # -----------------------------------------------------------------------------

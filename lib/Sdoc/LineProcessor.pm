@@ -175,6 +175,10 @@ sub nextType {
             $type = 'BridgeHead';
             $variant = 1;
         }
+        elsif ($text =~ /^> /) {
+            $type = 'Quote';
+            $variant = 1;
+        }
         elsif ($text =~ /^\[.+?\]:/) {
             $type = 'Item';
             $variant = 1;

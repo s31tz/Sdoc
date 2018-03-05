@@ -256,11 +256,11 @@ sub anchor {
 
 # -----------------------------------------------------------------------------
 
-=head3 latexLinkText() - Verweis-Text
+=head3 linkText() - Verweis-Text
 
 =head4 Synopsis
 
-    $linkText = $gph->latexLinkText($l);
+    $linkText = $gph->linkText($gen);
 
 =head4 Returns
 
@@ -268,16 +268,16 @@ Text (String)
 
 =head4 Description
 
-Liefere den Verweis-Text als fertigen LaTeX-Code. Dies ist der Text
+Liefere den Verweis-Text als fertigen Zielcode. Dies ist der Text
 für einen Verweis, I<der die Abbildung referenziert>.
 
 =cut
 
 # -----------------------------------------------------------------------------
 
-sub latexLinkText {
-    my ($self,$l) = @_;
-    return $self->latexText($l,'captionS');
+sub linkText {
+    my ($self,$gen) = @_;
+    return $self->expandText($gen,'captionS');
 }
 
 # -----------------------------------------------------------------------------
@@ -336,6 +336,73 @@ sub latexLinkCode {
 
 =head2 Formate
 
+=head3 html() - Generiere HTML-Code
+
+=head4 Synopsis
+
+    $code = $gph->html($gen);
+
+=head4 Arguments
+
+=over 4
+
+=item $gen
+
+Generator für HTML.
+
+=back
+
+=head4 Returns
+
+HTML-Code (String)
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub html {
+    my ($self,$h) = @_;
+
+    my $root = $self->root;
+
+    if ($self->definition) {
+        return '';
+    }
+
+    # HTML-Code erzeugen
+
+    # FIXME: analog zu latexLinkCode() in Methode auslagern
+
+    my $href;
+    my $n = $self->linkN;
+    if (defined $n) {
+        my $h = $self->linkA->[$n]->[1];
+        my $type = $h->type;
+        if ($type eq 'external') {
+            $href = $h->destText;
+        }
+        elsif ($type eq 'internal') {
+            $href = sprintf '#'.$h->destNode->linkId;
+        }
+    }
+
+    return $h->tag('p',
+        style => substr($self->align,0,1) eq 'c'? 'text-align: center': undef,
+        $h->tag('a',
+            -ignoreTagIf => !$href,
+            href => $href,
+            $h->tag('img',
+                -nl=>0,
+                src => $root->expandPath($self->file),
+                width => $self->width,
+                height => $self->height,
+            ),
+        ),
+    );
+}
+
+# -----------------------------------------------------------------------------
+
 =head3 latex() - Generiere LaTeX-Code
 
 =head4 Synopsis
@@ -375,7 +442,7 @@ sub latex {
         align => substr($self->align,0,1),
         border => $self->border,
         borderMargin => $self->borderMargin,
-        caption => $self->latexText($l,'captionS'),
+        caption => $self->expandText($l,'captionS'),
         file => $root->expandPath($self->file),
         height => $self->height,
         indent => $self->indentation // 1? $root->indentation.'em': undef,
