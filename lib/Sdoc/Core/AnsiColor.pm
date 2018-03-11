@@ -14,7 +14,7 @@ use Term::ANSIColor ();
 
 =head1 NAME
 
-Sdoc::Core::AnsiColor - Erzeuge Text mit ANSI Colorcodes
+Sdoc::Core::AnsiColor - Erzeuge Text mit/ohne ANSI Colorcodes
 
 =head1 BASE CLASS
 

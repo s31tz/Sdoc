@@ -153,11 +153,11 @@ sub new {
 
 =head2 Formate
 
-=head3 html() - Generiere HTML-Code
+=head3 generateHtml() - Generiere HTML-Code
 
 =head4 Synopsis
 
-    $code = $par->html($gen);
+    $code = $par->generateHtml($gen);
 
 =head4 Arguments
 
@@ -177,7 +177,7 @@ LaTeX-Code (String)
 
 # -----------------------------------------------------------------------------
 
-sub html {
+sub generateHtml {
     my ($self,$h) = @_;
 
     return $h->tag('p',
@@ -187,11 +187,11 @@ sub html {
 
 # -----------------------------------------------------------------------------
 
-=head3 latex() - Generiere LaTeX-Code
+=head3 generateLatex() - Generiere LaTeX-Code
 
 =head4 Synopsis
 
-    $code = $par->latex($gen);
+    $code = $par->generateLatex($gen);
 
 =head4 Arguments
 
@@ -211,7 +211,7 @@ LaTeX-Code (String)
 
 # -----------------------------------------------------------------------------
 
-sub latex {
+sub generateLatex {
     my ($self,$l) = @_;
     return $self->expandText($l,'textS')."\n\n";
 }

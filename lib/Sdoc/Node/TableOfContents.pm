@@ -32,8 +32,8 @@ Inhaltsverzeichnis-Knoten folgende zusätzliche Attribute:
 =item maxDepth => $n (Default: 3)
 
 Tiefe, bis zu welcher Abschnitte ins Inhaltsverzeichnis
-aufgenommen werden. Mögliche Werte: 0, 1, 2, 3, 4, 5. 0 = kein
-Inhaltsverzeichnis.
+aufgenommen werden. Mögliche Werte: -2, -1, 0, 1, 2, 3, 4. -2 =
+kein Inhaltsverzeichnis.
 
 =back
 
@@ -109,11 +109,11 @@ sub new {
 
 =head2 Formate
 
-=head3 latex() - Generiere LaTeX-Code
+=head3 generateLatex() - Generiere LaTeX-Code
 
 =head4 Synopsis
 
-    $code = $toc->latex($gen);
+    $code = $toc->generateLatex($gen);
 
 =head4 Arguments
 
@@ -133,10 +133,10 @@ LaTeX-Code (String)
 
 # -----------------------------------------------------------------------------
 
-sub latex {
+sub generateLatex {
     my ($self,$l) = @_;
 
-    if ($self->maxDepth == 0) {
+    if ($self->maxDepth < -1) {
         # Kein Inhaltsverzeichnis
         return '';
     }

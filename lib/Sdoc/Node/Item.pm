@@ -237,11 +237,11 @@ sub new {
 
 =head2 Formate
 
-=head3 latex() - Generiere LaTeX-Code
+=head3 generateLatex() - Generiere LaTeX-Code
 
 =head4 Synopsis
 
-    $code = $itm->latex($gen);
+    $code = $itm->generateLatex($gen);
 
 =head4 Arguments
 
@@ -261,7 +261,7 @@ LaTeX-Code (String)
 
 # -----------------------------------------------------------------------------
 
-sub latex {
+sub generateLatex {
     my ($self,$l) = @_;
 
     my $code;

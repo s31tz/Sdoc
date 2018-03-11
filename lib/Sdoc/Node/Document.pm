@@ -8,8 +8,12 @@ our $VERSION = 3.00;
 
 use Sdoc::Core::Hash;
 use Digest::SHA ();
+use Sdoc::Node::TableOfContents;
 use Sdoc::Core::Process;
+use Sdoc::Core::Pygments::Html;
+use Sdoc::Core::Time;
 use Sdoc::Core::Html::Page;
+use POSIX ();
 use Sdoc::Core::LaTeX::Document;
 
 # -----------------------------------------------------------------------------
@@ -35,9 +39,14 @@ Dokument-Knoten folgende zusätzliche Attribute:
 
 =over 4
 
-=item anchor => undef
+=item anchor => $str
 
 Anker des Dokuments.
+
+=item firstAppendixSection => $sec
+
+Erster Abschnitt, der zum Appendix gehört. Das Attribut wird
+von der Methode $doc->flagSectionsAsAppendix() gesetzt.
 
 =item author => $author
 
@@ -95,6 +104,11 @@ C<title>, C<author>, C<date>.
 
 Hash der Grafik-Knoten. Schlüssel des Hash ist der Name des
 Grafik-Knotens.
+
+=item highestSectionLevel => $n (memoize)
+
+Die Ebenennummer der höchsten Abschnittsebene des Dokuments.
+Wird von der Methode highestSectionLevel() gesetzt.
 
 =item indentation => $x (Default: 1.3)
 
@@ -179,9 +193,13 @@ Gib keine Warnungen aus.
 
 =item sectionNumberDepth => $n (Default: 3)
 
-Tiefe, bis zu welcher Abschnitte
-Die Abschnittsebene, bis zu welcher Abschnitte numeriert werden.
-Mögliche Werte: 0, 1, 2, 3, 4, 5. 0 = keine Abschnittsnumerierung.
+Abschnittsebene, bis zu welcher Abschnitte numeriert werden.
+Mögliche Werte: -2, -1, 0, 1, 2, 3, 4. -2 = keine
+Abschnittsnumerierung.
+
+=item sectionA => \@sections (memoize)
+
+Liste aller Abschnitts-Knoten.
 
 =item shellEscape => $bool (Default: 0)
 
@@ -268,8 +286,15 @@ sub new {
         else {
             $class->throw;
         }
-
         $root->setAttributes(variant=>$variant,%$attribH);
+
+        my $pageStyle = $root->latexPageStyle;
+        if (index($pageStyle,',') < 0) {
+            # Ist nur ein Seitenstil angegeben, übertragen wir
+            # ihn auf alle Seiten
+            $root->set(latexPageStyle=>"$pageStyle,$pageStyle");
+        }
+
         $par->parseSegments($root,'title');
         $par->parseSegments($root,'author');
         $par->parseSegments($root,'date');
@@ -290,6 +315,7 @@ sub new {
         copyComments => 1,
         date => undef,
         dateS => undef,
+        firstAppendixSection => undef,
         formulaA => [],
         graphicA => [],
         indentation => 1.3,
@@ -304,28 +330,23 @@ sub new {
         latexShowFrames => 0,
         linkA => [],
         linkId => undef,
+        quiet => 0,
         sectionNumberDepth => 3,
+        shellEscape => 0,
+        smallerMonospacedFont => 0,
         tableOfContents => 1,
         title => undef,
         titleS => undef,
         # memoize
         anchorA => undef,
         graphicH => undef,
+        highestSectionLevel => undef,
         linkH => undef,
         nodeA => undef,
         pathNodeA => undef,
-        quiet => 0,
-        shellEscape => 0,
-        smallerMonospacedFont => 0,
+        sectionA => undef,
         tocNode => undef,
     );
-
-    my $pageStyle = $self->latexPageStyle;
-    if (index($pageStyle,',') < 0) {
-        # Ist nur ein Seitenstil angegeben, übertragen wir
-        # ihn auf alle Seiten
-        $self->set(latexPageStyle=>"$pageStyle,$pageStyle");
-    }
 
     return $self;
 }
@@ -687,6 +708,49 @@ sub linkContainingNodes {
 
 # -----------------------------------------------------------------------------
 
+=head3 sections() - Liste aller Abschnitts-Knoten (memoized)
+
+=head4 Synopsis
+
+    @sections | $sectionA = $doc->sections;
+
+=head4 Returns
+
+Liste von Abschnitts-Knoten. Im Skalarkontext eine Referenz auf
+die Liste.
+
+=head4 Description
+
+Liefere die Liste aller Abschnitts-Knoten des Dokument-Baums.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub sections {
+    my $self = shift;
+
+    my $arr = $self->memoize('sectionA',sub {
+        my ($self,$key) = @_;
+
+        my @arr;
+        for my $node ($self->nodes) {
+            if ($node->type eq 'Section') {
+                push @arr,$node;
+            }
+        }
+        #!! Dokument-Knoten im Array finden und die Referenz zu einer
+        #!! schwachen Referenz machen
+        #$self->weakenSelfReference(\@arr);
+
+        return \@arr;
+    });
+
+    return wantarray? @$arr: $arr;
+}
+
+# -----------------------------------------------------------------------------
+
 =head3 tableOfContentsNode() - Lookup TableOfContents-Knoten
 
 =head4 Synopsis
@@ -749,7 +813,7 @@ sub anchor {
 
 # -----------------------------------------------------------------------------
 
-=head2 Links
+=head2 Verweise
 
 =head3 resolveLinks() - Löse alle Links im Dokument auf
 
@@ -1009,13 +1073,16 @@ sub resolveGraphics {
         }
     }
 
-    # Prüfe, ob alle Grafik-Knoten, die mit definition=1 deklariert
+    # Prüfe, ob alle Grafik-Knoten, die mit show=0 deklariert
     # sind, genutzt wurden. Warne ungenutzte Knoten an.
 
     for my $node ($self->nodes) {
-        if ($node->type eq 'Graphic' && $node->definition &&
-                $node->useCount == 0) {
-            $node->warn('Graphic node not used: name="%s"',$node->name // '');
+        if ($node->type eq 'Graphic') {
+            my $show = $node->show;
+            if (defined($show) && $show == 0 && $node->useCount == 0) {
+                $node->warn('Graphic node not used: name="%s"',
+                    $node->name // '');
+            }
         }
     }
 
@@ -1176,6 +1243,175 @@ sub findDestNodes {
 
 # -----------------------------------------------------------------------------
 
+=head2 Abschnitte
+
+=head3 createTableOfContentsNode() - Ergänze Inhaltsverzeichnis
+
+=head4 Synopsis
+
+    $doc->createTableOfContentsNode;
+
+=head4 Description
+
+Ergänze das Dokument $doc um ein Inhaltsverzeichnis, wenn
+
+=over 4
+
+=item 1.
+
+Dokument-Option C<tableOfContents=1> gesetzt ist,
+
+=item 2.
+
+das Dokument keinen TableOfContents-Knoten enthält und
+
+=item 3.
+
+das Dokument mindestens einen Abschnitt enthält.
+
+=back
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub createTableOfContentsNode {
+    my $self = shift;
+
+    if ($self->tableOfContents && !$self->tableOfContentsNode) {
+        my $h = $self->analyze;
+        if ($h->sections) {
+            my $toc = Sdoc::Node::TableOfContents->Sdoc::Node::new(
+                'TableOfContents',0,$self,$self,
+                maxDepth => 3,
+            );
+            $self->unshift(childA=>$toc);
+            $self->set(nodeA=>undef); # forciere neue Knotenliste
+        }
+    }
+
+    return;
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 flagSectionsAsAppendix() - Kennzeichne Appendix-Abschnitte
+
+=head4 Synopsis
+
+    $doc->flagSectionsAsAppendix;
+
+=head4 Description
+
+Kennzeichne alle Abschnitte nach dem ersten Abschnitt, der als
+zum Appendix gehrig gekennzeichnet ist, ebenfalls als zum
+Appendix gehörig. Bei Abschnitten, die zum Appendix gehören,
+liefert die Methode $sec->isAppendix() anschließend 1.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub flagSectionsAsAppendix {
+    my $self = shift;
+
+    my $appendix = 0;
+    for my $sec ($self->sections) {
+        # Appendix-Abschnitte kennzeichnen
+
+        if ($appendix) {
+            $sec->isAppendix(1);
+        }
+        elsif ($sec->isAppendix) {
+            $appendix = 1;
+            # Wir merken uns den ersten Appendix-Abschnitt
+            $self->firstAppendixSection($sec);
+        }
+    }
+
+    return;
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 flagSectionsNotToc() - Kennzeichne Abschnitte, die nicht ins Inhaltsverzeichnis sollen
+
+=head4 Synopsis
+
+    $doc->flagSectionsNotToc;
+
+=head4 Description
+
+Kennzeichne alle Abschnitte, für die ein übergeordneter Abschnitt
+mit C<stopToc=1> existiert, als Abschnitte, die nicht ins
+Inhaltsverzeichnis übernommen werden sollen. Bei Abschnitten,
+die nicht ins Inhaltsverzeichnis übernommen werden sollen,
+liefert die Methode $sec->notToc() anschließend den Wert 1.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub flagSectionsNotToc {
+    my $self = shift;
+
+    for my $sec ($self->sections) {
+        my $node = $sec;
+        while ($node = $node->parent) {
+            if ($node->type ne 'Section') {
+                last;
+            }
+            elsif ($node->tocStop) {
+                $sec->notToc(1);
+                last;
+            }
+        }
+    }
+
+    return;
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 highestSectionLevel() - Ermittele die höchste Abschnittsebene
+
+=head4 Synopsis
+
+    $n = $doc->highestSectionLevel;
+
+=head4 Returns
+
+Ebenennummer (Integer) oder C<undef>
+
+=head4 Description
+
+Ermittele die höchste Abschnittsebene des Dokuments und liefere
+deren Ebenennummer zurück. Die höchste Abschnittsebene ist die
+Abschnittsebene mit der I<niedrigsten> Ebenennummer (level). Es
+gibt die Ebenennummern: -1, 0, 1, 2, 3, 4. Enthält das Dokument
+keinen Abschnitt, wird C<undef> geliefert.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub highestSectionLevel {
+    my $self = shift;
+
+    return $self->memoize('highestSectionLevel',sub {
+        my $n;
+        for my $sec ($self->sections) {
+            my $level = $sec->level;
+            if (!defined($n) || $level < $n) {
+                $n = $level;
+            }
+        }
+        return $n;
+    });
+}
+
+# -----------------------------------------------------------------------------
+
 =head2 Pfade
 
 =head3 expandPath() - Expandiere Pfad
@@ -1241,11 +1477,11 @@ sub expandPath {
 
 =head2 Formate
 
-=head3 html() - Generiere HTML-Code
+=head3 generateHtml() - Generiere HTML-Code
 
 =head4 Synopsis
 
-    $code = $doc->html($gen);
+    $code = $doc->generateHtml($gen);
 
 =head4 Arguments
 
@@ -1265,34 +1501,89 @@ HTML-Code (String)
 
 # -----------------------------------------------------------------------------
 
-sub html {
+sub generateHtml {
     my ($self,$h) = @_;
 
-    my $title = $self->expandText($h,'titleS');
-    my $author = $self->expandText($h,'authorS');
-    my $date = $self->expandText($h,'dateS');
+    # Dokumenteigenschaften ermitteln
+    my $att = $self->analyze;
+
+    # Globale Information
+    my $doc = $self->root;
+
+    my $styleSheet;
+    if ($att->sourceCode) {
+        my $pyg = Sdoc::Core::Pygments::Html->new(
+            classPrefix => 'sdoc',
+        );
+        $styleSheet = $pyg->css('default');
+    }
+
+    # Code für den Body generieren
 
     my $code = '';
-    if ($title) {
+    if (my $title = $self->expandText($h,'titleS')) {
         $code = $h->tag('h1',
+            class => 'sdoc-title',
             $title
         );
     }
+    my $tmp;
+    if (my $author = $self->expandText($h,'authorS')) {
+        $tmp .= $h->tag('span',
+            class => 'sdoc-author',
+            $author
+        );
+    }
+    if (my $date = $self->expandText($h,'dateS')) {
+        if ($tmp) {
+            $tmp .= ', ';
+        }
+        # Spezielle Datumswerte:
+        # * today
+        # * now
+        # * strftime-Formate werden expandiert
 
+        if ($date eq 'today') {
+            my $t = Sdoc::Core::Time->new(local=>time);
+            if ($doc->language eq 'german') {
+                $date = sprintf '%d. %s %d',
+                    $t->day,$t->monthName('german'),$t->year;
+            }
+            else {
+                $date = sprintf '%s %d, %d',
+                    $t->monthName('english'),$t->day,$t->year;
+            }
+        }
+        elsif ($date eq 'now') {
+            $date = '%Y-%m-%d %H:%M:%S';
+        }
+        $tmp .= $h->tag('span',
+            class => 'sdoc-date',
+            POSIX::strftime($date,localtime)
+        );
+    }
+    if ($tmp) {
+        $code .= $h->tag('p',
+            class => 'sdoc-titleinfo',
+            $tmp
+        );
+    }
+    
     return Sdoc::Core::Html::Page->html($h,
         comment => 'Generated by Sdoc - DO NOT EDIT!',
         title => $self->title, # FIXME: Keine Sonderkonstrukte zulassen
+        styleSheet => $styleSheet,
         body => $code.$self->generateChilds('html',$h),
     );
 }
 
 # -----------------------------------------------------------------------------
 
-=head3 latex() - Generiere LaTeX-Code
+=head3 generateLatex() - Generiere LaTeX-Code
 
 =head4 Synopsis
 
-    $code = $doc->latex($gen);
+    $code = $doc->generateLatex($gen);
 
 =head4 Arguments
 
@@ -1312,37 +1603,20 @@ LaTeX-Code (String)
 
 # -----------------------------------------------------------------------------
 
-sub latex {
+sub generateLatex {
     my ($self,$l) = @_;
 
+    # Dokumenteigenschaften ermitteln
+    my $h = $self->analyze;
+
+    # Globale Information
+
     my $documentClass = $self->latexDocumentClass;
+    my $toc = $self->tableOfContentsNode; # kann undef sein
     my $pageStyle = $self->latexPageStyle;
     my ($titlePageStyle,$otherPageStyle) = split /,/,$pageStyle;
     my $smallerMonospacedFont = $self->smallerMonospacedFont;
     my $showFrames = $self->latexShowFrames;
-
-    my $secNumDepth = $self->sectionNumberDepth;
-    if ($documentClass =~ /book/) {
-        $secNumDepth -= 2;
-    }
-    elsif ($documentClass =~ /rep/) {
-        $secNumDepth -= 1;
-    }
-
-    my $tocDepth;
-    my $toc = $self->tableOfContentsNode;
-    if ($toc) {
-        $tocDepth = $toc->maxDepth;
-        if ($documentClass =~ /book/) {
-            $tocDepth -= 2;
-        }
-        elsif ($documentClass =~ /rep/) {
-            $tocDepth -= 1;
-        }
-    }
-
-    # Dokumenteigenschaften ermitteln
-    my $h = $self->analyze;
 
     # Pakete laden und Einstellungen vornehmen
 
@@ -1546,14 +1820,15 @@ sub latex {
     return Sdoc::Core::LaTeX::Document->latex($l,
         documentClass => $documentClass,
         options => $self->latexDocumentOptions,
+        language => $self->language,
         paperSize => $self->latexPaperSize,
         geometry => $self->latexGeometry,
         fontSize => $self->latexFontSize,
         title => $self->expandText($l,'titleS') // '',
         author => $self->expandText($l,'authorS') // '',
         date => $self->expandText($l,'dateS') // '',
-        secNumDepth => $h->sections? $secNumDepth: undef,
-        tocDepth => $tocDepth,
+        secNumDepth => $h->sections? $self->sectionNumberDepth: undef,
+        tocDepth => $toc? $toc->maxDepth: undef,
         titlePageStyle => $titlePageStyle,
         parSkip => $self->latexParSkip,
         preComment => 'Generated by Sdoc - DO NOT EDIT!',

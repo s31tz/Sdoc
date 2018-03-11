@@ -227,7 +227,7 @@ Name des LaTeX-Abschnitts. Mögliche Werte: 'part', 'chapter', 'section',
 
 Kennzeichne Abschnitt mit Label $label.
 
-=item -toc => $bool (Default: 1)
+=item -notToc => $bool (Default: 0)
 
 Nimm die Überschrift nicht ins Inhaltsverzeichnis auf.
 
@@ -259,15 +259,15 @@ sub section {
 
     # Optionen
 
-    my $toc = 1;
+    my $notToc = 0;
     my $label = undef;
 
     Sdoc::Core::Option->extract(\@_,
         -label => \$label,
-        -toc => \$toc,
+        -notToc => \$notToc,
     );
 
-    if (!$toc) {
+    if ($notToc) {
         $sectionName .= '*';
     }
 

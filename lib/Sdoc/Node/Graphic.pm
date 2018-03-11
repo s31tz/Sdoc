@@ -56,13 +56,6 @@ Abstand um die Abbildung.
 
 Beschriftung der Abbldung. Diese erscheint unter der Abbildung.
 
-=item definition => $bool (Default: I<kontextabhängig>)
-
-Wenn gesetzt, stellt der Grafik-Block lediglich eine Definition dar,
-d.h. die Grafik wird nicht an dieser Stelle angezeigt, sondern an
-anderer Stelle von einem G-Segment referenziert. Ist Attribut
-C<name> definiert, ist der Default 1, andernfalls 0.
-
 =item file => $path
 
 Pfad der Bilddatei. Beginnt der Pfad mit C<+/>, wird das
@@ -77,6 +70,13 @@ skaliert wird.
 
 LaTeX-spezifische Optionen, die als direkt an das LaTeX-Makro
 C<\includegraphics> übergeben werden.
+
+=item link => $url
+
+Versieh die Grafik mit einem Verweis. Dies kann ein Verweis auf
+ein internes oder externes Ziel sein wie bei einem L-Segment (nur
+dass das Attribut den Link-Text als Wert hat ohne den
+Segment-Bezeichner und die geschweiften Klammern).
 
 =item linkId => $linkId
 
@@ -99,18 +99,20 @@ Rücke die Grafik ein. Das Attribut ist nur bei C<< align =>
 Skalierungsfaktor. Der Skalierungsfaktor hat bei LaTeX
 Priorität gegenüber der Angabe von C<width> und C<height>.
 
-=item link => $url
+=item show => $bool (Default: undef)
 
-Versieh die Grafik mit einem Verweis. Dies kann ein Verweis auf
-ein internes oder externes Ziel sein wie bei einem L-Segment (nur
-dass das Attribut den Link-Text als Wert hat ohne den
-Segment-Bezeichner und die geschweiften Klammern).
+Wenn auf 1 gesetzt, wird die Grafik an Ort und Stelle angezeigt,
+wenn 0, nicht. Sie nicht anzuzeigen macht Sinn, wenn sie lediglich
+von G-Segmenten (Inline Grafik) genutzt werden soll. Der Default
+für das Attribut ist 0, wenn C<< useCount > 0 >> (d.h. die Grafik wird
+als Inline-Grafik genutzt), andernfalls 1.
 
 =item useCount => $n
 
 Die Anzahl der G-Segmente im Text, die diesen Grafik-Knoten
 nutzen. Nach dem Parsen kann anhand dieses Zählers geprüft werden,
-ob jeder Grafik-Knoten mit C<definition=1> genutzt wird.
+ob und wie oft ein Grafik-Knoten von G-Segmenten referenziert wird
+(siehe auch Attribut C<show>).
 
 =item width => $width
 
@@ -186,7 +188,6 @@ sub new {
         borderMargin => '0mm',
         caption => undef,
         captionS => undef,
-        definition => undef,
         file => undef,
         formulaA => [],
         graphicA => [],
@@ -199,18 +200,13 @@ sub new {
         linkId => undef,
         name => undef,
         scale => undef,
+        show => undef,
         useCount => 0,
         width => undef,
         # memoize
         anchorA => undef,
     );
     $self->setAttributes(%$attribH);
-
-    # Defaultwert für definition
-
-    if (!defined $self->definition) {
-        $self->set(definition=>$self->name? 1: 0);
-    }
 
     # Bild-Link registrieren
 
@@ -336,11 +332,11 @@ sub latexLinkCode {
 
 =head2 Formate
 
-=head3 html() - Generiere HTML-Code
+=head3 generateHtml() - Generiere HTML-Code
 
 =head4 Synopsis
 
-    $code = $gph->html($gen);
+    $code = $gph->generateHtml($gen);
 
 =head4 Arguments
 
@@ -360,12 +356,12 @@ HTML-Code (String)
 
 # -----------------------------------------------------------------------------
 
-sub html {
+sub generateHtml {
     my ($self,$h) = @_;
 
     my $root = $self->root;
 
-    if ($self->definition) {
+    if (!defined($self->show) && $self->useCount > 0) {
         return '';
     }
 
@@ -373,27 +369,31 @@ sub html {
 
     # FIXME: analog zu latexLinkCode() in Methode auslagern
 
-    my $href;
+    my ($href,$linkText);
     my $n = $self->linkN;
     if (defined $n) {
         my $h = $self->linkA->[$n]->[1];
         my $type = $h->type;
         if ($type eq 'external') {
             $href = $h->destText;
+            $linkText = $h->text;
         }
         elsif ($type eq 'internal') {
             $href = sprintf '#'.$h->destNode->linkId;
+            $linkText = $h->text;
         }
     }
 
-    return $h->tag('p',
+    return $h->tag('div',
         style => substr($self->align,0,1) eq 'c'? 'text-align: center': undef,
         $h->tag('a',
             -ignoreTagIf => !$href,
             href => $href,
             $h->tag('img',
                 -nl=>0,
+                class => 'sdoc-graphic',
                 src => $root->expandPath($self->file),
+                alt => $self->name || $linkText,
                 width => $self->width,
                 height => $self->height,
             ),
@@ -403,11 +403,11 @@ sub html {
 
 # -----------------------------------------------------------------------------
 
-=head3 latex() - Generiere LaTeX-Code
+=head3 generateLatex() - Generiere LaTeX-Code
 
 =head4 Synopsis
 
-    $code = $gph->latex($gen);
+    $code = $gph->generateLatex($gen);
 
 =head4 Arguments
 
@@ -427,12 +427,12 @@ LaTeX-Code (String)
 
 # -----------------------------------------------------------------------------
 
-sub latex {
+sub generateLatex {
     my ($self,$l) = @_;
 
     my $root = $self->root;
 
-    if ($self->definition) {
+    if (!defined($self->show) && $self->useCount > 0) {
         return '';
     }
 

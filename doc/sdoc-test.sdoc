@@ -4,6 +4,10 @@
   date="now"
   latexDocumentClass="scrreprt"
   latexShowFrames=1
+  sectionNumberDepth=4
+
+%TableOfContents:
+  maxDepth=5
 
 %Graphic:
   name="Invader"
@@ -129,5 +133,19 @@ XXXX Ein trennender Satz
 * Siehe Abschnitt L{+Link im Titel}.
 * Siehe Abschnitt L{+Formel im Titel}.
 * Siehe Abschnitt L{+Grafik im Titel}.
+
+==-! Kapitel ohne Unterabschnitte im Inhaltsverzeichnis
+
+= Section
+== SubSection
+=== SubSubSection
+==== Paragraph
+
+==-+ Appendix
+
+= Section
+== SubSection
+=== SubSubSection
+==== Paragraph
 
 # eof

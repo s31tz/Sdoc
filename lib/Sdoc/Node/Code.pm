@@ -10,6 +10,7 @@ use Sdoc::Core::Unindent;
 use Sdoc::Core::Path;
 use Sdoc::Core::Shell;
 use Sdoc::Core::Ipc;
+use Sdoc::Core::Pygments::Html;
 
 # -----------------------------------------------------------------------------
 
@@ -236,11 +237,11 @@ sub new {
 
 =head2 Formate
 
-=head3 latex() - Generiere LaTeX-Code
+=head3 generateHtml() - Generiere LaTeX-Code
 
 =head4 Synopsis
 
-    $code = $cod->latex($gen);
+    $code = $cod->generateHtml($gen);
 
 =head4 Arguments
 
@@ -260,7 +261,53 @@ LaTeX-Code (String)
 
 # -----------------------------------------------------------------------------
 
-sub latex {
+sub generateHtml {
+    my ($self,$h) = @_;
+
+    if (my $lang = $self->lang) {
+        # Code mit Highlighting
+
+        my $pyg = Sdoc::Core::Pygments::Html->new(
+            classPrefix => 'sdoc',
+        );
+        return $pyg->html($h,$lang,$self->text,-ln=>$self->ln);
+    }
+
+    # Code ohne Highlighting
+
+    return $h->tag('pre',
+        class => 'sdoc-code',
+        $h->protect($self->text),
+    );
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 generateLatex() - Generiere LaTeX-Code
+
+=head4 Synopsis
+
+    $code = $cod->generateLatex($gen);
+
+=head4 Arguments
+
+=over 4
+
+=item $gen
+
+Generator für das Zielformat.
+
+=back
+
+=head4 Returns
+
+LaTeX-Code (String)
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub generateLatex {
     my ($self,$l) = @_;
 
     my $root = $self->root;
@@ -269,7 +316,7 @@ sub latex {
     my @opt;
     my $indent = $self->indent;
     if (my $ln = $self->ln) {
-        my $c = chr(length($ln + $text =~ tr/\n//) + 96); # a, b, c, d
+        my $c = chr(length($ln + $text =~ tr/\n// - 1) + 96); # a, b, c, d
         my $i = $indent? 'i': '';
         push @opt,'linenos',"firstnumber=$ln","xleftmargin=\\lnwidth$c$i";
     }

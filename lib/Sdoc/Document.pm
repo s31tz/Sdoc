@@ -169,27 +169,25 @@ sub parse {
         $doc->push(childA=>$nodeClass->new($variant,$par,$doc,$doc));
     }
 
-    # Erzeuge TableOfContens-Knoten, wenn 1) Dokument-Option tableOfContents
-    # gesetzt ist, 2) kein TableOfContents-Knoten im Baum existiert und
-    # 3) es mindestens ein Abschnitt gibt.
+    # Erzeuge TableOfContens-Knoten, wenn nicht existent
+    $doc->createTableOfContentsNode;
 
-    if ($doc->tableOfContents && !$doc->tableOfContentsNode) {
-        my $h = $doc->analyze;
-        if ($h->sections) {
-            my $toc = Sdoc::Node::TableOfContents->Sdoc::Node::new(
-                'TableOfContents',0,$doc,$doc,
-                maxDepth=>3,
-            );
-            $doc->unshift(childA=>$toc);
-            $doc->set(nodeA=>undef); # forciere neue Knotenliste
-        }
-    }
+    # Kennzeichne Appendix-Abschnitte
+    $doc->flagSectionsAsAppendix;
+
+    # Kennzeichne Abschnitte, die nicht im Inhaltsverzeichnis
+    # erscheinen sollen
+    $doc->flagSectionsNotToc;
 
     # L-Segmente (Links) auflösen
     $doc->resolveLinks;
 
     # G-Segmente (Inline-Grafiken) auflösen
     $doc->resolveGraphics;
+
+    # Abschnitte kennzeichnen, die nicht ins Inhaltsverzeichnis
+    # übernommen werden sollen, weil ein übergeordneter Abschnitt
+    # seine untergeordneten Abschnitte davon ausgeschlossen hat (=!).
 
     return $doc;
 }

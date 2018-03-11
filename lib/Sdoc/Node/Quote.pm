@@ -63,7 +63,7 @@ Text des Paragraphen mit geparsten Segmenten.
 
 =head4 Synopsis
 
-    $com = $class->new($par,$variant,$root,$parent);
+    $quo = $class->new($par,$variant,$root,$parent);
 
 =head4 Arguments
 
@@ -156,11 +156,11 @@ sub new {
 
 =head2 Formate
 
-=head3 latex() - Generiere LaTeX-Code
+=head3 generateLatex() - Generiere LaTeX-Code
 
 =head4 Synopsis
 
-    $code = $com->latex($gen);
+    $code = $quo->generateLatex($gen);
 
 =head4 Arguments
 
@@ -180,7 +180,7 @@ LaTeX-Code (String)
 
 # -----------------------------------------------------------------------------
 
-sub latex {
+sub generateLatex {
     my ($self,$l) = @_;
 
     # Quote-Umgebung

@@ -221,11 +221,42 @@ sub linkText {
 
 =head2 Formate
 
-=head3 latex() - Generiere LaTeX-Code
+=head3 generateHtml() - Generiere HTML-Code
 
 =head4 Synopsis
 
-    $code = $brh->latex($gen);
+    $code = $sec->generateHtml($gen);
+
+=head4 Arguments
+
+=over 4
+
+=item $gen
+
+Generator für das Zielformat.
+
+=back
+
+=head4 Returns
+
+HTML-Code (String)
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub generateHtml {
+    my ($self,$h) = @_;
+    return $self->htmlSectionCode($h);
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 generateLatex() - Generiere LaTeX-Code
+
+=head4 Synopsis
+
+    $code = $brh->generateLatex($gen);
 
 =head4 Arguments
 
@@ -245,14 +276,14 @@ LaTeX-Code (String)
 
 # -----------------------------------------------------------------------------
 
-sub latex {
+sub generateLatex {
     my ($self,$l) = @_;
 
     return $l->section(
-        $self->latexLevelToSectionName($l,$self->level),
+        $self->latexSectionName($l),
         $self->expandText($l,'titleS'),
         -label => $self->linkId,
-        -toc => 0,
+        -notToc => 1,
     );
 }
 

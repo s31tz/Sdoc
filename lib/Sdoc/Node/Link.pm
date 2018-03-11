@@ -130,11 +130,11 @@ sub new {
 
 =head2 Formate
 
-=head3 latex() - Generiere LaTeX-Code (Leerstring)
+=head3 generateLatex() - Generiere LaTeX-Code (Leerstring)
 
 =head4 Synopsis
 
-    $code = $lnk->latex($gen);
+    $code = $lnk->generateLatex($gen);
 
 =head4 Arguments
 
@@ -154,7 +154,7 @@ Leerstring ('')
 
 # -----------------------------------------------------------------------------
 
-sub latex {
+sub generateLatex {
     my $self = shift;
     return '';
 }

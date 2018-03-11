@@ -30,7 +30,9 @@ L<Sdoc::Core::Object>
 
 =head4 Synopsis
 
+    $out = Sdoc::Core::Ipc->filter($cmd,$in,@opt);
     ($out,$err) = Sdoc::Core::Ipc->filter($cmd,$in,@opt);
+    $out = Sdoc::Core::Ipc->filter($cmd,@opt);
     ($out,$err) = Sdoc::Core::Ipc->filter($cmd,@opt);
 
 =head4 Options
@@ -48,7 +50,8 @@ geworfen, wenn das Kommando fehlschlägt.
 
 Rufe Kommando $cmd als Filter auf. Das Kommando erhält die Daten
 $in auf stdin und liefert die Daten $out und $err auf stdout
-bzw. stderr.
+bzw. stderr. In Skalarkontext wird nur die Ausgabe auf stdout
+geliefert.
 
 Achtung: Der Aufruf kann zu einem SIGPIPE führen, wenn per
 Parameter $in Daten an $cmd gesendet werden und das Kommando
@@ -99,7 +102,7 @@ sub filter {
         Sdoc::Core::Shell->checkError($?,$err,$cmd);
     }
 
-    return ($out,$err);
+    return wantarray? ($out,$err): $out;
 }
 
 # -----------------------------------------------------------------------------

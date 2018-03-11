@@ -498,7 +498,8 @@ my %Default = (
     checkLevel=>1,            # Umfang der Element- und Attribut-Prüfungen
     compact=>0,               # Einzeilig, Whitespace komprimiert
     embedImages=>0,           # Einbettung von Bildern
-    htmlVersion=>'xhtml-1.0', # XHTML vs. HTML, Versionsnr. für DOCTYPE
+    # htmlVersion=>'xhtml-1.0', # XHTML vs. HTML, Versionsnr. für DOCTYPE
+    htmlVersion=>'html-5',    # XHTML vs. HTML, Versionsnr. für DOCTYPE
     indentation=>undef,       # forcierte Einrückung
     uppercase=>0,             # wandele Elem.- und Att.-Namen in Großschr.
 );
@@ -1159,8 +1160,16 @@ sub tag {
 
     # Defaults
 
-    my $xhtml = $self->{'htmlVersion'} =~ /^xhtml/;
-    my $uppercase = !$xhtml && $self->{'uppercase'};
+    my ($xhtml,$html5);
+    my $htmlVersion = $self->{'htmlVersion'};
+    if ($htmlVersion =~ /^html-5/) {
+        $html5 = 1;
+    }
+    elsif ($htmlVersion =~ /^xhtml/) {
+        $xhtml = 1;
+    }
+
+    my $uppercase = $self->{'uppercase'} && !($xhtml || $html5);
     my $embedImage = $self->{'embedImages'};
     my $checkLevel = $self->{'checkLevel'};
     my $compact = $self->{'compact'};
@@ -1367,7 +1376,7 @@ sub tag {
 
             if ($dom eq 'bool') {
                 if ($val) {
-                    $str .= $xhtml? qq| $key="$key"|: " $key";
+                    $str .= $xhtml || $html5? qq| $key="$key"|: " $key";
                 }
             }
             else {
@@ -1535,7 +1544,7 @@ sub tag {
         $str .= "$content</$tagStr>";
     }
     else {
-        $str .= $xhtml? ' />': '>';
+        $str .= $xhtml || $html5? ' />': '>';
     }
 
     if ($indPos) {

@@ -579,7 +579,7 @@ sub getCounts {
 
 =item $format
 
-Das Zielformat. Mögliche Werte: 'latex', 'tree'.
+Das Zielformat. Mögliche Werte: 'html', 'latex', 'tree'.
 
 =back
 
@@ -603,22 +603,24 @@ sub generate {
     my $format = shift;
     # @_: @args
 
+    my $gen;
     if ($format eq 'tree') {
         return $self->tree(@_);
     }
     elsif ($format eq 'html') {
-        my $gen = Sdoc::Core::Html::Tag->new;
-        return $self->html($gen);
+        $gen = Sdoc::Core::Html::Tag->new;
     }
     elsif ($format eq 'latex') {
-        my $gen = Sdoc::Core::LaTeX::Code->new;
-        return $self->latex($gen);
+        $gen = Sdoc::Core::LaTeX::Code->new;
+    }
+    else {
+        $self->throw(
+            q~SDOC-00004: Unknown format~,
+            Format => $format,
+        );
     }
 
-    $self->throw(
-        q~SDOC-00004: Unknown format~,
-        Format => $format,
-    );
+    return $self->generateFormat($format,$gen);
 }
 
 # -----------------------------------------------------------------------------
@@ -662,10 +664,55 @@ sub generateChilds {
 
     my $code = '';
     for my $node ($self->childs) {
-        $code .= $node->$format($gen);
+        $code .= $node->generateFormat($format,$gen);
     }
 
     return $code;
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 generateFormat() - Generiere Knoten-Code für alle Formate (überschreibbar)
+
+=head4 Synopsis
+
+    $code = $node->generateFormat($format,$gen);
+
+=head4 Arguments
+
+=over 4
+
+=item $format
+
+Das Zielformat, in dem der Code generiert wird.
+
+=item $gen
+
+Generator für das Zielformat.
+
+=back
+
+=head4 Returns
+
+Code (String)
+
+=head4 Description
+
+Generiere Code im Format $format unter Nutzung des Generators $gen
+für Knoten $node und liefere das Resultat zurück. Diese Methode
+kann in einer Knoten-Klasse überschrieben werden, falls es bei
+der Generierung gemeinsamen Code für alle Formate gibt. Die Methode
+delegiert dann selbst an die Methoden generateI<FORMAT>().
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub generateFormat {
+    my ($self,$format,$gen) = @_;
+
+    my $meth = sprintf 'generate%s',ucfirst $format;
+    return $self->$meth($gen);
 }
 
 # -----------------------------------------------------------------------------
@@ -781,10 +828,10 @@ sub expandText {
 
         my $meth = 'unknown';
         if ($gen->isa('Prty::Html::Tag')) {
-            $meth = 'expandToHtml';
+            $meth = 'expandSegmentsToHtml';
         }
         elsif ($gen->isa('Prty::LaTeX::Code')) {
-            $meth = 'expandToLatex';
+            $meth = 'expandSegmentsToLatex';
         }
 
         # Expandiere Segmente mittels Zielformat-spezifischer Methode
@@ -798,11 +845,11 @@ sub expandText {
 
 # -----------------------------------------------------------------------------
 
-=head3 expandToHtml() - Expandiere Segmente zu HTML-Code
+=head3 expandSegmentsToHtml() - Expandiere Segmente zu HTML-Code
 
 =head4 Synopsis
 
-    $code = $node->expandToHtml($gen,$segment,$val);
+    $code = $node->expandSegmentsToHtml($gen,$segment,$val);
 
 =head4 Arguments
 
@@ -830,7 +877,7 @@ HTML-Code (String)
 
 # -----------------------------------------------------------------------------
 
-sub expandToHtml {
+sub expandSegmentsToHtml {
     my ($self,$h,$seg,$val) = @_;
 
     my $root = $self->root;
@@ -962,11 +1009,11 @@ sub expandToHtml {
 
 # -----------------------------------------------------------------------------
 
-=head3 expandToLatex() - Expandiere Segmente zu LaTeX-Code
+=head3 expandSegmentsToLatex() - Expandiere Segmente zu LaTeX-Code
 
 =head4 Synopsis
 
-    $code = $node->expandToLatex($gen,$segment,$val);
+    $code = $node->expandSegmentsToLatex($gen,$segment,$val);
 
 =head4 Arguments
 
@@ -994,7 +1041,7 @@ LaTeX-Code (String)
 
 # -----------------------------------------------------------------------------
 
-sub expandToLatex {
+sub expandSegmentsToLatex {
     my ($self,$l,$seg,$val) = @_;
 
     my $root = $self->root;
@@ -1117,11 +1164,11 @@ sub expandToLatex {
 
 # -----------------------------------------------------------------------------
 
-=head3 latexLevelToSectionName() - LaTeX Abschnittsname zu Sdoc Abschnittsebene
+=head3 latexSectionName() - LaTeX Abschnittsname zu Sdoc Abschnittsebene
 
 =head4 Synopsis
 
-    $code = $node->latexLevelToSectionName($gen,$level);
+    $code = $node->latexSectionName($gen);
 
 =head4 Arguments
 
@@ -1130,10 +1177,6 @@ sub expandToLatex {
 =item $gen
 
 Generator für das Zielformat.
-
-=item $level
-
-Sdoc Abschnittsebene.
 
 =back
 
@@ -1149,8 +1192,10 @@ Liefere den LaTeX Abschnittsnamen zur Sdoc Abschnittsebene.
 
 # -----------------------------------------------------------------------------
 
-sub latexLevelToSectionName {
-    my ($self,$l,$level) = @_;
+sub latexSectionName {
+    my ($self,$l) = @_;
+
+    my $level = $self->level;
 
     my $name;
     if ($level == -1) {
@@ -1185,17 +1230,83 @@ sub latexLevelToSectionName {
 
 # -----------------------------------------------------------------------------
 
-=head3 html() - Default-Implementierung für Format html
+=head3 htmlSectionCode() - HTML-Code für Section und Bridgehead
 
 =head4 Synopsis
 
-    $str = $node->html;
+    $code = $node->htmlSectionCode($gen);
+
+=head4 Arguments
+
+=over 4
+
+=item $gen
+
+Generator für das Zielformat.
+
+=back
+
+=head4 Returns
+
+HTML-Code (String)
+
+=head4 Description
+
+Liefere den HTML-Code für einen Section- oder BridgeHead-Knoten.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub htmlSectionCode {
+    my ($self,$h) = @_;
+
+    my $doc = $self->root;
+
+    # Anker voranstellen
+
+    my $code;
+    if (my $linkId = $self->linkId) {
+        $code .= $h->tag('a',
+            name => $linkId,
+        );
+    }
+
+    # Abschnitt generieren
+
+    my $highestLevel = $doc->highestSectionLevel;
+    my $n = $self->level+(1-$highestLevel);
+    if ($highestLevel == 1 && $doc->title) {
+        # Sonderbehandlung: Wenn das Dokument einen Titel, aber keine
+        # übergeordneten Abschnitte (Part oder Chapter) hat, beginnen
+        # wir mit h2, da der Titel bereits h1 ist.
+        $n++;
+    }
+
+    $code .= $h->tag("h$n",
+        class => 'sdoc-section',
+        $self->expandText($h,'titleS')
+    );
+
+    return $code;
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 generateHtml() - Default-Implementierung für Format html (TEMPORÄR)
+
+=head4 Synopsis
+
+    $str = $node->generateHtml;
 
 =head4 Returns
 
 Leerstring (String)
 
 =head4 Description
+
+MEMO: Diese Methode entfernen, wenn alle Knotenklassen das
+Format html implementieren.
 
 Diese Methode wird von Knotenklassen genutzt, die (noch) keine
 HTML-Repräsentation erzeugen.
@@ -1204,7 +1315,7 @@ HTML-Repräsentation erzeugen.
 
 # -----------------------------------------------------------------------------
 
-sub html {
+sub generateHtml {
     my $self = shift;
     return '';
 }

@@ -133,11 +133,11 @@ sub new {
 
 =head2 Formate
 
-=head3 latex() - Generiere LaTeX-Code
+=head3 generateLatex() - Generiere LaTeX-Code
 
 =head4 Synopsis
 
-    $code = $com->latex($gen);
+    $code = $com->generateLatex($gen);
 
 =head4 Arguments
 
@@ -157,7 +157,7 @@ LaTeX-Code (String)
 
 # -----------------------------------------------------------------------------
 
-sub latex {
+sub generateLatex {
     my ($self,$l) = @_;
 
     if (!$self->root->copyComments) {

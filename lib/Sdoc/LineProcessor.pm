@@ -591,11 +591,11 @@ sub sectionLevel {
             }
             $attrib .= $text;
         }
-        $level = Sdoc::Core::Converter->stringToKeyVal($attrib);
+        $level = Sdoc::Core::Converter->stringToKeyVal($attrib)->{'level'};
     }
     elsif ($self->markup eq 'sdoc') {
-        ($level) = $text =~ /^(=+)/;
-        $level = length $level;
+        ($level) = $text =~ /^(=+)(-)?/;
+        $level = $2? 1-length($level): length($level);
     }
 
     return $level;

@@ -53,7 +53,7 @@ G-Segmente (Inline-Grafiken).
 
 =item isAppendix => $bool (Default: 0)
 
-Mit diesem Abschnitt beginnen die Appendizes.
+Der Abschnitt gehört zu den Appendix-Abschnitten.
 
 =item level => $n
 
@@ -69,6 +69,14 @@ Links.
 
 Der Abschnitt ist Ziel eines Link. Dies ist der Anker für das
 Zielformat.
+
+=item notToc => $bool (Default: 0)
+
+Wenn gesetzt, wird der Abschnitt nicht ins Inhaltsverzeichnis
+übernommen. Dieses Attribut wird von der Methode
+$doc->flagSectionsNotToc() nach dem Parsen des Dokumentbaums
+für alle Abschnitte gesetzt, die Unterabschnitte eines Abschnitts
+mit C<stopToc=1> sind.
 
 =item number => $str (Default: undef)
 
@@ -181,6 +189,7 @@ sub new {
         linkA => [],
         linkId => undef,
         number => undef,
+        notToc => 0,
         tocStop => 0,
         title => undef,
         titleS => undef,
@@ -192,7 +201,7 @@ sub new {
 
     # Konsistenz-Prüfungen
 
-    if ($self->isAppendix && $self->level != 1) {
+    if ($self->isAppendix && $self->level > 1) {
         $self->warn('Appendix flag allowed on toplevel sections only');
         $self->isAppendix(0);
     }
@@ -271,11 +280,11 @@ sub linkText {
 
 =head2 Formate
 
-=head3 html() - Generiere HTML-Code
+=head3 generateHtml() - Generiere HTML-Code
 
 =head4 Synopsis
 
-    $code = $gph->html($gen);
+    $code = $sec->generateHtml($gen);
 
 =head4 Arguments
 
@@ -283,7 +292,7 @@ sub linkText {
 
 =item $gen
 
-Generator für HTML.
+Generator für das Zielformat.
 
 =back
 
@@ -295,52 +304,18 @@ HTML-Code (String)
 
 # -----------------------------------------------------------------------------
 
-sub html {
+sub generateHtml {
     my ($self,$h) = @_;
-return '';
-    # Prüfe, ob die Abschnittsüberschrift im Inhaltsverzeichnis
-    # unterdrückt werden soll. Dies ist der Fall, wenn ein
-    # *übergeordneter* Abschnitt seine untergeordneten
-    # Abschnittsüberschriften blockiert hat (=!).
-
-    my $toc = 1;
-    my $node = $self;
-    while ($node = $node->parent) {
-        if ($node->type ne 'Section') {
-            last;
-        }
-        elsif ($node->tocStop) {
-            $toc = 0;
-            last;
-        }
-    }
-
-    my $code;
-
-    # Beginnen mit dem Abschnitt die Appendizes?
-
-    if ($self->isAppendix) {
-        # $code .= $h->c('\appendix');
-    }
-
-    $code .= $h->section(
-        $self->latexLevelToSectionName($h,$self->level),
-        $self->expandText($h,'titleS'),
-        -label => $self->linkId,
-        -toc => $toc,
-    );
-    # $code .= $self->generateChilds('html',$h);
-
-    return $code;
+    return $self->htmlSectionCode($h).$self->generateChilds('html',$h);
 }
 
 # -----------------------------------------------------------------------------
 
-=head3 latex() - Generiere LaTeX-Code
+=head3 generateLatex() - Generiere LaTeX-Code
 
 =head4 Synopsis
 
-    $code = $sec->latex($gen);
+    $code = $sec->generateLatex($gen);
 
 =head4 Arguments
 
@@ -360,39 +335,24 @@ LaTeX-Code (String)
 
 # -----------------------------------------------------------------------------
 
-sub latex {
+sub generateLatex {
     my ($self,$l) = @_;
 
-    # Prüfe, ob die Abschnittsüberschrift im Inhaltsverzeichnis
-    # unterdrückt werden soll. Dies ist der Fall, wenn ein
-    # *übergeordneter* Abschnitt seine untergeordneten
-    # Abschnittsüberschriften blockiert hat (=!).
-
-    my $toc = 1;
-    my $node = $self;
-    while ($node = $node->parent) {
-        if ($node->type ne 'Section') {
-            last;
-        }
-        elsif ($node->tocStop) {
-            $toc = 0;
-            last;
-        }
-    }
-
-    my $code;
+    my $doc = $self->root;
 
     # Beginnen mit dem Abschnitt die Appendizes?
+    # Bei LaTeX wird nur der Beginn gekennzeichnet.
 
-    if ($self->isAppendix) {
+    my $code;
+    my $first = $doc->firstAppendixSection;
+    if ($first && $self == $first) {
         $code .= $l->c('\appendix');
     }
-
     $code .= $l->section(
-        $self->latexLevelToSectionName($l,$self->level),
+        $self->latexSectionName($l),
         $self->expandText($l,'titleS'),
         -label => $self->linkId,
-        -toc => $toc,
+        -notToc => $self->notToc,
     );
     $code .= $self->generateChilds('latex',$l);
 

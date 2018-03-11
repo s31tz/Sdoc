@@ -359,10 +359,10 @@ sub latex {
     # Abschnittskonfiguration
 
     if (defined $secNumDepth) {
-        $code .= $l->c('\setcounter{secnumdepth}{%s}',$secNumDepth);
+        $code .= $l->c('\setcounter{secnumdepth}{%s}','--',$secNumDepth);
     }
     if (defined $tocDepth) {
-        $code .= $l->c('\setcounter{tocdepth}{%s}',$tocDepth);
+        $code .= $l->c('\setcounter{tocdepth}{%s}','--',$tocDepth);
     }
 
     # Paragraph-Eigenschaften
