@@ -8,10 +8,11 @@ our $VERSION = 1.125;
 
 use Sdoc::Core::CommandLine;
 use Sdoc::Core::Shell;
-use Sdoc::Core::Css;
-use Sdoc::Core::Option;
 use Sdoc::Core::Ipc;
+use Sdoc::Core::Unindent;
+use Sdoc::Core::Css;
 use Sdoc::Core::Html::Table::Simple;
+use Sdoc::Core::Html::Page;
 
 # -----------------------------------------------------------------------------
 
@@ -27,209 +28,275 @@ L<Sdoc::Core::Hash>
 
 =head1 METHODS
 
-=head2 Konstruktor
+=head2 Klassenmethoden
 
-=head3 new() - Instantiiere Syntax Highlighter
+=head3 css() - CSS-Information für Highlighting in HTML
 
 =head4 Synopsis
 
-    $pyg = $class->new(@keyVal);
+    ($rules,$bgColor) = $class->css;
+    ($rules,$bgColor) = $class->css($style);
+    ($rules,$bgColor) = $class->css($style,$selector);
 
-=head4 Options
+=head4 Arguments
 
 =over 4
 
-=item classPrefix => $str (Default: 'pyg')
+=item $style (Default: 'default')
 
-Präfix, der, mit Bindestrich getrennt, den CSS Klassennamen
-vorangestellt wird.
+Name des Pygments-Style, für den die CSS-Information geliefert wird.
+
+Mögliche Werte: abap, algol, algol_nu, arduino, autumn, borland,
+bw, colorful, default, emacs, friendly, fruity, igor, lovelace,
+manni, monokai, murphy, native, paraiso-dark, paraiso-light,
+pastie, perldoc, rainbow_dash, rrt, tango, trac, vim, vs, xcode.
+
+Die definitiv gültige Liste der Stylenamen liefert die Methode
+styles().
+
+=item $selector
+
+CSS-Selektor, der den CSS-Regeln vorangestellt wird. Der Selektor
+schränkt den Gültigkeitsbereich der CSS-Regeln auf ein
+Parent-Element ein. Ist kein Selektor angegeben, gelten die
+CSS-Regeln global.
 
 =back
 
 =head4 Returns
 
-Referenz auf Highlighter-Objekt.
+CSS-Regeln und Hintergrundfarbe (String, String)
 
 =head4 Description
 
-Instantiiere ein Highlighter-Objekt und liefere eine Referenz auf
-dieses Objekt zurück.
-
-=cut
-
-# -----------------------------------------------------------------------------
-
-sub new {
-    my $class = shift;
-    # @_: @keyVal
-
-    my $self = $class->SUPER::new(
-        classPrefix => 'pyg',
-        tableProperties => [
-            # 'background-color' => '#f0f0f0',
-        ],
-        lnColumnProperties => [
-            color => '#808080',
-        ],
-        marginColumnProperties => [
-            width => '0.6em',
-        ],
-        textColumnProperties => [
-        ],
-    );
-    $self->set(@_);
-
-    return $self;
-}
-
-# -----------------------------------------------------------------------------
-
-=head2 Objektmethoden
-
-=head3 css() - CSS-Code für HTML Highlighting
-
-=head4 Synopsis
-
-    $css = $pyg->css($style);
-
-=head4 Returns
-
-CSS-Code (String)
+Liefere die CSS-Regeln für die Vordergrund-Darstellung von
+Syntax-Elementen und die zugehörige Hintergrundfarbe für
+Pygments-Style $style.
 
 =cut
 
 # -----------------------------------------------------------------------------
 
 sub css {
-    my ($self,$style) = @_;
-
-    # Objektattribute
-    my $prefix = $self->classPrefix;
-
-    # Style-Code erzeugen
+    my $class = shift;
+    my $style = shift // 'default';
+    my $selector = shift // 'D-U-M-M-Y';
 
     my $c = Sdoc::Core::CommandLine->new('pygmentize');
     $c->addOption(
         -f => 'html',
         -S => $style,
-        -a => ".$prefix-code-text",
+        -a => $selector,
     );
 
-    my $code = Sdoc::Core::Shell->exec($c->command,-capture=>'stdout');
+    my $css = Sdoc::Core::Shell->exec($c->command,-capture=>'stdout');
 
-    # Nachbearbeitung des CSS-Codes:
-    # * Definition der <div>-Klasse entfernen, denn
-    #   die wollen wir selbst definieren
+    # Bestimme Hintergrundfarbe, diese muss existieren, da die
+    # Forderungrundfarben darauf abgestimmt sind.
 
-    $code =~ s|^\.$prefix-code-text\s+\{.*\n||m;
+    $css =~ s/^$selector\s*\{.*background:\s*(\S+);.*\n//m;
+    my $bgColor = $1;
+    if (!$bgColor) {
+        $class->throw(
+            q~PYG-00001: Can't determine main background-color~,
+            Style => $style,
+            CssRules => $css,
+        );
+    }
 
-    # Definition der eigenen Regeln
+    if ($selector eq 'D-U-M-M-Y') {
+        # Entferne Dummy aus den CSS-Regeln
+        $css =~ s/^$selector\s+//mg;
+    }
 
-    my $css = Sdoc::Core::Css->new('flat');
-    my $rules .= $css->rule(".$prefix-code-table pre",
-        margin => 0,
-    );
-    $rules .= $css->rule(".$prefix-code-table",
-        @{$self->tableProperties},
-    );
-    $rules .= $css->rule(".$prefix-code-ln",
-        @{$self->lnColumnProperties},
-    );
-    $rules .= $css->rule(".$prefix-code-margin",
-        @{$self->marginColumnProperties},
-    );
-    $rules .= $css->rule(".$prefix-code-text",
-        @{$self->textColumnProperties},
-    );
-
-    return "$rules$code";
+    return ($css,$bgColor);
 }
 
 # -----------------------------------------------------------------------------
 
-=head3 html() - Syntax Highlighting in HTML
+=head3 html() - Quellcode in HTML highlighten
 
 =head4 Synopsis
 
-    $html = $pyg->html($h,$lexer,$code,@opt);
+    $html = $class->html($lang,$code);
 
-=head4 Options
+=head4 Arguments
 
 =over 4
 
-=item ln => $n (Default: 0)
+=item $lang
 
-Nummeriere die Zeilen, beginnend mit Zeilennummer $n. Wert 0
-bedeutet: Keine Zeilennummern.
+Die Sprache des Quelltexts $code. In Pygments-Terminiologie
+handelt es sich um den Namen eines "Lexers". Die Liste aller
+Lexer liefert das Kommando:
+
+    $ pygmentize -L lexers
+
+=item $code
+
+Der Quelltext, der gehighlightet wird.
 
 =back
 
 =head4 Returns
 
-HTML-Code (String)
+HTML-Code mit gehighlightetem Quelltext (String)
+
+=head4 Description
+
+Liefere den HTML-Code mit dem Syntax-Highlighting für Quelltext $code
+der Sprache $lang.
 
 =cut
 
 # -----------------------------------------------------------------------------
 
 sub html {
-    my ($self,$h,$lexer,$code) = splice @_,0,4;
-    # @_: @opt
-
-    # Objektattribute
-    my $prefix = $self->classPrefix;
-
-    # Optionen
-
-    my $ln = 0;
-
-    Sdoc::Core::Option->extract(\@_,
-        -ln => \$ln,
-    );
+    my ($class,$lang,$code) = @_;
 
     # Quelltext highlighten
 
     my $c = Sdoc::Core::CommandLine->new('pygmentize');
     $c->addOption(
         -f => 'html',
-        -l => $lexer,
+        -l => $lang, # = lexer
     );
-    my $hl = Sdoc::Core::Ipc->filter($c->command,$code);
+    my $html = Sdoc::Core::Ipc->filter($c->command,$code);
 
-    # Tabelle erzeugen
+    # Nicht benötigte "Umrahmung" des gehighlighteten Code entfernen
 
-    my $lnCount = ($hl =~ tr/\n//)-1; # Anzahl Sourcecode-Zeilen
-    $hl =~ s|\s+$||;                  # Whitespace am Ende entfernen
-    $hl =~ s|\n+(</pre>)|$1|;         # NL am Ende des pre-Content entfernen
-    $hl =~ s|\n|&#10;|g;              # NL in Entities wandeln
-    $hl =~ s|^<div.*?>||;             # <div> am Anfang entfernen
-    $hl =~ s|</div>$||;               # </div> am Ende entfernen
+    $html =~ s|^<div.*?><pre>(<span></span>)?||;
+    $html =~ s|</pre></div>\s*$||;
 
-    my @cols;
+    return $html;
+}
 
-    if ($ln) {
-        my $lnLast = $ln + $lnCount - 1;
-        my $lnMaxWidth = length $lnLast;
-        my $tmp;
-        for (my $i = $ln; $i <= $lnLast; $i++) {
-            if ($tmp) {
-                $tmp .= '&#10;';
-            }
-            $tmp .= sprintf '%*d',$lnMaxWidth,$i;
-        }
-        push @cols,
-            [class=>"$prefix-code-ln",$h->tag('pre',$tmp)],
-            [class=>"$prefix-code-margin",''],
-        ;
+# -----------------------------------------------------------------------------
+
+=head3 styles() - Liste der Pygments-Styles
+
+=head4 Synopsis
+
+    @styles | $styleA = $class->styles;
+
+=head4 Returns
+
+Liste von Pygments Stylenamen (Array of Strings).
+
+=head4 Description
+
+Ermittele die Liste der Namen aller Pygments-Styles und liefere diese
+zurück. Im Skalarkontext liefere ein Referenz auf die Liste.
+
+Interaktiv lässt sich die (kommentierte) Liste aller Styles
+ermitteln mit:
+
+    $ pygmentize -L styles
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub styles {
+    my $class = shift;
+
+    # Styles ermitteln
+
+    my $c = Sdoc::Core::CommandLine->new('pygmentize');
+    $c->addOption(
+        -L => 'styles',
+    );
+    my $text = Sdoc::Core::Shell->exec($c->command,-capture=>'stdout');
+    my @styles = sort $text =~ /^\* (\S+?):/mg;
+
+    return wantarray? @styles: \@styles;
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 stylesPage() - HTML-Seite mit allen Styles
+
+=head4 Synopsis
+
+    $html = $class->stylesPage($h,$lang,$code);
+
+=head4 Arguments
+
+=over 4
+
+=item $h
+
+HTML-Generator.
+
+=item $lang
+
+Die Sprache des Quelltexts $code (siehe auch Methode html()).
+
+=item $code
+
+Beispiel-Quelltext der Sprache $lang.
+
+=back
+
+=head4 Returns
+
+HTML-Seite (String)
+
+=head4 Description
+
+Erzeuge für Codebeispiel $code der Sprache (des "Lexers") $lang
+eine HTML-Seite mit allen Pygments-Styles und liefere diese
+zurück.
+
+Diese Seite bietet Hilfestellung für die Entscheidung, welcher
+Style am besten passt.
+
+=head4 Example
+
+Generiere eine Seite mit allen Styles und schreibe sie auf Datei $file:
+
+    my $h = Sdoc::Core::Html::Tag->new;
+    my $html = Sdoc::Core::Pygments::Html->stylesPage($h,'perl',q~
+        PERL-CODE
+    ~));
+    Sdoc::Core::Path->write($file,$html);
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub stylesPage {
+    my ($class,$h,$lang,$code) = @_;
+
+    $code = Sdoc::Core::Unindent->trimNl($code);
+
+    my $css = Sdoc::Core::Css->new('flat');
+
+    my ($rules,$html);
+    $rules .= $css->rule('td pre',
+        margin => 0,
+    );
+    for my $style ($class->styles) {
+        my ($styleRules,$bgColor) = $class->css($style,".$style");
+        $rules .= $css->rule(".$style",
+            backgroundColor => $bgColor,
+            border => '1px solid #e0e0e0',
+            marginLeft => '1em',
+            padding => '4px',
+        );
+        $rules .= $styleRules;
+
+        $html .= $h->tag('h3',$style);
+        $html .= Sdoc::Core::Html::Table::Simple->html($h,
+            class => $style,
+            rows => [[[$h->tag('pre',$class->html($lang,$code))]]],
+        );
     }
-    push @cols,[class=>"$prefix-code-text",$hl];
 
-    return Sdoc::Core::Html::Table::Simple->html($h,
-        class => "$prefix-code-table",
-        cellpadding => 0,
-        rows => [
-            [@cols],
-        ],
+    return Sdoc::Core::Html::Page->html($h,
+        title => 'Pygments Styles',
+        styleSheet => $rules,
+        body => $html,
     );
 }
 
