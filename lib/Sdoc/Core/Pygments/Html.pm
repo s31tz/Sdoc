@@ -26,6 +26,45 @@ Sdoc::Core::Pygments::Html - Syntax Highlighting in HTML
 
 L<Sdoc::Core::Hash>
 
+=head1 SYNOPSIS
+
+Modul laden:
+
+    use Sdoc::Core::Pygments::Html;
+
+Liefere die CSS-Regeln für Pygments-Style 'emacs', eingeschränkt
+auf einen Container 'highlight', der den gehighlighteten Code
+aufnimmt:
+
+    ($rules,$bgColor) = Sdoc::Core::Pygments::Html->css('emacs','highlight');
+    # .highlight .hll { background-color: #ffffcc }
+    # ...
+    # #f8f8f8
+
+Erzeuge Syntax-Highlighting für Perl-Code $code. Der gelieferte
+HTML-Code $html muss in einen Container 'highlight' (s.o.)
+eingebettet werden, damit die oben erzeugten CSS-Regeln greifen:
+
+    $html = Sdoc::Core::Pygments::Html->html('perl',$code);
+
+Liefere die Namen aller Pygments-Styles:
+
+    @styles = Sdoc::Core::Pygments::Html->styles;
+
+Liefere eine HTML-Seite mit einem Darstellungsbeispiel
+für jeden Pygments-Style. Gehighlightet wird der Code $code
+der Programmiersprache $lang:
+
+    $html = Sdoc::Core::Pygments::Html->stylesPage($h,$lang,$code);
+
+=head1 DESCRIPTION
+
+Diese Klasse stellt eine Schnittstelle zum Pygments Syntax
+Highlighting Paket dar, speziell zum Syntax Highlightin in HTML.
+Die Methoden der Klassen liefern sowohl die CSS-Regeln als
+auch den HTML-Code, um gehighlighteten Quelltext in
+HTML-Seiten integrieren zu können.
+
 =head1 METHODS
 
 =head2 Klassenmethoden
