@@ -212,7 +212,7 @@ sub rules {
 
 # -----------------------------------------------------------------------------
 
-=head3 rulesFromObject() - Generiere CSS Style Rules aus Objekt
+=head3 rulesFromObject() - Generiere CSS Style Rules aus Objekt-Attributen
 
 =head4 Synopsis
 
@@ -232,9 +232,8 @@ CSS-Regeln generiert werden.
 
 =item $key => [$selector,@properties], ...
 
-Der Objekt-Attribut $key zugrunde liegende CSS-Selektor $selector
-und dessen Default-Properties @properties. Es kann eine Liste
-solcher Definitionen angegeben werden.
+Liste der Objekt-Attribute $key, ..., ihre entsprechenden
+Selektoren und Default-Properties.
 
 =back
 
@@ -242,16 +241,55 @@ solcher Definitionen angegeben werden.
 
 CSS-Regeln (String)
 
+=head4 Description
+
+Die Methode erzeugt CSS-Regeln auf Basis von Objekt-Attributen.
+Jedes Attribut entspricht einem CSS-Selektor und definiert dessen
+Properties. Es können Default-Properties hinterlegt werden, die
+der Aufrufer ergänzen ('+' als erstes Element der Property-Liste)
+oder ersetzen oder löschen kann (siehe Example).
+
 =head4 Example
 
-Beispiel aus Sdoc::Core::Html::Verbatim:
+B<< Beispiel aus Sdoc::Core::Html::Verbatim >>
+
+Im Konstruktor werden die Objekt-Attribute vereinbart. Diese
+können bei der Instantiierung des Objektes gesetzt werden.
+
+    my $self = $class->SUPER::new(
+        cssTableProperties => undef,
+        cssLnProperties => undef,
+        cssMarginProperties => undef,
+        cssTextProperties => undef,
+        ...
+    );
+
+In der Methode, die die CSS-Regeln erzeugt, werden die zugehörigen
+Selektoren und Default-Properties vereinbart.
 
     $rules .= $css->rulesFromObject($self,
-        cssTableProperties => [".$prefix-table"],
-        cssLnProperties => [".prefix-ln",color=>'#808080'],
-        cssMarginProperties => [".$prefix-margin",width=>'0.6em'],
-        cssTextProperties => [".prefix-text"],
+        cssTableProperties => [".xxx-table"],
+        cssLnProperties => [".xxx-ln",color=>'#808080'],
+        cssMarginProperties => [".xxx-margin",width=>'0.6em'],
+        cssTextProperties => [".xxx-text"],
     );
+
+Beim Konstruktor-Aufruf können die Default-Properties ergänzt ('+'
+als erstes Element in der Property-Liste) oder ersetzt (keine
+Angabe) oder gelöscht werden (leere Liste).
+
+    my $obj = Sdoc::Core::Hash->new(
+        cssTableProperties => [backgroundColor=>'#f0f0f0'],  # ersetzen
+        cssLnProperties => ['>',color=>'black'],             # ersetzen
+        cssMarginProperties => ['+',backgroundColor=>'red'], # ergänzen
+        cssTextProperties => [],                             # löschen
+    );
+
+Resultierende CSS-Regeln:
+
+    .xxx-table { background-color: #f0f0f0; }
+    .xxx-ln { color: black; }
+    .xxx-margin { width: 0.6em; background-color: red; }
 
 =cut
 
