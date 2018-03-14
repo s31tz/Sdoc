@@ -161,6 +161,7 @@ Dokument-Bock angegeben:
     author=STRING
     copyComments=BOOL
     date=STRING
+    highlightStyle=STYLE
     indentation=FLOAT
     language=german|english
     latexDocumentClass=scrartcl|scrreprt|scrbook|article|report|book
@@ -199,20 +200,20 @@ verwendet werden:
 
 === Eigenschaften
 
-[anchor]:
+[anchor=STRING]:
   Anker des Dokuments.
   
-[author]:
+[author=STRING]:
   Der Autor des Dokuments. Wenn gesetzt, wird eine Titelseite bzw.
   ein Titelabschnitt erzeugt.
 
-[copyComments]:
+[copyComments=BOOL]:
   (Default: 1) Kopiere Sdoc-Kommentare in den Quelltext des
   Zielformats. Dies ist z.B. nützlich, um eine Stelle im Quelltext des
   Zielformats zu finden, die aus einem bestimmten Sdoc-Konstrukt
   hervorgegangen ist.
 
-[date]:
+[date=STRING]:
   Das Datum des Dokuments. Wenn gesetzt, wird eine Titelseite bzw.
   ein Titelabschnitt erzeugt. Formatelemente von strftime werden
   expandiert. Spezielle Werte:
@@ -224,35 +225,42 @@ verwendet werden:
 
   Ist kein Wert angegeben, erscheint kein Datum im Dokumenttitel.
 
-[indentation]:
+[highlightStyle=STYLE]:
+    (Default: 'default') Der Style, in dem das Syntax-Highlighting von
+    Code-Blöcken erfolgt, wenn das Attribut C{lang} gesetzt ist. Die
+    Liste der verfügbaren Styles liefert das Kommando
+
+        $ pygmentize -L styles
+
+[indentation=FLOAT]:
   (Default: 1.3) Einrückung für List-, Graphic-, Code-, Table-Blöcke
   vom linken Rand. Einheit ist C{em}, die aber nicht angegeben wird.
 
-[language]:
+[language=LANGUAGE]:
   (Default: german) Die Sprache, in der das Dokument verfasst ist. In
   dieser Sprache werden Dokument-Bezeichnungen wie z.B.
   Q{Inhaltsverzeichnis} erzeugt. Ferner bestimmt die Sprache in LaTeX
   die Trennregeln. Mögliche Werte: german, english.
 
-[latexDocumentClass]:
+[latexDocumentClass=NAME]:
   LaTeX-Dokumentklasse. Werte: 'scrartcl', 'scrreprt', 'scrbook',
   'article', 'report', 'book', ...
 
-[latexDocumentOptions]:
+[latexDocumentOptions=STRING]:
   Kommaseparierte Liste von LaTeX
   Dokumentklassen-Optionen. Z.B. 'twoside'.
 
-[latexFontSize]:
+[latexFontSize=SIZE]:
   (Default: '10pt') Die Größe des LaTeX-Font. Mögliche Werte: '10pt',
   '11pt', '12pt'.
 
-[latexGeometry]:
+[latexGeometry=STRING]:
   (Default: 'height=22.5cm,bottom=3.8cm' bei a4paper) Definition der
   Seitengeometrie mittels des LaTeX-Pakets C{geometry}. Damit können
   gegenüber der Grundeinstellung abweichende Seitenmaße definiert
   werden.
 
-[latexPageStyle]:
+[latexPageStyle=NAME]:
   Definiere den Seitenstil der Titelseite und der sonstigen Seiten.
   Der Seitenstil legt fest, was im Kopf und im Fuß der Seite erscheint.
   Zur Verfügung stehen die Seitenstil-Bezeichnungen 'empty' (Kopf-
@@ -266,32 +274,32 @@ verwendet werden:
 
     latexPageStyle="empty,empty"
 
-[latexPaperSize]:
+[latexPaperSize=NAME]:
   (Default: 'a4paper') Papiergröße für LaTeX.
 
-[latexParSkip]:
+[latexParSkip=LENGTH]:
   (Default: '0.5ex') Vertikaler Abstand zwischen Absätzen.
 
-[latexShowFrames]:
+[latexShowFrames=BOOL]:
   (Default: 0) Zeichne den Text-, Kopfzeilen-, Fußzeilen- und
   Kommentarbereich in die Seiten ein. Dies ist eine Debugging-Option.
 
-[quiet]:
+[quiet=BOOL]:
   (Default: 0) Gib keine Warnungen aus.
 
-[sectionNumberDepth]:
+[sectionNumberDepth=N]:
   (Default: 3) Die Abschnittsebene, bis zu welcher Abschnitte
   numeriert werden.  Mögliche Werte: -2, -1, 0, 1, 2, 3, 4. -2
   bedeutet: Die Abschnitte des Dokuments werden nicht numeriert.
 
-[smallerMonospacedFont]:
+[smallerMonospacedFont=BOOL]:
   Wähle einen kleineren Monospaced Font als standardmäßig.
 
-[tableOfContents]:
+[tableOfContents=BOOL]:
   (Default: 1) Erzeuge ein Inhaltsverzeichnis, auch wenn das Dokument
   keinen TableOfContents-Block enthält.
 
-[title]:
+[title=STRING]:
   Der Titel des Dokuments. Wenn gesetzt, wird eine Titelseite bzw.
   ein Titelabschnitt erzeugt.
 
@@ -318,7 +326,7 @@ dies nicht statt und das Dokument erhält kein Inhaltsverzeichnis.
 
 === Eigenschaften
 
-[maxDepth]:
+[maxDepth=N]:
   (Default: 3) Tiefe, bis zu welcher Abschnitte ins Inhaltsverzeichnis
   aufgenommen werden. Mögliche Werte: -2, -1, 0, 1, 2, 3, 4. -2 = kein
   Inhaltsverzeichnis.
@@ -404,20 +412,20 @@ L{+Syntax/Segment}) verwendet werden:
     stopToc=BOOL
     title=STRING
 
-[anchor]:
+[anchor=STRING]:
   Anker des Abschnitts.
   
-[isAppendix]:
+[isAppendix=BOOL]:
   Mit diesem Abschnitt beginnen die Appendizes.
 
-[level]:
+[level=N]:
   Tiefe des Abschnitts in der Abschnittshierarchie, beginnend mit 1.
 
-[stopToc]:
+[stopToc=BOOL]:
   Alle Abschnitte unterhalb dieses Abschnitts werden nicht in das
   Inhaltsverzeichnis aufgenommen.
 
-[title]:
+[title=STRING]:
   Titel des Abschnitts.
 
 ---PageBreak---
@@ -456,13 +464,13 @@ L{+Syntax/Segment}) verwendet werden:
     level=N
     title=STRING
 
-[anchor]:
+[anchor=STRING]:
   Anker der Zwischenüberschrift.
   
-[level]:
+[level=N]:
   Größe der Zwischenüberschrift, beginnend mit 1.
 
-[title]:
+[title=STRING]:
   Titel der Zwischenüberschrift.
 
 ---PageBreak---
@@ -606,62 +614,62 @@ In der Beschriftung (C{caption}) einer Abbildung können alle Segmente
     show=BOOL
     with=INTEGER
 
-[align]:
+[align=left|center|right]:
   (Default: 'left') Horizontale Ausrichtung des Bildes. Mögliche
   Werte: 'left', 'center', 'right'.
 
-[anchor]:
+[anchor=STRING]:
   Anker der Grafik.
 
-[border]:
+[border=BOOL]:
   (Default: 0) Zeichne einen Rahmen um die Abbildung.
 
-[borderMargin]:
+[borderMargin=LENGTH]:
   (Default: 0mm) Zeichne den Rahmen (Attribut C{border}) mit dem
   angegebenen Abstand um die Abbildung.
 
-[caption]:
+[caption=STRING]:
   Beschriftung der Grafik. Diese erscheint unter der Grafik.
 
-[file]:
+[file=PATH]:
   Pfad der Bilddatei. Beginnt der Pfad mit C{+/}, wird das
   Pluszeichen zum Pfad des Dokumentverzeichnisses expandiert.
 
-[height]:
+[height=INTEGER]:
   Höhe in Pixeln (ohne Angabe einer Einheit), auf die das Bild
   skaliert wird.
 
-[latexOptions]:
+[latexOptions=STRING]:
   LaTeX-spezifische Optionen, die direkt an das LaTeX-Makro
   C{\includegraphics} übergeben werden.
 
-[link]:
+[link=URL]:
   Versieh das Bild mit einem Verweis. Dies kann ein Verweis auf ein
   internes oder externes Ziel sein wie bei einem L-Segment (nur dass
   das Attribut den Link-Text als Wert hat ohne den Segment-Bezeichner
   und die geschweiften Klammern).
 
-[name]:
+[name=STRING]:
   Name der Grafik. Ein Name muss angegeben sein, wenn die Grafik von
   einem G-Segment referenziert wird. Ist ein Name gesetzt, ist der
   Default für das Attribut C{definition} 1, sonst 0.
 
-[indentation]:
+[indentation=BOOL]:
   Rücke die Grafik ein. Das Attribut ist nur bei C{align=left}
   und bei Inline-Grafiken von Bedeutung.
 
-[scale]:
+[scale=FLOAT]:
   Skalierungsfaktor. Der Skalierungsfaktor hat bei LaTeX Priorität
   gegenüber der Angabe von C{width} und C{height}.
 
-[show]:
+[show=BOOL]:
   Wenn auf 1 gesetzt, wird die Grafik an Ort und Stelle angezeigt,
   wenn 0, nicht. Sie nicht anzuzeigen macht Sinn, wenn sie lediglich
   von G-Segmenten (Inline Grafik) genutzt werden soll. Der Default für
   das Attribut ist 0, wenn C{useCount > 0} (d.h. die Grafik wird als
   Inline-Grafik genutzt), andernfalls 1.
 
-[width]:
+[width=INTEGER]:
   Breite in Pixeln (ohne Angabe einer Einheit), auf die das Bild
   skaliert wird.
 
@@ -821,7 +829,7 @@ L{+Syntax/Segment}) verwendet werden:
   %Item:
     key=STRING
 
-[key]:
+[key=STRING]:
   Stern (*) im Falle einer Punktliste. Nummer im Falle einer
   Nummerierungsliste. Zeichenkette im Falle einer Definitionsliste.
 
@@ -1202,14 +1210,15 @@ Q{Dies ist ein Zitat}
     anchor=STRING
     border=STRING
     caption=STRING
+    indentation=BOOL
     titleColor=RGB
   TEXT
   .
 
-[anchor]:
+[anchor=STRING]:
   Anker der Tabelle.
 
-[border]:
+[border=STRING]:
   (Default: 'hHV') Legt fest, welche Linien in und um die Tabelle
   gezeichnet werden.
 
@@ -1224,10 +1233,10 @@ Q{Dies ist ein Zitat}
   [V]:
     Vertikale Linien links und rechts von der Tabelle.
 
-[caption]:
+[caption=STRING]:
   Die Beschriftung der Tabelle. Diese erscheint unter der Tabelle.
 
-[indentation]:
+[indentation=BOOL]:
   Rücke die Tabelle ein. Das Attribut ist nur bei C{align=left}
   von Bedeutung.
 
@@ -1461,15 +1470,15 @@ C{filter} und C{load} - so weit angegeben - ist:
 2. C{filter}
 3. C{extract}
 
-# Eigenschaften
+% neue Tabelle
 
-[exec]:
+[exec=COMMAND]:
   Führe das Kommando C{COMMAND} aus und verwende dessen Ausgabe nach
   stdout und stderr als Text des Code-Blocks. Der Code Block hat in
   diesem Fall keinen Text-Body. Beginnt das Kommando mit C{+/}, wird
   das Pluszeichen zum Pfad des Dokumentverzeichnisses expandiert.
 
-[extract]:
+[extract=REGEX]:
   Reduziere den Text auf einen Teil. Der Reguläre Ausdruck $regex
   hat Perl-Mächtigkeit und wird unter den Modifiern C{s} (C{.}
   matcht Zeilenumbrüche) und C{m} (C{^} und C{$} matchen
@@ -1477,28 +1486,31 @@ C{filter} und C{load} - so weit angegeben - ist:
   muss einen eingebetteten Klammerausdruck C{(...)} enthalten.
   Dieser Q{captured} den gewünschten Teil.
 
-[filter]:
+[filter=COMMAND]:
   Schicke den Text des Code-Blocks an Kommando COMMAND und ersetze
   ihn durch dessen Ausgabe. Das Kommando arbeitet als Filter, liest
   also von stdin und schreibt nach stdout.
 
-[indent]:
+[indent=BOOL]:
   (Default: I{kontextabhängig}) Rücke den Text ein. Im Falle von
   Zeilennummern (C{ln=N}) wird I{nicht} eingerückt. Sonst wird
   eingerückt.  Durch explizite Setzung des Attributs kann der
   jeweilige Default überschrieben werden.
 
-[load]:
+[load=FILE]:
   Lade Datei C{FILE} und verwende dessen Inhalt als Text des
   Code-Blocks.  Der Code Block hat in diesem Fall keinen
   Text-Body. Beginnt der Pfad der Datei mit C{+/}, wird das
   Pluszeichen zum Pfad des Dokumentverzeichnisses expandiert.
 
-[lang]:
-  Wende Syntax-Highlighting auf den Text an. Das Attribut C{indent}
-  wird auf den Default 0 gesetzt.
+[lang=LANGUAGE]:
+  Der Code ist Quelltext der Sprache LANGUAGE. Mit dieser Option wird
+  das Syntax-Highlighting aktiviert. Dies verfügbaren Sprachen
+  (Q{Lexer}) liefert das Kommando
 
-[ln]:
+      $ pygmentize -L lexers
+
+[ln=N]:
   Setze an den Anfang der Zeilen eine Zeilennummer, wenn C{N > 0}.
   Start-Zeilennummer ist C{N}. Das Attribut C{indent} wird auf den
   Default 0 gesetzt.
@@ -1550,17 +1562,17 @@ gebildet.
     regex=REGEX
     url=URL
 
-[name]:
+[name=STRING]:
   Name der Link-Definiton. Mehrere Namen können mit | getrennt
   definiert werden. Beispiel: C{name="Sdoc|Sdoc Homepage"}
 
-[file]:
+[file=PATH]:
   Pfad einer lokalen Datei.
 
-[regex]:
+[regex=REGEX]:
   Regex, der den internen Zielknoten identifiziert.
 
-[url]:
+[url=URL]:
   URL eines externen Dokuments.
 
 ---PageBreak---
@@ -1582,7 +1594,7 @@ produziert:
   %Include:
     load=PATH
 
-[load]:
+[load=PATH]:
   Lade Datei PATH und füge dessen Inhalt in das Dokument ein. Beginnt
   der Pfad mit C{+/}, wird das Pluszeichen zum Pfad des
   Dokumentverzeichnisses expandiert.

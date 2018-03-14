@@ -10,7 +10,8 @@ use Sdoc::Core::Unindent;
 use Sdoc::Core::Path;
 use Sdoc::Core::Shell;
 use Sdoc::Core::Ipc;
-use Sdoc::Core::Pygments::Html;
+use Sdoc::Core::Html::Pygments;
+use Sdoc::Core::Html::Verbatim;
 
 # -----------------------------------------------------------------------------
 
@@ -75,8 +76,11 @@ Pluszeichen zum Pfad des Dokumentverzeichnisses expandiert.
 
 =item lang => $lang
 
-Die Sprache des Code. Aktiviert Syntax-Highlighting. Einrückung wird
-auf Default 0 gesetzt.
+Der Code ist Quelltext der Sprache $lang. Mit dieser Option wird
+das Syntax-Highlighting aktiviert. Dies verfügbaren Sprachen
+("Lexer") liefert das Kommando
+
+    $ pygmentize -L lexers
 
 =item ln => $n (Default: 0)
 
@@ -264,20 +268,24 @@ LaTeX-Code (String)
 sub generateHtml {
     my ($self,$h) = @_;
 
+    my $text = $self->text;
     if (my $lang = $self->lang) {
-        # Code mit Highlighting
-
-        my $pyg = Sdoc::Core::Pygments::Html->new(
-            classPrefix => 'sdoc',
-        );
-        return $pyg->html($h,$lang,$self->text,-ln=>$self->ln);
+        $text = Sdoc::Core::Html::Pygments->html($lang,$text);
     }
 
-    # Code ohne Highlighting
+    my $indent = $self->indent;
+    my $ln = $self->ln;
 
-    return $h->tag('pre',
-        class => 'sdoc-code',
-        $h->protect($self->text),
+    my $style;
+    if ($indent || !defined($indent) && !$ln) {
+        $style = 'padding-left: 1.5em';
+    }
+
+    return Sdoc::Core::Html::Verbatim->html($h,
+        cssClassPrefix => 'sdoc-code',
+        cssTableStyle => $style,
+        ln => $self->ln,
+        text => $text,
     );
 }
 

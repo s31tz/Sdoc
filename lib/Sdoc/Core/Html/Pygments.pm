@@ -1,4 +1,4 @@
-package Sdoc::Core::Pygments::Html;
+package Sdoc::Core::Html::Pygments;
 use base qw/Sdoc::Core::Hash/;
 
 use strict;
@@ -20,7 +20,7 @@ use Sdoc::Core::Html::Page;
 
 =head1 NAME
 
-Sdoc::Core::Pygments::Html - Syntax Highlighting in HTML
+Sdoc::Core::Html::Pygments - Syntax Highlighting in HTML
 
 =head1 BASE CLASS
 
@@ -30,13 +30,13 @@ L<Sdoc::Core::Hash>
 
 Modul laden:
 
-    use Sdoc::Core::Pygments::Html;
+    use Sdoc::Core::Html::Pygments;
 
 Liefere die CSS-Regeln für Pygments-Style 'emacs', eingeschränkt
 auf einen Container 'highlight', der den gehighlighteten Code
 aufnimmt:
 
-    ($rules,$bgColor) = Sdoc::Core::Pygments::Html->css('emacs','highlight');
+    ($rules,$bgColor) = Sdoc::Core::Html::Pygments->css('emacs','highlight');
     # .highlight .hll { background-color: #ffffcc }
     # ...
     # #f8f8f8
@@ -45,25 +45,24 @@ Erzeuge Syntax-Highlighting für Perl-Code $code. Der gelieferte
 HTML-Code $html muss in einen Container 'highlight' (s.o.)
 eingebettet werden, damit die oben erzeugten CSS-Regeln greifen:
 
-    $html = Sdoc::Core::Pygments::Html->html('perl',$code);
+    $html = Sdoc::Core::Html::Pygments->html('perl',$code);
 
 Liefere die Namen aller Pygments-Styles:
 
-    @styles = Sdoc::Core::Pygments::Html->styles;
+    @styles = Sdoc::Core::Html::Pygments->styles;
 
 Liefere eine HTML-Seite mit einem Darstellungsbeispiel
 für jeden Pygments-Style. Gehighlightet wird der Code $code
 der Programmiersprache $lang:
 
-    $html = Sdoc::Core::Pygments::Html->stylesPage($h,$lang,$code);
+    $html = Sdoc::Core::Html::Pygments->stylesPage($h,$lang,$code);
 
 =head1 DESCRIPTION
 
 Diese Klasse stellt eine Schnittstelle zum Pygments Syntax
-Highlighting Paket dar, speziell zum Syntax Highlightin in HTML.
-Die Methoden der Klassen liefern sowohl die CSS-Regeln als
-auch den HTML-Code, um gehighlighteten Quelltext in
-HTML-Seiten integrieren zu können.
+Highlighting Paket dar, speziell zum Syntax Highlighting in HTML.
+Die Methoden der Klassen liefern die CSS-Regeln und den HTML-Code,
+um gehighlighteten Quelltext in HTML-Seiten integrieren zu können.
 
 =head1 METHODS
 
@@ -73,9 +72,9 @@ HTML-Seiten integrieren zu können.
 
 =head4 Synopsis
 
-    ($rules,$bgColor) = $class->css;
-    ($rules,$bgColor) = $class->css($style);
-    ($rules,$bgColor) = $class->css($style,$selector);
+    ($rules,$bgColor) | $rules = $class->css;
+    ($rules,$bgColor) | $rules = $class->css($style);
+    ($rules,$bgColor) | $rules = $class->css($style,$selector);
 
 =head4 Arguments
 
@@ -93,7 +92,7 @@ pastie, perldoc, rainbow_dash, rrt, tango, trac, vim, vs, xcode.
 Die definitiv gültige Liste der Stylenamen liefert die Methode
 styles().
 
-=item $selector
+=item $selector (Default: I<kein Selektor>)
 
 CSS-Selektor, der den CSS-Regeln vorangestellt wird. Der Selektor
 schränkt den Gültigkeitsbereich der CSS-Regeln auf ein
@@ -104,7 +103,8 @@ CSS-Regeln global.
 
 =head4 Returns
 
-CSS-Regeln und Hintergrundfarbe (String, String)
+CSS-Regeln und Hintergrundfarbe (String, String). Im Skalarkontext
+werden nur die CSS-Regeln geliefert.
 
 =head4 Description
 
@@ -128,27 +128,27 @@ sub css {
         -a => $selector,
     );
 
-    my $css = Sdoc::Core::Shell->exec($c->command,-capture=>'stdout');
+    my $rules = Sdoc::Core::Shell->exec($c->command,-capture=>'stdout');
 
     # Bestimme Hintergrundfarbe, diese muss existieren, da die
     # Forderungrundfarben darauf abgestimmt sind.
 
-    $css =~ s/^$selector\s*\{.*background:\s*(\S+);.*\n//m;
+    $rules =~ s/^$selector\s*\{.*background:\s*(\S+);.*\n//m;
     my $bgColor = $1;
     if (!$bgColor) {
         $class->throw(
             q~PYG-00001: Can't determine main background-color~,
             Style => $style,
-            CssRules => $css,
+            CssRules => $rules,
         );
     }
 
     if ($selector eq 'D-U-M-M-Y') {
-        # Entferne Dummy aus den CSS-Regeln
-        $css =~ s/^$selector\s+//mg;
+        # Entferne Dummy-Selektor aus den CSS-Regeln
+        $rules =~ s/^$selector\s+//mg;
     }
 
-    return ($css,$bgColor);
+    return wantarray? ($rules,$bgColor): $rules;
 }
 
 # -----------------------------------------------------------------------------
@@ -295,7 +295,7 @@ Style am besten passt.
 Generiere eine Seite mit allen Styles und schreibe sie auf Datei $file:
 
     my $h = Sdoc::Core::Html::Tag->new;
-    my $html = Sdoc::Core::Pygments::Html->stylesPage($h,'perl',q~
+    my $html = Sdoc::Core::Html::Pygments->stylesPage($h,'perl',q~
         PERL-CODE
     ~));
     Sdoc::Core::Path->write($file,$html);
