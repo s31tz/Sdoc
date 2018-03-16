@@ -78,10 +78,10 @@ ein internes oder externes Ziel sein wie bei einem L-Segment (nur
 dass das Attribut den Link-Text als Wert hat ohne den
 Segment-Bezeichner und die geschweiften Klammern).
 
-=item linkId => $linkId
+=item linkId => $str (memoize)
 
-Die Grafik ist Ziel eines Link. Dies ist der Anker für das
-Zielformat.
+Berechneter SHA1-Hash, unter dem der Knoten von einem
+Verweis aus referenziert wird.
 
 =item name => $name
 
@@ -93,6 +93,11 @@ Default für das Attribut C<definition> 1, sonst 0.
 
 Rücke die Grafik ein. Das Attribut ist nur bei C<< align =>
 'left' >> oder bei Inline-Grafiken von Bedeutung.
+
+=item referenced => $n (Default: 0)
+
+Die Grafik ist $n Mal Ziel eines Link. Zeigt an,
+ob für die Grafik ein Anker erzeugt werden muss.
 
 =item scale => $factor
 
@@ -197,14 +202,15 @@ sub new {
         link => undef,
         linkN => undef,
         linkA => [],
-        linkId => undef,
         name => undef,
+        referenced => 0,
         scale => undef,
         show => undef,
         useCount => 0,
         width => undef,
         # memoize
         anchorA => undef,
+        linkId => undef,
     );
     $self->setAttributes(%$attribH);
 
@@ -446,7 +452,7 @@ sub generateLatex {
         file => $root->expandPath($self->file),
         height => $self->height,
         indent => $self->indentation // 1? $root->indentation.'em': undef,
-        label => $self->linkId,
+        label => $self->referenced? $self->linkId: undef,
         link => $self->latexLinkCode($l),
         options => $self->latexOptions,
         postVSpace => $l->modifyLength($root->latexParSkip,'*-2'),

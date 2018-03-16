@@ -237,6 +237,70 @@ sub new {
 
 =head2 Formate
 
+=head3 generateHtml() - Generiere HTML-Code
+
+=head4 Synopsis
+
+    $code = $itm->generateHtml($gen);
+
+=head4 Arguments
+
+=over 4
+
+=item $gen
+
+Generator für HTML.
+
+=back
+
+=head4 Returns
+
+LaTeX-Code (String)
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub generateHtml {
+    my ($self,$h) = @_;
+
+    my $listType = $self->parent->listType;
+    my $key = $self->key;
+    my $childs = $self->generateChilds('html',$h);
+
+    if ($listType eq 'ordered') {
+        return $h->tag('li',
+            $childs,
+        );
+    }
+    elsif ($listType eq 'unordered') {
+        # '*' => 'disc', # Default
+        my $mark = {
+            'o' => 'circle',
+            '+' => 'square',
+        }->{$key};
+
+        return $h->tag('li',
+            style => $mark? "list-style-type:$mark": undef,
+            $childs,
+        );
+    }
+    elsif ($listType eq 'description') {
+        return $h->cat(
+            $h->tag('dt',
+                $self->expandText($h,'keyS')
+            ),
+            $h->tag('dd',
+                $childs
+            ),
+        );
+    }
+
+    $self->throw("Unexpected listType: $listType");
+}
+
+# -----------------------------------------------------------------------------
+
 =head3 generateLatex() - Generiere LaTeX-Code
 
 =head4 Synopsis

@@ -11,6 +11,7 @@ use Sdoc::Core::Path;
 use Sdoc::Core::Shell;
 use Sdoc::Core::Ipc;
 use Sdoc::Core::Html::Pygments;
+use Sdoc::Core::Css;
 use Sdoc::Core::Html::Verbatim;
 
 # -----------------------------------------------------------------------------
@@ -86,6 +87,10 @@ das Syntax-Highlighting aktiviert. Dies verfügbaren Sprachen
 
 Wenn $n > 0, wird der Code mit Zeilennummern
 versehen. Start-Zeilennummer ist $n.
+
+=item number => $n
+
+Nummer des Codeblocks. Wird automatisch hochgezählt.
 
 =item text => $text
 
@@ -184,6 +189,7 @@ sub new {
         lang => undef,
         ln => 0,
         indent => $attribH->{'ln'}? 0: 1,
+        number => $root->increment('countCode'),
         text => undef,
     );
     $self->setAttributes(%$attribH);
@@ -268,24 +274,35 @@ LaTeX-Code (String)
 sub generateHtml {
     my ($self,$h) = @_;
 
+    my $indent = $self->indent;
+    my $ln = $self->ln;
+    my $id = sprintf 'code%02d',$self->number;
+
     my $text = $self->text;
     if (my $lang = $self->lang) {
         $text = Sdoc::Core::Html::Pygments->html($lang,$text);
     }
 
-    my $indent = $self->indent;
-    my $ln = $self->ln;
-
     my $style;
     if ($indent || !defined($indent) && !$ln) {
-        $style = 'padding-left: 1.5em';
+        # $style = 'margin-left: 2em';
     }
 
-    return Sdoc::Core::Html::Verbatim->html($h,
-        cssClassPrefix => 'sdoc-code',
-        cssTableStyle => $style,
-        ln => $self->ln,
-        text => $text,
+    return $h->cat(
+        $h->tag('style',
+            Sdoc::Core::Css->new('flat')->restrictedRules("#$id",
+                'td pre' => [
+                    margin => 0,
+                ],
+            )
+        ),
+        Sdoc::Core::Html::Verbatim->html($h,
+            class => 'sdoc-code',
+            id => $id,
+            style => $style,
+            ln => $self->ln,
+            text => $text,
+        ),
     );
 }
 

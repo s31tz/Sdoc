@@ -133,6 +133,43 @@ sub new {
 
 =head2 Formate
 
+=head3 generateHtml() - Generiere HTML-Code
+
+=head4 Synopsis
+
+    $code = $par->generateHtml($gen);
+
+=head4 Arguments
+
+=over 4
+
+=item $gen
+
+Generator für HTML.
+
+=back
+
+=head4 Returns
+
+LaTeX-Code (String)
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub generateHtml {
+    my ($self,$h) = @_;
+
+    if (!$self->root->copyComments) {
+        # Keine Kommentare ins Zielformat übernehmen
+        return '';
+    }
+
+    return $h->comment($self->text);
+}
+
+# -----------------------------------------------------------------------------
+
 =head3 generateLatex() - Generiere LaTeX-Code
 
 =head4 Synopsis

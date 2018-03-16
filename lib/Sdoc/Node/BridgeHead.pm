@@ -25,7 +25,7 @@ Ein Objekt der Klasse repräsentiert einen Zwischenüberschrift.
 =head1 ATTRIBUTES
 
 Über die Attribute der Basisklasse hinaus besitzt ein
-Zwischenberschrifts-Knoten folgende zusätzliche Attribute:
+Zwischenüberschrifts-Knoten folgende zusätzliche Attribute:
 
 =over 4
 
@@ -55,10 +55,15 @@ Größe der Zwischenüberschrift, beginnend mit 1.
 
 Array mit Informationen über die im Titel vorkommenden Links.
 
-=item linkId => $linkId
+=item linkId => $str (memoize)
 
-Die Zwischenberschrift ist Ziel eines Link. Dies ist der Anker für
-das Zielformat.
+Berechneter SHA1-Hash, unter dem der Knoten von einem
+Verweis aus referenziert wird.
+
+=item referenced => $n (Default: 0)
+
+Die Zwischenüberschrift ist $n Mal Ziel eines Link. Zeigt an,
+ob für die Zwischenüberschrift ein Anker erzeugt werden muss.
 
 =item title => $str
 
@@ -66,7 +71,7 @@ Titel der Zwischenüberschrift.
 
 =item titleS => $str
 
-Titel des Zwischenberschrift nach Parsing der Segmente.
+Titel des Zwischenüberschrift nach Parsing der Segmente.
 
 =back
 
@@ -152,11 +157,12 @@ sub new {
         graphicA => [],
         level => undef,
         linkA => [],
-        linkId => undef,
+        referenced => 0,
         title => undef,
         titleS => undef,
         # memoize
         anchorA => undef,
+        linkId => undef,
     );
     $self->setAttributes(%$attribH);
     $par->parseSegments($self,'title');
@@ -225,7 +231,7 @@ sub linkText {
 
 =head4 Synopsis
 
-    $code = $sec->generateHtml($gen);
+    $code = $brh->generateHtml($gen);
 
 =head4 Arguments
 
@@ -247,7 +253,7 @@ HTML-Code (String)
 
 sub generateHtml {
     my ($self,$h) = @_;
-    return $self->htmlSectionCode($h);
+    return $self->htmlSectionCode($h,'bridgehead');
 }
 
 # -----------------------------------------------------------------------------
@@ -282,7 +288,7 @@ sub generateLatex {
     return $l->section(
         $self->latexSectionName($l),
         $self->expandText($l,'titleS'),
-        -label => $self->linkId,
+        -label => $self->referenced? $self->linkId: undef,
         -notToc => 1,
     );
 }

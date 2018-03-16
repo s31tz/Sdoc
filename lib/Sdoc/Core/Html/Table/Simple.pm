@@ -224,8 +224,8 @@ sub html {
         id rows style width/);
 
     return $h->tag('table',
-        id=>$id,
         class=>$class,
+        id=>$id,
         style=>$style,
         data=>$dataA,
         border=>$border,

@@ -169,7 +169,8 @@ sub parse {
         $doc->push(childA=>$nodeClass->new($variant,$par,$doc,$doc));
     }
 
-    # Erzeuge TableOfContens-Knoten, wenn nicht existent
+    # Erzeuge TableOfContens-Knoten, wenn nicht existiert und per
+    # Default erzeugt werden soll
     $doc->createTableOfContentsNode;
 
     # Kennzeichne Appendix-Abschnitte
@@ -179,15 +180,11 @@ sub parse {
     # erscheinen sollen
     $doc->flagSectionsNotToc;
 
-    # L-Segmente (Links) auflösen
+    # Löse L-Segmente (Links) auf
     $doc->resolveLinks;
 
-    # G-Segmente (Inline-Grafiken) auflösen
+    # Löse G-Segmente (Inline-Grafiken) auf
     $doc->resolveGraphics;
-
-    # Abschnitte kennzeichnen, die nicht ins Inhaltsverzeichnis
-    # übernommen werden sollen, weil ein übergeordneter Abschnitt
-    # seine untergeordneten Abschnitte davon ausgeschlossen hat (=!).
 
     return $doc;
 }

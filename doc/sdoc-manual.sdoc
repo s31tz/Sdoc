@@ -409,8 +409,8 @@ L{+Syntax/Segment}) verwendet werden:
     anchor=STRING
     isAppendix=BOOL
     level=N
-    stopToc=BOOL
     title=STRING
+    tocStop=BOOL
 
 [anchor=STRING]:
   Anker des Abschnitts.
@@ -421,12 +421,12 @@ L{+Syntax/Segment}) verwendet werden:
 [level=N]:
   Tiefe des Abschnitts in der Abschnittshierarchie, beginnend mit 1.
 
-[stopToc=BOOL]:
-  Alle Abschnitte unterhalb dieses Abschnitts werden nicht in das
-  Inhaltsverzeichnis aufgenommen.
-
 [title=STRING]:
   Titel des Abschnitts.
+
+[tocStop=BOOL]:
+  Alle Abschnitte unterhalb dieses Abschnitts werden nicht in das
+  Inhaltsverzeichnis aufgenommen.
 
 ---PageBreak---
 
@@ -1008,8 +1008,8 @@ verwendet werden.
 Die Titelfarbe kann mittels des Attributs C{titleColor} gesetzt werden:
 
   %Table:
-    titleColor="ffd700"
-    caption="titleColor=ffd700"
+    titleColor="#ffd700"
+    caption="titleColor=#ffd700"
   
   Links Rechts Zentriert
   ----- ------ ---------
@@ -1020,8 +1020,8 @@ Die Titelfarbe kann mittels des Attributs C{titleColor} gesetzt werden:
 produziert:
 
 %Table:
-  titleColor="ffd700"
-  caption="titleColor=ffd700"
+  titleColor="#ffd700"
+  caption="titleColor=#ffd700"
 
 Links Rechts Zentriert
 ----- ------ ---------
@@ -1211,7 +1211,7 @@ Q{Dies ist ein Zitat}
     border=STRING
     caption=STRING
     indentation=BOOL
-    titleColor=RGB
+    titleColor=COLOR
   TEXT
   .
 
@@ -1240,9 +1240,9 @@ Q{Dies ist ein Zitat}
   Rücke die Tabelle ein. Das Attribut ist nur bei C{align=left}
   von Bedeutung.
 
-[titleColor=RGB]:
-  (Default: 'e8e8e8') Die Farbe der Titelzeile. Der Wert wird als RGB-Wert
-  angegeben.
+[titleColor=COLOR]:
+  (Default: '#e8e8e8') Die Farbe der Titelzeile. Der Wert wird als
+  RGB-Wert angegeben.
 
 === LaTeX Setup
 

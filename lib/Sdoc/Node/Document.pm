@@ -7,10 +7,9 @@ use warnings;
 our $VERSION = 3.00;
 
 use Sdoc::Core::Hash;
-use Digest::SHA ();
 use Sdoc::Node::TableOfContents;
 use Sdoc::Core::Process;
-use Sdoc::Core::Html::Verbatim;
+use Sdoc::Core::Css;
 use Sdoc::Core::Html::Pygments;
 use Sdoc::Core::Time;
 use Sdoc::Core::Html::Page;
@@ -69,6 +68,16 @@ ist z.B. nützlich, um eine Stelle im Quelltext des Zielformats zu
 finden, die aus einem bestimmten Sdoc-Konstrukt hervorgegangen
 ist.
 
+=item countCode => $n (Default: 0)
+
+Anzahl der Code-Knoten. Der Wert wird während des Parsings
+hochgezählt.
+
+=item countTable => $n (Default: 0)
+
+Anzahl der Tabellen-Knoten. Der Wert wird während des Parsings
+hochgezählt.
+
 =item date => $date
 
 Das Datum des Dokuments. Wenn gesetzt, wird eine Titelseite bzw.
@@ -90,6 +99,11 @@ YYYY-MM-DD HH:MI:SS
 =item dateS => $str
 
 Datum des Dokuments nach Parsing der Segmente.
+
+=item doneNumberSections => $bool (memoize)
+
+Kennzeichen, dass alle Abschnitte durchnummeriert wurden. Wird von
+der Methode numberSections() gesetzt.
 
 =item formulaA => \@formulas
 
@@ -183,10 +197,10 @@ C<title>, C<author>, C<date>.
 Hash der Link-Knoten. Schlüssel des Hash ist der Name des
 Link-Knotens.
 
-=item linkId => $linkId
+=item linkId => $str (memoize)
 
-Der Dokumentanfang ist Ziel eines Link. Dies ist der Anker für
-das Zielformat.
+Berechneter SHA1-Hash, unter dem der Knoten von einem
+Verweis aus referenziert wird.
 
 =item nodeA => \@nodes (memoize)
 
@@ -199,6 +213,11 @@ Liste aller Knoten des Dokument-Baums, die einen Pfad besitzen.
 =item quiet => $bool (Default: 0)
 
 Gib keine Warnungen aus.
+
+=item referenced => $n (Default: 0)
+
+Das Dokument ist $n Mal Ziel eines Link. Zeigt an,
+ob für das Dokument ein Anker erzeugt werden muss.
 
 =item sectionNumberDepth => $n (Default: 3)
 
@@ -322,6 +341,8 @@ sub new {
         authorS => undef,
         childA => [],
         copyComments => 1,
+        countCode => 0,
+        countTable => 0,
         date => undef,
         dateS => undef,
         firstAppendixSection => undef,
@@ -339,8 +360,8 @@ sub new {
         latexParSkip => '1ex',
         latexShowFrames => 0,
         linkA => [],
-        linkId => undef,
         quiet => 0,
+        referenced => 0,
         sectionNumberDepth => 3,
         shellEscape => 0,
         smallerMonospacedFont => 0,
@@ -349,9 +370,11 @@ sub new {
         titleS => undef,
         # memoize
         anchorA => undef,
+        doneNumberSections => undef,
         graphicH => undef,
         highestSectionLevel => undef,
         linkH => undef,
+        linkId => undef,
         nodeA => undef,
         pathNodeA => undef,
         sectionA => undef,
@@ -963,8 +986,7 @@ sub resolveLinks {
                         subType => undef,
                     );
                     $e->[1]->weaken('destNode');
-                    $node->set(linkId=>Digest::SHA::sha1_base64(
-                        $node->anchorPathAsString));
+                    $node->increment('referenced');
                 }
                 next;
             }
@@ -986,8 +1008,7 @@ sub resolveLinks {
                     subType => 'regex',
                 );
                 $e->[1]->weaken('destNode');
-                $node->set(linkId=>Digest::SHA::sha1_base64(
-                    $node->anchorPathAsString));
+                $node->increment('referenced');
                 next;
             }
             if (my $file = $lnk->file) {
@@ -1353,7 +1374,7 @@ sub flagSectionsAsAppendix {
 =head4 Description
 
 Kennzeichne alle Abschnitte, für die ein übergeordneter Abschnitt
-mit C<stopToc=1> existiert, als Abschnitte, die nicht ins
+mit C<notToc=1> existiert, als Abschnitte, die nicht ins
 Inhaltsverzeichnis übernommen werden sollen. Bei Abschnitten,
 die nicht ins Inhaltsverzeichnis übernommen werden sollen,
 liefert die Methode $sec->notToc() anschließend den Wert 1.
@@ -1409,6 +1430,8 @@ sub highestSectionLevel {
     my $self = shift;
 
     return $self->memoize('highestSectionLevel',sub {
+        my ($self,$key) = @_;
+
         my $n;
         for my $sec ($self->sections) {
             my $level = $sec->level;
@@ -1417,6 +1440,75 @@ sub highestSectionLevel {
             }
         }
         return $n;
+    });
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 numberSections() - Setze Dokument-Abschnittsnummern (memoize)
+
+=head4 Synopsis
+
+    $doc->numberSections;
+
+=head4 Description
+
+Setze auf allen Abschnitts-Knoten des Dokuments die
+Dokument-Abschnittsnummer.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub numberSections {
+    my $self = shift;
+
+    return $self->memoize('doneNumberSections',sub {
+        my ($self,$key) = @_;
+
+        my @num = (0);        # Array mit den Abschnittsnummer der Ebenen
+        my $lastLevel;        # Ebene des vorigen Abschnitts
+        my $firstAppendixNum; # Nummer des ersten Appendix-Abschnitts
+        for my $sec ($self->sections) {
+            my $level = $sec->level;
+
+            # Array aktualisieren
+
+            if (!defined($lastLevel) || $level == $lastLevel) {
+                # Anfang oder gleiche Ebene -> Zähler der Ebene inkrementieren
+                $num[-1]++;
+            }
+            elsif ($level > $lastLevel) {
+                # Wir steigen eine Ebene tiefer -> Ebene am Ende hinzufügen
+                push @num,1;
+            }
+            elsif ($level < $lastLevel) {
+                # Wir steigen n Ebenen hoch -> untergeordnete Ebenen entfernen
+                splice @num,-($lastLevel-$level);
+                $num[-1]++;
+            }
+            
+            # Abschnittsnummer erzeugen
+            my $num = join '.',@num;
+            
+            if ($sec->isAppendix) {
+                # Abschnitt ist ein Appendix -> erste Ebene durch
+                # Buchstaben ersetzen
+
+                if (!defined $firstAppendixNum) {
+                    $firstAppendixNum = $num[0];
+                }
+                $num =~ s/^\d+/chr(65+$num[0]-$firstAppendixNum)/e;
+            }
+
+            # Abschnittsnummer auf Abschnitts-Objekt setzen
+            $sec->set(sectionNumber=>$num);
+
+            # Letzte Ebene merken
+            $lastLevel = $level;
+        }
+
+        return 1;
     });
 }
 
@@ -1526,12 +1618,37 @@ sub generateHtml {
 
     my $rules;
     if ($att->verbatim || $att->sourceCode) {
-        $rules .= Sdoc::Core::Html::Verbatim->css('flat',
-            cssClassPrefix => 'sdoc-code',
-            cssTableProperties => [
-                # marginLeft => '1.5em',
-                # padding => '4px',
-                # backgroundColor => '#f0f0f0',
+        my $css = Sdoc::Core::Css->new('flat');
+        $rules .= $css->rules(
+            '.sdoc-code' => [
+                backgroundColor => '#f0f0f0',
+            ],
+        );
+        $rules .= $css->restrictedRules('.sdoc-tableofcontents',
+            #'' => [
+            #    marginLeft => '2em',
+            #],
+            '> ul.n' => [
+                # backgroundColor => 'red',
+                paddingLeft => '2em',
+            ],
+            '> ul.b' => [
+                # backgroundColor => 'red',
+                paddingLeft => '2.5em',
+            ],
+            '> ul ul.n' => [
+                # backgroundColor => 'yellow',
+                paddingLeft => '1.5em',
+            ],
+            '> ul ul.b' => [
+                # backgroundColor => 'cyan',
+                paddingLeft => '2.5em',
+            ],
+            'ul.n' => [
+                listStyleType => 'none',
+            ],
+            'span.n' => [
+                paddingRight => '3px',
             ],
         );
         if ($att->sourceCode) {
@@ -1545,14 +1662,15 @@ sub generateHtml {
     my $code = '';
     if (my $title = $self->expandText($h,'titleS')) {
         $code = $h->tag('h1',
-            class => 'sdoc-title',
+            class => 'sdoc-document-title',
+            # style => 'font-size: 2.3em',
             $title
         );
     }
     my $tmp;
     if (my $author = $self->expandText($h,'authorS')) {
         $tmp .= $h->tag('span',
-            class => 'sdoc-author',
+            class => 'sdoc-document-author',
             $author
         );
     }
@@ -1580,13 +1698,13 @@ sub generateHtml {
             $date = '%Y-%m-%d %H:%M:%S';
         }
         $tmp .= $h->tag('span',
-            class => 'sdoc-date',
+            class => 'sdoc-document-date',
             POSIX::strftime($date,localtime)
         );
     }
     if ($tmp) {
         $code .= $h->tag('p',
-            class => 'sdoc-titleinfo',
+            class => 'sdoc-document-info',
             $tmp
         );
     }

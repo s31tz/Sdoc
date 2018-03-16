@@ -357,6 +357,29 @@ sub new {
 =head4 Synopsis
 
     @align | $alignA = $tab->alignments;
+    @align | $alignA = $tab->alignments($domain);
+
+=head4 Arguments
+
+=over 4
+
+=item $domain (Default: 'latex')
+
+Legt die gelieferte Wertemenge fest.
+
+=over 4
+
+=item 'latex'
+
+Gelieferte Werte: 'l', 'r', 'c'.
+
+=item 'html'
+
+Gelieferte Werte: 'left', 'right', 'center'.
+
+=back
+
+=back
 
 =head4 Returns
 
@@ -365,20 +388,20 @@ Referenz auf die Liste.
 
 =head4 Description
 
-Liefere die Liste der Kolumnenausrichtungen. Für jede Kolumne ist
-dies einer der Werte
+Liefere die Liste der Kolumnenausrichtungen der Domäne $domain.
+Mögliche Ausrichtungen:
 
-=over 4
+=over 2
 
-=item 'c'
+=item *
 
 Zentriert (centered).
 
-=item 'r'
+=item *
 
 Rechtsbündig (right aligned).
 
-=item 'l'
+=item *
 
 Linksbündig (left aligned).
 
@@ -407,7 +430,13 @@ Resultat:
 
 sub alignments {
     my $self = shift;
+    my $domain = shift // 'latex';
+
     my $alignA = $self->{'alignA'};
+    if ($domain eq 'html') {
+        $alignA = [map {{l=>'left',r=>'right',c=>'center'}->{$_}} @$alignA];
+    }
+
     return wantarray? @$alignA: $alignA;
 }
 

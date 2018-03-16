@@ -109,6 +109,43 @@ sub new {
 
 =head2 Formate
 
+=head3 generateHtml() - Generiere HTML-Code
+
+=head4 Synopsis
+
+    $code = $toc->generateHtml($gen);
+
+=head4 Arguments
+
+=over 4
+
+=item $gen
+
+Generator für das Zielformat.
+
+=back
+
+=head4 Returns
+
+HTML-Code (String)
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub generateHtml {
+    my ($self,$h) = @_;
+
+    if ($self->maxDepth < -1) {
+        # Kein Inhaltsverzeichnis
+        return '';
+    }
+
+    return $self->root->htmlTableOfContents($h,$self->maxDepth);
+}
+
+# -----------------------------------------------------------------------------
+
 =head3 generateLatex() - Generiere LaTeX-Code
 
 =head4 Synopsis
@@ -152,9 +189,8 @@ sub generateLatex {
             $code .= $l->c('\vspace{5.5ex}');
         }
     }
-    $code .= "\n";
 
-    return $code;
+    return "$code\n";
 }
 
 # -----------------------------------------------------------------------------

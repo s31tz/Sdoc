@@ -7,6 +7,8 @@ use warnings;
 our $VERSION = 3.00;
 
 use Sdoc::Core::AsciiTable;
+use Sdoc::Core::Css;
+use Sdoc::Core::Html::Table::List;
 use Sdoc::Core::LaTeX::LongTable;
 
 # -----------------------------------------------------------------------------
@@ -92,21 +94,30 @@ Rücke die Tabelle ein. Das Attribut ist nur bei C<< align =>
 Array mit Informationen über die in Zellen vorkommenden Links
 (L-Segmente).
 
+=item linkId => $str (memoize)
+
+Berechneter SHA1-Hash, unter dem der Knoten von einem
+Verweis aus referenziert wird.
+
 =item graphicA => \@graphics
 
 Array mit Informationen über die in Zellen vorkommenden
 Inline-Grafiken (G-Segmente).
 
-=item linkId => $linkId
+=item number => $n
 
-Ist die Tabelle das Ziel eines Link, ist dies der Anker, der in
-das Zielformat eingesetzt wird.
+Tabellennummer. Wird automatisch hochgezählt.
+
+=item referenced => $n
+
+Die Tabelle ist $n Mal Ziel eines Link. Zeigt an,
+ob für die Tabelle ein Anker erzeugt werden muss.
 
 =item text => $text
 
 Quelltext der Tabelle.
 
-=item titleColor => $rgb (Default: 'e8e8e8')
+=item titleColor => $color (Default: '#e8e8e8')
 
 Farbe der Titelzeile.
 
@@ -177,7 +188,6 @@ sub new {
     # FIXME: Ausprobieren, ob G-, M-, L-Segmente in einer Tabelle
     # funktionieren
 
-    CORE::state $tableNumber = 0;
     my $self = $class->SUPER::new('Table',$variant,$root,$parent,
         anchor => undef,
         asciiTable => undef,
@@ -187,13 +197,14 @@ sub new {
         formulaA => [],
         graphicA => [],
         linkA => [],
-        linkId => undef,
         indentation => 1,
-        number => ++$tableNumber,
+        number => $root->increment('countTable'),
+        referenced => 0,
         text => undef,
-        titleColor => 'e8e8e8',
+        titleColor => '#e8e8e8',
         # memoize
         anchorA => undef,
+        linkId => undef,
     );
     $self->setAttributes(%$attribH);
 
@@ -291,6 +302,111 @@ sub linkText {
 
 =head2 Formate
 
+=head3 generateHtml() - Generiere HTML-Code
+
+=head4 Synopsis
+
+    $code = $tab->generateHtml($gen);
+
+=head4 Arguments
+
+=over 4
+
+=item $gen
+
+Generator für das Zielformat.
+
+=back
+
+=head4 Returns
+
+HTML-Code (String)
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub generateHtml {
+    my ($self,$h) = @_;
+
+    my $atb = $self->asciiTable;
+    my $cssId = sprintf 'table%03d',$self->number;
+    my $border = $self->border;
+    if (!defined $border) {
+        $border = $atb->multiLine? 'hvHV': 'hHV';
+    }
+
+    my (@table,@thead,@th,@tr,@td,@tdLast);
+    push @table,borderCollapse=>'collapse';
+    push @th,padding=>'4px';
+    push @td,padding=>'4px';
+
+    my $bh = index($border,'h') >= 0;
+    my $bt = index($border,'t') >= 0;
+    my $bv = index($border,'v') >= 0;
+    my $bH = index($border,'H') >= 0;
+    my $bV = index($border,'V') >= 0;
+    my $b = '1px solid black';
+    
+    if ($bh) {
+        push @td,borderTop=>$b;
+    }
+    elsif ($bt) {
+        push @th,borderBottom=>$b;
+    }
+    if ($bv) {
+        push @td,borderRight=>$b;
+        push @th,borderRight=>$b;
+        push @tdLast,borderRight=>'1px none black';
+    }
+    if ($bH && $bV) {
+        push @table,border=>$b;
+    }
+    elsif ($bH) {
+        push @table,borderLeft=>$b,borderRight=>$b;
+    }
+    elsif ($bV) {
+        push @table,borderTop=>$b,borderBottom=>$b;
+    }
+    if (my $color = $self->titleColor) {
+        push @thead,backgroundColor=>$color;
+    }
+
+    my $html = $h->tag('style',
+        Sdoc::Core::Css->new('flat')->restrictedRules("#$cssId",
+            '' => \@table,
+            thead => \@thead,
+            th => \@th,
+            td => \@td,
+            'td:last-child' => \@tdLast,
+            'th:last-child' => \@tdLast,
+        )
+    );
+    $html .= Sdoc::Core::Html::Table::List->html($h,
+        class => 'sdoc-table',
+        id => $cssId,
+        border => undef,
+        cellpadding => undef,
+        cellspacing => undef,
+        align => scalar $atb->alignments('html'),
+        titles => [map { $self->expandText($h,\$_) } $atb->titles],
+        rows => scalar $atb->rows,
+        rowCallbackArguments => [$self],
+        rowCallback => sub {
+            my ($row,$i,$node) = @_;
+            my @row;
+            for (@$row) {
+                push @row,$node->expandText($h,\$_);
+            }
+            return (undef,@row);
+        },
+    );
+
+    return $html;
+}
+
+# -----------------------------------------------------------------------------
+
 =head3 generateLatex() - Generiere LaTeX-Code
 
 =head4 Synopsis
@@ -329,12 +445,12 @@ sub generateLatex {
 
     return Sdoc::Core::LaTeX::LongTable->latex($l,
         align => 'l',
-        alignments => scalar $atb->alignments,
+        alignments => scalar $atb->alignments('latex'),
         border => $border,
         callbackArguments => [$self],
         caption => $self->expandText($l,'captionS'),
         indent => $self->indentation? $root->indentation.'em': undef,
-        label => $self->linkId,
+        label => $self->referenced? $self->linkId: undef,
         multiLine => $atb->multiLine,
         postVSpace => $l->modifyLength($root->latexParSkip,'*-2'),
         rows => scalar $atb->rows,

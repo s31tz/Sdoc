@@ -155,7 +155,7 @@ liefert, die in den LaTeX-Code eingesetzt wird. Default:
         return @row;
     }
 
-=item titleColor => $rgb
+=item titleColor => $color
 
 Farbe der Titelzeile.
 
@@ -291,6 +291,15 @@ sub latex {
     my $HBorder = $border =~ tr/H//? 1: 0;
     my $vBorder = $border =~ tr/v//? 1: 0;
     my $VBorder = $border =~ tr/V//? 1: 0;
+
+    # Titelfarbe
+
+    if ($titleColor && $titleColor !~ s/^#//) {
+        $self->throw(
+            q~LATEX-00001: Only RGB color allowed~,
+            Color => $titleColor,
+        );
+    }
 
     # Head
 

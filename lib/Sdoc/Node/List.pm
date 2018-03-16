@@ -129,6 +129,52 @@ sub new {
 
 =head2 Formate
 
+=head3 generateHtml() - Generiere HTML-Code
+
+=head4 Synopsis
+
+    $code = $lst->generateHtml($gen);
+
+=head4 Arguments
+
+=over 4
+
+=item $gen
+
+Generator für HTML.
+
+=back
+
+=head4 Returns
+
+LaTeX-Code (String)
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub generateHtml {
+    my ($self,$h) = @_;
+
+    # Abbildung der Sdoc-Aufzählungstypen auf HTML-Aufzählungstypen
+
+    my $listType = $self->listType;
+    my $tag = {
+        ordered => 'ol',
+        unordered => 'ul',
+        description => 'dl',
+    }->{$listType};
+
+    # Generiere HTML
+
+    return $h->tag($tag,
+        class => "sdoc-list-$listType",
+        $self->generateChilds('html',$h)
+    );
+}
+
+# -----------------------------------------------------------------------------
+
 =head3 generateLatex() - Generiere LaTeX-Code
 
 =head4 Synopsis
@@ -158,7 +204,7 @@ sub generateLatex {
 
     my $root = $self->root;
 
-    # Abbildung der Sdoc-Listentypen auf die LaTeX-Listentypen
+    # Abbildung der Sdoc-Aufzählungstypen auf die LaTeX-Aufzählungstypen
 
     my $listType = $self->listType;
     if ($listType eq 'ordered') {
@@ -168,10 +214,11 @@ sub generateLatex {
         $listType = 'itemize';
     }
 
-    # Durch die Sonderbehandlung von itemize sorgen dafür, dass die
-    # Einrückung von enumerate, itemize und verbatim (siehe Klasse
-    # Sdoc::Node::Code) aufeinander abgestimmt sind. Die Angabe
-    # leftmargin setzt das LaTeX-Paket enumitem voraus.
+    # Durch die Sonderbehandlung von itemize und enumerate sorgen wir
+    # dafür, dass die Einrückung von enumerate, itemize und verbatim
+    # (siehe Klasse Sdoc::Node::Code) aufeinander abgestimmt
+    # ist. Die Option leftmargin setzt das LaTeX-Paket enumitem
+    # voraus.
 
     my $childs = $self->generateChilds('latex',$l);
     $childs =~ s/\n{2,}$/\n/;

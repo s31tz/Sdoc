@@ -181,6 +181,7 @@ sub generateHtml {
     my ($self,$h) = @_;
 
     return $h->tag('p',
+        class => 'sdoc-paragraph',
         $self->expandText($h,'textS')
     );
 }

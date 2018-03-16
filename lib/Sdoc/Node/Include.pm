@@ -142,15 +142,19 @@ sub new {
 
 =head2 Formate
 
-=head3 generateLatex() - Generiere LaTeX-Code
+=head3 generateFormat() - Generiere Code für alle Formate
 
 =head4 Synopsis
 
-    $code = $inc->generateLatex($gen);
+    $code = $inc->generateFormat($format,$gen);
 
 =head4 Arguments
 
 =over 4
+
+=item $format
+
+Zielformat, das generiert wird.
 
 =item $gen
 
@@ -160,15 +164,20 @@ Generator für das Zielformat.
 
 =head4 Returns
 
-LaTeX-Code (String)
+Code (String)
+
+=head4 Description
+
+Ein Include-Knoten hat keine eigene Repräsentation, er liefert für
+alle Formate den Code seiner Childs.
 
 =cut
 
 # -----------------------------------------------------------------------------
 
-sub generateLatex {
-    my ($self,$l) = @_;
-    return $self->generateChilds('latex',$l);
+sub generateFormat {
+    my ($self,$format,$gen) = @_;
+    return $self->generateChilds($format,$gen);
 }
 
 # -----------------------------------------------------------------------------

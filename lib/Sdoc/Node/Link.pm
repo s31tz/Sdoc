@@ -130,15 +130,19 @@ sub new {
 
 =head2 Formate
 
-=head3 generateLatex() - Generiere LaTeX-Code (Leerstring)
+=head3 generateFormat() - Generiere Code für alle Formate
 
 =head4 Synopsis
 
-    $code = $lnk->generateLatex($gen);
+    $code = $lnk->generateFormat($format,$gen);
 
 =head4 Arguments
 
 =over 4
+
+=item $format
+
+Zielformat, das generiert wird.
 
 =item $gen
 
@@ -150,12 +154,17 @@ Generator für das Zielformat.
 
 Leerstring ('')
 
+=head4 Description
+
+Da ein Link-Knoten keine Repräsentation in irgendeinem Format hat,
+liefert diese Methode für alle Formate einen Leerstring ('').
+
 =cut
 
 # -----------------------------------------------------------------------------
 
-sub generateLatex {
-    my $self = shift;
+sub generateFormat {
+    my ($self,$format,$gen) = @_;
     return '';
 }
 

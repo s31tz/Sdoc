@@ -65,10 +65,10 @@ Tiefe des Abschnitts in der Abschnittshierarchie. Werte: =- -1,
 Array mit Informationen über die im Abschnittstitel vorkommenden
 Links.
 
-=item linkId => $linkId
+=item linkId => $str (memoize)
 
-Der Abschnitt ist Ziel eines Link. Dies ist der Anker für das
-Zielformat.
+Berechneter SHA1-Hash, unter dem der Knoten von einem
+Verweis aus referenziert wird.
 
 =item notToc => $bool (Default: 0)
 
@@ -76,17 +76,18 @@ Wenn gesetzt, wird der Abschnitt nicht ins Inhaltsverzeichnis
 übernommen. Dieses Attribut wird von der Methode
 $doc->flagSectionsNotToc() nach dem Parsen des Dokumentbaums
 für alle Abschnitte gesetzt, die Unterabschnitte eines Abschnitts
-mit C<stopToc=1> sind.
+mit C<notToc=1> sind.
 
-=item number => $str (Default: undef)
+=item sectionNumber => $str (Default: undef)
 
-Nummer des Abschitts in der Form N.N.N (abhängig von der Ebene).
-Der Attributwert wird automatisch generiert.
+Nummer des Abschitts in der Form N.N.N. Der Wert wird beim ersten
+Zugriff über die Methode sectionNumber() für alle Abschnitte
+gesetzt.
 
-=item stopToc => $bool (Default: 0)
+=item referenced => $n (Default: 0)
 
-Alle Abschnitte unterhalb dieses Abschnitts werden nicht in das
-Inhaltsverzeichnis aufgenommen.
+Der Abschnitt ist $n Mal Ziel eines Link. Zeigt an,
+ob für den Abschnitt ein Anker erzeugt werden muss.
 
 =item title => $str
 
@@ -95,6 +96,11 @@ Titel des Abschnitts.
 =item titleS => $str
 
 Titel des Abschnitts nach Parsing der Segmente.
+
+=item tocStop => $bool (Default: 0)
+
+Alle Abschnitte unterhalb dieses Abschnitts werden nicht in das
+Inhaltsverzeichnis aufgenommen.
 
 =back
 
@@ -187,14 +193,15 @@ sub new {
         isAppendix => 0,
         level => undef,
         linkA => [],
-        linkId => undef,
-        number => undef,
+        sectionNumber => undef,
         notToc => 0,
+        referenced => 0,
         tocStop => 0,
         title => undef,
         titleS => undef,
         # memoize
         anchorA => undef,
+        linkId => undef,
     );
     $self->setAttributes(%$attribH);
     $par->parseSegments($self,'title');
@@ -221,6 +228,36 @@ sub new {
     }
 
     return $self;
+}
+
+# -----------------------------------------------------------------------------
+
+=head2 Abschnittsnummer
+
+=head3 sectionNumber() - Dokument-Abschnittsnummer
+
+=head4 Synopsis
+
+    $str = $sec->sectionNumber;
+
+=head4 Returns
+
+Dokument-Abschnittsnummer (String)
+
+=head4 Description
+
+Liefere die Dokument-Abschnittsnummer. Die Dokument-Abschnittsnummer
+besteht aus n Zahlen, die mit einem Punkt getrennt sind, wobei
+jede Zahl eine Abschnittsebene nummeriert. Z.B. 1.3.2.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub sectionNumber {
+    my $self = shift;
+    $self->root->numberSections;
+    return $self->get('sectionNumber');
 }
 
 # -----------------------------------------------------------------------------
@@ -306,7 +343,8 @@ HTML-Code (String)
 
 sub generateHtml {
     my ($self,$h) = @_;
-    return $self->htmlSectionCode($h).$self->generateChilds('html',$h);
+    return $self->htmlSectionCode($h,'section',).
+        $self->generateChilds('html',$h);
 }
 
 # -----------------------------------------------------------------------------
@@ -351,7 +389,7 @@ sub generateLatex {
     $code .= $l->section(
         $self->latexSectionName($l),
         $self->expandText($l,'titleS'),
-        -label => $self->linkId,
+        -label => $self->referenced? $self->linkId: undef,
         -notToc => $self->notToc,
     );
     $code .= $self->generateChilds('latex',$l);

@@ -6,6 +6,7 @@ use warnings;
 
 our $VERSION = 3.00;
 
+use Digest::SHA ();
 use Scalar::Util ();
 use Sdoc::Core::Html::Tag;
 use Sdoc::Core::LaTeX::Code;
@@ -339,7 +340,7 @@ Liefere den Anker-Pfad des Knotens $node als Liste von
 Ankern. Definiert der Knoten keinen Anker, wird eine leere Liste
 geliefert. Der Anker-Pfad eines Knotens ist die Liste aller Anker
 vom Wurzelknoten des Dokuments bis zum Knoten $node. Definiert
-ein innen liegender Knoten keinen Anker, wird als Anker sein Typ
+ein I<innen liegender> Knoten keinen Anker, wird als Anker sein Typ
 eingetragen.
 
 =cut
@@ -409,6 +410,39 @@ sub anchorPathAsString {
     }
 
     return join '/',@$anchorA;
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 linkId() - Link-Id des Knotens (memoize)
+
+=head4 Synopsis
+
+    $linkId = $node->linkId;
+
+=head4 Returns
+
+Link_id (String)
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub linkId {
+    my $self = shift;
+
+    return $self->memoize('linkId',sub {
+        my ($self,$key) = @_;
+        
+        my $anchorPath = $self->anchorPathAsString;
+        if (!$anchorPath) {
+            $self->warn("Node can't be referenced");
+            return undef;
+        }
+
+        return Digest::SHA::sha1_base64($anchorPath);
+    });
+
 }
 
 # -----------------------------------------------------------------------------
@@ -684,7 +718,7 @@ sub generateChilds {
 
 =item $format
 
-Das Zielformat, in dem der Code generiert wird.
+Zielformat, das generiert wird.
 
 =item $gen
 
@@ -960,7 +994,7 @@ sub expandSegmentsToHtml {
             my $destNode = $obj->destNode;
             my $linkId = $destNode->linkId;
 
-            if ($h->attribute eq '+') {
+            if ($obj->attribute eq '+') {
                 $code = $h->tag('a',
                     href => "#$linkId",
                     $destNode->linkText($h),
@@ -1234,7 +1268,7 @@ sub latexSectionName {
 
 =head4 Synopsis
 
-    $code = $node->htmlSectionCode($gen);
+    $code = $node->htmlSectionCode($gen,$type);
 
 =head4 Arguments
 
@@ -1243,6 +1277,10 @@ sub latexSectionName {
 =item $gen
 
 Generator für das Zielformat.
+
+=item $type
+
+Typ der Überschrift. Mögliche Werte: 'bridgehead', 'section'.
 
 =back
 
@@ -1259,33 +1297,37 @@ Liefere den HTML-Code für einen Section- oder BridgeHead-Knoten.
 # -----------------------------------------------------------------------------
 
 sub htmlSectionCode {
-    my ($self,$h) = @_;
+    my ($self,$h,$type) = @_;
 
     my $doc = $self->root;
 
-    # Anker voranstellen
-
-    my $code;
-    if (my $linkId = $self->linkId) {
-        $code .= $h->tag('a',
-            name => $linkId,
-        );
+    my $title = $self->expandText($h,'titleS');
+    if ($self->level <= $doc->sectionNumberDepth) {
+        $title = $self->sectionNumber.' '.$title;
     }
 
     # Abschnitt generieren
 
     my $highestLevel = $doc->highestSectionLevel;
     my $n = $self->level+(1-$highestLevel);
-    if ($highestLevel == 1 && $doc->title) {
-        # Sonderbehandlung: Wenn das Dokument einen Titel, aber keine
-        # übergeordneten Abschnitte (Part oder Chapter) hat, beginnen
-        # wir mit h2, da der Titel bereits h1 ist.
-        $n++;
-    }
+    #if ($highestLevel == 1 && $doc->title) {
+    #    # Sonderbehandlung: Wenn das Dokument einen Titel, aber keine
+    #    # übergeordneten Abschnitte (Part oder Chapter) hat, beginnen
+    #    # wir mit h2, da der Titel bereits h1 ist.
+    #    $n++;
+    #}
 
+    # In HTML stellen wir jedem Abschnitt einen Anker voran,
+    # um alle Abschnitte aus dem Inhaltsverzeichnis und
+    # von externen Links referenzieren zu können
+
+    my $code .= $h->tag('a',
+        -nl => 1,
+        name => $self->linkId,
+    );
     $code .= $h->tag("h$n",
-        class => 'sdoc-section',
-        $self->expandText($h,'titleS')
+        class => "sdoc-$type",
+        $title
     );
 
     return $code;
@@ -1293,31 +1335,86 @@ sub htmlSectionCode {
 
 # -----------------------------------------------------------------------------
 
-=head3 generateHtml() - Default-Implementierung für Format html (TEMPORÄR)
+=head3 htmlTableOfContents() - Erzeuge Inhaltsverzeichnis in HTML (rekursiv)
 
 =head4 Synopsis
 
-    $str = $node->generateHtml;
+    $code = $node->htmlTableOfContents($gen,$maxDepth);
+
+=head4 Arguments
+
+=over 4
+
+=item $gen
+
+Generator für das Zielformat.
+
+=item $maxDepth
+
+Tiefe des tiefsten Abschnitts, der noch in das Inhaltsverzeichnis
+aufgenommen wird. Mögliche Werte: -1, 0, 1, 2, 3 4.
+
+=back
 
 =head4 Returns
 
-Leerstring (String)
+HTML-Code (String)
 
 =head4 Description
 
-MEMO: Diese Methode entfernen, wenn alle Knotenklassen das
-Format html implementieren.
-
-Diese Methode wird von Knotenklassen genutzt, die (noch) keine
-HTML-Repräsentation erzeugen.
+Erzeuge das Inhaltsverzeichnis des Dokuments in HTML und liefere
+dieses zurück. Die Methode wird initial über den Dokument-Knoten
+(Wurzelknoten des Dokuments) aufgerufen und ruft sich selbst über
+den untergeordneten Abschnitts-Knoten auf.
 
 =cut
 
 # -----------------------------------------------------------------------------
 
-sub generateHtml {
-    my $self = shift;
-    return '';
+sub htmlTableOfContents {
+    my ($self,$h,$maxDepth) = @_;
+
+    my $doc = $self->root;
+
+    my $html = '';
+    my $sectionNumber; # zeigt an, ob Ebene mit Abschnittsnummern
+    for my $node ($self->childs) {
+        if ($node->type eq 'Section' &&
+                $node->level <= $maxDepth && !$node->notToc) {
+
+            my $title = $node->expandText($h,'titleS');
+            if ($node->level <= $doc->sectionNumberDepth) {
+                $sectionNumber = $h->tag('span',
+                    class => 'n',
+                    $node->sectionNumber
+                ).' ';
+            }
+
+            $html .= $h->tag('li',
+                $h->cat(
+                    $sectionNumber,
+                    $h->tag('a',
+                        -nl => 1,
+                        href => '#'.$node->linkId,
+                        $title
+                    ),
+                    $node->htmlTableOfContents($h,$maxDepth),
+                ),
+            );
+        }
+    }
+    if ($html) {
+        $html = $h->tag('div',
+            -ignoreTagIf => $self->type ne 'Document',
+            class => 'sdoc-tableofcontents',
+            $h->tag('ul',
+                class => $sectionNumber? 'n': 'b',
+                $html
+            )
+        );
+    }
+
+    return $html;
 }
 
 # -----------------------------------------------------------------------------

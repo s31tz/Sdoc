@@ -7,8 +7,6 @@ use warnings;
 our $VERSION = 1.125;
 
 use Sdoc::Core::Html::Table::Simple;
-use Sdoc::Core::Option;
-use Sdoc::Core::Css;
 
 # -----------------------------------------------------------------------------
 
@@ -32,73 +30,90 @@ Zeilennummern ausgestattet sein.
 
 Aufbau eines Verbatim-Abschnitts I<ohne> Zeilennummern:
 
-    <table class="verbatim-table" cellpadding="0" cellspacing="0">
-    <tr>
-      <td class="verbatim-text">
-        <pre>TEXT</pre>
-      </td>
-    </tr>
-    </table>
+    <div class="verbatim">
+      <table class="verbatim-table" cellpadding="0" cellspacing="0">
+      <tr>
+        <td class="verbatim-text">
+          <pre>TEXT</pre>
+        </td>
+      </tr>
+      </table>
+    </div>
 
 Aufbau eines Verbatim-Abschnitts I<mit> Zeilennummern:
 
-    <table class="verbatim-table" cellpadding="0" cellspacing="0">
-    <tr>
-      <td class="verbatim-ln">
-        <pre>ZEILENNUMMERN</pre>
-      </td>
-      <td class="verbatim-margin"></td>
-      <td class="verbatim-text">
-        <pre>TEXT</pre>
-      </td>
-    </tr>
-    </table>
+    <div class="verbatim">
+      <table class="verbatim-table" cellpadding="0" cellspacing="0">
+      <tr>
+        <td class="verbatim-ln">
+          <pre>ZEILENNUMMERN</pre>
+        </td>
+        <td class="verbatim-margin"></td>
+        <td class="verbatim-text">
+          <pre>TEXT</pre>
+        </td>
+      </tr>
+      </table>
+    </div>
+
+Das umgebende Div ermglicht, dass der Hintergrund des Abschnitts
+über die gesamte Breite der Seite farbig hinterlegt werden kann.
 
 Das Aussehen des Verbatim-Abschnitts kann via CSS gestaltet werden.
-Der Abschnitt verwendet vier CSS-Klassen:
+Der Abschnitt verwendet fünf CSS-Klassen:
+
+[CLASS]
+
+    Die Klasse des umgebenden Div (Default: 'verbatim').
 
 =over 4
 
-=item PREFIX-table
+=item CLASS-table
 
-Die gesamte Tabelle.
+Die Tabelle.
 
-=item PREFIX-ln
+=item CLASS-ln
 
-Die Zeilennummern-Spalte.
+Die Zeilennummern-Spalte der Tabelle.
 
-=item PREFIX-margin
+=item CLASS-margin
 
-Die Trenn-Spalte zwischen Zeilennummer- und Text-Spalte.
+Die Trenn-Spalte der Tabelle zwischen Zeilennummer- und
+Text-Spalte.
 
-=item PREFIX-text
+=item CLASS-text
 
-Die Text-Spalte.
+Die Text-Spalte der Tabelle.
 
 =back
 
-PREFIX ist hierbei ein über das Attribut cssClassPrefix
-änderbarer Namens-Präfix. Default ist 'verbatim'.
+CLASS ist hierbei der über das Attribut C<class> änderbarer
+CSS-Klassenname. Default ist 'verbatim'.
 
-Der CSS-Code kann mittels der Klassenmethode $class->rules()
+Der CSS-Code kann mittels der Klassenmethode $class->css()
 erzeugt werden. Beschreibung siehe dort.
 
 =head1 ATTRIBUTES
 
 =over 4
 
-=item cssClassPrefix => $str (Default: 'verbatim')
+=item class => $name (Default: 'verbatim')
 
-Präfix für die CSS-Klassen des Verbatim-Abschnitts.
+CSS-Klasse des Verbatim-Abschnitts. Subelemente erhalten diesen
+Klassennamen als Präfix.
 
-=item cssTableStyle => $properties
+=item id => $name
 
-Setze Properties $properties auf dem style-Attribut der Tabelle.
+Die CSS-Id des Verbatim-Abschnitts.
 
 =item ln => $n (Default: 0)
 
 Wenn ungleich 0, wird jeder Zeile eine Zeilennummer vorangestellt,
 beginnend Zeilennummer $n.
+
+=item style => $style
+
+CSS-Properties des Verbatim-Abschnitts.
 
 =item text => $text
 
@@ -153,9 +168,10 @@ sub new {
     # @_: @keyVal
 
     my $self = $class->SUPER::new(
-        cssClassPrefix => 'verbatim',
-        cssTableStyle => undef,
+        class => 'verbatim',
+        id => undef,
         ln => 0,
+        style => undef,
         text => undef,
     );
     $self->set(@_);
@@ -209,8 +225,7 @@ sub html {
 
     my $self = ref $this? $this: $this->new(@_);
 
-    my ($prefix,$style,$ln,$text) = $self->get(qw/cssClassPrefix
-        cssTableStyle ln text/);
+    my ($class,$id,$ln,$style,$text) = $self->get(qw/class id ln style text/);
 
     if (!defined($text) || $text eq '') {
         # Wenn kein Text gegeben ist, wird kein Code generiert
@@ -238,145 +253,30 @@ sub html {
             $tmp .= sprintf '%*d',$lnMaxWidth,$i;
         }
         push @cols,
-            [class=>"$prefix-ln",$h->tag('pre',$tmp)],
-            [class=>"$prefix-margin",''],
+            [class=>"$class-ln",$h->tag('pre',$tmp)],
+            [class=>"$class-margin",''],
         ;
     }
     
     # Text-Kolumne
-    push @cols,[class=>"$prefix-text",$h->tag('pre',$text)];
+    push @cols,[class=>"$class-text",$h->tag('pre',$text)];
 
     # Erzeuge Tabelle
 
-    return Sdoc::Core::Html::Table::Simple->html($h,
-        class => "$prefix-table",
-        cellpadding => 0,
+    return $h->tag('div',
+        class => $class,
+        id => $id,
         style => $style,
-        rows => [
-            [@cols],
-        ],
+        Sdoc::Core::Html::Table::Simple->html($h,
+            class => "$class-table",
+            border => undef,
+            cellpadding => undef,
+            cellspacing => undef,
+            rows => [
+                [@cols],
+            ],
+        )
     );
-}
-
-# -----------------------------------------------------------------------------
-
-=head2 Klassenmethoden
-
-=head3 css() - CSS-Regeln für Verbatim-Abschnitt
-
-=head4 Synopsis
-
-    $rules = $class->css($format,@keyVal);
-
-=head4 Arguments
-
-=over 4
-
-=item $format (Default: siehe Sdoc::Core::Css->new())
-
-Format, in der die CSS-Regeln erzeugt werden.
-
-=item @keyVal
-
-Schlüssel/Wert-Paare, die die CSS-Eigenschaften definieren.
-
-=over 4
-
-=item cssClassPrefix
-
-(Default: 'verbatim') Präfix der CSS-Klassen des Verbatim-Abschnitts.
-
-=item cssTableProperties
-
-(Default: []) Liste der Properties der CSS-Klasse PREFIX-table.
-
-=item cssLnProperties
-
-(Default: [color=>'#808080']) Liste der Properties der
-CSS-Klasse PREFIX-ln.
-
-=item cssMarginProperties
-
-(Default: [width=>'0.6em']) Liste der Properties der
-CSS-Klasse PREFIX-margin.
-
-=item cssTextProperties
-
-(Default: []) Liste der Properties der CSS-Klasse PREFIX-text.
-
-=back
-
-Ist '+' das erste Element einer Property-Liste, werden die
-Default-Properties um diese I<ergänzt>.
-
-=back
-
-=head4 Returns
-
-CSS-Regeln (String)
-
-=head4 Description
-
-Generiere CSS-Regeln für den Verbatim-Abschnitt auf Basis der
-CSS-Eigenschaften @keyVal und liefere diese zurück.
-
-=head4 Example
-
-Ergänze die Kolumnen um Hintergrundfarben:
-
-    Sdoc::Core::Html::Verbatim->css('flat',
-        cssLnProperties => ['+',
-            backgroundColor => 'yellow',
-        ],
-        cssMarginProperties => ['+',
-            backgroundColor => 'red',
-        ],
-        cssTextProperties => ['+',
-            backgroundColor => 'green',
-        ],
-    );
-
-liefert
-
-    .verbatim-table pre { margin: 0; }
-    .verbatim-ln { color: #808080; background-color: yellow; }
-    .verbatim-margin { width: 0.6em; background-color: red; }
-    .verbatim-text { background-color: green; }
-
-=cut
-
-# -----------------------------------------------------------------------------
-
-sub css {
-    my $class = shift;
-    my $format = shift;
-    # @_: @keyVal
-
-    # Übergebene Attribute
-
-    my $opt = Sdoc::Core::Option->extract(-properties=>1,\@_,
-        cssClassPrefix => 'verbatim',
-        cssTableProperties => undef,
-        cssLnProperties => undef,
-        cssMarginProperties => undef,
-        cssTextProperties => undef,
-    );        
-
-    # CSS-Regeln erzeugen
-
-    my $css = Sdoc::Core::Css->new($format);
-    my $prefix = $opt->cssClassPrefix;
-    my $rules .= $css->rule(".$prefix-table pre",
-        margin => 0,
-    );
-    $rules .= $css->rulesFromObject($opt,
-        cssTableProperties => [".$prefix-table"],
-        cssLnProperties => [".$prefix-ln",color=>'#808080'],
-        cssMarginProperties => [".$prefix-margin",width=>'0.6em'],
-        cssTextProperties => [".$prefix-text"],
-    );
-
-    return $rules;
 }
 
 # -----------------------------------------------------------------------------

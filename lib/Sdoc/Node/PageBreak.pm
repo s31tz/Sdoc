@@ -105,6 +105,42 @@ sub new {
 
 =head2 Formate
 
+=head3 generateHtml() - Generiere HTML-Code
+
+=head4 Synopsis
+
+    $code = $pbr->generateHtml($gen);
+
+=head4 Arguments
+
+=over 4
+
+=item $gen
+
+Generator für das Zielformat.
+
+=back
+
+=head4 Returns
+
+Leerstring ('')
+
+=head4 Description
+
+In HTML gibt es keinen Seitenumbruch, daher liefert die Methode
+konstant einen Leersting.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub generateHtml {
+    my ($self,$h) = @_;
+    return '';
+}
+
+# -----------------------------------------------------------------------------
+
 =head3 generateLatex() - Generiere LaTeX-Code
 
 =head4 Synopsis

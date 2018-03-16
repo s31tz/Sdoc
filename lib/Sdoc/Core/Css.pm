@@ -212,6 +212,64 @@ sub rules {
 
 # -----------------------------------------------------------------------------
 
+=head3 restrictedRules() - Generiere lokale CSS Style Rules
+
+=head4 Synopsis
+
+    $rules = $css->restrictedRules($localSelector,
+        $selector => \@properties,
+        ...
+    );
+
+=head4 Arguments
+
+=over 4
+
+=item $localSelector
+
+Selector, der allen folgenden Selektoren vorangestellt wird.
+Z.B. '#table01'.
+
+=item $selector
+
+CSS-Selector. Z.B. 'p.abstract'.
+
+=item \@properties
+
+Liste von Property/Wert-Paaren. Z.B. [color=>'red',fontStyle=>'italic'].
+
+=back
+
+=head4 Returns
+
+CSS-Regeln (String)
+
+=head4 Description
+
+Wie $css->rules(), nur mit zusätzlicher Einschränkung auf einen
+lokalen Selektor.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub restrictedRules {
+    my $self = shift;
+    my $localSelector = shift;
+    # @_: $selector=>\@properties,...
+
+    my $rules = '';
+    while (@_) {
+        my $selector = shift;
+        $selector = $selector? "$localSelector $selector": $localSelector;
+        $rules .= $self->rule($selector,shift);
+    }
+
+    return $rules;
+}
+
+# -----------------------------------------------------------------------------
+
 =head3 rulesFromObject() - Generiere CSS Style Rules aus Objekt-Attributen
 
 =head4 Synopsis
