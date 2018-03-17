@@ -159,9 +159,10 @@ Dokument-Bock angegeben:
   %Document:
     anchor=STRING
     author=STRING
+    codeStyle=STYLE
     copyComments=BOOL
     date=STRING
-    highlightStyle=STYLE
+    htmlDocumentStyle=NAME
     indentation=FLOAT
     language=german|english
     latexDocumentClass=scrartcl|scrreprt|scrbook|article|report|book
@@ -207,6 +208,13 @@ verwendet werden:
   Der Autor des Dokuments. Wenn gesetzt, wird eine Titelseite bzw.
   ein Titelabschnitt erzeugt.
 
+[codeStyle=STYLE]:
+    (Default: 'default') Der Style, in dem das Syntax-Highlighting von
+    Code-Blöcken erfolgt, wenn das Attribut C{lang} gesetzt ist. Die
+    Liste der verfügbaren Styles liefert das Kommando
+
+        $ pygmentize -L styles
+
 [copyComments=BOOL]:
   (Default: 1) Kopiere Sdoc-Kommentare in den Quelltext des
   Zielformats. Dies ist z.B. nützlich, um eine Stelle im Quelltext des
@@ -225,12 +233,9 @@ verwendet werden:
 
   Ist kein Wert angegeben, erscheint kein Datum im Dokumenttitel.
 
-[highlightStyle=STYLE]:
-    (Default: 'default') Der Style, in dem das Syntax-Highlighting von
-    Code-Blöcken erfolgt, wenn das Attribut C{lang} gesetzt ist. Die
-    Liste der verfügbaren Styles liefert das Kommando
-
-        $ pygmentize -L styles
+[htmlDocumentStyle=NAME]
+  (Default: default) Der Name des CSS-Stylesheet, das für das Design
+  des HTML-Dokuments verwendet wird.
 
 [indentation=FLOAT]:
   (Default: 1.3) Einrückung für List-, Graphic-, Code-, Table-Blöcke
