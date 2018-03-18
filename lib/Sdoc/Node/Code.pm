@@ -278,9 +278,12 @@ sub generateHtml {
     my $ln = $self->ln;
     my $id = sprintf 'code%02d',$self->number;
 
-    my $text = $self->text;
+    my $text;
     if (my $lang = $self->lang) {
-        $text = Sdoc::Core::Html::Pygments->html($lang,$text);
+        $text = Sdoc::Core::Html::Pygments->html($lang,$self->text);
+    }
+    else {
+        $text = $h->protect($self->text);
     }
 
     my $style;
@@ -293,6 +296,7 @@ sub generateHtml {
             Sdoc::Core::Css->new('flat')->restrictedRules("#$id",
                 'td pre' => [
                     margin => 0,
+                    # lineHeight => '125%',
                 ],
             )
         ),

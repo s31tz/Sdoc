@@ -69,18 +69,19 @@ sub main {
 
     # Sdoc-Beispielseite erzeugen und croppen
 
-    my $srcFile = 'doc/sdoc-example.sdoc';
-    my $destFile = 'doc/sdoc-example.pdf';
-    if ($opt->force || Sdoc::Core::Path->newer($srcFile,$destFile)) {
-        $sh->exec("sdoc pdf $srcFile $destFile --shell-escape");
-        $sh->exec("mv $destFile $destFile.tmp");
-        $sh->exec("pdfcrop $destFile.tmp $destFile");
-        $sh->exec("rm $destFile.tmp");
+    my $path = 'doc/sdoc-example';
+    if ($opt->force || Sdoc::Core::Path->newer("$path.sdoc","$path.pdf")) {
+        $sh->exec("sdoc pdf $path.sdoc $path.pdf --shell-escape");
+        $sh->exec("mv $path.pdf $path.pdf.tmp");
+        $sh->exec("pdfcrop $path.pdf.tmp $path.pdf");
+        $sh->exec("rm $path.pdf.tmp");
+        $sh->exec("pdftoppm $path.pdf $path -png");
+        $sh->exec("mv $path-1.png $path.png");
         $createManual++;
     }
 
-    $srcFile = 'doc/sdoc-manual.sdoc';
-    $destFile = 'doc/sdoc-manual.pdf';
+    my $srcFile = 'doc/sdoc-manual.sdoc';
+    my $destFile = 'doc/sdoc-manual.pdf';
     if (Sdoc::Core::Path->newer($srcFile,$destFile) || $createManual) {
         $sh->exec("sdoc pdf $srcFile $destFile --shell-escape");
     }

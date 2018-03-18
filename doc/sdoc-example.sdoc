@@ -13,14 +13,15 @@ wie B{I{fett und kursiv}} oder C{I{monospace und kursiv}} möglich.
 
 == Ein Beispiel
 
-Mit dem Satz des Pythagoras M~c^2=a^2+b^2~ berechnen wir die Länge der
-Hypotenuse: M~c=\sqrt{a^2+b^2}~.
+Mit dem Satz des Pythagoras M~c^2 = a^2 + b^2~ berechnen wir die Länge
+der Hypotenuse: M~c = \sqrt{a^2 + b^2}~.
 
 %Graphic:
   file="+/sdoc-graphic-illusion"
-  align="center"
   caption="Illusion"
   scale=0.3
+  width=100
+  height=100
 
 Programm-Quelltexte können wir mit Syntax-Highlighting verschönern:
 

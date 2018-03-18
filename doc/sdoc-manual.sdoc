@@ -2,7 +2,6 @@
   title="Sdoc Handbuch"
   author="Frank Seitz, L{http://fseitz.de/}"
   date="today"
-  latexShowFrames=0
 
 %TableOfContents:
   maxDepth=4
@@ -11,14 +10,14 @@
 
 = Einleitung
 
-Dieses Dokument beschreibt die Syntax und den Gebrauch der
-Auszeichnungsprache Sdoc. Sdoc ist eine Metasprache zum Verfassen von
-Dokumenten. Ein Dokument, das in Sdoc geschrieben wurde, kann portabel
-in eine Online-Fassung (HTML) und in eine Druck-Fassung (PDF)
-übersetzt werden.
+Dieses Dokument beschreibt die Syntax und den Gebrauch der Sprache
+Sdoc. Sdoc ist eine leichtgewichtige Auszeichnungssprache zum
+Verfassen von Dokumenten. Ein Dokument, das in Sdoc geschrieben wurde,
+kann portabel in eine Online-Fassung (HTML) und in eine Druck-Fassung
+(PDF) übersetzt werden.
 
 Die Online-Fassung ist für die Wiedergabe in einem Browser gedacht.
-Das Aussehen kann via CSS gestaltet werden.
+Ihr Aussehen kann via CSS gestaltet werden.
 
 Die Druck-Fassung wird von LaTeX gesetzt und besitzt eine entsprechend
 hohe Qualität für die Wiedergabe auf Papier. In einem PDF-Viewer kann
@@ -26,26 +25,30 @@ die Druck-Fassung auch interaktiv genutzt werden, da sie mit
 Hyperlinks versehen ist.
 
 Dieses Dokument ist selbst in Sdoc geschrieben. Wie es übersetzt,
-angezeigt und verarbeitet werden kann, ist in Abschnitt L{+Dieses
-Dokument übersetzen} beschrieben.
+angezeigt und verarbeitet wird, ist in Abschnitt L{+Dieses Dokument
+übersetzen} beschrieben.
 
 ---PageBreak---
 
 = Beispiel
 
-== Sdoc
+== Sdoc Quelltext
 
 %Code: load="+/sdoc-example.sdoc" filter="grep -avi geometry" ln=1
 
 == PDF
 
 %Graphic:
-  align="center"
+# align="center"
   border=1
   borderMargin=2mm
   file="+/sdoc-example"
+  latexOptions="width=0.965\textwidth"
+#  width=469
+#  height=628
+  scale=0.7
   indentation=0
-  latexOptions="clip,trim=0cm 0cm 0cm 0cm,width=0.965\textwidth"
+# latexOptions="clip,trim=0cm 0cm 0cm 0cm,width=0.965\textwidth"
 
 ---PageBreak---
 

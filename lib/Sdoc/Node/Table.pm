@@ -386,17 +386,22 @@ sub generateHtml {
         class => 'sdoc-table',
         id => $cssId,
         border => undef,
+        allowHtml => 1,
         cellpadding => undef,
         cellspacing => undef,
         align => scalar $atb->alignments('html'),
-        titles => [map { $self->expandText($h,\$_) } $atb->titles],
+        # FIXME: verbessern
+        titles => [map { $self->expandText($h,\$_);
+            s/\n/$h->tag('br')/ge; $_ } $atb->titles],
         rows => scalar $atb->rows,
         rowCallbackArguments => [$self],
         rowCallback => sub {
             my ($row,$i,$node) = @_;
             my @row;
             for (@$row) {
-                push @row,$node->expandText($h,\$_);
+                my $text = $node->expandText($h,\$_);
+                $text =~ s/\n/$h->tag('br')/ge;
+                push @row,$text;
             }
             return (undef,@row);
         },

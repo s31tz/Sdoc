@@ -6,6 +6,8 @@ use warnings;
 
 our $VERSION = 3.00;
 
+use Sdoc::Core::File::Image;
+use Sdoc::Core::Math;
 use Sdoc::Core::LaTeX::Figure;
 
 # -----------------------------------------------------------------------------
@@ -390,6 +392,27 @@ sub generateHtml {
         }
     }
 
+    my $path = $root->expandPath($self->file);
+    if (!-e $path) {
+        for my $ext (qw/png gif jpg/) {
+            if (-e "$path.$ext") {
+                $path = "$path.$ext";
+                last;
+            }
+        }
+    }
+
+    my $width = $self->width;
+    my $height = $self->height;
+warn "$path $width x $height\n";
+    if (!$width || !$height) {
+        ($width,$height) = Sdoc::Core::File::Image->new($path)->size;
+        if (my $scale = $self->scale) {
+            $width = Sdoc::Core::Math->roundToInt($width*$scale);
+            $height = Sdoc::Core::Math->roundToInt($height*$scale);
+        }
+    }
+warn "$path $width x $height\n";
     return $h->tag('div',
         style => substr($self->align,0,1) eq 'c'? 'text-align: center': undef,
         $h->tag('a',
@@ -398,10 +421,10 @@ sub generateHtml {
             $h->tag('img',
                 -nl=>0,
                 class => 'sdoc-graphic',
-                src => $root->expandPath($self->file),
+                src => $path,
                 alt => $self->name || $linkText,
-                width => $self->width,
-                height => $self->height,
+                width => $width,
+                height => $height,
             ),
         ),
     );

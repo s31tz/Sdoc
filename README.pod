@@ -2,16 +2,17 @@
 
 =head1 NAME
 
-Sdoc - Metasprache für Druck- und Online-Dokumente
+Sdoc - Auszeichnungssprache für Druck- und Online-Dokumente
 
 =head1 DESCRIPTION
 
-Sdoc ist eine Metasprache zum Verfassen von Dokumenten. Ein Dokument,
-das in Sdoc geschrieben ist, kann portabel in eine Online-Fassung
-(HTML) und in eine Druck-Fassung (PDF) übersetzt werden.
+Sdoc ist eine leichtgewichtige Auszeichnungssprache zum Verfassen von
+Dokumenten. Ein Dokument, das in Sdoc geschrieben ist, kann portabel
+in eine Online-Fassung (HTML) und in eine Druck-Fassung (PDF)
+übersetzt werden.
 
 Die Online-Fassung ist für die Wiedergabe in einem Browser vorgesehen.
-Das Aussehen kann via CSS gestaltet werden.
+Ihr Aussehen kann via CSS gestaltet werden.
 
 Die Druck-Fassung wird von LaTeX gesetzt und besitzt eine entsprechend
 hohe Qualität für die Wiedergabe auf Papier. In einem PDF-Viewer kann

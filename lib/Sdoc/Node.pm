@@ -948,26 +948,16 @@ sub expandSegmentsToHtml {
             # diesem Knoten kein erwartetes Segment. Siehe auch
             # Methode parseSegments(). Wir liefern den Text
             # unverändert.
-            return sprintf 'G\{%s\}',$val;
+            return sprintf 'G{%s}',$val;
         }
         my ($name,$gph) = @{$self->graphicA->[$val]};
         if ($gph) {
-            $code .= Sdoc::Core::LaTeX::Figure->latex($h,
-                inline => 1,
-                border => $gph->border,
-                borderMargin => $gph->borderMargin,
-                file => $root->expandPath($gph->file),
-                height => $gph->height,
-                indent => $gph->indentation // 0?
-                    $root->indentation.'em': undef,
-                link => $gph->latexLinkCode($h),
-                options => $gph->latexOptions,
-                scale => $gph->scale,
-                width => $gph->width,
-            );
+            # FIXME
+            $self->warn('G-Segment not implemented for HTML');
+            $code = sprintf 'G{%s}',$name;
         }
         else {
-            $code = sprintf 'G\{%s\}',$name;
+            $code = sprintf 'G{%s}',$name;
         }
 
         return $code;
@@ -980,7 +970,7 @@ sub expandSegmentsToHtml {
             # diesem Knoten kein erwartetes Segment. Siehe auch
             # Methode parseSegments(). Wir liefern den Text
             # unverändert.
-            return sprintf 'L\{%s\}',$val;
+            return sprintf 'L{%s}',$val;
         }
 
         my ($linkText,$obj) = @{$self->linkA->[$val]};
@@ -1008,7 +998,7 @@ sub expandSegmentsToHtml {
             }
         }
         elsif ($h->type eq 'unresolved') {
-            $code = sprintf 'L\{%s\}',$h->protect($linkText);
+            $code = sprintf 'L{%s}',$h->protect($linkText);
         }
 
         return $code;
@@ -1019,17 +1009,18 @@ sub expandSegmentsToHtml {
             # diesem Knoten kein erwartetes Segment. Siehe auch
             # Methode parseSegments(). Wir liefern das
             # Segment als Text.
-            return sprintf 'M\textasciitilde{}%s\textasciitilde{}',$val;
+            return sprintf 'M~%s~',$val;
         }
 
-        # Wir übergeben die Formel an den LaTeX Mathe-Modus
-        return sprintf '\(%s\)',$self->formulaA->[$val];
+        return $h->tag('b',
+            $h->protect($self->formulaA->[$val])
+        );
     }
     elsif ($seg eq 'N') {
-        return '\\\\';
+        return $h->tag('br');
     }
     elsif ($seg eq 'Q') {
-        return "``$val''";
+        return $h->tag('q',$val);
     }
 
     $self->throw(
@@ -1302,7 +1293,7 @@ sub htmlSectionCode {
     my $doc = $self->root;
 
     my $title = $self->expandText($h,'titleS');
-    if ($self->level <= $doc->sectionNumberDepth) {
+    if ($type eq 'section' && $self->level <= $doc->sectionNumberDepth) {
         $title = $self->sectionNumber.' '.$title;
     }
 
@@ -1352,7 +1343,7 @@ Generator für das Zielformat.
 =item $maxDepth
 
 Tiefe des tiefsten Abschnitts, der noch in das Inhaltsverzeichnis
-aufgenommen wird. Mögliche Werte: -1, 0, 1, 2, 3 4.
+aufgenommen wird. Mögliche Werte: -1, 0, 1, 2, 3, 4.
 
 =back
 
@@ -1404,14 +1395,20 @@ sub htmlTableOfContents {
         }
     }
     if ($html) {
-        $html = $h->tag('div',
-            -ignoreTagIf => $self->type ne 'Document',
-            class => 'sdoc-tableofcontents',
-            $h->tag('ul',
-                class => $sectionNumber? 'n': 'b',
-                $html
-            )
+        $html = $h->tag('ul',
+            class => $sectionNumber? 'number': 'bullet',
+            $html
         );
+        if ($self->type eq 'Document') {
+            my $title = $doc->language eq 'german'? 'Inhaltsverzeichnis':
+                'Contents';
+            $html = $h->tag('div',
+                class => 'sdoc-tableofcontents',
+                '-',
+                $h->tag('h3',$title),
+                $html,
+            );
+        }
     }
 
     return $html;
