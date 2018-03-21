@@ -79,6 +79,16 @@ ist.
 Anzahl der Code-Knoten. Der Wert wird während des Parsings
 hochgezählt.
 
+=item countGraphic => $n (Default: 0)
+
+Anzahl der Graphic-Knoten. Der Wert wird während des Parsings
+hochgezählt.
+
+=item countList => $n (Default: 0)
+
+Anzahl der List-Knoten. Der Wert wird während des Parsings
+hochgezählt.
+
 =item countTable => $n (Default: 0)
 
 Anzahl der Tabellen-Knoten. Der Wert wird während des Parsings
@@ -136,10 +146,16 @@ Wird von der Methode highestSectionLevel() gesetzt.
 Der Name des CSS-Stylesheet, das für das Design des HTML-Dokuments
 verwendet wird.
 
-=item indentation => $x (Default: 1.3)
+=item htmlIndentation => $n (Default: 20)
 
-Einrückung für List-, Graphic-, Code-, Table-Blöcke vom linken
-Rand. Einheit ist C<em>, die aber nicht angegeben wird.
+In HTML die Tiefe der Einrückung für List-, Graphic-, Code-,
+Table-Blöcke vom linken Rand, wenn diese eingerückt werden
+sollen. Das Maß wird einheitenlos in Pixel angegeben.
+
+=item indentStyle=BOOL (Default: 0)
+
+Wenn gesetzt, werden alle Code-, Graphic-, List- und Table-Blöcke,
+für die nichts anderes angegeben ist, eingerückt dargestellt.
 
 =item language => $language (Default: 'german')
 
@@ -161,6 +177,12 @@ Größe des LaTeX-Font. Mögliche Werte: '10pt', '11pt', '12pt'.
 =item latexGeometry => $str
 
 Einstellungen des LaTeX-Pakets C<geometry>.
+
+=item latexIndentation => $x (Default: 1.3)
+
+In LaTeX die Tiefe der Einrückung für List-, Graphic-, Code-,
+Table-Blöcke vom linken Rand, wenn diese eingerückt werden
+sollen. Einheit ist C<em>, die aber nicht angegeben wird.
 
 =item latexPageStyle => "$titlePage,$otherPages" (Default: "plain,headings")
 
@@ -346,6 +368,8 @@ sub new {
         codeStyle => 'default',
         copyComments => 1,
         countCode => 0,
+        countGraphic => 0,
+        countList => 0,
         countTable => 0,
         date => undef,
         dateS => undef,
@@ -353,12 +377,14 @@ sub new {
         formulaA => [],
         graphicA => [],
         htmlDocumentStyle => 'default',
-        indentation => 1.3,
+        htmlIndentation => 20,
+        indentStyle => 0,
         language => 'german',
         latexDocumentClass => 'scrartcl',
         latexDocumentOptions => undef,
         latexFontSize => '10pt',
         latexGeometry => undef,
+        latexIndentation => 1.3,
         latexPageStyle => "plain,headings",
         latexPaperSize => 'a4paper',
         latexParSkip => '1ex',
@@ -1318,6 +1344,7 @@ sub createTableOfContentsNode {
         if ($h->sections) {
             my $toc = Sdoc::Node::TableOfContents->Sdoc::Node::new(
                 'TableOfContents',0,$self,$self,
+                htmlTitle => 1,
                 maxDepth => 3,
             );
             $self->unshift(childA=>$toc);

@@ -13,6 +13,7 @@ use Sdoc::Core::LaTeX::Code;
 use Sdoc::Core::AnsiColor;
 use Sdoc::Core::TreeFormatter;
 use Sdoc::Core::LaTeX::Figure;
+use Sdoc::Core::Css;
 
 # -----------------------------------------------------------------------------
 
@@ -1105,13 +1106,13 @@ sub expandSegmentsToLatex {
             $code .= Sdoc::Core::LaTeX::Figure->latex($l,
                 inline => 1,
                 border => $gph->border,
-                borderMargin => $gph->borderMargin,
                 file => $root->expandPath($gph->file),
                 height => $gph->height,
-                indent => $gph->indentation // 0?
-                    $root->indentation.'em': undef,
+                indent => $gph->indent // 0?
+                    $root->latexIndentation.'em': undef,
                 link => $gph->latexLinkCode($l),
                 options => $gph->latexOptions,
+                padding => $gph->padding,
                 scale => $gph->scale,
                 width => $gph->width,
             );
@@ -1330,7 +1331,7 @@ sub htmlSectionCode {
 
 =head4 Synopsis
 
-    $code = $node->htmlTableOfContents($gen,$maxDepth);
+    $code = $node->htmlTableOfContents($gen,$toc);
 
 =head4 Arguments
 
@@ -1363,7 +1364,7 @@ den untergeordneten Abschnitts-Knoten auf.
 # -----------------------------------------------------------------------------
 
 sub htmlTableOfContents {
-    my ($self,$h,$maxDepth) = @_;
+    my ($self,$h,$toc) = @_;
 
     my $doc = $self->root;
 
@@ -1371,12 +1372,12 @@ sub htmlTableOfContents {
     my $sectionNumber; # zeigt an, ob Ebene mit Abschnittsnummern
     for my $node ($self->childs) {
         if ($node->type eq 'Section' &&
-                $node->level <= $maxDepth && !$node->notToc) {
+                $node->level <= $toc->maxDepth && !$node->notToc) {
 
             my $title = $node->expandText($h,'titleS');
             if ($node->level <= $doc->sectionNumberDepth) {
                 $sectionNumber = $h->tag('span',
-                    class => 'n',
+                    class => 'number',
                     $node->sectionNumber
                 ).' ';
             }
@@ -1389,7 +1390,7 @@ sub htmlTableOfContents {
                         href => '#'.$node->linkId,
                         $title
                     ),
-                    $node->htmlTableOfContents($h,$maxDepth),
+                    $node->htmlTableOfContents($h,$toc),
                 ),
             );
         }
@@ -1399,14 +1400,53 @@ sub htmlTableOfContents {
             class => $sectionNumber? 'number': 'bullet',
             $html
         );
+
         if ($self->type eq 'Document') {
-            my $title = $doc->language eq 'german'? 'Inhaltsverzeichnis':
-                'Contents';
-            $html = $h->tag('div',
-                class => 'sdoc-tableofcontents',
-                '-',
-                $h->tag('h3',$title),
-                $html,
+            my $id = 'toc';
+            my $indent = $doc->htmlIndentation;
+            
+            $html = $h->cat(
+                $h->tag('style',
+                    Sdoc::Core::Css->new('flat')->restrictedRules("#$id",
+                        '> ul' => [
+                            marginTop => '8px',
+                        ],
+                        'ul.bullet' => [
+                            listStyleType => 'disc',
+                            paddingLeft => ($indent+16).'px',
+                        ],
+                        'ul.number' => [
+                            listStyleType => 'none',
+                            paddingLeft => $indent.'px',
+                        ],
+                        # FIXME: ins Default-Stylesheet verlegen
+                        'h3' => [
+                            marginBottom => '8px',
+                        ],
+                        'li' => [
+                            marginTop => '2px',
+                            marginBottom => '2px',
+                        ],
+                        'span.number' => [
+                            paddingRight => '2px',
+                        ],
+                    )
+                ),
+                $h->tag('div',
+                    class => 'sdoc-tableofcontents',
+                    id => $id,
+                    '-',
+                    do {
+                        my $tag = '';
+                        if ($toc->htmlTitle) {
+                            my $title = $doc->language eq 'german'?
+                                'Inhaltsverzeichnis': 'Contents';
+                            $tag = $h->tag('h3',$title);
+                        }
+                        $tag;
+                    },
+                    $html
+                ),
             );
         }
     }

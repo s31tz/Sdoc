@@ -19,6 +19,8 @@ sdoc - Prozessiere Sdoc-Dokument
 
 sdoc [OPTIONS] [pdf] INPUT.sdoc [OUTPUT.pdf]
 
+sdoc [OPTIONS] html INPUT.sdoc [OUTPUT.html]
+
 sdoc [OPTIONS] validate INPUT.sdoc
 
 sdoc [OPTIONS] anchors INPUT.sdoc
@@ -28,6 +30,12 @@ sdoc [OPTIONS] links INPUT.sdoc
 sdoc [OPTIONS] tree INPUT.sdoc [OUTPUT]
 
 sdoc [OPTIONS] convert INPUT.sdoc2 [OUTPUT.sdoc3]
+
+sdoc [OPTIONS] pygments-styles
+
+sdoc [OPTIONS] pygments-style NAME [SELECTOR]
+
+sdoc [OPTIONS] cleanup
 
 =head1 OPTIONS
 
@@ -63,13 +71,11 @@ Gib Laufzeitinformationen aus.
 
 Wurzelverzeichnis des Verzeichnisbaums, in dem die Sdoc-Quelle übersetzt
 werden, da LaTeX viele temporäre Dateien erzeugt. Der Pfad Dir kann
-die Platzhalter enthalten
+den Platzhalter enthalten
 
     %U - der Name des aufrufenden Benutzers
-    %D - der Basisname (Dateiname ohne Pfad und Extension) des
-         Sdoc-Dokuments
 
-Der anfängliche Default ist C</tmp/sdoc/%U/%D>.
+Der anfängliche Default ist C</tmp/sdoc/%U>.
 
 =item --help|-h
 
@@ -98,11 +104,12 @@ angegebenen Optionen überschrieben werden. Aufbau der Datei:
     # Sdoc configuration
     
     ansiColor => 1,
+    cacheDir => '/tmp/sdoc/%U',
+    browser => 'google-chrome --new-window',
     pdfViewer => 'evince',
     shellEscape => 0,
     textViewer => 'less -R',
     verbose => 0,
-    workDir => '/tmp/sdoc/%U/%D',
     
     # eof
 
@@ -117,6 +124,14 @@ Wandele nach PDF und zeige das Ergebnis im PDF-Viewer an:
 Wandele nach PDF und schreibe das Ergebnis in eine Datei:
 
     $ sdoc INPUT.sdoc OUTPUT.pdf
+
+Wandele nach HTML und zeige das Ergebnis im Browser an:
+
+    $ sdoc html INPUT.sdoc
+
+Wandele nach HTML und schreibe das Ergebnis in eine Datei:
+
+    $ sdoc html INPUT.sdoc OUTPUT.html
 
 Wandele Eingabedatei zuerst von Sdoc2 nach Sdoc3 und dann
 nach PDF und zeige das Ergebnis im PDF-Viewer an:
@@ -158,6 +173,18 @@ Schreibe den Parsingbaum des Dokuments in eine Datei:
 Konvertiere eine Sdoc2-Datei in eine Sdoc3-Datei:
 
     $ sdoc convert INPUT.sdoc2 OUTPUT.sdoc3
+
+Erzeuge eine Pygments Style-Datei für das Syntax Highlighting:
+
+    $ sdoc pygments-style emacs .sdoc-code
+
+Liste der Namen aller Pygments-Styles:
+
+    $ sdoc pygments-styles
+
+Lösche (nach Rückfrage) das Cache-Verzeichnis des aufrufenden Benutzers:
+
+    $ sdoc cleanup
 
 =head1 PROGRAM CLASS
 

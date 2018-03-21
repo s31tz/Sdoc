@@ -188,7 +188,7 @@ sub new {
         load => undef,
         lang => undef,
         ln => 0,
-        indent => $attribH->{'ln'}? 0: 1,
+        indent => undef,
         number => $root->increment('countCode'),
         text => undef,
     );
@@ -274,9 +274,11 @@ LaTeX-Code (String)
 sub generateHtml {
     my ($self,$h) = @_;
 
+    my $doc = $self->root;
+
     my $indent = $self->indent;
     my $ln = $self->ln;
-    my $id = sprintf 'code%02d',$self->number;
+    my $id = sprintf 'cod%02d',$self->number;
 
     my $text;
     if (my $lang = $self->lang) {
@@ -286,24 +288,29 @@ sub generateHtml {
         $text = $h->protect($self->text);
     }
 
-    my $style;
-    if ($indent || !defined($indent) && !$ln) {
-        # $style = 'margin-left: 2em';
+    my $marginLeft;
+    if ($self->indent || $doc->indentStyle && !defined $self->indent) {
+        $marginLeft = sprintf('%spx',$doc->htmlIndentation);
     }
+
+    # HTML-Code erzeugen
 
     return $h->cat(
         $h->tag('style',
             Sdoc::Core::Css->new('flat')->restrictedRules("#$id",
+                '' => [
+                    marginTop => '16px',
+                    marginBottom => '16px',
+                    marginLeft => $marginLeft,
+                ],
                 'td pre' => [
                     margin => 0,
-                    # lineHeight => '125%',
                 ],
             )
         ),
         Sdoc::Core::Html::Verbatim->html($h,
             class => 'sdoc-code',
             id => $id,
-            style => $style,
             ln => $self->ln,
             text => $text,
         ),
@@ -350,7 +357,7 @@ sub generateLatex {
         push @opt,'linenos',"firstnumber=$ln","xleftmargin=\\lnwidth$c$i";
     }
     elsif ($indent) {
-        push @opt,sprintf 'xleftmargin=%sem',$root->indentation;
+        push @opt,sprintf 'xleftmargin=%sem',$root->latexIndentation;
     }
 
     if (my $lang = $self->lang) {

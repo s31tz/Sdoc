@@ -7,6 +7,8 @@ use warnings;
 our $VERSION = 3.00;
 
 use Sdoc::Core::Config;
+use Sdoc::Core::Html::Pygments;
+use Sdoc::Core::Terminal;
 use Sdoc::Core::Path;
 use Sdoc::Core::AnsiColor;
 use Sdoc::Document;
@@ -52,21 +54,23 @@ sub main {
     # existiert.
 
     my $ansiColorDefault = 1;
+    my $browserDefault = 'google-chrome';
+    my $cacheDirDefault = '/tmp/sdoc/%U';
     my $pdfViewerDefault = 'evince';
     my $shellEscapeDefault = 0;
     my $textViewerDefault = 'less -R',
     my $verboseDefault = 0;
-    my $workDirDefault = '/tmp/sdoc/%U/%D';
 
     my $conf = Sdoc::Core::Config->new('~/.sdoc.conf',
         -create => qq|
             # Sdoc configuration
 
             ansiColor => $ansiColorDefault,
+            browser => $browserDefault,
+            cacheDir => $cacheDirDefault,
             pdfViewer => $pdfViewerDefault,
             shellEscape => $shellEscapeDefault,
             textViewer => $textViewerDefault,
-            workDir => $workDirDefault,
 
             # eof
         |,
@@ -76,12 +80,13 @@ sub main {
 
     my ($error,$opt,$argA) = $self->options(
         -ansiColor => $conf->try('ansiColor') // $ansiColorDefault,
+        -browser => $conf->try('browser') // $browserDefault,
+        -cacheDir => $conf->try('cacheDir') // $cacheDirDefault,
         -convert => 0,
         -pdfViewer => $conf->try('pdfViewer') // $pdfViewerDefault,
         -shellEscape => $conf->try('shellEscape') // $shellEscapeDefault,
         -textViewer => $conf->try('textViewer') // $textViewerDefault,
         -verbose => $conf->try('verbose') // $verboseDefault,
-        -workDir => $conf->try('workDir') // $workDirDefault,
         -help => 0,
     );
     if ($error) {
@@ -95,10 +100,51 @@ sub main {
     }
 
     my $op = 'pdf';
-    if ($argA->[0] =~ /^(anchors|convert|html|latex|links|pdf|tree|
-            validate)$/x) {
+    if ($argA->[0] =~ /^(anchors|cleanup|convert|html|latex|links|pdf|
+            pygments-styles?|tree|validate)$/x) {
         $op = shift @$argA;
     }
+
+    # Operationen ohne Sdoc-Dokument
+
+    if ($op eq 'pygments-style') {
+        if (@$argA < 1 || @$argA > 2) {
+            $self->help(11,'ERROR: Wrong number of arguments');
+        }
+        my $style = shift @$argA;
+        my $selector = shift @$argA;
+        print scalar Sdoc::Core::Html::Pygments->css($style,$selector);
+        return;
+    }
+    elsif ($op eq 'pygments-styles') {
+        if (@$argA) {
+            $self->help(11,'ERROR: Wrong number of arguments');
+        }
+        print join("\n",Sdoc::Core::Html::Pygments->styles),"\n";
+        return;
+    }
+    elsif ($op eq 'cleanup') {
+        if (@$argA) {
+            $self->help(11,'ERROR: Wrong number of arguments');
+        }
+        # Lösche Arbeitsverzeichnis-Baum
+
+        my $cacheDir = $self->cacheDir($opt);
+        my $answ = Sdoc::Core::Terminal->askUser(
+            "Really delete cache directory $cacheDir?",
+            -values => 'y/n',
+            -default => 'y',
+        );
+        if ($answ ne 'y') {
+            print "Aborted.\n";
+            return;
+        }
+        Sdoc::Core::Path->delete($cacheDir);
+        return;
+    }
+
+    # Operationen auf Sdoc-Dokument
+
     my $sdocFile = shift @$argA;
     my $basename = Sdoc::Core::Path->basename($sdocFile);
 
@@ -112,11 +158,9 @@ sub main {
     # Ausgabe in ANSI Farben
     my $a = Sdoc::Core::AnsiColor->new($opt->ansiColor);
 
-    # Sdoc-Datei von Sdoc2 nach Sdoc3 wandeln
-
     if ($op eq 'convert') {
-        # Wandelung als alleiniger Vorgang
-
+        # Wandele Sdoc-Datei von Sdoc2 nach Sdoc3
+        
         my $sdoc3File = $self->sdoc2ToSdoc3($sdocFile,$opt);
         $self->showResult($sdoc3File,$output,$opt->textViewer);
         return;
@@ -178,8 +222,8 @@ sub main {
     elsif ($op eq 'tree') {
         my $str = $doc->generate('tree',$opt->ansiColor);
         if (-t STDOUT) {
-            my $workDir = $self->workDir($basename,$opt);
-            my $treeFile = sprintf '%s/tree.txt',$workDir;
+            my $docDir = $self->docDir('tree',$basename,$opt);
+            my $treeFile = sprintf '%s/tree.txt',$docDir;
             Sdoc::Core::Path->write($treeFile,$str,-encode=>'utf-8');
             
             my $c = Sdoc::Core::CommandLine->new($opt->textViewer);
@@ -192,11 +236,11 @@ sub main {
     }
     elsif ($op eq 'html') {
         # Ermittele/erzeuge Arbeitsverzeichnis
-        my $workDir = $self->workDir($basename,$opt);
+        my $docDir = $self->docDir('html',$basename,$opt);
 
         # Erzeuge LaTeX-Datei
 
-        my $htmlFile = sprintf '%s/%s.html',$workDir,$basename;
+        my $htmlFile = sprintf '%s/%s.html',$docDir,$basename;
         my $fh = Sdoc::Core::FileHandle->new('>',$htmlFile);
         $fh->setEncoding('utf-8');
         $fh->print($doc->generate('html'));
@@ -205,18 +249,18 @@ sub main {
         # Wechsele in Arbeitsverzeichnis
 
         my $sh = Sdoc::Core::Shell->new(quiet=>!$opt->verbose);
-        $sh->cd($workDir);
+        $sh->cd($docDir);
 
         # Zeige/kopiere Ergebnis
-        $self->showResult("$basename.html",$output,$opt->textViewer);
+        $self->showResult("$basename.html",$output,$opt->browser);
     }
     elsif ($op eq 'latex' || $op eq 'pdf') {
         # Ermittele/erzeuge Arbeitsverzeichnis
-        my $workDir = $self->workDir($basename,$opt);
+        my $docDir = $self->docDir('latex',$basename,$opt);
 
         # Erzeuge LaTeX-Datei
 
-        my $latexFile = sprintf '%s/%s.tex',$workDir,$basename;
+        my $latexFile = sprintf '%s/%s.tex',$docDir,$basename;
         my $fh = Sdoc::Core::FileHandle->new('>',$latexFile);
         $fh->setEncoding('utf-8');
         $fh->print($doc->generate('latex'));
@@ -225,7 +269,7 @@ sub main {
         # Wechsele in Arbeitsverzeichnis
 
         my $sh = Sdoc::Core::Shell->new(quiet=>!$opt->verbose);
-        $sh->cd($workDir);
+        $sh->cd($docDir);
 
         # Zeige/kopiere Ergebnis
         
@@ -273,36 +317,61 @@ sub main {
 
 # -----------------------------------------------------------------------------
 
-=head3 workDir() - Liefere Arbeitsverzeichnis
+=head3 cacheDir() - Liefere Cache-Verzeichnis
 
 =head4 Synopsis
 
-    $workDir = $prg->workDir($name,$opt);
+    $cacheDir = $prg->cacheDir($opt);
 
 =head4 Description
 
-Liefere das Arbeitsverzeichnis für die Generierung der erzeugten
-Formate. Existiert das Verzeichnis nicht, erzeuge es.
+Liefere das Cache-Verzeichnis für die
+Dokument-Generierung. Existiert das Verzeichnis nicht, wird es erzeugt.
 
 =cut
 
 # -----------------------------------------------------------------------------
 
-sub workDir {
-    my ($self,$name,$opt) = @_;
+sub cacheDir {
+    my ($self,$opt) = @_;
 
-    my $workDir = $opt->workDir;
-    if ($workDir =~ m|(.*)/%U|) {
+    my $cacheDir = $opt->cacheDir;
+    if ($cacheDir =~ m|(.*)/%U|) {
         # Das Eltern-Verzeichnis des User-Verzeichnisses
         # muss für alle schreibbar sein
         Sdoc::Core::Path->mkdir($1,-forceMode=>01777);
     }
-    $workDir =~ s/%U/$self->user/eg;
-    $workDir =~ s/%D/$name/g;
-    $workDir = Sdoc::Core::Path->expandTilde($workDir);
-    Sdoc::Core::Path->mkdir($workDir,-recursive=>1);
+    $cacheDir =~ s/%U/$self->user/eg;
+    $cacheDir = Sdoc::Core::Path->expandTilde($cacheDir);
+    Sdoc::Core::Path->mkdir($cacheDir,-recursive=>1);
 
-    return $workDir;
+    return $cacheDir;
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 docDir() - Liefere Arbeitsverzeichnis
+
+=head4 Synopsis
+
+    $docDir = $prg->docDir($format,$basename,$opt);
+
+=head4 Description
+
+Liefere das Arbeitsverzeichnis für die Generierung des erzeugten
+Formats. Existiert das Verzeichnis nicht, erzeuge es.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub docDir {
+    my ($self,$format,$basename,$opt) = @_;
+
+    my $docDir = sprintf '%s/%s/%s',$self->cacheDir($opt),$basename,$format;
+    Sdoc::Core::Path->mkdir($docDir,-recursive=>1);
+
+    return $docDir;
 }
 
 # -----------------------------------------------------------------------------
@@ -325,11 +394,12 @@ Sdoc3-Datei und liefere den Pfad der erzeugten Sdoc3-Datei zurück.
 sub sdoc2ToSdoc3 {
     my ($self,$sdoc2File,$opt) = @_;
 
-    my $basename = Sdoc::Core::Path->basename($sdoc2File);
-    my $workDir = $self->workDir($basename,$opt);
     my $code = Sdoc::Core::Path->read($sdoc2File,-decode=>'utf-8');
     $code = Sdoc::Document->sdoc2ToSdoc3($code);
-    my $sdoc3File = sprintf '%s/%s.sdoc3',$workDir,$basename;
+
+    my $basename = Sdoc::Core::Path->basename($sdoc2File);
+    my $docDir = $self->docDir('sdoc3',$basename,$opt);
+    my $sdoc3File = sprintf '%s/%s.sdoc3',$docDir,$basename;
     Sdoc::Core::Path->write($sdoc3File,$code,-encode=>'utf-8');
 
     return $sdoc3File;
@@ -366,7 +436,7 @@ sub showResult {
     else {
         # Zeige Datei an
         Sdoc::Core::Shell->exec(sprintf('%s %s',$pager,$srcFile),
-            -quiet => $pager =~ /evince|acroread/? 1: 0,
+            -quiet => $pager =~ /evince|acroread|chrome/? 1: 0,
         );
     }
 

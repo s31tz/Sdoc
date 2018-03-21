@@ -92,12 +92,12 @@ pastie, perldoc, rainbow_dash, rrt, tango, trac, vim, vs, xcode.
 Die definitiv gültige Liste der Stylenamen liefert die Methode
 styles().
 
-=item $selector (Default: I<kein Selektor>)
+=item $selector (Default: I<kein zusätzlicher Selektor>)
 
-CSS-Selektor, der den CSS-Regeln vorangestellt wird. Der Selektor
-schränkt den Gültigkeitsbereich der CSS-Regeln auf ein
-Parent-Element ein. Ist kein Selektor angegeben, gelten die
-CSS-Regeln global.
+Zusätzlicher CSS-Selektor, der den CSS-Regeln vorangestellt
+wird. Der Selektor schränkt den Gültigkeitsbereich der CSS-Regeln
+auf ein Parent-Element ein. Ist kein Selektor angegeben, gelten
+die CSS-Regeln global.
 
 =back
 
@@ -111,6 +111,29 @@ werden nur die CSS-Regeln geliefert.
 Liefere die CSS-Regeln für die Vordergrund-Darstellung von
 Syntax-Elementen und die zugehörige Hintergrundfarbe für
 Pygments-Style $style.
+
+=head4 Example
+
+Gib die CSS-Regeln für den Pyments-Style 'emacs' aus:
+
+    print scalar Sdoc::Core::Html::Pygments->css('emacs');
+    __END__
+    .hll { background-color: #ffffcc }
+    .c { color: #008800; font-style: italic } /* Comment */
+    .err { border: 1px solid #FF0000 } /* Error */
+    .k { color: #AA22FF; font-weight: bold } /* Keyword */
+    .o { color: #666666 } /* Operator */
+
+Gib die CSS-Regeln für den Pyments-Style 'emacs' und
+Parent-Elemente der Klasse 'highlight' aus:
+
+    print scalar Sdoc::Core::Html::Pygments->css('emacs','.syntax');
+    __END__
+    .syntax .hll { background-color: #ffffcc }
+    .syntax .c { color: #008800; font-style: italic } /* Comment */
+    .syntax .err { border: 1px solid #FF0000 } /* Error */
+    .syntax .k { color: #AA22FF; font-weight: bold } /* Keyword */
+    .syntax .o { color: #666666 } /* Operator */
 
 =cut
 

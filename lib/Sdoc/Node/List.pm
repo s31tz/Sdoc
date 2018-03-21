@@ -6,6 +6,8 @@ use warnings;
 
 our $VERSION = 3.00;
 
+use Sdoc::Core::Css;
+
 # -----------------------------------------------------------------------------
 
 =encoding utf8
@@ -37,6 +39,10 @@ Liste der Subknoten.
 
 Art der Liste. Mögliche Werte: 'description', 'ordered', 'unordered'.
 Wenn nicht gesetzt, wird der Wert vom ersten List-Item gesetzt.
+
+=item number => $n
+
+Nummer der Liste. Wird automatisch hochgezählt.
 
 =back
 
@@ -103,6 +109,7 @@ sub new {
     my $self = $class->SUPER::new('List',$variant,$root,$parent,
         childA => [],
         listType => undef,
+        number => $root->increment('countList'),
     );
     $self->setAttributes(%$attribH);
 
@@ -156,6 +163,10 @@ LaTeX-Code (String)
 sub generateHtml {
     my ($self,$h) = @_;
 
+    my $doc = $self->root;
+
+    my $id = sprintf 'lst%02d',$self->number;
+
     # Abbildung der Sdoc-Aufzählungstypen auf HTML-Aufzählungstypen
 
     my $listType = $self->listType;
@@ -165,11 +176,31 @@ sub generateHtml {
         description => 'dl',
     }->{$listType};
 
+    my @style;
+    if ($doc->indentStyle) {
+        push @style,paddingLeft=>sprintf('%spx',$doc->htmlIndentation+18);
+    }
+
     # Generiere HTML
 
-    return $h->tag($tag,
-        class => "sdoc-list-$listType",
-        $self->generateChilds('html',$h)
+    return $h->cat(
+        $h->tag('style',
+            Sdoc::Core::Css->new('flat')->restrictedRules("#$id",
+                '' => \@style,
+                # FIXME: In Default-Stylesheet verlagern
+                'li > *:first-child' => [
+                    marginTop => '4px',
+                ],
+                'li > *:last-child' => [
+                    marginBottom => '4px',
+                ],
+            )
+        ),
+        $h->tag($tag,
+            class => "sdoc-list-$listType",
+            id => $id,
+            $self->generateChilds('html',$h)
+        ),
     );
 }
 
@@ -225,10 +256,10 @@ sub generateLatex {
 
     my @opt;
     if ($listType eq 'itemize') {
-        push @opt,sprintf 'leftmargin=%sem',0.8+$root->indentation;
+        push @opt,sprintf 'leftmargin=%sem',1.1+$root->latexIndentation;
     }
     elsif ($listType eq 'enumerate') {
-        push @opt,sprintf 'leftmargin=%sem',1.15+$root->indentation;
+        push @opt,sprintf 'leftmargin=%sem',1.15+$root->latexIndentation;
     }
 
     return $l->env($listType,

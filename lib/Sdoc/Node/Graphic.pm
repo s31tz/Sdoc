@@ -8,6 +8,7 @@ our $VERSION = 3.00;
 
 use Sdoc::Core::File::Image;
 use Sdoc::Core::Math;
+use Sdoc::Core::Css;
 use Sdoc::Core::LaTeX::Figure;
 
 # -----------------------------------------------------------------------------
@@ -49,11 +50,6 @@ Anker-Pfad der Grafik.
 
 Zeichne einen Rahmen um die Abbildung.
 
-=item borderMargin => $length (Default: '0mm')
-
-Zeichne den Rahmen (Attribut C<border>) mit dem angegebenen
-Abstand um die Abbildung.
-
 =item caption => $text
 
 Beschriftung der Abbldung. Diese erscheint unter der Abbildung.
@@ -91,10 +87,19 @@ Name der Grafik. Ein Name muss angegeben sein, wenn die Grafik von
 einem G-Segment referenziert wird. Ist ein Name gesetzt, ist der
 Default für das Attribut C<definition> 1, sonst 0.
 
-=item indentation => $bool
+=item number => $n
+
+Nummer der Grafik. Wird automatisch hochgezählt.
+
+=item indent => $bool
 
 Rücke die Grafik ein. Das Attribut ist nur bei C<< align =>
 'left' >> oder bei Inline-Grafiken von Bedeutung.
+
+=item padding => $length (Default: '0mm')
+
+Zeichne den Rahmen (Attribut C<border>) mit dem angegebenen
+Abstand um die Abbildung.
 
 =item referenced => $n (Default: 0)
 
@@ -192,19 +197,20 @@ sub new {
         align => 'left',
         anchor => undef,
         border => 0,
-        borderMargin => '0mm',
         caption => undef,
         captionS => undef,
         file => undef,
         formulaA => [],
         graphicA => [],
         height => undef,
-        indentation => undef,
+        indent => undef,
         latexOptions => undef,
         link => undef,
         linkN => undef,
         linkA => [],
         name => undef,
+        number => $root->increment('countGraphic'),
+        padding => '0mm',
         referenced => 0,
         scale => undef,
         show => undef,
@@ -367,7 +373,7 @@ HTML-Code (String)
 sub generateHtml {
     my ($self,$h) = @_;
 
-    my $root = $self->root;
+    my $doc = $self->root;
 
     if (!defined($self->show) && $self->useCount > 0) {
         return '';
@@ -392,7 +398,7 @@ sub generateHtml {
         }
     }
 
-    my $path = $root->expandPath($self->file);
+    my $path = $doc->expandPath($self->file);
     if (!-e $path) {
         for my $ext (qw/png gif jpg/) {
             if (-e "$path.$ext") {
@@ -404,7 +410,6 @@ sub generateHtml {
 
     my $width = $self->width;
     my $height = $self->height;
-warn "$path $width x $height\n";
     if (!$width || !$height) {
         ($width,$height) = Sdoc::Core::File::Image->new($path)->size;
         if (my $scale = $self->scale) {
@@ -412,19 +417,54 @@ warn "$path $width x $height\n";
             $height = Sdoc::Core::Math->roundToInt($height*$scale);
         }
     }
-warn "$path $width x $height\n";
-    return $h->tag('div',
-        style => substr($self->align,0,1) eq 'c'? 'text-align: center': undef,
-        $h->tag('a',
-            -ignoreTagIf => !$href,
-            href => $href,
-            $h->tag('img',
-                -nl=>0,
-                class => 'sdoc-graphic',
-                src => $path,
-                alt => $self->name || $linkText,
-                width => $width,
-                height => $height,
+
+    # FIXME: oberhalb reimplementieren
+
+    my $id = sprintf 'gph%02d',$self->number;
+
+    # Positionierung der Grafik
+
+    my @divStyle = (
+        marginTop => '16px',
+        marginBottom => '16px',
+    );
+    if (substr($self->align,0,1) eq 'c') {
+        push @divStyle,textAlign=>'center';
+    }
+    elsif ($self->indent || $doc->indentStyle && !defined $self->indent) {
+        push @divStyle,marginLeft=>sprintf('%spx',$doc->htmlIndentation+4);
+    }
+
+    my @imgStyle;
+    if (my $padding = $self->padding) {
+        push @imgStyle,padding=>$padding;
+    }
+    if ($self->border) {
+        push @imgStyle,border=>'1px solid black';
+    }
+
+    # HTML-Code erzeugen
+
+    return $h->cat(
+        $h->tag('style',
+            Sdoc::Core::Css->new('flat')->restrictedRules("#$id",
+                '' => \@divStyle,
+                'img' => \@imgStyle,
+            )
+        ),
+        $h->tag('div',
+            class => 'sdoc-graphic',
+            id => $id,
+            $h->tag('a',
+                -ignoreTagIf => !$href,
+                href => $href,
+                $h->tag('img',
+                    -nl=>0,
+                    src => $path,
+                    alt => $self->name || $linkText,
+                    width => $width,
+                    height => $height,
+                ),
             ),
         ),
     );
@@ -470,14 +510,14 @@ sub generateLatex {
     return Sdoc::Core::LaTeX::Figure->latex($l,
         align => substr($self->align,0,1),
         border => $self->border,
-        borderMargin => $self->borderMargin,
         caption => $self->expandText($l,'captionS'),
         file => $root->expandPath($self->file),
         height => $self->height,
-        indent => $self->indentation // 1? $root->indentation.'em': undef,
+        # indent => $self->indent // 1? $root->latexIndentation.'em': undef,
         label => $self->referenced? $self->linkId: undef,
         link => $self->latexLinkCode($l),
         options => $self->latexOptions,
+        padding => $self->padding,
         postVSpace => $l->modifyLength($root->latexParSkip,'*-2'),
         scale => $self->scale,
         width => $self->width,

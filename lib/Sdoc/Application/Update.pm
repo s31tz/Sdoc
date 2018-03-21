@@ -71,12 +71,27 @@ sub main {
 
     my $path = 'doc/sdoc-example';
     if ($opt->force || Sdoc::Core::Path->newer("$path.sdoc","$path.pdf")) {
+        # Erzeuge PDF-Version
+        
         $sh->exec("sdoc pdf $path.sdoc $path.pdf --shell-escape");
-        $sh->exec("mv $path.pdf $path.pdf.tmp");
-        $sh->exec("pdfcrop $path.pdf.tmp $path.pdf");
-        $sh->exec("rm $path.pdf.tmp");
+        #$sh->exec("mv $path.pdf $path.pdf.tmp");
+        #$sh->exec("pdfcrop $path.pdf.tmp $path.pdf");
+        #$sh->exec("rm $path.pdf.tmp");
         $sh->exec("pdftoppm $path.pdf $path -png");
         $sh->exec("mv $path-1.png $path.png");
+
+        # Erzeuge HTML-Version
+        
+        $sh->exec("sdoc html $path.sdoc $path.html --shell-escape");
+        $sh->exec("wkhtmltopdf -T 1.5cm -B 1.5cm -L 1.5cm -R 1.5cm $path.html $path-html.pdf",-sloppy=>1);
+        # $sh->exec("wkhtmltopdf $path.html $path-html.pdf",-sloppy=>1);
+        $sh->exec("pdftoppm $path-html.pdf $path-html -png");
+        $sh->exec("mv $path-html-1.png $path-html.png");
+
+        #$sh->exec("pdfcrop $path-html.pdf $path-html-crop.pdf");
+        #$sh->exec("pdftoppm $path-html-crop.pdf $path-html-crop -png");
+        #$sh->exec("mv $path-html-crop-1.png $path-html-crop.png");
+        
         $createManual++;
     }
 

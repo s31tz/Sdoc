@@ -29,6 +29,11 @@ Inhaltsverzeichnis-Knoten folgende zusätzliche Attribute:
 
 =over 4
 
+=item htmlTitle => $bool (Default: 1)
+
+Wenn gesetzt, wird in HTML das Inhaltsverzeichnis mit einer
+Überschrift ("Inhaltsverzeichnis" oder "Contents") versehen.
+
 =item maxDepth => $n (Default: 3)
 
 Tiefe, bis zu welcher Abschnitte ins Inhaltsverzeichnis
@@ -98,6 +103,7 @@ sub new {
     # Objekt instantiieren
 
     my $self = $class->SUPER::new('TableOfContents',$variant,$root,$parent,
+        htmlTitle => 1,
         maxDepth => 3,
     );
     $self->setAttributes(%$attribH);
@@ -136,12 +142,14 @@ HTML-Code (String)
 sub generateHtml {
     my ($self,$h) = @_;
 
+    my $doc = $self->root;
+
     if ($self->maxDepth < -1) {
         # Kein Inhaltsverzeichnis
         return '';
     }
 
-    return $self->root->htmlTableOfContents($h,$self->maxDepth);
+    return $doc->htmlTableOfContents($h,$self);
 }
 
 # -----------------------------------------------------------------------------
@@ -186,7 +194,7 @@ sub generateLatex {
 
         my $type = $nextNode->type;
         if (!($type eq 'Section' || $type eq 'BridgeHead')) {
-            $code .= $l->c('\vspace{5.5ex}');
+            $code .= $l->c('\vspace{4ex}');
         }
     }
 

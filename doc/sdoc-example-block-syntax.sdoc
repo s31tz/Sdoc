@@ -11,7 +11,7 @@
 %Paragraph:
 Dies ist eine I{Einleitung}. Mit wenig C{Aufwand} erstellen wir in
 Sdoc ein B{Dokument}. Als Textauszeichnungen sind auch Kombinationen
-wie B{I{fett und kursiv}} oder C{I{monospace und kursiv}} möglich.
+wie B{I{fett und kursiv}} möglich.
 .
 
 %Section:
@@ -27,9 +27,12 @@ Hypotenuse: M~c=\sqrt{a^2+b^2}~.
   file="+/sdoc-graphic-illusion"
   align="center"
   scale=0.3
+  width=100
+  height=100
+  border=1
 
 %Paragraph:
-Programm-Quelltexte können wir mit Syntax-Highlighting verschönern:
+Programm-Quelltexte können wir mit Q{Syntax-Highlighting} darstellen:
 .
 
 %Code: lang=Perl ln=1 indent=1

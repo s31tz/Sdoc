@@ -38,17 +38,29 @@ angezeigt und verarbeitet wird, ist in Abschnitt L{+Dieses Dokument
 
 == PDF
 
+  $ sdoc pdf sdoc-example.sdoc
+
 %Graphic:
-# align="center"
-  border=1
-  borderMargin=2mm
   file="+/sdoc-example"
   latexOptions="width=0.965\textwidth"
-#  width=469
-#  height=628
-  scale=0.7
-  indentation=0
-# latexOptions="clip,trim=0cm 0cm 0cm 0cm,width=0.965\textwidth"
+  scale=0.55
+  border=1
+  padding=2mm
+  indent=0
+
+---PageBreak---
+
+== HTML
+
+  $ sdoc html sdoc-example.sdoc
+
+%Graphic:
+  file="+/sdoc-example-html"
+  latexOptions="width=0.965\textwidth"
+  scale=0.55
+  border=1
+  padding=2mm
+  indent=0
 
 ---PageBreak---
 
@@ -166,12 +178,14 @@ Dokument-Bock angegeben:
     copyComments=BOOL
     date=STRING
     htmlDocumentStyle=NAME
-    indentation=FLOAT
+    htmlIndentation=INTEGER
+    indentStyle=BOOL
     language=german|english
     latexDocumentClass=scrartcl|scrreprt|scrbook|article|report|book
     latexDocumentOptions=STRING
     latexFontSize=10pt|11pt|12pt
     latexGeometry=STRING
+    latexIndentation=FLOAT
     latexPageStyle=TITLEPAGE,OTHERPAGES
     latexPaperSize=PAPERSIZE
     latexParSkip=LENGTH
@@ -236,13 +250,19 @@ verwendet werden:
 
   Ist kein Wert angegeben, erscheint kein Datum im Dokumenttitel.
 
-[htmlDocumentStyle=NAME]
+[htmlDocumentStyle=NAME]:
   (Default: default) Der Name des CSS-Stylesheet, das für das Design
   des HTML-Dokuments verwendet wird.
 
-[indentation=FLOAT]:
-  (Default: 1.3) Einrückung für List-, Graphic-, Code-, Table-Blöcke
-  vom linken Rand. Einheit ist C{em}, die aber nicht angegeben wird.
+[htmlIndentation=INTEGER]:
+  (Default: 20) In HTML die Tiefe der Einrückung für List-, Graphic-,
+  Code-, Table-Blöcke vom linken Rand, wenn diese eingerückt werden
+  sollen. Das Maß wird einheitenlos in Pixel angegeben.
+
+[indentStyle=BOOL]:
+  (Default: 0) Wenn gesetzt, werden alle Code-, Graphic-, List- und
+  Table-Blöcke, für die nichts anderes angegeben ist, eingerückt
+  dargestellt.
 
 [language=LANGUAGE]:
   (Default: german) Die Sprache, in der das Dokument verfasst ist. In
@@ -267,6 +287,11 @@ verwendet werden:
   Seitengeometrie mittels des LaTeX-Pakets C{geometry}. Damit können
   gegenüber der Grundeinstellung abweichende Seitenmaße definiert
   werden.
+
+[latexIndentation=FLOAT]:
+  (Default: 1.3) In LaTeX die Tiefe der Einrückung für List-,
+  Graphic-, Code-, Table-Blöcke vom linken Rand, wenn diese eingerückt
+  werden sollen. Einheit ist C{em}, die aber nicht angegeben wird.
 
 [latexPageStyle=NAME]:
   Definiere den Seitenstil der Titelseite und der sonstigen Seiten.
@@ -549,32 +574,45 @@ Ein Paragraph hat keine Eigenschaften.
 Eine Abbildung ist ein freistehendes Bild zwischen zwei Paragraphen
 oder anderen Block-Elementen.
 
+Die Größe der Darstellung wird durch die Angabe der Breite (C{width})
+und der Höhe (C{height}) festgelegt. Die Werte werden ganzzahlig ohne
+Einheit angegeben und von Sdoc in der Einheit I{Pixel} (1/96in)
+interpretiert. Für HTML ist dies die natürliche Einheit. Für LaTeX
+werden die Werte in die Einheit I{Point} (1/72in) umgerechnet (1px =
+0.75pt), so dass die Abbildung in LaTeX in der gleichen Größe
+dargestellt wird.
+
   %Graphic:
     file="+/sdoc-graphic-illusion"
-    scale=0.25
+    width=100
+    height=100
 
 produziert:
 
 %Graphic:
   file="+/sdoc-graphic-illusion"
-  scale=0.25
+  width=100
+  height=100
 
 Per Default wird die Abbildung linksseitig mit der Einrückung
-C{indentation} (siehe Abschnitt L{+Dokument}) gesetzt. Die Einrückung
-wird weggelassen wenn das Attribut C{indentation=0} gesetzt ist.
-Mit C{align=center} kann die Abbildung auch mittig gesetzt werden.
+C{latexIndentation} bzw. C{htmlIndentation} (siehe Abschnitt
+L{+Dokument}) gesetzt. Die Einrückung wird weggelassen wenn das
+Attribut C{indent=0} gesetzt ist. Mit C{align=center} kann die
+Abbildung auch mittig gesetzt werden.
 
   %Graphic:
-    align=center
     file="+/sdoc-graphic-illusion"
-    scale=0.25
+    width=100
+    height=100
+    align=center
 
 produziert:
 
 %Graphic:
-  align=center
   file="+/sdoc-graphic-illusion"
-  scale=0.25
+  width=100
+  height=100
+  align=center
 
 Eine Abbildung kann durch Setzen des Attributs C{caption} mit einer
 Beschriftung versehen werden. Das Setzen des Attributs C{border}
@@ -582,17 +620,19 @@ auf 1, fügt einen Rahmen hinzu.
 
   %Graphic:
     file="+/sdoc-graphic-illusion"
-    scale=0.25
     caption=Illusion
+    width=100
+    height=100
     border=1
 
 produziert:
 
 %Graphic:
   file="+/sdoc-graphic-illusion"
-  scale=0.25
   caption=Illusion
-    border=1
+  width=100
+  height=100
+  border=1
 
 Für eine Grafik, die I{im Textfluss} erscheinen soll, siehe Abschnitt
 L{+G - Inline-Grafik}.
@@ -610,14 +650,14 @@ In der Beschriftung (C{caption}) einer Abbildung können alle Segmente
     align=left|center|right
     anchor=STRING
     border=BOOL
-    borderMargin=LENGTH
     caption=STRING
     file=PATH
     height=INTEGER
     latexOptions=STRING
     link=URL
     name=STRING
-    indentation=BOOL
+    indent=BOOL
+    padding=LENGTH
     scale=FLOAT
     show=BOOL
     with=INTEGER
@@ -631,10 +671,6 @@ In der Beschriftung (C{caption}) einer Abbildung können alle Segmente
 
 [border=BOOL]:
   (Default: 0) Zeichne einen Rahmen um die Abbildung.
-
-[borderMargin=LENGTH]:
-  (Default: 0mm) Zeichne den Rahmen (Attribut C{border}) mit dem
-  angegebenen Abstand um die Abbildung.
 
 [caption=STRING]:
   Beschriftung der Grafik. Diese erscheint unter der Grafik.
@@ -662,9 +698,13 @@ In der Beschriftung (C{caption}) einer Abbildung können alle Segmente
   einem G-Segment referenziert wird. Ist ein Name gesetzt, ist der
   Default für das Attribut C{definition} 1, sonst 0.
 
-[indentation=BOOL]:
+[indent=BOOL]:
   Rücke die Grafik ein. Das Attribut ist nur bei C{align=left}
   und bei Inline-Grafiken von Bedeutung.
+
+[padding=LENGTH]:
+  (Default: 0mm) Zeichne den Rahmen (Attribut C{border}) mit dem
+  angegebenen Abstand um die Abbildung.
 
 [scale=FLOAT]:
   Skalierungsfaktor. Der Skalierungsfaktor hat bei LaTeX Priorität
@@ -1218,7 +1258,7 @@ Q{Dies ist ein Zitat}
     anchor=STRING
     border=STRING
     caption=STRING
-    indentation=BOOL
+    indent=BOOL
     titleColor=COLOR
   TEXT
   .
@@ -1244,7 +1284,7 @@ Q{Dies ist ein Zitat}
 [caption=STRING]:
   Die Beschriftung der Tabelle. Diese erscheint unter der Tabelle.
 
-[indentation=BOOL]:
+[indent=BOOL]:
   Rücke die Tabelle ein. Das Attribut ist nur bei C{align=left}
   von Bedeutung.
 

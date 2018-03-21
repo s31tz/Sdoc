@@ -7,6 +7,7 @@ use utf8;
 
 our $VERSION = 1.125;
 
+use Sdoc::Core::Css;
 use Sdoc::Core::Template;
 use Sdoc::Core::String;
 use Scalar::Util ();
@@ -1088,6 +1089,12 @@ und dem Inhalt $content und liefere das Resultat zurück [2].
 Der Inhalt kann auch fehlen [1] oder sich über mehrere Argumente
 erstrecken [3].
 
+B<Attribut C{style}>
+
+Als Wert des Attributs C<style> kann eine Array-Referenz mit
+Property/Wert-Paaren angegeben werden. Diese werden von der
+Methode Sdoc::Core::Css->properties() aufgelöst.
+
 B<Boolsche Attribute>
 
 Boolsche Attribute werden in HTML ohne Wert und in XHTML mit sich
@@ -1360,6 +1367,10 @@ sub tag {
 
         # Attribut/Wert-Paar
 
+        if ($key eq 'style' && ref($val)) {
+            # liefert undef, wenn Array leer ist
+            $val = Sdoc::Core::Css->properties($val);
+        }
         if (defined $val) {
             if ($checkLevel >= 2) {
                 $self->checkValue($dom,$val);

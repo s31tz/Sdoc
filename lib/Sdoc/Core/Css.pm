@@ -101,6 +101,72 @@ sub new {
 
 =head2 Objektmethoden
 
+=head3 properties() - Zeichenkette aus CSS Properties
+
+=head4 Synopsis
+
+    $properties = $this->properties(@properties);
+    $properties = $this->properties(\@properties);
+
+=head4 Description
+
+Generiere aus den Property/Wert-Paaren @properties eine
+Zeichenkette aus CSS Properties. Ist die Liste der
+Property/Wert-Paare leer oder haben alle Schlüssel keinen Wert
+(C<undef> oder Leerstring) liefere C<undef> (keinen Leerstring,
+damit von der Methode tag() kein style-Attribut mit Leerstring
+erzeugt wird!).
+
+Diese Methode ist nützlich, wenn der Wert eines HTML
+style-Attributs erzeugt werden soll. Wenn als Wert des Attributs
+C<style> eines Sdoc::Core::Html::Tag eine Array-Referenz angegeben
+wird, wird diese Methode gerufen.
+
+=head4 Example
+
+Erzeuge Properties für HTML style-Attribut:
+
+    $properties = Sdoc::Core::Css->properties(
+        fontStyle => 'italic',
+        marginLeft => '0.5cm',
+        marginRight => '0.5cm',
+    );
+
+liefert
+
+    font-style: italic; margin-left: 0.5cm; margin-right: 0.5cm;
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub properties {
+    my $this = shift;
+    my $propertyA = ref $_[0]? shift: \@_;
+
+    my $self = ref $this? $this: $this->new('flat');
+    my $sep = $self->{'format'} eq 'flat'? ' ': "\n";
+
+    my $code;
+    for (my $i = 0; $i < @$propertyA; $i += 2) {
+        my $key = $propertyA->[$i];
+        my $val = $propertyA->[$i+1];
+
+        $key =~ s/([a-z])([A-Z])/$1-\L$2/g;
+
+        if (defined $val && $val ne '') {
+            if ($code) {
+                $code .= $sep;
+            }
+            $code .= "$key: $val;";
+        }
+    }
+
+    return $code;
+}
+
+# -----------------------------------------------------------------------------
+
 =head3 rule() - Generiere CSS Style Rule
 
 =head4 Synopsis
@@ -111,17 +177,19 @@ sub new {
 =head4 Description
 
 Generiere eine CSS Style Rule, bestehend aus Selector $selector
-und den Property/Value-Paaren @properties und liefere
-diese als Zeichenkette zurück.
+und den Property/Value-Paaren @properties und liefere diese als
+Zeichenkette zurück. Ist die Liste der Properties leer oder haben
+alle Schlüssel keinen Wert (C<undef> oder Leerstring) liefere
+einen Leerstring ('').
 
 =head4 Example
 
 Erzeuge eine einfache Style Rule:
 
     $rule = Sdoc::Core::Css->rule('p.abstract',
-        fontStyle=>'italic',
-        marginLeft=>'0.5cm',
-        marginRight=>'0.5cm',
+        fontStyle => 'italic',
+        marginLeft => '0.5cm',
+        marginRight => '0.5cm',
     );
 
 liefert
@@ -142,23 +210,16 @@ sub rule {
     my $propertyA = ref $_[0]? shift: \@_;
 
     my $self = ref $this? $this: $this->new;
-    my $flat = $self->{'format'} eq 'flat'? 1: 0;
-
-    my $rule = '';
-    for (my $i = 0; $i < @$propertyA; $i += 2) {
-        my $prop = $propertyA->[$i];
-        my $val = $propertyA->[$i+1];
-
-        $prop =~ s/([a-z])([A-Z])/$1-\L$2/g;
-
-        if (defined $val && $val ne '') {
-            $rule .= $flat? "$prop: $val; ": "    $prop: $val;\n";
-        }
-    }
-
+    
+    my $rule = $self->properties($propertyA) // '';
     if ($rule) {
-        #  Wir erzeugen nur dann eine Regel, wenn sie Definitionen enthält
-        $rule = $flat? "$selector { $rule}\n": "$selector {\n$rule}\n";
+        if ($self->{'format'} eq 'flat') {
+            $rule = "$selector { $rule }\n";
+        }
+        else {
+            $rule =~ s/^/    /mg;
+            $rule = "$selector {\n$rule\n}\n";
+        }
     }
 
     return $rule;

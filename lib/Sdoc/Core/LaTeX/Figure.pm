@@ -60,7 +60,7 @@ Ausrichtung der Abbildung auf der Seite: l=links, c=zentriert.
 
 Zeichne einen Rahmen um die Abbildung.
 
-=item borderMargin => $length (Default: '0mm')
+=item padding => $length (Default: '0mm')
 
 Zeichne den Rahmen (Attribut C<border>) mit dem angegebenen
 Abstand um die Abbildung.
@@ -75,7 +75,9 @@ Pfad der Bilddatei.
 
 =item height => $height
 
-Höhe (ohne Angabe einer Einheit), auf die das Bild skaliert wird.
+Höhe in Pixel (ohne Angabe einer Einheit), auf die das Bild
+skaliert wird. Der Wert wird für LaTeX in pt umgerechnet (1px =
+0.75pt).
 
 =item indent => $length
 
@@ -124,8 +126,9 @@ Ist auch Attribut C<ref> gesetzt, hat dieses Priorität.
 
 =item width => $width
 
-Breite (ohne Angabe einer Einheit), auf die das Bild skaliert
-wird.
+Breite in Pixel (ohne Angabe einer Einheit), auf die das Bild
+skaliert wird. Der Wert wird für LaTeX in pt umgerechnet (1px =
+0.75pt).
 
 =back
 
@@ -149,7 +152,6 @@ sub new {
     my $self = $class->SUPER::new(
         align => undef,
         border => 0,
-        borderMargin => '0mm',
         caption => undef,
         file => undef,
         height => undef,
@@ -158,6 +160,7 @@ sub new {
         label => undef,
         link => undef,
         options => undef, # $str | \@opt
+        padding => '0mm',
         position => 'H',
         postVSpace => undef,
         scale => undef,
@@ -195,10 +198,10 @@ sub latex {
 
     my $self = ref $this? $this: $this->new(@_);
 
-    my ($align,$border,$borderMargin,$caption,$file,$height,$indent,$inline,
-        $label,$link,$options,$position,$postVSpace,$scale,$width) =
-        $self->get(qw/align border borderMargin caption file height indent
-        inline label link options position postVSpace scale width/);
+    my ($align,$border,$caption,$file,$height,$indent,$inline,$label,$link,
+        $options,$padding,$position,$postVSpace,$scale,$width) =
+        $self->get(qw/align border caption file height indent inline label
+        link options padding position postVSpace scale width/);
 
     $align //= $inline? '': 'c';
 
@@ -212,9 +215,13 @@ sub latex {
         push @opt,"scale=$scale";
     }
     elsif ($width && $height) {
-        # Fallback, wenn scale nicht angegeben ist
-        push @opt,"width=${width}px";
-        push @opt,"height=${height}px";
+        # Umrechnung von px in pt (1px = 0.75pt)
+
+        $width *= 0.75;
+        $height *= 0.75;
+
+        push @opt,"width=${width}pt";
+        push @opt,"height=${height}pt";
     }
     if (defined $options) {
         if (Sdoc::Core::Reference->isArrayRef($options)) {
@@ -235,7 +242,7 @@ sub latex {
         -nl => 0,
     );
     if ($border) {
-        $code = $l->ci('{\fboxsep%s\fbox{%s}}',$borderMargin,$code);
+        $code = $l->ci('{\fboxsep%s\fbox{%s}}',$padding,$code);
     }
     if ($link) {
         # $link muss %s enthalten
