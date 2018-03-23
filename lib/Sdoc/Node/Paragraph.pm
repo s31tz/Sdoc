@@ -153,11 +153,11 @@ sub new {
 
 =head2 Formate
 
-=head3 generateHtml() - Generiere HTML-Code
+=head3 html() - Generiere HTML-Code
 
 =head4 Synopsis
 
-    $code = $par->generateHtml($gen);
+    $code = $par->html($gen);
 
 =head4 Arguments
 
@@ -171,28 +171,28 @@ Generator für HTML.
 
 =head4 Returns
 
-LaTeX-Code (String)
+HTML-Code (String)
 
 =cut
 
 # -----------------------------------------------------------------------------
 
-sub generateHtml {
+sub html {
     my ($self,$h) = @_;
 
     return $h->tag('p',
-        class => 'sdoc-paragraph',
+        class => $self->cssClass,
         $self->expandText($h,'textS')
     );
 }
 
 # -----------------------------------------------------------------------------
 
-=head3 generateLatex() - Generiere LaTeX-Code
+=head3 latex() - Generiere LaTeX-Code
 
 =head4 Synopsis
 
-    $code = $par->generateLatex($gen);
+    $code = $par->latex($gen);
 
 =head4 Arguments
 
@@ -200,7 +200,7 @@ sub generateHtml {
 
 =item $gen
 
-Generator für das Zielformat.
+Generator für LaTeX.
 
 =back
 
@@ -212,7 +212,7 @@ LaTeX-Code (String)
 
 # -----------------------------------------------------------------------------
 
-sub generateLatex {
+sub latex {
     my ($self,$l) = @_;
     return $self->expandText($l,'textS')."\n\n";
 }

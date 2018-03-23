@@ -2,9 +2,10 @@
   title="Sdoc Handbuch"
   author="Frank Seitz, L{http://fseitz.de/}"
   date="today"
+  indentMode=1
 
 %TableOfContents:
-  maxDepth=4
+  maxLevel=4
 
 ---PageBreak---
 
@@ -34,7 +35,11 @@ angezeigt und verarbeitet wird, ist in Abschnitt L{+Dieses Dokument
 
 == Sdoc Quelltext
 
-%Code: load="+/sdoc-example.sdoc" filter="grep -avi geometry" ln=1
+%Code:
+  load="+/sdoc-example.sdoc"
+  filter="grep -avi geometry"
+  ln=1
+  indent=0
 
 == PDF
 
@@ -176,10 +181,11 @@ Dokument-Bock angegeben:
     author=STRING
     codeStyle=STYLE
     copyComments=BOOL
+    cssClassPrefix=NAME
     date=STRING
     htmlDocumentStyle=NAME
     htmlIndentation=INTEGER
-    indentStyle=BOOL
+    indentMode=BOOL
     language=german|english
     latexDocumentClass=scrartcl|scrreprt|scrbook|article|report|book
     latexDocumentOptions=STRING
@@ -191,7 +197,7 @@ Dokument-Bock angegeben:
     latexParSkip=LENGTH
     latexShowFrames=BOOL
     quiet=BOOL
-    sectionNumberDepth=-2|-1|0|1|2|3|4
+    sectionNumberLevel=-2|-1|0|1|2|3|4
     smallerMonospacedFont=BOOL
     tableOfContents=BOOL
     title=STRING
@@ -238,6 +244,10 @@ verwendet werden:
   Zielformats zu finden, die aus einem bestimmten Sdoc-Konstrukt
   hervorgegangen ist.
 
+[cssClassPrefix=NAME]
+  (Default: 'sdoc') Präfix für die CSS-Klassen der Elemente des
+  Dokuments.
+
 [date=STRING]:
   Das Datum des Dokuments. Wenn gesetzt, wird eine Titelseite bzw.
   ein Titelabschnitt erzeugt. Formatelemente von strftime werden
@@ -259,7 +269,7 @@ verwendet werden:
   Code-, Table-Blöcke vom linken Rand, wenn diese eingerückt werden
   sollen. Das Maß wird einheitenlos in Pixel angegeben.
 
-[indentStyle=BOOL]:
+[indentMode=BOOL]:
   (Default: 0) Wenn gesetzt, werden alle Code-, Graphic-, List- und
   Table-Blöcke, für die nichts anderes angegeben ist, eingerückt
   dargestellt.
@@ -289,9 +299,10 @@ verwendet werden:
   werden.
 
 [latexIndentation=FLOAT]:
-  (Default: 1.3) In LaTeX die Tiefe der Einrückung für List-,
-  Graphic-, Code-, Table-Blöcke vom linken Rand, wenn diese eingerückt
-  werden sollen. Einheit ist C{em}, die aber nicht angegeben wird.
+  (Default: 11.5) In LaTeX die Tiefe der Einrückung für Code-,
+  Graphic-, List- und Table-Blöcke vom linken Rand, wenn diese
+  eingerückt werden sollen. Einheit ist C{pt}, die aber nicht
+  angegeben wird.
 
 [latexPageStyle=NAME]:
   Definiere den Seitenstil der Titelseite und der sonstigen Seiten.
@@ -320,7 +331,7 @@ verwendet werden:
 [quiet=BOOL]:
   (Default: 0) Gib keine Warnungen aus.
 
-[sectionNumberDepth=N]:
+[sectionNumberLevel=N]:
   (Default: 3) Die Abschnittsebene, bis zu welcher Abschnitte
   numeriert werden.  Mögliche Werte: -2, -1, 0, 1, 2, 3, 4. -2
   bedeutet: Die Abschnitte des Dokuments werden nicht numeriert.
@@ -344,7 +355,7 @@ Das Inhaltsverzeichnis wird an die Stelle plaziert, wo der
 TableOfContents-Block steht.
 
   %TableOfContents:
-    maxDepth=N
+    maxLevel=N
 
 Der TableOfContents-Block ist optional. Kommt er im Dokument nicht
 vor, wird das Inhaltsverzeichnis automatisch nach dem
@@ -359,7 +370,7 @@ dies nicht statt und das Dokument erhält kein Inhaltsverzeichnis.
 
 === Eigenschaften
 
-[maxDepth=N]:
+[maxLevel=N]:
   (Default: 3) Tiefe, bis zu welcher Abschnitte ins Inhaltsverzeichnis
   aufgenommen werden. Mögliche Werte: -2, -1, 0, 1, 2, 3, 4. -2 = kein
   Inhaltsverzeichnis.
@@ -381,7 +392,7 @@ werden.
   === Dies ist ein Abschnitt der Ebene 3
 
 Abschnitte werden optional mit 1. 1.1. 1.2. ... 2. 2.1. usw.
-durchnummeriert, wenn das %Document-Attribut C{sectionNumberDepth}
+durchnummeriert, wenn das %Document-Attribut C{sectionNumberLevel}
 auf einen Wert > -2 gesetzt wird.
 
 === Übergeordnete Ebenen
@@ -425,7 +436,7 @@ Unterabschnitte müssen nicht gekennzeichnet werden.
 
   ==== Abschnitt ABCD (erscheint nicht in Inhaltsverzeichnis)
 
-Im Unterschied zum %TableOfContents-Attribut C{maxDepth} können auf
+Im Unterschied zum %TableOfContents-Attribut C{maxLevel} können auf
 diesem Weg Abschnitte unterschiedlicher Ebenen vom Inhaltsverzeichnis
 ausgeschlossen werden.
 
@@ -865,9 +876,14 @@ L{+Syntax/Segment}) verwendet werden:
 ====* List
 
   %List:
+    indent=BOOL
     listType=TYPE
 
-[listType]:
+[indent=BOOL]:
+  Rücke die Liste ein. Das Attribut ist nur für Aufzählungs- und
+  Markierungslisten von Bedeutung.
+
+[listType=TYPE]:
   Art der Liste. Mögliche Werte: 'unordered', 'ordered',,
   'description'.  Wenn nicht gesetzt, wird der Wert vom ersten
   List-Item gesetzt.
@@ -1926,6 +1942,168 @@ also ausschließlich in Block-Syntax. Der Quelltext wird dadurch
 deutlich länger und ist weniger gut lesbar.
 
 %Code: load="+/sdoc-example-block-syntax.sdoc" ln=1
+
+---PageBreak---
+
+= Einrückung von Blöcken
+
+Die Einrückung von Code-, Graphic-, List- und Table-Blöcken vom linken
+Dokument-Rand kann individuell oder global eingestellt werden. Die
+individuelle Einstellung hat Vorrang gegenüber der globalen
+Einstellung.
+
+Die globale Einstellung erfolgt durch das Attribut
+C{Document.indentMode=BOOL} (Default: 0), die individuelle durch das
+Attribut I{Block}.C{indent=BOOL} (Default: undef).
+
+== Ohne Einrückung
+
+Keine Einrückung findet statt, wenn C{Document.indentMode=0} und
+I{Block}.C{indent=undef} oder I{Block}.C{indent=0} eingestellt ist
+(Ausnahme siehe Abschnitt L{Sonderfall Listen}).
+
+%List:
+  indent=0
+* Apfel
+* Birne
+* Pflaume
+
+%Graphic:
+  file="+/sdoc-graphic-illusion"
+  width=100
+  height=100
+  indent=0
+
+%List:
+  indent=0
+1. Einkaufen
+2. Kochen
+3. Abwaschen
+
+%Table:
+  indent=0
+
+Links Rechts Zentriert
+----- ------ ---------
+A          1    AB
+AB        12    CD
+ABC      123    EF
+.
+
+%Code: lang=Perl indent=0
+  my $dh = DirHandle->new($dir);
+  while (my $entry = $dh->next) {
+      say $entry;
+  }
+  $dh->close;
+.
+
+%Code: lang=Perl indent=0 ln=118
+  my $dh = DirHandle->new($dir);
+  while (my $entry = $dh->next) {
+      say $entry;
+  }
+  $dh->close;
+.
+
+%List:
+  indent=0
+[255 239 213]:
+  PapayaWhip
+[188 143 143]:
+  RosyBrown
+[255 218 185]:
+  PeachPuff
+
+== Mit Einrückung
+
+Eine Einrückung findet statt, wenn C{Document.indentMode=1} und
+I{Block}.C{indent=undef} oder I{Block}.C{indent=1} eingestellt ist:
+
+Die Tiefe der Einrückung wird für die Zielformate getrennt
+festgelegt. Dies geschieht durch die globalen Dokument-Attribute
+I{Format}C{Indentation=FLOAT}. Hierbei ist I{Format} der Bezeichner
+für das Zielformat: C{latex} für LaTeX, C{html} für HTML. Der Wert des
+jeweiligen Attributs gibt den Abstand vom linken Rand des Dokuments
+an. Im Falle von LaTeX wird der Abstand in I{Punkt} (pt) gemessen, im
+Falle von HTML in I{Pixel} (px). Es wird der numerische Wert
+angegeben, die Einheit ist I{nicht} Bestandteil des Attributwerts.
+
+* Apfel
+* Birne
+* Pflaume
+
+%Graphic:
+  file="+/sdoc-graphic-illusion"
+  width=100
+  height=100
+  indent=1
+
+1. Einkaufen
+2. Kochen
+3. Abwaschen
+
+%Table:
+  indent=1
+
+Links Rechts Zentriert
+----- ------ ---------
+A          1    AB
+AB        12    CD
+ABC      123    EF
+.
+
+%Code: lang=Perl indent=1
+  my $dh = DirHandle->new($dir);
+  while (my $entry = $dh->next) {
+      say $entry;
+  }
+  $dh->close;
+.
+
+%Code: lang=Perl indent=1 ln=118
+  my $dh = DirHandle->new($dir);
+  while (my $entry = $dh->next) {
+      say $entry;
+  }
+  $dh->close;
+.
+
+[255 239 213]:
+  PapayaWhip
+[188 143 143]:
+  RosyBrown
+[255 218 185]:
+  PeachPuff
+
+== Sonderfall Listen
+
+Die drei Listenarten - C{unordered}, C{ordered} und C{description} -
+stellen einen Sonderfall hinsichtlich der Einrückung dar. Sie werden,
+sofern ihr Attribut I{Block}.C{indent} nicht explizit auf den Wert
+C{0} gesetzt wird, immer eingerückt, also auch, wenn
+C{Document.indentMode=0} gesetzt ist.
+
+===* Unordered
+
+* Apfel
+* Birne
+* Pflaume
+
+===* Ordered
+
+1. Einkaufen
+2. Kochen
+3. Abwaschen
+
+===* Description
+
+[255 239 213]:
+  PapayaWhip
+[188 143 143]:
+  RosyBrown
+[255 218 185]:
+  PeachPuff
 
 ---PageBreak---
 

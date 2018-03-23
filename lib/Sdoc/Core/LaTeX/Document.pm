@@ -29,11 +29,12 @@ Der Code
     use Sdoc::Core::LaTeX::Document;
     use Sdoc::Core::LaTeX::Code;
     
+    my $l = Sdoc::Core::LaTeX::Code->new;
+    
     my $doc = Sdoc::Core::LaTeX::Document->new(
         body => 'Hallo Welt',
     );
     
-    my $l = Sdoc::Core::LaTeX::Code->new;
     my $code = $doc->latex($l);
 
 produziert

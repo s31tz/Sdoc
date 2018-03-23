@@ -247,11 +247,11 @@ sub new {
 
 =head2 Formate
 
-=head3 generateHtml() - Generiere LaTeX-Code
+=head3 html() - Generiere HTML-Code
 
 =head4 Synopsis
 
-    $code = $cod->generateHtml($gen);
+    $code = $cod->html($gen);
 
 =head4 Arguments
 
@@ -259,19 +259,19 @@ sub new {
 
 =item $gen
 
-Generator für das Zielformat.
+Generator für HTML.
 
 =back
 
 =head4 Returns
 
-LaTeX-Code (String)
+HTML-Code (String)
 
 =cut
 
 # -----------------------------------------------------------------------------
 
-sub generateHtml {
+sub html {
     my ($self,$h) = @_;
 
     my $doc = $self->root;
@@ -289,7 +289,7 @@ sub generateHtml {
     }
 
     my $marginLeft;
-    if ($self->indent || $doc->indentStyle && !defined $self->indent) {
+    if ($self->indent || $doc->indentMode && !defined $self->indent) {
         $marginLeft = sprintf('%spx',$doc->htmlIndentation);
     }
 
@@ -319,11 +319,11 @@ sub generateHtml {
 
 # -----------------------------------------------------------------------------
 
-=head3 generateLatex() - Generiere LaTeX-Code
+=head3 latex() - Generiere LaTeX-Code
 
 =head4 Synopsis
 
-    $code = $cod->generateLatex($gen);
+    $code = $cod->latex($gen);
 
 =head4 Arguments
 
@@ -331,7 +331,7 @@ sub generateHtml {
 
 =item $gen
 
-Generator für das Zielformat.
+Generator für LaTeX.
 
 =back
 
@@ -343,21 +343,23 @@ LaTeX-Code (String)
 
 # -----------------------------------------------------------------------------
 
-sub generateLatex {
+sub latex {
     my ($self,$l) = @_;
 
-    my $root = $self->root;
+    my $doc = $self->root;
     my $text = $self->text;
 
+    # Einrückung
+    my $indent = $self->indent || $doc->indentMode && !defined $self->indent;
+
     my @opt;
-    my $indent = $self->indent;
     if (my $ln = $self->ln) {
         my $c = chr(length($ln + $text =~ tr/\n// - 1) + 96); # a, b, c, d
         my $i = $indent? 'i': '';
         push @opt,'linenos',"firstnumber=$ln","xleftmargin=\\lnwidth$c$i";
     }
     elsif ($indent) {
-        push @opt,sprintf 'xleftmargin=%sem',$root->latexIndentation;
+        push @opt,'xleftmargin='.$doc->latexIndentation.'pt';
     }
 
     if (my $lang = $self->lang) {

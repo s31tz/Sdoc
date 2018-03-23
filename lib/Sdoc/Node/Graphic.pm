@@ -91,7 +91,7 @@ Default für das Attribut C<definition> 1, sonst 0.
 
 Nummer der Grafik. Wird automatisch hochgezählt.
 
-=item indent => $bool
+=item indent => $bool (Default: undef)
 
 Rücke die Grafik ein. Das Attribut ist nur bei C<< align =>
 'left' >> oder bei Inline-Grafiken von Bedeutung.
@@ -346,11 +346,11 @@ sub latexLinkCode {
 
 =head2 Formate
 
-=head3 generateHtml() - Generiere HTML-Code
+=head3 html() - Generiere HTML-Code
 
 =head4 Synopsis
 
-    $code = $gph->generateHtml($gen);
+    $code = $gph->html($gen);
 
 =head4 Arguments
 
@@ -370,7 +370,7 @@ HTML-Code (String)
 
 # -----------------------------------------------------------------------------
 
-sub generateHtml {
+sub html {
     my ($self,$h) = @_;
 
     my $doc = $self->root;
@@ -431,7 +431,7 @@ sub generateHtml {
     if (substr($self->align,0,1) eq 'c') {
         push @divStyle,textAlign=>'center';
     }
-    elsif ($self->indent || $doc->indentStyle && !defined $self->indent) {
+    elsif ($self->indent || $doc->indentMode && !defined $self->indent) {
         push @divStyle,marginLeft=>sprintf('%spx',$doc->htmlIndentation+4);
     }
 
@@ -472,11 +472,11 @@ sub generateHtml {
 
 # -----------------------------------------------------------------------------
 
-=head3 generateLatex() - Generiere LaTeX-Code
+=head3 latex() - Generiere LaTeX-Code
 
 =head4 Synopsis
 
-    $code = $gph->generateLatex($gen);
+    $code = $gph->latex($gen);
 
 =head4 Arguments
 
@@ -484,7 +484,7 @@ sub generateHtml {
 
 =item $gen
 
-Generator für das Zielformat.
+Generator für LaTeX.
 
 =back
 
@@ -496,29 +496,36 @@ LaTeX-Code (String)
 
 # -----------------------------------------------------------------------------
 
-sub generateLatex {
+sub latex {
     my ($self,$l) = @_;
 
-    my $root = $self->root;
+    my $doc = $self->root;
 
     if (!defined($self->show) && $self->useCount > 0) {
         return '';
     }
 
+    # Einrückung
+
+    my $indent;
+    if ($self->indent || $doc->indentMode && !defined $self->indent) {
+        $indent = $doc->latexIndentation.'pt';
+    }
+    
     # LaTeX-Code erzeugen
 
     return Sdoc::Core::LaTeX::Figure->latex($l,
         align => substr($self->align,0,1),
         border => $self->border,
         caption => $self->expandText($l,'captionS'),
-        file => $root->expandPath($self->file),
+        file => $doc->expandPath($self->file),
         height => $self->height,
-        # indent => $self->indent // 1? $root->latexIndentation.'em': undef,
+        indent => $indent,
         label => $self->referenced? $self->linkId: undef,
         link => $self->latexLinkCode($l),
         options => $self->latexOptions,
         padding => $self->padding,
-        postVSpace => $l->modifyLength($root->latexParSkip,'*-2'),
+        postVSpace => $l->modifyLength($doc->latexParSkip,'*-2'),
         scale => $self->scale,
         width => $self->width,
     )."\n";

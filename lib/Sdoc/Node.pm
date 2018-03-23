@@ -644,18 +644,16 @@ sub generate {
     }
     elsif ($format eq 'html') {
         $gen = Sdoc::Core::Html::Tag->new;
+        return $self->html($gen);
     }
     elsif ($format eq 'latex') {
         $gen = Sdoc::Core::LaTeX::Code->new;
+        return $self->latex($gen);
     }
-    else {
-        $self->throw(
-            q~SDOC-00004: Unknown format~,
-            Format => $format,
-        );
-    }
-
-    return $self->generateFormat($format,$gen);
+    $self->throw(
+        q~SDOC-00004: Unknown format~,
+        Format => $format,
+    );
 }
 
 # -----------------------------------------------------------------------------
@@ -699,55 +697,10 @@ sub generateChilds {
 
     my $code = '';
     for my $node ($self->childs) {
-        $code .= $node->generateFormat($format,$gen);
+        $code .= $node->$format($gen);
     }
 
     return $code;
-}
-
-# -----------------------------------------------------------------------------
-
-=head3 generateFormat() - Generiere Knoten-Code für alle Formate (überschreibbar)
-
-=head4 Synopsis
-
-    $code = $node->generateFormat($format,$gen);
-
-=head4 Arguments
-
-=over 4
-
-=item $format
-
-Zielformat, das generiert wird.
-
-=item $gen
-
-Generator für das Zielformat.
-
-=back
-
-=head4 Returns
-
-Code (String)
-
-=head4 Description
-
-Generiere Code im Format $format unter Nutzung des Generators $gen
-für Knoten $node und liefere das Resultat zurück. Diese Methode
-kann in einer Knoten-Klasse überschrieben werden, falls es bei
-der Generierung gemeinsamen Code für alle Formate gibt. Die Methode
-delegiert dann selbst an die Methoden generateI<FORMAT>().
-
-=cut
-
-# -----------------------------------------------------------------------------
-
-sub generateFormat {
-    my ($self,$format,$gen) = @_;
-
-    my $meth = sprintf 'generate%s',ucfirst $format;
-    return $self->$meth($gen);
 }
 
 # -----------------------------------------------------------------------------
@@ -1202,13 +1155,13 @@ sub expandSegmentsToLatex {
 
 =item $gen
 
-Generator für das Zielformat.
+Generator für LaTeX.
 
 =back
 
 =head4 Returns
 
-LaTeX Abschnittsname (String)
+LaTeX-Code (String)
 
 =head4 Description
 
@@ -1260,7 +1213,7 @@ sub latexSectionName {
 
 =head4 Synopsis
 
-    $code = $node->htmlSectionCode($gen,$type);
+    $code = $node->htmlSectionCode($gen);
 
 =head4 Arguments
 
@@ -1268,11 +1221,7 @@ sub latexSectionName {
 
 =item $gen
 
-Generator für das Zielformat.
-
-=item $type
-
-Typ der Überschrift. Mögliche Werte: 'bridgehead', 'section'.
+Generator für HTML.
 
 =back
 
@@ -1289,36 +1238,25 @@ Liefere den HTML-Code für einen Section- oder BridgeHead-Knoten.
 # -----------------------------------------------------------------------------
 
 sub htmlSectionCode {
-    my ($self,$h,$type) = @_;
+    my ($self,$h) = @_;
 
     my $doc = $self->root;
 
+    # Erzeuge Abschnittstitel. Ein Bridgehead hat keine Abschnittsnummer.
+
     my $title = $self->expandText($h,'titleS');
-    if ($type eq 'section' && $self->level <= $doc->sectionNumberDepth) {
+    if ($self->type eq 'Section' && $self->level <= $doc->sectionNumberLevel) {
         $title = $self->sectionNumber.' '.$title;
     }
 
-    # Abschnitt generieren
-
-    my $highestLevel = $doc->highestSectionLevel;
-    my $n = $self->level+(1-$highestLevel);
-    #if ($highestLevel == 1 && $doc->title) {
-    #    # Sonderbehandlung: Wenn das Dokument einen Titel, aber keine
-    #    # übergeordneten Abschnitte (Part oder Chapter) hat, beginnen
-    #    # wir mit h2, da der Titel bereits h1 ist.
-    #    $n++;
-    #}
-
-    # In HTML stellen wir jedem Abschnitt einen Anker voran,
-    # um alle Abschnitte aus dem Inhaltsverzeichnis und
-    # von externen Links referenzieren zu können
+    # Generiere HTML-Code
 
     my $code .= $h->tag('a',
         -nl => 1,
         name => $self->linkId,
     );
-    $code .= $h->tag("h$n",
-        class => "sdoc-$type",
+    $code .= $h->tag('h'.($self->level+(1-$doc->highestSectionLevel)),
+        class => $self->cssClass,
         $title
     );
 
@@ -1339,9 +1277,9 @@ sub htmlSectionCode {
 
 =item $gen
 
-Generator für das Zielformat.
+Generator für HTML.
 
-=item $maxDepth
+=item $maxLevel
 
 Tiefe des tiefsten Abschnitts, der noch in das Inhaltsverzeichnis
 aufgenommen wird. Mögliche Werte: -1, 0, 1, 2, 3, 4.
@@ -1372,10 +1310,10 @@ sub htmlTableOfContents {
     my $sectionNumber; # zeigt an, ob Ebene mit Abschnittsnummern
     for my $node ($self->childs) {
         if ($node->type eq 'Section' &&
-                $node->level <= $toc->maxDepth && !$node->notToc) {
+                $node->level <= $toc->maxLevel && !$node->notToc) {
 
             my $title = $node->expandText($h,'titleS');
-            if ($node->level <= $doc->sectionNumberDepth) {
+            if ($node->level <= $doc->sectionNumberLevel) {
                 $sectionNumber = $h->tag('span',
                     class => 'number',
                     $node->sectionNumber
@@ -1452,6 +1390,34 @@ sub htmlTableOfContents {
     }
 
     return $html;
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 cssClass() - Name der CSS-Klasse
+
+=head4 Synopsis
+
+    $cssClass = $node->cssClass;
+
+=head4 Returns
+
+CSS-Klassenname (String)
+
+=head4 Description
+
+Liefere den CSS-Klassennamen des Knotens. Alle Knoten desselben
+Typs haben denselben CSS-Klassennamen. Der CSS-Klassenname setzt
+sich zusammen aus dem CSS-Klassenpräfix, den der Dokument-Knoten
+definiert, und dem Namen des Knotentyps.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub cssClass {
+    my $self = shift;
+    return lc sprintf '%s-%s',$self->root->cssClassPrefix,$self->type;
 }
 
 # -----------------------------------------------------------------------------

@@ -35,6 +35,11 @@ Listen-Knoten folgende zusätzliche Attribute:
 
 Liste der Subknoten.
 
+=item indent => $bool (Default: undef)
+
+Rücke die Liste ein. Das Attribut ist nur für Aufzählungs- und
+Markierungslisten von Bedeutung.
+
 =item listType => $listType
 
 Art der Liste. Mögliche Werte: 'description', 'ordered', 'unordered'.
@@ -108,6 +113,7 @@ sub new {
 
     my $self = $class->SUPER::new('List',$variant,$root,$parent,
         childA => [],
+        indent => undef,
         listType => undef,
         number => $root->increment('countList'),
     );
@@ -119,11 +125,16 @@ sub new {
     while (@$lineA) {
         my ($nodeClass,$variant,$type) = $par->nextType(1);
 
-        # Abbruch bei einem anderen Typ als Item oder einem Item
-        # eines anderen Listentyps
-        
         if ($type ne 'Item') {
+            # Abbruch bei einem anderen Typ als Item
             last;
+        }
+        else { # $type eq 'Item'
+            my $listType = $self->listType;
+            if ($listType && $listType ne $par->listType) {
+                # Abbruch bei einem Item eines anderen Listentyps
+                last;
+            }
         }
 
         $self->push(childA=>$nodeClass->new($variant,$par,$root,$self));
@@ -136,11 +147,11 @@ sub new {
 
 =head2 Formate
 
-=head3 generateHtml() - Generiere HTML-Code
+=head3 html() - Generiere HTML-Code
 
 =head4 Synopsis
 
-    $code = $lst->generateHtml($gen);
+    $code = $lst->html($gen);
 
 =head4 Arguments
 
@@ -154,13 +165,13 @@ Generator für HTML.
 
 =head4 Returns
 
-LaTeX-Code (String)
+HTML-Code (String)
 
 =cut
 
 # -----------------------------------------------------------------------------
 
-sub generateHtml {
+sub html {
     my ($self,$h) = @_;
 
     my $doc = $self->root;
@@ -177,7 +188,7 @@ sub generateHtml {
     }->{$listType};
 
     my @style;
-    if ($doc->indentStyle) {
+    if ($doc->indentMode) {
         push @style,paddingLeft=>sprintf('%spx',$doc->htmlIndentation+18);
     }
 
@@ -206,11 +217,11 @@ sub generateHtml {
 
 # -----------------------------------------------------------------------------
 
-=head3 generateLatex() - Generiere LaTeX-Code
+=head3 latex() - Generiere LaTeX-Code
 
 =head4 Synopsis
 
-    $code = $lst->generateLatex($gen);
+    $code = $lst->latex($gen);
 
 =head4 Arguments
 
@@ -218,7 +229,7 @@ sub generateHtml {
 
 =item $gen
 
-Generator für das Zielformat.
+Generator für LaTeX.
 
 =back
 
@@ -230,10 +241,10 @@ LaTeX-Code (String)
 
 # -----------------------------------------------------------------------------
 
-sub generateLatex {
+sub latex {
     my ($self,$l) = @_;
 
-    my $root = $self->root;
+    my $doc = $self->root;
 
     # Abbildung der Sdoc-Aufzählungstypen auf die LaTeX-Aufzählungstypen
 
@@ -245,22 +256,34 @@ sub generateLatex {
         $listType = 'itemize';
     }
 
-    # Durch die Sonderbehandlung von itemize und enumerate sorgen wir
-    # dafür, dass die Einrückung von enumerate, itemize und verbatim
-    # (siehe Klasse Sdoc::Node::Code) aufeinander abgestimmt
-    # ist. Die Option leftmargin setzt das LaTeX-Paket enumitem
-    # voraus.
+    # Einrückung
+
+    my $indent = 0;
+    if ($self->indent || !defined $self->indent) {
+        $indent = $doc->latexIndentation;
+    }
+    
+    my @opt;
+    if ($listType eq 'itemize') {
+        # 10pt ist der Offset, bei dem der Bullet genau am linken Rand steht
+        push @opt,sprintf 'leftmargin=%spt',10+$indent;
+    }
+    elsif ($listType eq 'enumerate') {
+        # 11pt ist der Offset, bei die Zahl genau am linken Rand steht
+        push @opt,sprintf 'leftmargin=%spt',12+$indent;
+    }
+    else { # $listType eq 'description'
+        push @opt,
+            'style=nextline', # Kann auch global gesetzt werden
+            sprintf 'leftmargin=%spt',$indent;
+    }
+
+    # Childs
 
     my $childs = $self->generateChilds('latex',$l);
     $childs =~ s/\n{2,}$/\n/;
 
-    my @opt;
-    if ($listType eq 'itemize') {
-        push @opt,sprintf 'leftmargin=%sem',1.1+$root->latexIndentation;
-    }
-    elsif ($listType eq 'enumerate') {
-        push @opt,sprintf 'leftmargin=%sem',1.15+$root->latexIndentation;
-    }
+    # LaTeX-Code generieren
 
     return $l->env($listType,
         $childs,

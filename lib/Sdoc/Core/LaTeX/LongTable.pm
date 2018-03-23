@@ -308,7 +308,9 @@ sub latex {
         my @arr;
         for (my $i = 0; $i < @$titleA; $i++) {
              my $val = $titleCb->($self,$l,$titleA->[$i],$i,@$cbArguments);
-             if ($multiLine) {
+             # Wir setzen den Titel auch mehrzeilig, wenn $multiLine
+             # nicht gesetzt ist, aber \n in einem Titel vorhanden ist
+             if ($multiLine || grep {m|\n|} @$titleA) {
                  $val =~ s|\n|\\\\|g;
                  $val = $l->ci('\makecell[%sb]{%s}',$alignA->[$i],$val);
                  if ($titleColor) {

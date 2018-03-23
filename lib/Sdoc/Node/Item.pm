@@ -98,15 +98,18 @@ Listenelement-Knoten (Object)
 sub new {
     my ($class,$variant,$par,$root,$parent) = @_;
 
-    # Falls der Parent kein List-Knoten ist, erzeugen wir ihn.
-    # Der Listentyp wird vom erstn (diesem) Item gesetzt.
+    # Falls der Parent kein List-Knoten ist, fügen wir einen
+    # List-Block in den Parsing-Stream ein und delegieren die
+    # Verarbeitung an die List-Klasse.
 
     if ($parent->type ne 'List') {
+        # Wir geben der Liste die Zeilennummer und Quelle des Item.
+        # Der Listentyp wird vom ersten Item gesetzt.
+
         my $lineA = $par->lines;
-        # Wir geben der Liste die Eingabe/Zeilennummer des Item
-        my $lineNum = $lineA->[0]->number;
-        my $inputR = $lineA->[0]->inputR;
-        unshift @$lineA,$par->lineClass->new('%List:',$lineNum,$inputR);
+        unshift @$lineA,$par->lineClass->new('%List:',
+            $lineA->[0]->number,$lineA->[0]->inputR);
+
         return Sdoc::Node::List->new(0,$par,$root,$parent);
     }
 
@@ -237,11 +240,11 @@ sub new {
 
 =head2 Formate
 
-=head3 generateHtml() - Generiere HTML-Code
+=head3 html() - Generiere HTML-Code
 
 =head4 Synopsis
 
-    $code = $itm->generateHtml($gen);
+    $code = $itm->html($gen);
 
 =head4 Arguments
 
@@ -255,13 +258,13 @@ Generator für HTML.
 
 =head4 Returns
 
-LaTeX-Code (String)
+HTML-Code (String)
 
 =cut
 
 # -----------------------------------------------------------------------------
 
-sub generateHtml {
+sub html {
     my ($self,$h) = @_;
 
     my $listType = $self->parent->listType;
@@ -301,11 +304,11 @@ sub generateHtml {
 
 # -----------------------------------------------------------------------------
 
-=head3 generateLatex() - Generiere LaTeX-Code
+=head3 latex() - Generiere LaTeX-Code
 
 =head4 Synopsis
 
-    $code = $itm->generateLatex($gen);
+    $code = $itm->latex($gen);
 
 =head4 Arguments
 
@@ -313,7 +316,7 @@ sub generateHtml {
 
 =item $gen
 
-Generator für das Zielformat.
+Generator für LaTeX.
 
 =back
 
@@ -325,7 +328,7 @@ LaTeX-Code (String)
 
 # -----------------------------------------------------------------------------
 
-sub generateLatex {
+sub latex {
     my ($self,$l) = @_;
 
     my $code;

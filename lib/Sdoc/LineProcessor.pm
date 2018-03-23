@@ -8,8 +8,8 @@ our $VERSION = 3.00;
 
 use Sdoc::Core::LineProcessor::Line;
 use Sdoc::Core::Option;
-use Sdoc::Core::Converter;
 use Sdoc::Core::Unindent;
+use Sdoc::Core::Converter;
 
 # -----------------------------------------------------------------------------
 
@@ -288,30 +288,16 @@ sub readBlock {
     my $noContentA = shift // [];
 
     my $lineA = $self->lines;
+    my $input = $lineA->[0]->input;
+    my $lineNum = $lineA->[0]->number;
 
-    # Attribute lesen. Die Attributzeilen enden, wenn eine Zeile
-    # nicht mit einem eingerücktem KEY= beginnt.
+    my ($type,$h) = $self->readBlockHead(1);
 
-    my $line = shift @$lineA;
-    my $input = $line->input;
-    my $lineNum = $line->number;
-    my $text = $line->text;
-
-    my ($type,$attrib) = $text =~ /%(\w+):(.*)/;
-
-    while (@$lineA) {
-        $text = $lineA->[0]->text;
-        if ($text !~ /^\s+\w+=/) {
-            last;
-        }
-        $attrib .= $text;
-        shift(@$lineA);
-    }
     my $attribH = {
         variant => 0,
         input => $input,
         lineNum => $lineNum,
-        Sdoc::Core::Converter->stringToKeyVal($attrib),
+        %$h,
     };
 
     if ($key && !grep {$attribH->{$_}} @$noContentA) {
@@ -330,6 +316,182 @@ sub readBlock {
     }
 
     return $attribH;
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 readBlockHead() - Lies Blockanfang
+
+=head4 Synopsis
+
+    ($type,$attribH) = $par->readBlockHead($remove); # lies und entferne Zeilen
+    $attribH = $par->readBlockHead; # analysiere Zeilen
+
+=head4 Arguments
+
+=over 4
+
+=item $remove (Default: 0)
+
+Entferne die gelesenen Zeilen aus der Eingabe.
+
+=back
+
+=head4 Returns
+
+=over 4
+
+=item $type (String)
+
+Der Block-Typ.
+
+=item $attribH (Hash-Referenz)
+
+Hash mit den geparsten Knoten-Attributen.
+
+=back
+
+=head4 Description
+
+Lies den nächsten Blockanfang und liefere dessen Typ $type und
+Attribut-Hash $attribH zurück.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub readBlockHead {
+    my ($self,$remove) = @_;
+
+    # Attribute lesen. Die Attributzeilen enden, wenn eine Zeile
+    # nicht mit einem eingerücktem KEY= beginnt.
+
+    my $lineA = $self->lines;
+
+    my $i = 0;
+    my ($type,$str);
+    while ($lineA->[$i]) {
+        my $text = $lineA->[$i]->text;
+        if ($i == 0) {
+            ($type,$str) = $text =~ /^%(\w+):(.*)/;
+        }
+        elsif ($text =~ /^\s+\w+=/) {
+            $str .= $text;
+        }
+        else {
+            last;
+        }
+        $i++;
+    }
+    my $attribH = {Sdoc::Core::Converter->stringToKeyVal($str)};
+
+    if ($remove) {
+        splice @$lineA,0,$i;
+    }
+
+    return wantarray? ($type,$attribH): $attribH;
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 listType() - Ermittele Listen-Typ
+
+=head4 Synopsis
+
+    $listType = $par->listType;
+
+=head4 Returns
+
+Listentyp-Bezeichner (String)
+
+=head4 Description
+
+Diese Methode rufen wir, wenn wir wissen, dass das nächste Element
+der Eingabe ein Item ist. Sie ermittelt den Listentyp dieses
+Items. Wir nutzen diese Methode im Konstruktor der List-Klasse,
+um zu entscheiden, ob das aktuelle Item zu der Liste gehört oder
+zu einer neuen Liste eines anderen Typs.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub listType {
+    my $self = shift;
+
+    my $markup = $self->markup;
+    my $lineA = $self->lines;
+
+    my $listType;
+    my $text = $lineA->[0]->text;
+    if ($text =~ /^%Item:(.*)/) {
+        my $key = $self->readBlockHead->{'key'};
+        if (length($key) == 1 && index('*o+',$key) >= 0) {
+            $listType = 'unordered';
+        }
+        elsif ($key =~ /^\d+$/) {
+            $listType = 'ordered';
+        }
+        else {
+            $listType = 'description';
+        }
+    }
+    elsif ($self->markup eq 'sdoc') {
+        my $c = substr $text,0,1;
+        if ($c eq '[') {
+            $listType = 'description';
+        }
+        elsif (index('*o+',$c) >= 0) {
+            $listType = 'unordered';
+        }
+        else {
+            $listType = 'ordered';
+        }
+    }
+    else {
+        $self->throw;
+    }
+
+    return $listType;
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 sectionLevel() - Ermittele Abschnitts-Ebene
+
+=head4 Synopsis
+
+    $level = $par->sectionLevel;
+
+=head4 Returns
+
+Abschnitts-Ebene (Integer)
+
+=head4 Description
+
+Liefere die Ebene des nächsten Abschnitts in der Eingabe.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub sectionLevel {
+    my $self = shift;
+
+    my $markup = $self->markup;
+    my $lineA = $self->lines;
+
+    my $level;
+    my $text = $lineA->[0]->text;
+    if ($text =~ /^%Section:(.*)/) {
+        $level = $self->readBlockHead->{'level'};
+    }
+    elsif ($self->markup eq 'sdoc') {
+        ($level) = $text =~ /^(=+)(-)?/;
+        $level = $2? 1-length($level): length($level);
+    }
+
+    return $level;
 }
 
 # -----------------------------------------------------------------------------
@@ -552,53 +714,6 @@ sub parseSegments {
     }
 
     return;
-}
-
-# -----------------------------------------------------------------------------
-
-=head3 sectionLevel() - Ermittele Abschnitts-Ebene
-
-=head4 Synopsis
-
-    $level = $par->sectionLevel;
-
-=head4 Returns
-
-Abschnitts-Ebene (Integer)
-
-=head4 Description
-
-Liefere die Ebene des nächsten Abschnitts in der Eingabe.
-
-=cut
-
-# -----------------------------------------------------------------------------
-
-sub sectionLevel {
-    my $self = shift;
-
-    my $markup = $self->markup;
-    my $lineA = $self->lines;
-
-    my $level;
-    my $text = $lineA->[0]->text;
-    if ($text =~ /^%Section:(.*)/) {
-        my $attrib = $2;
-        for (my $i = 1; $i < @$lineA; $i++) {
-            $text = $lineA->[$i]->text;
-            if ($text !~ /^\s+\w+=/) {
-                last;
-            }
-            $attrib .= $text;
-        }
-        $level = Sdoc::Core::Converter->stringToKeyVal($attrib)->{'level'};
-    }
-    elsif ($self->markup eq 'sdoc') {
-        ($level) = $text =~ /^(=+)(-)?/;
-        $level = $2? 1-length($level): length($level);
-    }
-
-    return $level;
 }
 
 # -----------------------------------------------------------------------------

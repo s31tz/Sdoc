@@ -130,23 +130,19 @@ sub new {
 
 =head2 Formate
 
-=head3 generateFormat() - Generiere Code für alle Formate
+=head3 html() - Generiere HTML-Code
 
 =head4 Synopsis
 
-    $code = $lnk->generateFormat($format,$gen);
+    $code = $lnk->html($gen);
 
 =head4 Arguments
 
 =over 4
 
-=item $format
-
-Zielformat, das generiert wird.
-
 =item $gen
 
-Generator für das Zielformat.
+Generator für HTML.
 
 =back
 
@@ -156,15 +152,51 @@ Leerstring ('')
 
 =head4 Description
 
-Da ein Link-Knoten keine Repräsentation in irgendeinem Format hat,
-liefert diese Methode für alle Formate einen Leerstring ('').
+Ein Link-Knoten hat keine Darstellung, daher liefert die Methode
+konstant einen Leersting.
 
 =cut
 
 # -----------------------------------------------------------------------------
 
-sub generateFormat {
-    my ($self,$format,$gen) = @_;
+sub html {
+    my ($self,$h) = @_;
+    return '';
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 latex() - Generiere LaTeX-Code
+
+=head4 Synopsis
+
+    $code = $lnk->latex($gen);
+
+=head4 Arguments
+
+=over 4
+
+=item $gen
+
+Generator für LaTeX.
+
+=back
+
+=head4 Returns
+
+Leerstring ('')
+
+=head4 Description
+
+Ein Link-Knoten hat keine Darstellung, daher liefert die Methode
+konstant einen Leersting.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub latex {
+    my ($self,$l) = @_;
     return '';
 }
 

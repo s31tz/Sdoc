@@ -227,11 +227,11 @@ sub linkText {
 
 =head2 Formate
 
-=head3 generateHtml() - Generiere HTML-Code
+=head3 html() - Generiere HTML-Code
 
 =head4 Synopsis
 
-    $code = $brh->generateHtml($gen);
+    $code = $brh->html($gen);
 
 =head4 Arguments
 
@@ -239,7 +239,7 @@ sub linkText {
 
 =item $gen
 
-Generator für das Zielformat.
+Generator für HTML.
 
 =back
 
@@ -251,18 +251,18 @@ HTML-Code (String)
 
 # -----------------------------------------------------------------------------
 
-sub generateHtml {
+sub html {
     my ($self,$h) = @_;
-    return $self->htmlSectionCode($h,'bridgehead');
+    return $self->htmlSectionCode($h);
 }
 
 # -----------------------------------------------------------------------------
 
-=head3 generateLatex() - Generiere LaTeX-Code
+=head3 latex() - Generiere LaTeX-Code
 
 =head4 Synopsis
 
-    $code = $brh->generateLatex($gen);
+    $code = $brh->latex($gen);
 
 =head4 Arguments
 
@@ -270,7 +270,7 @@ sub generateHtml {
 
 =item $gen
 
-Generator für das Zielformat.
+Generator für LaTeX.
 
 =back
 
@@ -282,7 +282,7 @@ LaTeX-Code (String)
 
 # -----------------------------------------------------------------------------
 
-sub generateLatex {
+sub latex {
     my ($self,$l) = @_;
 
     return $l->section(

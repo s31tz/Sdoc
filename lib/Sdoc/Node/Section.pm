@@ -317,11 +317,11 @@ sub linkText {
 
 =head2 Formate
 
-=head3 generateHtml() - Generiere HTML-Code
+=head3 html() - Generiere HTML-Code
 
 =head4 Synopsis
 
-    $code = $sec->generateHtml($gen);
+    $code = $sec->html($gen);
 
 =head4 Arguments
 
@@ -329,7 +329,7 @@ sub linkText {
 
 =item $gen
 
-Generator für das Zielformat.
+Generator für HTML.
 
 =back
 
@@ -341,19 +341,18 @@ HTML-Code (String)
 
 # -----------------------------------------------------------------------------
 
-sub generateHtml {
+sub html {
     my ($self,$h) = @_;
-    return $self->htmlSectionCode($h,'section',).
-        $self->generateChilds('html',$h);
+    return $self->htmlSectionCode($h).$self->generateChilds('html',$h);
 }
 
 # -----------------------------------------------------------------------------
 
-=head3 generateLatex() - Generiere LaTeX-Code
+=head3 latex() - Generiere LaTeX-Code
 
 =head4 Synopsis
 
-    $code = $sec->generateLatex($gen);
+    $code = $sec->latex($gen);
 
 =head4 Arguments
 
@@ -361,7 +360,7 @@ sub generateHtml {
 
 =item $gen
 
-Generator für das Zielformat.
+Generator für LaTeX.
 
 =back
 
@@ -373,7 +372,7 @@ LaTeX-Code (String)
 
 # -----------------------------------------------------------------------------
 
-sub generateLatex {
+sub latex {
     my ($self,$l) = @_;
 
     my $doc = $self->root;

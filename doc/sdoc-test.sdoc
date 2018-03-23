@@ -4,10 +4,10 @@
   date="now"
   latexDocumentClass="scrreprt"
   latexShowFrames=1
-  sectionNumberDepth=4
+  sectionNumberLevel=4
 
 %TableOfContents:
-  maxDepth=5
+  maxLevel=4
 
 %Graphic:
   name="Invader"
@@ -83,39 +83,60 @@ XXXX Ein trennender Satz
 
 XXXX Ein trennender Satz
 
+[255 239 213]:
+  PapayaWhip
+[188 143 143]:
+  RosyBrown
+[255 218 185]:
+  PeachPuff
+
+XXXX Ein trennender Satz
+
 %Graphic:
   file="+/sdoc-graphic-illusion"
-  scale=0.4
   caption="Test-Grafik"
+  width=100
+  height=100
+  indent=1
 
 XXXX Ein trennender Satz
 
-1. Einkaufen
-2. Kochen
-3. Putzen
-
-XXXX Ein trennender Satz
-
-%Table:
-  caption="Test-Tabelle"
-
-Links Rechts Zentriert
------ ------ ---------
-A          1    AB
-AB        12    CD
-ABC      123    EF
-ABCD    1234    GH
-.
-
-XXXX Ein trennender Satz
-
-%Code: lang=Perl
+%Code: lang=Perl indent=1 ln=1
   my $dh = DirHandle->new($dir);
   while (my $entry = $dh->next) {
       say $entry;
   }
   $dh->close;
 .
+
+XXXX Ein trennender Satz
+
+%Table:
+  caption="Test-Tabelle"
+  indent=1
+
+Links Rechts Zentriert
+----- ------ ---------
+A          1    AB
+AB        12    CD
+ABC      123    EF
+.
+
+XXXX Ein trennender Satz
+
+%Code: lang=Perl indent=1
+  my $dh = DirHandle->new($dir);
+  while (my $entry = $dh->next) {
+      say $entry;
+  }
+  $dh->close;
+.
+
+XXXX Ein trennender Satz
+
+1. Einkaufen
+2. Kochen
+3. Abwaschen
 
 XXXX Ein trennender Satz
 

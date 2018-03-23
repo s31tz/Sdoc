@@ -42,7 +42,9 @@ L<Sdoc::Core::Object>
     use Sdoc::Document;
     
     my $doc = Sdoc::Document->parse($file);
+    print $doc->generate('html');
     print $doc->generate('latex');
+    print $doc->generate('tree');
 
 =head1 DESCRIPTION
 

@@ -34,7 +34,7 @@ Inhaltsverzeichnis-Knoten folgende zusätzliche Attribute:
 Wenn gesetzt, wird in HTML das Inhaltsverzeichnis mit einer
 Überschrift ("Inhaltsverzeichnis" oder "Contents") versehen.
 
-=item maxDepth => $n (Default: 3)
+=item maxLevel => $n (Default: 3)
 
 Tiefe, bis zu welcher Abschnitte ins Inhaltsverzeichnis
 aufgenommen werden. Mögliche Werte: -2, -1, 0, 1, 2, 3, 4. -2 =
@@ -104,7 +104,7 @@ sub new {
 
     my $self = $class->SUPER::new('TableOfContents',$variant,$root,$parent,
         htmlTitle => 1,
-        maxDepth => 3,
+        maxLevel => 3,
     );
     $self->setAttributes(%$attribH);
 
@@ -115,11 +115,11 @@ sub new {
 
 =head2 Formate
 
-=head3 generateHtml() - Generiere HTML-Code
+=head3 html() - Generiere HTML-Code
 
 =head4 Synopsis
 
-    $code = $toc->generateHtml($gen);
+    $code = $toc->html($gen);
 
 =head4 Arguments
 
@@ -127,7 +127,7 @@ sub new {
 
 =item $gen
 
-Generator für das Zielformat.
+Generator für HTML.
 
 =back
 
@@ -139,26 +139,24 @@ HTML-Code (String)
 
 # -----------------------------------------------------------------------------
 
-sub generateHtml {
+sub html {
     my ($self,$h) = @_;
 
-    my $doc = $self->root;
-
-    if ($self->maxDepth < -1) {
-        # Kein Inhaltsverzeichnis
-        return '';
+    my $html = '';
+    if ($self->maxLevel >= -1) {
+        $html = $self->root->htmlTableOfContents($h,$self);
     }
 
-    return $doc->htmlTableOfContents($h,$self);
+    return $html;
 }
 
 # -----------------------------------------------------------------------------
 
-=head3 generateLatex() - Generiere LaTeX-Code
+=head3 latex() - Generiere LaTeX-Code
 
 =head4 Synopsis
 
-    $code = $toc->generateLatex($gen);
+    $code = $toc->latex($gen);
 
 =head4 Arguments
 
@@ -166,7 +164,7 @@ sub generateHtml {
 
 =item $gen
 
-Generator für das Zielformat.
+Generator für LaTeX.
 
 =back
 
@@ -178,10 +176,10 @@ LaTeX-Code (String)
 
 # -----------------------------------------------------------------------------
 
-sub generateLatex {
+sub latex {
     my ($self,$l) = @_;
 
-    if ($self->maxDepth < -1) {
+    if ($self->maxLevel < -1) {
         # Kein Inhaltsverzeichnis
         return '';
     }

@@ -302,11 +302,11 @@ sub linkText {
 
 =head2 Formate
 
-=head3 generateHtml() - Generiere HTML-Code
+=head3 html() - Generiere HTML-Code
 
 =head4 Synopsis
 
-    $code = $tab->generateHtml($gen);
+    $code = $tab->html($gen);
 
 =head4 Arguments
 
@@ -314,7 +314,7 @@ sub linkText {
 
 =item $gen
 
-Generator für das Zielformat.
+Generator für HTML.
 
 =back
 
@@ -326,7 +326,7 @@ HTML-Code (String)
 
 # -----------------------------------------------------------------------------
 
-sub generateHtml {
+sub html {
     my ($self,$h) = @_;
 
     my $atb = $self->asciiTable;
@@ -412,11 +412,11 @@ sub generateHtml {
 
 # -----------------------------------------------------------------------------
 
-=head3 generateLatex() - Generiere LaTeX-Code
+=head3 latex() - Generiere LaTeX-Code
 
 =head4 Synopsis
 
-    $code = $tab->generateLatex($gen);
+    $code = $tab->latex($gen);
 
 =head4 Arguments
 
@@ -424,7 +424,7 @@ sub generateHtml {
 
 =item $gen
 
-Generator für das Zielformat.
+Generator für LaTeX.
 
 =back
 
@@ -436,17 +436,28 @@ LaTeX-Code (String)
 
 # -----------------------------------------------------------------------------
 
-sub generateLatex {
+sub latex {
     my ($self,$l) = @_;
 
-    my $root = $self->root;
+    my $doc = $self->root;
 
     my $atb = $self->asciiTable;
+
+    # Einrückung
+
+    my $indent;
+    if ($self->indent || $doc->indentMode && !defined $self->indent) {
+        $indent = $doc->latexIndentation.'pt';
+    }
+
+    # Trennlinien
 
     my $border = $self->border;
     if (!defined $border) {
         $border = $atb->multiLine? 'hvHV': 'hHV';
     }
+
+    # LaTeX-Code erzeugen
 
     return Sdoc::Core::LaTeX::LongTable->latex($l,
         align => 'l',
@@ -454,10 +465,10 @@ sub generateLatex {
         border => $border,
         callbackArguments => [$self],
         caption => $self->expandText($l,'captionS'),
-        indent => $self->indent? $root->latexIndentation.'em': undef,
+        indent => $indent,
         label => $self->referenced? $self->linkId: undef,
         multiLine => $atb->multiLine,
-        postVSpace => $l->modifyLength($root->latexParSkip,'*-2'),
+        postVSpace => $l->modifyLength($doc->latexParSkip,'*-2'),
         rows => scalar $atb->rows,
         rowCallback => sub {
             my ($self,$l,$row,$n,$node) = @_;

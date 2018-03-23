@@ -94,6 +94,10 @@ hochgezählt.
 Anzahl der Tabellen-Knoten. Der Wert wird während des Parsings
 hochgezählt.
 
+=item cssClassPrefix => $name (Default: 'sdoc')
+
+Präfix für die CSS-Klassen der Elemente des Dokuments.
+
 =item date => $date
 
 Das Datum des Dokuments. Wenn gesetzt, wird eine Titelseite bzw.
@@ -152,7 +156,7 @@ In HTML die Tiefe der Einrückung für List-, Graphic-, Code-,
 Table-Blöcke vom linken Rand, wenn diese eingerückt werden
 sollen. Das Maß wird einheitenlos in Pixel angegeben.
 
-=item indentStyle=BOOL (Default: 0)
+=item indentMode=BOOL (Default: 0)
 
 Wenn gesetzt, werden alle Code-, Graphic-, List- und Table-Blöcke,
 für die nichts anderes angegeben ist, eingerückt dargestellt.
@@ -178,11 +182,11 @@ Größe des LaTeX-Font. Mögliche Werte: '10pt', '11pt', '12pt'.
 
 Einstellungen des LaTeX-Pakets C<geometry>.
 
-=item latexIndentation => $x (Default: 1.3)
+=item latexIndentation => $x (Default: 11.5)
 
-In LaTeX die Tiefe der Einrückung für List-, Graphic-, Code-,
+In LaTeX die Tiefe der Einrückung für Code-, Graphic-, List- und
 Table-Blöcke vom linken Rand, wenn diese eingerückt werden
-sollen. Einheit ist C<em>, die aber nicht angegeben wird.
+sollen. Einheit ist C<pt>, die aber nicht angegeben wird.
 
 =item latexPageStyle => "$titlePage,$otherPages" (Default: "plain,headings")
 
@@ -244,7 +248,7 @@ Gib keine Warnungen aus.
 Das Dokument ist $n Mal Ziel eines Link. Zeigt an,
 ob für das Dokument ein Anker erzeugt werden muss.
 
-=item sectionNumberDepth => $n (Default: 3)
+=item sectionNumberLevel => $n (Default: 3)
 
 Abschnittsebene, bis zu welcher Abschnitte numeriert werden.
 Mögliche Werte: -2, -1, 0, 1, 2, 3, 4. -2 = keine
@@ -371,6 +375,7 @@ sub new {
         countGraphic => 0,
         countList => 0,
         countTable => 0,
+        cssClassPrefix => 'sdoc',
         date => undef,
         dateS => undef,
         firstAppendixSection => undef,
@@ -378,13 +383,13 @@ sub new {
         graphicA => [],
         htmlDocumentStyle => 'default',
         htmlIndentation => 20,
-        indentStyle => 0,
+        indentMode => 0,
         language => 'german',
         latexDocumentClass => 'scrartcl',
         latexDocumentOptions => undef,
         latexFontSize => '10pt',
         latexGeometry => undef,
-        latexIndentation => 1.3,
+        latexIndentation => 11.5,
         latexPageStyle => "plain,headings",
         latexPaperSize => 'a4paper',
         latexParSkip => '1ex',
@@ -392,7 +397,7 @@ sub new {
         linkA => [],
         quiet => 0,
         referenced => 0,
-        sectionNumberDepth => 3,
+        sectionNumberLevel => 3,
         shellEscape => 0,
         smallerMonospacedFont => 0,
         tableOfContents => 1,
@@ -1345,7 +1350,7 @@ sub createTableOfContentsNode {
             my $toc = Sdoc::Node::TableOfContents->Sdoc::Node::new(
                 'TableOfContents',0,$self,$self,
                 htmlTitle => 1,
-                maxDepth => 3,
+                maxLevel => 3,
             );
             $self->unshift(childA=>$toc);
             $self->set(nodeA=>undef); # forciere neue Knotenliste
@@ -1610,11 +1615,11 @@ sub expandPath {
 
 =head2 Formate
 
-=head3 generateHtml() - Generiere HTML-Code
+=head3 html() - Generiere HTML-Code
 
 =head4 Synopsis
 
-    $code = $doc->generateHtml($gen);
+    $code = $doc->html($gen);
 
 =head4 Arguments
 
@@ -1634,7 +1639,7 @@ HTML-Code (String)
 
 # -----------------------------------------------------------------------------
 
-sub generateHtml {
+sub html {
     my ($self,$h) = @_;
 
     # Dokumenteigenschaften ermitteln
@@ -1697,7 +1702,7 @@ sub generateHtml {
         title => $self->title, # FIXME: Keine Sonderkonstrukte zulassen
         styleSheet => [
             sprintf('css/document/%s.css',$self->htmlDocumentStyle),
-            sprintf('css/code/%s.css',$self->codeStyle),
+            sprintf('css/pygments/%s.css',$self->codeStyle),
         ],
         body => $code.$self->generateChilds('html',$h),
     );
@@ -1705,11 +1710,11 @@ sub generateHtml {
 
 # -----------------------------------------------------------------------------
 
-=head3 generateLatex() - Generiere LaTeX-Code
+=head3 latex() - Generiere LaTeX-Code
 
 =head4 Synopsis
 
-    $code = $doc->generateLatex($gen);
+    $code = $doc->latex($gen);
 
 =head4 Arguments
 
@@ -1717,7 +1722,7 @@ sub generateHtml {
 
 =item $gen
 
-Generator für das Zielformat.
+Generator für LaTeX.
 
 =back
 
@@ -1729,7 +1734,7 @@ LaTeX-Code (String)
 
 # -----------------------------------------------------------------------------
 
-sub generateLatex {
+sub latex {
     my ($self,$l) = @_;
 
     # Dokumenteigenschaften ermitteln
@@ -1902,7 +1907,7 @@ sub generateLatex {
                     my $n = '9' x (ord($c)-96);
                     for my $i ('','i') {
                         my $name = sprintf('\lnwidth%s%s',$c,$i);
-                        my $indent = $i? '2.1em': '0.8em';
+                        my $indent = ($i? $self->latexIndentation+8: 8).'pt';
 
                         $code .= $l->c('\newlength{%s}',$name);
                         $code .= $l->c('\settowidth{%s}'.
@@ -1953,8 +1958,8 @@ sub generateLatex {
         title => $self->expandText($l,'titleS') // '',
         author => $self->expandText($l,'authorS') // '',
         date => $self->expandText($l,'dateS') // '',
-        secNumDepth => $h->sections? $self->sectionNumberDepth: undef,
-        tocDepth => $toc? $toc->maxDepth: undef,
+        secNumDepth => $h->sections? $self->sectionNumberLevel: undef,
+        tocDepth => $toc? $toc->maxLevel: undef,
         titlePageStyle => $titlePageStyle,
         parSkip => $self->latexParSkip,
         preComment => 'Generated by Sdoc - DO NOT EDIT!',

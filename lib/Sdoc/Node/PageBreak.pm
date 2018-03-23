@@ -105,11 +105,11 @@ sub new {
 
 =head2 Formate
 
-=head3 generateHtml() - Generiere HTML-Code
+=head3 html() - Generiere HTML-Code
 
 =head4 Synopsis
 
-    $code = $pbr->generateHtml($gen);
+    $code = $pbr->html($gen);
 
 =head4 Arguments
 
@@ -117,7 +117,7 @@ sub new {
 
 =item $gen
 
-Generator für das Zielformat.
+Generator für HTML.
 
 =back
 
@@ -134,18 +134,18 @@ konstant einen Leersting.
 
 # -----------------------------------------------------------------------------
 
-sub generateHtml {
+sub html {
     my ($self,$h) = @_;
     return '';
 }
 
 # -----------------------------------------------------------------------------
 
-=head3 generateLatex() - Generiere LaTeX-Code
+=head3 latex() - Generiere LaTeX-Code
 
 =head4 Synopsis
 
-    $code = $pbr->generateLatex($gen);
+    $code = $pbr->latex($gen);
 
 =head4 Arguments
 
@@ -153,7 +153,7 @@ sub generateHtml {
 
 =item $gen
 
-Generator für das Zielformat.
+Generator für LaTeX.
 
 =back
 
@@ -165,7 +165,7 @@ LaTeX-Code (String)
 
 # -----------------------------------------------------------------------------
 
-sub generateLatex {
+sub latex {
     my ($self,$l) = @_;
     return $l->c('\newpage',-nl=>2);
 }
