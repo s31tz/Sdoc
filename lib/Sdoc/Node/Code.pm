@@ -305,6 +305,7 @@ sub html {
                 ],
                 'td pre' => [
                     margin => 0,
+                    lineHeight => '125%',
                 ],
             )
         ),

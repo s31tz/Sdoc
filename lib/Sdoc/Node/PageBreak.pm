@@ -123,12 +123,12 @@ Generator für HTML.
 
 =head4 Returns
 
-Leerstring ('')
+HTML-Code (String)
 
 =head4 Description
 
-In HTML gibt es keinen Seitenumbruch, daher liefert die Methode
-konstant einen Leersting.
+Erzeuge einen Seitenumbruch für die I<Druckfassung> des
+HTML-Dokuments.
 
 =cut
 
@@ -136,7 +136,11 @@ konstant einen Leersting.
 
 sub html {
     my ($self,$h) = @_;
-    return '';
+
+    return $h->tag('div',
+        -nl => 1,
+        style => 'page-break-before: always;',
+    );
 }
 
 # -----------------------------------------------------------------------------

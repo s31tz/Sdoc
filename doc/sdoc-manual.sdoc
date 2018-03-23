@@ -41,6 +41,8 @@ angezeigt und verarbeitet wird, ist in Abschnitt L{+Dieses Dokument
   ln=1
   indent=0
 
+---PageBreak---
+
 == PDF
 
   $ sdoc pdf sdoc-example.sdoc

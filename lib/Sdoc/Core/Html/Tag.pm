@@ -1092,8 +1092,8 @@ erstrecken [3].
 B<Attribut C{style}>
 
 Als Wert des Attributs C<style> kann eine Array-Referenz mit
-Property/Wert-Paaren angegeben werden. Diese werden von der
-Methode Sdoc::Core::Css->properties() aufgelöst.
+CSS-Regeln angegeben werden. Diese werden von der
+Methode Sdoc::Core::Css->rules() aufgelöst.
 
 B<Boolsche Attribute>
 
@@ -1369,7 +1369,7 @@ sub tag {
 
         if ($key eq 'style' && ref($val)) {
             # liefert undef, wenn Array leer ist
-            $val = Sdoc::Core::Css->properties($val);
+            $val = Sdoc::Core::Css->rules(@$val);
         }
         if (defined $val) {
             if ($checkLevel >= 2) {
