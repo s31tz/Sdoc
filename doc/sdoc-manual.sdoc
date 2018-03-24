@@ -1,3 +1,7 @@
+%Style:
+  file="/tmp/default.css"
+.
+
 %Document:
   title="Sdoc Handbuch"
   author="Frank Seitz, L{http://fseitz.de/}"
@@ -187,6 +191,7 @@ Dokument-Bock angegeben:
     date=STRING
     htmlDocumentStyle=NAME
     htmlIndentation=INTEGER
+    htmlTitleAlign=left|center
     indentMode=BOOL
     language=german|english
     latexDocumentClass=scrartcl|scrreprt|scrbook|article|report|book
@@ -265,6 +270,10 @@ verwendet werden:
 [htmlDocumentStyle=NAME]:
   (Default: default) Der Name des CSS-Stylesheet, das für das Design
   des HTML-Dokuments verwendet wird.
+
+[htmlTitleAlign=left|center]:
+  (Default: 'left') Ausrichtung des von Titel, Autor, Datum des
+  Dokuments im Falle von HTML.
 
 [htmlIndentation=INTEGER]:
   (Default: 20) In HTML die Tiefe der Einrückung für List-, Graphic-,
@@ -660,12 +669,13 @@ In der Beschriftung (C{caption}) einer Abbildung können alle Segmente
 === Eigenschaften
 
   %Graphic:
-    align=left|center|right
+    align=left|center
     anchor=STRING
     border=BOOL
     caption=STRING
     file=PATH
     height=INTEGER
+    latexAlign=left|center
     latexOptions=STRING
     link=URL
     name=STRING
@@ -695,6 +705,9 @@ In der Beschriftung (C{caption}) einer Abbildung können alle Segmente
 [height=INTEGER]:
   Höhe in Pixeln (ohne Angabe einer Einheit), auf die das Bild
   skaliert wird.
+
+[latexAlign=left|center]
+  Horizontale Ausrichtung des Bildes in LaTeX.
 
 [latexOptions=STRING]:
   LaTeX-spezifische Optionen, die direkt an das LaTeX-Makro

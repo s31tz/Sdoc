@@ -189,7 +189,7 @@ sub html {
 
     my @style;
     if ($doc->indentMode) {
-        push @style,paddingLeft=>sprintf('%spx',$doc->htmlIndentation+18);
+        push @style,paddingLeft=>sprintf('%spx',$doc->htmlIndentation+19);
     }
 
     # Generiere HTML

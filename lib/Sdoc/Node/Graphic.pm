@@ -34,7 +34,7 @@ Inhaltsverzeichnis-Knoten folgende zusätzliche Attribute:
 
 =over 4
 
-=item align => 'left'|'center'|'right' (Default: 'left')
+=item align => 'left'|'center' (Default: 'left')
 
 Horizontale Ausrichtung des Bildes.
 
@@ -63,6 +63,10 @@ Pluszeichen zum Pfad des Dokumentverzeichnisses expandiert.
 
 Höhe in Pixeln (ohne Angabe einer Einheit), auf die das Bild
 skaliert wird.
+
+=item latexAlign => 'left'|'center' (Default: undef)
+
+Horizontale Ausrichtung des Bildes in LaTeX.
 
 =item latexOptions => $str
 
@@ -204,6 +208,7 @@ sub new {
         graphicA => [],
         height => undef,
         indent => undef,
+        latexAlign => undef,
         latexOptions => undef,
         link => undef,
         linkN => undef,
@@ -425,7 +430,7 @@ sub html {
     # Positionierung der Grafik
 
     my @divStyle = (
-        marginTop => '16px',
+        marginTop => '18px',
         marginBottom => '16px',
     );
     if (substr($self->align,0,1) eq 'c') {
@@ -445,6 +450,13 @@ sub html {
 
     # HTML-Code erzeugen
 
+    my $caption;
+    if ($caption = $self->caption) {
+        my $str = sprintf $doc->language eq 'german'? 'Abbildung %s':
+            'figure %s',$self->number;
+        $caption = $h->tag('b',"$str: ").$caption;
+    }
+
     return $h->cat(
         $h->tag('style',
             Sdoc::Core::Css->new('flat')->restrictedRules("#$id",
@@ -458,12 +470,19 @@ sub html {
             $h->tag('a',
                 -ignoreTagIf => !$href,
                 href => $href,
-                $h->tag('img',
-                    -nl=>0,
-                    src => $path,
-                    alt => $self->name || $linkText,
-                    width => $width,
-                    height => $height,
+                $h->cat(
+                    $h->tag('img',
+                        -nl=>0,
+                        src => $path,
+                        alt => $self->name || $linkText,
+                        width => $width,
+                        height => $height,
+                    ),
+                    $h->tag('p',
+                        -ignoreIfNull => 1,
+                        style => 'margin-top: 4px; font-size: smaller',
+                        $caption,
+                    ),
                 ),
             ),
         ),
@@ -515,7 +534,7 @@ sub latex {
     # LaTeX-Code erzeugen
 
     return Sdoc::Core::LaTeX::Figure->latex($l,
-        align => substr($self->align,0,1),
+        align => $self->latexAlign // $self->align,
         border => $self->border,
         caption => $self->expandText($l,'captionS'),
         file => $doc->expandPath($self->file),

@@ -52,9 +52,10 @@ produziert
 
 =over 4
 
-=item align => 'l' | 'c' (Default: 'c')
+=item align => 'left' | 'center' (Default: 'center')
 
-Ausrichtung der Abbildung auf der Seite: l=links, c=zentriert.
+Ausrichtung der Abbildung auf der Seite. Nur der erste Buchstabe
+des Werts wird interpretiert.
 
 =item border => $bool (Default: 0)
 
@@ -203,7 +204,7 @@ sub latex {
         $self->get(qw/align border caption file height indent inline label
         link options padding position postVSpace scale width/);
 
-    $align //= $inline? '': 'c';
+    $align //= $inline? '': 'center';
 
     if (!$file) {
         return '';
@@ -248,7 +249,7 @@ sub latex {
         # $link muss %s enthalten
         $code = sprintf $link,$code;
     }
-    if ($indent && $align ne 'c') {
+    if ($indent && $align ne 'center') {
         $code = $l->ci('\hspace*{%s}',$indent).$code;
     }
 
@@ -261,14 +262,14 @@ sub latex {
     # Alleinstehende Abbildung
 
     if (!$inline) {
-        if ($align eq 'c') {
+        if ($align eq 'center') {
             $code = $l->c('\centering').$code;
         }
     }
 
     if ($caption) {
         my @opt;
-        if ($align ne 'c') {
+        if ($align ne 'center') {
             push @opt,'singlelinecheck=off';
             if ($indent) {
                 push @opt,"margin=$indent";

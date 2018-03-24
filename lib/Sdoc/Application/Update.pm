@@ -83,9 +83,10 @@ sub main {
         # Erzeuge HTML-Version
         
         $sh->exec("sdoc html $path.sdoc $path.html --shell-escape");
-        # $sh->exec("wkhtmltopdf -T 1.5cm -B 1.5cm -L 1.5cm -R 1.5cm $path.html $path-html.pdf",-sloppy=>1);
+        $sh->exec("sed -ie 's/100/125/g' $path.html");
+        $sh->exec("wkhtmltopdf -T 1.5cm -B 1.5cm -L 1.5cm -R 1.5cm $path.html $path-html.pdf",-sloppy=>1);
         # $sh->exec("wkhtmltopdf $path.html $path-html.pdf",-sloppy=>1);
-        $sh->exec("chromium --headless --disable-gpu --print-to-pdf=$path-html.pdf file:///home/fs2/exp/Sdoc/$path.html");
+        # $sh->exec("chromium --headless --disable-gpu --print-to-pdf=$path-html.pdf file:///home/fs2/exp/Sdoc/$path.html");
         $sh->exec("pdftoppm $path-html.pdf $path-html -png");
         $sh->exec("mv $path-html-1.png $path-html.png");
 

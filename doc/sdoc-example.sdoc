@@ -2,6 +2,7 @@
   title="Ein Beispieldokument"
   author="Nico Laus"
   date="today"
+  indentMode=1
 
 = Einleitung
 
@@ -20,11 +21,11 @@ der Hypotenuse: M~c = \sqrt{a^2 + b^2}~.
   width=100
   height=100
   border=1
-  align="center"
+  latexAlign="center"
 
 Programm-Quelltexte können wir mit Q{Syntax-Highlighting} darstellen:
 
-%Code: lang=Perl ln=1 indent=1
+%Code: lang=Perl ln=1
   open(my $fh, 'ls -l |') or die "open failed ($!)\n";
   while (<$fh>) {
       s/\n/<BR>\n/;

@@ -31,9 +31,9 @@ sdoc [OPTIONS] tree INPUT.sdoc [OUTPUT]
 
 sdoc [OPTIONS] convert INPUT.sdoc2 [OUTPUT.sdoc3]
 
-sdoc [OPTIONS] pygments-styles
+sdoc [OPTIONS] code-styles
 
-sdoc [OPTIONS] pygments-style NAME [SELECTOR]
+sdoc [OPTIONS] code-style NAME [OUTPUT.css]
 
 sdoc [OPTIONS] cleanup
 
@@ -53,6 +53,11 @@ Sdoc3.
 =item --pdf-viewer=PROGRAM (Default: siehe ~/.sdoc.conf)
 
 Viewer zum Anzeigen des erzeugten PDF.
+
+=item --selector=SELECTOR (Default: '.sdoc-code text')
+
+CSS-Selektor, der den Style-Regeln für das Syntax-Highlighting
+vorangestellt wird (s. Operation C<code-style>).
 
 =item --shell-escape[=BOOL] (Default: siehe ~/.sdoc.conf)
 
@@ -174,13 +179,13 @@ Konvertiere eine Sdoc2-Datei in eine Sdoc3-Datei:
 
     $ sdoc convert INPUT.sdoc2 OUTPUT.sdoc3
 
-Erzeuge eine Pygments Style-Datei für das Syntax Highlighting:
+Erzeuge eine Style-Datei für das Syntax Highlighting:
 
-    $ sdoc pygments-style emacs .sdoc-code
+    $ sdoc code-style emacs emacs.css
 
-Liste der Namen aller Pygments-Styles:
+Liste der Namen aller Code-Styles:
 
-    $ sdoc pygments-styles
+    $ sdoc code-styles
 
 Lösche (nach Rückfrage) das Cache-Verzeichnis des aufrufenden Benutzers:
 

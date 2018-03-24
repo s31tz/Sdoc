@@ -14,7 +14,7 @@ use Sdoc::Core::Html::Table::Simple;
 
 =head1 NAME
 
-Sdoc::Core::Html::Verbatim - Verbatim-Abschnitt in HTML
+Sdoc::Core::Html::Verbatim - Verbatim-Block in HTML
 
 =head1 BASE CLASS
 
@@ -22,18 +22,18 @@ L<Sdoc::Core::Hash>
 
 =head1 DESCRIPTION
 
-Ein Objekt der Klasse repräsentiert einen Verbatim-Abschnitt in
-HTML. Ein Verbatim-Abschnitt gibt einen Text TEXT in einem
-monospaced Font mit allen Leerzeichen und Zeilenumbrüchen
-identisch wieder. Der Verbatim-Abschnitt kann mit oder ohne
-Zeilennummern ausgestattet sein.
+Ein Objekt der Klasse repräsentiert einen Verbatim-Block in
+HTML. Ein Verbatim-Block gibt einen Text TEXT in einem monospaced
+Font mit allen Leerzeichen und Zeilenumbrüchen identisch
+wieder. Der Verbatim-Block kann mit oder ohne Zeilennummern
+ausgestattet sein.
 
 Aufbau eines Verbatim-Abschnitts I<ohne> Zeilennummern:
 
-    <div class="verbatim">
-      <table class="verbatim-table" cellpadding="0" cellspacing="0">
+    <div class="CLASS">
+      <table>
       <tr>
-        <td class="verbatim-text">
+        <td class="text">
           <pre>TEXT</pre>
         </td>
       </tr>
@@ -42,56 +42,55 @@ Aufbau eines Verbatim-Abschnitts I<ohne> Zeilennummern:
 
 Aufbau eines Verbatim-Abschnitts I<mit> Zeilennummern:
 
-    <div class="verbatim">
-      <table class="verbatim-table" cellpadding="0" cellspacing="0">
+    <div class="CLASS">
+      <table>
       <tr>
-        <td class="verbatim-ln">
+        <td class="ln">
           <pre>ZEILENNUMMERN</pre>
         </td>
-        <td class="verbatim-margin"></td>
-        <td class="verbatim-text">
+        <td class="margin"></td>
+        <td class="text">
           <pre>TEXT</pre>
         </td>
       </tr>
       </table>
     </div>
 
-Das umgebende Div ermglicht, dass der Hintergrund des Abschnitts
-über die gesamte Breite der Seite farbig hinterlegt werden kann.
+Das umgebende C<div> ermöglicht, dass der Hintergrund des
+Abschnitts über die gesamte Breite der Seite farbig hinterlegt
+werden kann.
 
 Das Aussehen des Verbatim-Abschnitts kann via CSS gestaltet werden.
-Der Abschnitt verwendet fünf CSS-Klassen:
+Hier die Selektoren, mit denen die einzelnen Bestandteile des
+Konstrukts in CSS angesprochen werden können:
 
-[CLASS]
+[.CLASS]
 
-    Die Klasse des umgebenden Div (Default: 'verbatim').
+    Die Klasse des umgebenden C{div} (Default: 'verbatim').
 
 =over 4
 
-=item CLASS-table
+=item .CLASS table
 
 Die Tabelle.
 
-=item CLASS-ln
+=item .CLASS ln
 
 Die Zeilennummern-Spalte der Tabelle.
 
-=item CLASS-margin
+=item .CLASS margin
 
 Die Trenn-Spalte der Tabelle zwischen Zeilennummer- und
 Text-Spalte.
 
-=item CLASS-text
+=item .CLASS text
 
 Die Text-Spalte der Tabelle.
 
 =back
 
-CLASS ist hierbei der über das Attribut C<class> änderbarer
-CSS-Klassenname. Default ist 'verbatim'.
-
-Der CSS-Code kann mittels der Klassenmethode $class->css()
-erzeugt werden. Beschreibung siehe dort.
+Hierbei ist CLASS der über das Attribut C<class> änderbare
+CSS-Klassenname. Default für den CSS-Klassenname ist 'verbatim'.
 
 =head1 ATTRIBUTES
 
@@ -253,13 +252,13 @@ sub html {
             $tmp .= sprintf '%*d',$lnMaxWidth,$i;
         }
         push @cols,
-            [class=>"$class-ln",$h->tag('pre',$tmp)],
-            [class=>"$class-margin",''],
+            [class=>"ln",$h->tag('pre',$tmp)],
+            [class=>"margin",''],
         ;
     }
     
     # Text-Kolumne
-    push @cols,[class=>"$class-text",$h->tag('pre',$text)];
+    push @cols,[class=>"text",$h->tag('pre',$text)];
 
     # Erzeuge Tabelle
 
@@ -268,7 +267,6 @@ sub html {
         id => $id,
         style => $style,
         Sdoc::Core::Html::Table::Simple->html($h,
-            class => "$class-table",
             border => undef,
             cellpadding => undef,
             cellspacing => undef,

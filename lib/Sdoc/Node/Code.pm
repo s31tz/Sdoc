@@ -305,7 +305,7 @@ sub html {
                 ],
                 'td pre' => [
                     margin => 0,
-                    lineHeight => '125%',
+                    lineHeight => '125%', # für Chrome, sonst Zeilen zu eng
                 ],
             )
         ),

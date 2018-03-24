@@ -7,9 +7,9 @@ use warnings;
 our $VERSION = 3.00;
 
 use Sdoc::Core::Config;
+use Sdoc::Core::Path;
 use Sdoc::Core::Html::Pygments;
 use Sdoc::Core::Terminal;
-use Sdoc::Core::Path;
 use Sdoc::Core::AnsiColor;
 use Sdoc::Document;
 use Sdoc::Core::CommandLine;
@@ -84,6 +84,7 @@ sub main {
         -cacheDir => $conf->try('cacheDir') // $cacheDirDefault,
         -convert => 0,
         -pdfViewer => $conf->try('pdfViewer') // $pdfViewerDefault,
+        -selector => '.sdoc-code text',
         -shellEscape => $conf->try('shellEscape') // $shellEscapeDefault,
         -textViewer => $conf->try('textViewer') // $textViewerDefault,
         -verbose => $conf->try('verbose') // $verboseDefault,
@@ -101,22 +102,28 @@ sub main {
 
     my $op = 'pdf';
     if ($argA->[0] =~ /^(anchors|cleanup|convert|html|latex|links|pdf|
-            pygments-styles?|tree|validate)$/x) {
+            code-styles?|tree|validate)$/x) {
         $op = shift @$argA;
     }
 
     # Operationen ohne Sdoc-Dokument
 
-    if ($op eq 'pygments-style') {
-        if (@$argA < 1 || @$argA > 2) {
+    if ($op eq 'code-style') {
+        if (@$argA == 0 || @$argA > 2) {
             $self->help(11,'ERROR: Wrong number of arguments');
         }
-        my $style = shift @$argA;
-        my $selector = shift @$argA;
-        print scalar Sdoc::Core::Html::Pygments->css($style,$selector);
+        my ($style,$output) = @$argA;
+        if (defined($output) && $output ne '-') {
+            $output = Sdoc::Core::Path->absolute($output);
+        }
+        my $styleCode = Sdoc::Core::Html::Pygments->css($style,$opt->selector);
+        my $styleFile = sprintf '%s/%s/%s.css',
+            $self->cacheDir($opt),'style-code',$style;
+        Sdoc::Core::Path->write($styleFile,$styleCode,-recursive=>1);
+        $self->showResult($styleFile,$output,$opt->textViewer);
         return;
     }
-    elsif ($op eq 'pygments-styles') {
+    elsif ($op eq 'code-styles') {
         if (@$argA) {
             $self->help(11,'ERROR: Wrong number of arguments');
         }
