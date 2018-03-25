@@ -11,7 +11,7 @@
 
 %Graphic:
   name="Invader"
-  file="+/sdoc-graphic-invader"
+  source="+/sdoc-graphic-invader"
   scale=0.025
 
 =- Erster Teil
@@ -93,7 +93,7 @@ XXXX Ein trennender Satz
 XXXX Ein trennender Satz
 
 %Graphic:
-  file="+/sdoc-graphic-illusion"
+  source="+/sdoc-graphic-illusion"
   caption="Test-Grafik"
   width=100
   height=100

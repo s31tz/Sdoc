@@ -535,6 +535,37 @@ sub warn {
 
 # -----------------------------------------------------------------------------
 
+=head2 Prüfung
+
+=head3 validate() - Prüfe Knoten auf Korrektheit
+
+=head4 Synopsis
+
+    $node->validate;
+
+=head4 Description
+
+Jede Knoten-Klasse kann eine Methode validate() definieren. Die
+Methode wird nach Ende des Parsings für jeden Knoten
+aufgerufen. Ihre Aufgabe ist, Prüfungen auf dem Knoten
+durchzuführen und für jede Konsistenz-Verletzung eine Warnung zu
+generieren.
+
+Die Implementierung hier in der Basisklasse führt keine Prüfungen
+durch. Sie existiert nur, um in abgeleiteten Klassen überschrieben
+zu werden.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub validate {
+    my $self = shift;
+    return;
+}
+
+# -----------------------------------------------------------------------------
+
 =head2 Debug
 
 Die Klasse Sdoc::Node ist an jeder Knoten-Instantiierung
@@ -1059,7 +1090,7 @@ sub expandSegmentsToLatex {
             $code .= Sdoc::Core::LaTeX::Figure->latex($l,
                 inline => 1,
                 border => $gph->border,
-                file => $root->expandPath($gph->file),
+                file => $root->expandPath($gph->source),
                 height => $gph->height,
                 indent => $gph->indent // 0?
                     $root->latexIndentation.'em': undef,

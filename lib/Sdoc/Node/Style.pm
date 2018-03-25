@@ -29,14 +29,14 @@ Stylesheet-Knoten folgende zusätzliche Attribute:
 
 =over 4
 
-=item file => $path
-
-Pfad der Stylesheet-Datei. Beginnt der Pfad mit C<+/>, wird das
-Pluszeichen zum Pfad des Dokumentverzeichnisses expandiert.
-
 =item code => $code
 
-Stylesheet-Code.
+Stylesheet-Code aus dem Rumpf des Style-Blocks.
+
+=item source => $path
+
+Pfad zu einer Stylesheet-Datei. Beginnt der Pfad mit C<+/>, wird
+das Pluszeichen zum Pfad des Dokumentverzeichnisses expandiert.
 
 =back
 
@@ -97,18 +97,46 @@ sub new {
         $attribH = $par->readBlock('code');
     }
     elsif ($markup eq 'sdoc') {
-        # nichts
+        # kommt nicht vor
     }
 
     # Objekt instantiieren
 
     my $self = $class->SUPER::new('Style',$variant,$root,$parent,
         code => undef,
-        file => undef,
+        source => undef,
     );
     $self->setAttributes(%$attribH);
 
     return $self;
+}
+
+# -----------------------------------------------------------------------------
+
+=head2 Prüfung
+
+=head3 validate() - Prüfe Knoten auf Korrektheit
+
+=head4 Synopsis
+
+    $sty->validate;
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub validate {
+    my $self = shift;
+
+    # Prüfe, dass die angegebene StyleSheet-Datei existiert
+
+    if (my $path = $self->source) {
+        if (!-f $path) {
+            $self->warn('StyleSheet does not exist: %s',$path);
+        }
+    }
+
+    return;
 }
 
 # -----------------------------------------------------------------------------

@@ -189,6 +189,12 @@ sub parse {
     # Löse G-Segmente (Inline-Grafiken) auf
     $doc->resolveGraphics;
 
+    # Prüfe alle Knoten des Dokuments
+
+    for my $node ($doc->nodes) {
+        $node->validate;
+    }
+
     return $doc;
 }
 
@@ -297,7 +303,7 @@ sub sdoc2ToSdoc3 {
             if ($graphics) {
                 $graphics .= "\n";
             }
-            $graphics .= sprintf qq|%%Graphic:\n  name="%s"\n  file="%s"\n|,
+            $graphics .= sprintf qq|%%Graphic:\n  name="%s"\n  source="%s"\n|,
                 $name,$arg;
             for my $key (sort keys %opt) {
                 $graphics .= sprintf qq|  %s="%s"\n|,$key,$opt{$key};

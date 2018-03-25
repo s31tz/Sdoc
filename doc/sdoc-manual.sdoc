@@ -1,5 +1,5 @@
 %Style:
-  file="/tmp/default.css"
+  source="/tmp/default.css"
 .
 
 %Document:
@@ -52,7 +52,7 @@ angezeigt und verarbeitet wird, ist in Abschnitt L{+Dieses Dokument
   $ sdoc pdf sdoc-example.sdoc
 
 %Graphic:
-  file="+/sdoc-example"
+  source="+/sdoc-example"
   latexOptions="width=0.965\textwidth"
   scale=0.55
   border=1
@@ -66,7 +66,7 @@ angezeigt und verarbeitet wird, ist in Abschnitt L{+Dieses Dokument
   $ sdoc html sdoc-example.sdoc
 
 %Graphic:
-  file="+/sdoc-example-html"
+  source="+/sdoc-example-html"
   latexOptions="width=0.965\textwidth"
   scale=0.55
   border=1
@@ -605,14 +605,14 @@ werden die Werte in die Einheit I{Point} (1/72in) umgerechnet (1px =
 dargestellt wird.
 
   %Graphic:
-    file="+/sdoc-graphic-illusion"
+    source="+/sdoc-graphic-illusion"
     width=100
     height=100
 
 produziert:
 
 %Graphic:
-  file="+/sdoc-graphic-illusion"
+  source="+/sdoc-graphic-illusion"
   width=100
   height=100
 
@@ -623,7 +623,7 @@ Attribut C{indent=0} gesetzt ist. Mit C{align=center} kann die
 Abbildung auch mittig gesetzt werden.
 
   %Graphic:
-    file="+/sdoc-graphic-illusion"
+    source="+/sdoc-graphic-illusion"
     width=100
     height=100
     align=center
@@ -631,7 +631,7 @@ Abbildung auch mittig gesetzt werden.
 produziert:
 
 %Graphic:
-  file="+/sdoc-graphic-illusion"
+  source="+/sdoc-graphic-illusion"
   width=100
   height=100
   align=center
@@ -641,7 +641,7 @@ Beschriftung versehen werden. Das Setzen des Attributs C{border}
 auf 1, fügt einen Rahmen hinzu.
 
   %Graphic:
-    file="+/sdoc-graphic-illusion"
+    source="+/sdoc-graphic-illusion"
     caption=Illusion
     width=100
     height=100
@@ -650,7 +650,7 @@ auf 1, fügt einen Rahmen hinzu.
 produziert:
 
 %Graphic:
-  file="+/sdoc-graphic-illusion"
+  source="+/sdoc-graphic-illusion"
   caption=Illusion
   width=100
   height=100
@@ -673,7 +673,7 @@ In der Beschriftung (C{caption}) einer Abbildung können alle Segmente
     anchor=STRING
     border=BOOL
     caption=STRING
-    file=PATH
+    source=PATH
     height=INTEGER
     latexAlign=left|center
     latexOptions=STRING
@@ -697,10 +697,6 @@ In der Beschriftung (C{caption}) einer Abbildung können alle Segmente
 
 [caption=STRING]:
   Beschriftung der Grafik. Diese erscheint unter der Grafik.
-
-[file=PATH]:
-  Pfad der Bilddatei. Beginnt der Pfad mit C{+/}, wird das
-  Pluszeichen zum Pfad des Dokumentverzeichnisses expandiert.
 
 [height=INTEGER]:
   Höhe in Pixeln (ohne Angabe einer Einheit), auf die das Bild
@@ -742,6 +738,10 @@ In der Beschriftung (C{caption}) einer Abbildung können alle Segmente
   von G-Segmenten (Inline Grafik) genutzt werden soll. Der Default für
   das Attribut ist 0, wenn C{useCount > 0} (d.h. die Grafik wird als
   Inline-Grafik genutzt), andernfalls 1.
+
+[source=PATH]:
+  Pfad der Bilddatei. Beginnt der Pfad mit C{+/}, wird das
+  Pluszeichen zum Pfad des Dokumentverzeichnisses expandiert.
 
 [width=INTEGER]:
   Breite in Pixeln (ohne Angabe einer Einheit), auf die das Bild
@@ -847,7 +847,7 @@ produziert:
 
 %Graphic:
   name="InvaderItem"
-  file="+/sdoc-graphic-invader"
+  source="+/sdoc-graphic-invader"
   scale=0.025
   show=0
 
@@ -1248,7 +1248,7 @@ Das folgende Beispiel zeigt sämtliche Möglichkeiten.
 
   %Graphic:
     name="InvaderList"
-    file="+/sdoc-graphic-invader"
+    source="+/sdoc-graphic-invader"
     scale=0.03
     show=0
 
@@ -1275,7 +1275,7 @@ Q{Dies ist ein Zitat}
 
 %Graphic:
   name="InvaderList"
-  file="+/sdoc-graphic-invader"
+  source="+/sdoc-graphic-invader"
   scale=0.03
   show=0
 
@@ -1709,12 +1709,13 @@ Ein Zitat-Block hat keine Eigenschaften.
 
 Sdoc unterscheidet zwei Arten von Kommentaren:
 
-1. Kommentare mit einem Hash (#) am Zeilenanfang
-2. Kommentare mit einem Prozentzeichen + Leerzeichen (% ) am Zeilenanfang
+1. Kommentare mit einem Hash (Q{#}) am Zeilenanfang
+2. Kommentare mit einem Prozentzeichen plus Leerzeichen (Q{% }) am
+   Zeilenanfang
 
 === #-Kommentare
 
-Kommentarzeilen, die mit einem Hash (#) beginnen, werden
+Kommentarzeilen, die mit einem Hash beginnen, werden
 ignoriert. Sie können in jeder Zeile im Sdoc-Quelltext vorkommen. Sie
 sind für Quelltextnotizen nützlich oder zum Auskommentieren von
 Sdoc-Code. Beispiel:
@@ -1723,7 +1724,7 @@ Sdoc-Code. Beispiel:
 
 === %-Kommentare
 
-Kommentarzeilen, die mit Prozentzeichen + Leerzeichen (% ) beginnen,
+Kommentarzeilen, die mit Prozentzeichen (plus Leerzeichen) beginnen,
 werden als Kommentar-Blöcke in den Syntaxbaum übernommen. Sie sind,
 da sie eine eigene syntaktische Einheit bilden, nur I{zwischen}
 anderen Blöcken zulässig. Der Kommentar
@@ -1758,6 +1759,41 @@ statt.
   .
 
 Ein %-Kommentar hat keine Eigenschaften.
+
+---PageBreak---
+
+== Style (Style)
+
+In HTML kann das Aussehen des Dokuments durch CSS-Regeln verändert
+werden. Die CSS-Regeln können innerhalb des Dokuments oder außerhalb
+in einer Datei definiert sein. Beide Möglichkeiten, die lokale
+Definition und das Laden eines externen StyleSheets, bietet der
+Style-Block.
+
+Lokale Regeln werden im Rumpf des Style-Blocks definiert. Ein externes
+StyleSheet wird geladen, wenn das Attribut C{source} gesetzt ist. In
+einem Style-Block kann auch beides zusammen angewendet werden. Die
+lokal definierten CSS-Regeln werden I{nach} dem externen StyleSheet
+eingebunden, haben gegenüber dessen Regeln also Priorität. Mit lokalen
+CSS-Regeln können die Regeln des externen StyleSheet also modifiziert
+oder überschrieben werden.
+
+Für mehrere externe StyleSheets müssen mehrere Style-Blöcke
+definiert werden.
+
+=== Eigenschaften
+
+  %Style:
+    source=PATH
+  CODE
+  .
+
+[CODE]:
+  Lokale CSS-Regeln.
+
+[source=PATH]:
+  Pfad einer externen Stylesheet-Datei. Beginnt der Pfad mit C{+/},
+  wird das Pluszeichen zum Pfad des Dokumentverzeichnisses expandiert.
 
 ---PageBreak---
 
@@ -1803,7 +1839,7 @@ Abschnitts oder am Anfang oder am Ende des Dokuments.
 
   %Graphic:
     name="Invader"
-    file="+/sdoc-graphic-invader"
+    source="+/sdoc-graphic-invader"
     scale=0.08
 
 produziert:
@@ -1812,7 +1848,7 @@ Dies ist eine G{Invader} Inline-Grafik.
 
 %Graphic:
   name="Invader"
-  file="+/sdoc-graphic-invader"
+  source="+/sdoc-graphic-invader"
   scale=0.08
 
 ===! I - Kursivschrift (italic)
@@ -1984,7 +2020,7 @@ I{Block}.C{indent=undef} oder I{Block}.C{indent=0} eingestellt ist
 * Pflaume
 
 %Graphic:
-  file="+/sdoc-graphic-illusion"
+  source="+/sdoc-graphic-illusion"
   width=100
   height=100
   indent=0
@@ -2049,7 +2085,7 @@ angegeben, die Einheit ist I{nicht} Bestandteil des Attributwerts.
 * Pflaume
 
 %Graphic:
-  file="+/sdoc-graphic-illusion"
+  source="+/sdoc-graphic-illusion"
   width=100
   height=100
   indent=1

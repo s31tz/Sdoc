@@ -531,7 +531,8 @@ Liste von Knoten. Im Skalarkontext eine Referenz auf die Liste.
 
 =head4 Description
 
-Liefere die Liste aller Knoten des Dokument-Baums.
+Liefere die Liste aller Knoten des Dokument-Baums, einschließlich
+des Dokument-Knotens.
 
 =cut
 

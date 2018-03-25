@@ -54,11 +54,6 @@ Zeichne einen Rahmen um die Abbildung.
 
 Beschriftung der Abbldung. Diese erscheint unter der Abbildung.
 
-=item file => $path
-
-Pfad der Bilddatei. Beginnt der Pfad mit C<+/>, wird das
-Pluszeichen zum Pfad des Dokumentverzeichnisses expandiert.
-
 =item height => $height
 
 Höhe in Pixeln (ohne Angabe einer Einheit), auf die das Bild
@@ -122,6 +117,11 @@ wenn 0, nicht. Sie nicht anzuzeigen macht Sinn, wenn sie lediglich
 von G-Segmenten (Inline Grafik) genutzt werden soll. Der Default
 für das Attribut ist 0, wenn C<< useCount > 0 >> (d.h. die Grafik wird
 als Inline-Grafik genutzt), andernfalls 1.
+
+=item source => $path
+
+Pfad der Bilddatei. Beginnt der Pfad mit C<+/>, wird das
+Pluszeichen zum Pfad des Dokumentverzeichnisses expandiert.
 
 =item useCount => $n
 
@@ -203,7 +203,6 @@ sub new {
         border => 0,
         caption => undef,
         captionS => undef,
-        file => undef,
         formulaA => [],
         graphicA => [],
         height => undef,
@@ -219,6 +218,7 @@ sub new {
         referenced => 0,
         scale => undef,
         show => undef,
+        source => undef,
         useCount => 0,
         width => undef,
         # memoize
@@ -403,7 +403,7 @@ sub html {
         }
     }
 
-    my $path = $doc->expandPath($self->file);
+    my $path = $doc->expandPath($self->source);
     if (!-e $path) {
         for my $ext (qw/png gif jpg/) {
             if (-e "$path.$ext") {
@@ -537,7 +537,7 @@ sub latex {
         align => $self->latexAlign // $self->align,
         border => $self->border,
         caption => $self->expandText($l,'captionS'),
-        file => $doc->expandPath($self->file),
+        file => $doc->expandPath($self->source),
         height => $self->height,
         indent => $indent,
         label => $self->referenced? $self->linkId: undef,

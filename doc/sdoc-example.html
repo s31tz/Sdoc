@@ -11,7 +11,7 @@
 <body>
   <h1 class="sdoc-document-title">Ein Beispieldokument</h1>
   <p class="sdoc-document-info">
-    <span class="author">Nico Laus</span>, <span class="sdoc-document-date">24. März 2018</span>
+    <span class="author">Nico Laus</span>, <span class="sdoc-document-date">25. März 2018</span>
   </p>
   <style type="text/css">
     #toc > ul { margin-top: 8px; }
@@ -64,13 +64,13 @@
     #cod01 td pre { margin: 0; line-height: 125%; }
   </style>
   <div class="sdoc-code" id="cod01">
-    <table class="sdoc-code-table">
+    <table>
     <tr>
-      <td class="sdoc-code-ln">
+      <td class="ln">
         <pre>1&#10;2&#10;3&#10;4&#10;5&#10;6</pre>
       </td>
-      <td class="sdoc-code-margin"></td>
-      <td class="sdoc-code-text">
+      <td class="margin"></td>
+      <td class="text">
         <pre><span class="nb">open</span><span class="p">(</span><span class="k">my</span> <span class="nv">$fh</span><span class="p">,</span> <span class="s">&#39;ls -l |&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">die</span> <span class="s">&quot;open failed ($!)\n&quot;</span><span class="p">;</span>&#10;<span class="k">while</span> <span class="p">(</span><span class="sr">&lt;$fh&gt;</span><span class="p">)</span> <span class="p">{</span>&#10;    <span class="sr">s/\n/&lt;BR&gt;\n/</span><span class="p">;</span>&#10;    <span class="k">print</span><span class="p">;</span>&#10;<span class="p">}</span>&#10;<span class="nb">close</span><span class="p">(</span><span class="nv">$fh</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">die</span> <span class="s">&quot;close failed ($!)\n&quot;</span><span class="p">;</span>&#10;</pre>
       </td>
     </tr>
