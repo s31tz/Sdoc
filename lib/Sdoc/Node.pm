@@ -523,7 +523,7 @@ sub warn {
 
     my $quiet = $self->root->quiet;
     if (!$quiet) {
-        warn sprintf "WARNING: %s (%s +%s %s)\n",
+        warn sprintf "WARNING: %s (%%%s: +%s %s)\n",
             sprintf($fmt,@_),
             $self->type,
             $self->lineNum,
@@ -669,17 +669,16 @@ sub generate {
     my $format = shift;
     # @_: @args
 
-    my $gen;
     if ($format eq 'tree') {
         return $self->tree(@_);
     }
     elsif ($format eq 'html') {
-        $gen = Sdoc::Core::Html::Tag->new;
-        return $self->html($gen);
+        my $h = Sdoc::Core::Html::Tag->new('html-5');
+        return $self->html($h);
     }
     elsif ($format eq 'latex') {
-        $gen = Sdoc::Core::LaTeX::Code->new;
-        return $self->latex($gen);
+        my $l = Sdoc::Core::LaTeX::Code->new;
+        return $self->latex($l);
     }
     $self->throw(
         q~SDOC-00004: Unknown format~,
@@ -693,7 +692,7 @@ sub generate {
 
 =head4 Synopsis
 
-    $code = $node->generateChilds($format,$gen);
+    $code = $node->generateChilds($format,$gen,@args);
 
 =head4 Arguments
 
@@ -706,6 +705,11 @@ Das Zielformat, in dem der Code generiert wird.
 =item $gen
 
 Generator für das Zielformat.
+
+=item @args
+
+Weitere Parameter, die an die Format-Methoden weitergereicht
+werden.
 
 =back
 
@@ -724,11 +728,14 @@ zurück.
 # -----------------------------------------------------------------------------
 
 sub generateChilds {
-    my ($self,$format,$gen) = @_;
+    my $self = shift;
+    my $format = shift;
+    my $gen = shift;
+    # @_: @args
 
     my $code = '';
     for my $node ($self->childs) {
-        $code .= $node->$format($gen);
+        $code .= $node->$format($gen,@_);
     }
 
     return $code;
@@ -1449,6 +1456,51 @@ definiert, und dem Namen des Knotentyps.
 sub cssClass {
     my $self = shift;
     return lc sprintf '%s-%s',$self->root->cssClassPrefix,$self->type;
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 css() - Generiere CSS-Code
+
+=head4 Synopsis
+
+    $code = $node->css($c,$global);
+
+=head4 Arguments
+
+=over 4
+
+=item $c
+
+Generator für CSS.
+
+=item $global
+
+Wenn gesetzt, werden die globalen CSS-Regeln zum Knotentyp
+geliefert.
+
+=back
+
+=head4 Returns
+
+CSS-Code (String)
+
+=head4 Description
+
+Generiere den CSS-Code der Knoten-Klasse oder des Knotens und
+liefere diesen zurück.
+
+Die Implementierung hier in der Basisklasse generiert keinen
+CSS-Code. Sie existiert nur, um in abgeleiteten Klassen
+überschrieben zu werden.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub css {
+    my ($self,$c) = @_;
+    return '';
 }
 
 # -----------------------------------------------------------------------------

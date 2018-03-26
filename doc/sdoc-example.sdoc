@@ -1,3 +1,14 @@
+%Style:
+  .sdoc-document h1 {
+      font-size: 230%;
+      margin-bottom: 10px;
+  }
+  .sdoc-document p {
+      margin-top: 10px;
+      font-size: 115%;
+  }
+.
+
 %Document:
   title="Ein Beispieldokument"
   author="Nico Laus"

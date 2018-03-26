@@ -1,7 +1,3 @@
-%Style:
-  source="/tmp/default.css"
-.
-
 %Document:
   title="Sdoc Handbuch"
   author="Frank Seitz, L{http://fseitz.de/}"
@@ -191,7 +187,6 @@ Dokument-Bock angegeben:
     date=STRING
     htmlDocumentStyle=NAME
     htmlIndentation=INTEGER
-    htmlTitleAlign=left|center
     indentMode=BOOL
     language=german|english
     latexDocumentClass=scrartcl|scrreprt|scrbook|article|report|book
@@ -239,11 +234,10 @@ verwendet werden:
   ein Titelabschnitt erzeugt.
 
 [codeStyle=STYLE]:
-    (Default: 'default') Der Style, in dem das Syntax-Highlighting von
-    Code-Blöcken erfolgt, wenn das Attribut C{lang} gesetzt ist. Die
-    Liste der verfügbaren Styles liefert das Kommando
-
-        $ pygmentize -L styles
+  (Default: 'default') Der Style, in dem das Syntax-Highlighting von
+  Code-Blöcken erfolgt, wenn das Attribut C{lang} gesetzt ist.  Die
+  Liste der verfügbaren Code Styles findet sich in Abschnitt L{Code
+  Styles}.
 
 [copyComments=BOOL]:
   (Default: 1) Kopiere Sdoc-Kommentare in den Quelltext des
@@ -270,10 +264,6 @@ verwendet werden:
 [htmlDocumentStyle=NAME]:
   (Default: default) Der Name des CSS-Stylesheet, das für das Design
   des HTML-Dokuments verwendet wird.
-
-[htmlTitleAlign=left|center]:
-  (Default: 'left') Ausrichtung des von Titel, Autor, Datum des
-  Dokuments im Falle von HTML.
 
 [htmlIndentation=INTEGER]:
   (Default: 20) In HTML die Tiefe der Einrückung für List-, Graphic-,
@@ -1762,21 +1752,22 @@ Ein %-Kommentar hat keine Eigenschaften.
 
 ---PageBreak---
 
-== Style (Style)
+== Stilvorlage (Style)
 
 In HTML kann das Aussehen des Dokuments durch CSS-Regeln verändert
-werden. Die CSS-Regeln können innerhalb des Dokuments oder außerhalb
-in einer Datei definiert sein. Beide Möglichkeiten, die lokale
-Definition und das Laden eines externen StyleSheets, bietet der
-Style-Block.
+werden. Die CSS-Regeln können I{innerhalb} des Dokuments oder
+I{außerhalb} in einer Datei definiert werden. Beide Möglichkeiten - die
+lokale Definition und das Laden eines externen StyleSheets - bietet
+der Style-Block.
 
-Lokale Regeln werden im Rumpf des Style-Blocks definiert. Ein externes
-StyleSheet wird geladen, wenn das Attribut C{source} gesetzt ist. In
-einem Style-Block kann auch beides zusammen angewendet werden. Die
-lokal definierten CSS-Regeln werden I{nach} dem externen StyleSheet
-eingebunden, haben gegenüber dessen Regeln also Priorität. Mit lokalen
-CSS-Regeln können die Regeln des externen StyleSheet also modifiziert
-oder überschrieben werden.
+Im Rumpf des Style-Blocks C{CODE} werden lokale CSS-Regeln
+definiert. Ein externes StyleSheet wird durch Setzen des Attributs
+C{source=PATH} geladen. In einem Style-Block kann auch beides zusammen
+angewendet werden. Die lokal definierten Regeln eines Style-Blocks
+werden I{nach} dem externen StyleSheet des Blocks eingebunden, haben
+gegenüber dessen Setzungen somit Priorität. Mit lokalen CSS-Regeln
+können die Setzungen des externen StyleSheet also modifiziert oder
+überschrieben werden.
 
 Für mehrere externe StyleSheets müssen mehrere Style-Blöcke
 definiert werden.
@@ -2155,6 +2146,65 @@ C{Document.indentMode=0} gesetzt ist.
   RosyBrown
 [255 218 185]:
   PeachPuff
+
+---PageBreak---
+
+= HTML/CSS
+
+== Document
+
+=== HTML
+
+%Code: lang=HTML
+  <div class="sdoc-document">
+    <h1>...</h1>
+    <p>
+      <span class="author">...</span>, <span class="date">...</date>
+    </p>
+  </div>
+.
+
+=== CSS
+
+%Table:
+  Selektor               Bereich
+  ---------------------- ----------------------------------------
+  .sdoc-document         Gesamter Kopf des Dokuments
+  .sdoc-document h1      Titel des Dokuments
+  .sdoc-document p       Info-Bereich
+  .sdoc-document .author Autor
+  .sdoc-document .date   Datum
+.
+
+=== Beispiele
+
+====* Dokument-Kopf zentieren (ähnl. LaTeX)
+
+%Code: lang=CSS
+  .sdoc-document {
+      text-align: center;
+  }
+.
+
+====* Titel vergrößern, Abstand zum Info-Text verkleinern
+
+%Code: lang=CSS
+  .sdoc-document h1 {
+      font-size: 230%;
+      margin-bottom: 10px;
+  }
+  .sdoc-document p {
+      margin-top: 10px;
+  }
+.
+
+====* Größerer Info-Text
+
+%Code: lang=CSS
+  .sdoc-document p {
+      font-size: 110%;
+  }
+.
 
 ---PageBreak---
 
@@ -2569,3 +2619,82 @@ In den Methoden der Klasse kann die Eigenschaft abgefragt werden mit:
    $val = $node->ATTRIBUTE;
 
 Beispiel: Eigenschaft C{language} der Klasse Sdoc::Node::Document.
+
+---PageBreak---
+
+=+ Code Styles
+
+Die Liste der Namen der verfügbaren Code-Styles liefert das Kommando
+
+   $ sdoc codestyle-names
+
+Eine HTML-Seite mit einer Darstellung aller Code-Styles
+für den Programmcode in Datei FILE der Programmiersprache LANG
+liefert das Kommando:
+
+   $ sdoc codestyle-page LANG FILE
+
+== Übersicht
+
+[abap]:
+  No description.
+[algol]:
+  No description.
+[algol_nu]:
+  No description.
+[arduino]:
+  The Arduino® language style. This style is designed to highlight the
+  Arduino source code, so exepect the best results with it.
+[autumn]:
+  A colorful style, inspired by the terminal highlighting style.
+[borland]:
+  Style similar to the style used in the borland IDEs.
+[bw]:
+  No description.
+[colorful]:
+  A colorful style, inspired by CodeRay.
+[default]:
+  The default style (inspired by Emacs 22).
+[emacs]:
+  The default style (inspired by Emacs 22).
+[friendly]:
+  A modern style based on the VIM pyte theme.
+[fruity]:
+  Pygments version of the Q{native} vim theme.
+[igor]:
+  Pygments version of the official colors for Igor Pro procedures.
+[lovelace]:
+  The style used in Lovelace interactive learning environment. Tries
+  to avoid the Q{angry fruit salad} effect with desaturated and dim
+  colours.
+[manni]:
+  A colorful style, inspired by the terminal highlighting style.
+[monokai]:
+  This style mimics the Monokai color scheme.
+[murphy]:
+  Murphy's style from CodeRay.
+[native]:
+  Pygments version of the Q{native} vim theme.
+[paraiso-dark]:
+  No description.
+[paraiso-light]:
+  No description.
+[pastie]:
+  Style similar to the pastie default style.
+[perldoc]:
+  Style similar to the style used in the perldoc code blocks.
+[rainbow_dash]:
+  A bright and colorful syntax highlighting theme.
+[rrt]:
+  Minimalistic Q{rrt} theme, based on Zap and Emacs defaults.
+[tango]:
+  The Crunchy default Style inspired from the color palette from
+  the Tango Icon Theme Guidelines.
+[trac]:
+  Port of the default trac highlighter design.
+[vim]:
+  Styles somewhat like vim 7.0
+[vs]:
+  No description.
+[xcode]:
+  Style similar to the Xcode default colouring theme.

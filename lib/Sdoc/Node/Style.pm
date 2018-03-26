@@ -103,7 +103,7 @@ sub new {
     # Objekt instantiieren
 
     my $self = $class->SUPER::new('Style',$variant,$root,$parent,
-        code => undef,
+        code => '',
         source => undef,
     );
     $self->setAttributes(%$attribH);
@@ -128,9 +128,11 @@ sub new {
 sub validate {
     my $self = shift;
 
+    my $doc = $self->root;
+
     # Prüfe, dass die angegebene StyleSheet-Datei existiert
 
-    if (my $path = $self->source) {
+    if (my $path = $doc->expandPath($self->source)) {
         if (!-f $path) {
             $self->warn('StyleSheet does not exist: %s',$path);
         }
@@ -142,6 +144,48 @@ sub validate {
 # -----------------------------------------------------------------------------
 
 =head2 Formate
+
+=head3 css() - Generiere CSS-Code
+
+=head4 Synopsis
+
+    $code = $sty->css($c,$global);
+
+=head4 Arguments
+
+=over 4
+
+=item $c
+
+Generator für CSS.
+
+=item $global
+
+Wenn gesetzt, werden die I<globalen> CSS-Regeln des Knotentyps
+geliefert.
+
+=back
+
+=head4 Returns
+
+CSS-Code (String)
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub css {
+    my ($self,$c,$global) = @_;
+
+    if ($global) {
+        # Globale CSS-Regeln des Knoten-Typs
+        return '';
+    }
+
+    return $c->makeFlat($self->code);
+}
+
+# -----------------------------------------------------------------------------
 
 =head3 html() - Generiere HTML-Code
 

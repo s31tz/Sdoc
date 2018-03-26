@@ -247,6 +247,67 @@ sub new {
 
 =head2 Formate
 
+=head3 css() - Generiere CSS-Code
+
+=head4 Synopsis
+
+    $code = $cod->css($c,$global);
+
+=head4 Arguments
+
+=over 4
+
+=item $c
+
+Generator für CSS.
+
+=item $global
+
+Wenn gesetzt, werden die globalen CSS-Regeln zum Knotentyp
+geliefert.
+
+=back
+
+=head4 Returns
+
+CSS-Code (String)
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub css {
+    my ($self,$c,$global) = @_;
+
+    if ($global) {
+        # Liefere die globalen CSS-Regeln des Knoten-Typs
+
+        my $doc = $self->root;
+
+        # Dokumenteigenschaften ermitteln
+        my $att = $doc->analyze;
+
+        my $code = '';
+        if ($att->sourceCode) {
+            # CSS-Regeln für Syntax Highlighting erzeugen
+
+            my $codeStyle = $doc->codeStyle;
+            $code .= eval{Sdoc::Core::Html::Pygments->css($codeStyle,
+                '.sdoc-code table')} // '';
+            if ($@) {
+                $doc->warn('Unknown code style: %s',$codeStyle);
+            }
+        }
+
+        return $code;
+    }
+
+    # FIXME
+    return '';
+}
+
+# -----------------------------------------------------------------------------
+
 =head3 html() - Generiere HTML-Code
 
 =head4 Synopsis

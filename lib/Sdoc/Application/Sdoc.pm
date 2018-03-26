@@ -9,6 +9,7 @@ our $VERSION = 3.00;
 use Sdoc::Core::Config;
 use Sdoc::Core::Path;
 use Sdoc::Core::Html::Pygments;
+use Sdoc::Core::Html::Tag;
 use Sdoc::Core::Terminal;
 use Sdoc::Core::AnsiColor;
 use Sdoc::Document;
@@ -55,6 +56,7 @@ sub main {
 
     my $ansiColorDefault = 1;
     my $browserDefault = 'google-chrome';
+    my $codeStyleDefault = 'default',
     my $cacheDirDefault = '/tmp/sdoc/%U';
     my $pdfViewerDefault = 'evince';
     my $shellEscapeDefault = 0;
@@ -67,6 +69,7 @@ sub main {
 
             ansiColor => $ansiColorDefault,
             browser => $browserDefault,
+            codeStyle => $codeStyleDefault,
             cacheDir => $cacheDirDefault,
             pdfViewer => $pdfViewerDefault,
             shellEscape => $shellEscapeDefault,
@@ -82,6 +85,7 @@ sub main {
         -ansiColor => $conf->try('ansiColor') // $ansiColorDefault,
         -browser => $conf->try('browser') // $browserDefault,
         -cacheDir => $conf->try('cacheDir') // $cacheDirDefault,
+        -codeStyle => $conf->try('codeStyle') // $codeStyleDefault,
         -convert => 0,
         -pdfViewer => $conf->try('pdfViewer') // $pdfViewerDefault,
         -selector => '.sdoc-code text',
@@ -102,13 +106,13 @@ sub main {
 
     my $op = 'pdf';
     if ($argA->[0] =~ /^(anchors|cleanup|convert|html|latex|links|pdf|
-            code-styles?|tree|validate)$/x) {
+            codestyle-(names|page|file)|tree|validate)$/x) {
         $op = shift @$argA;
     }
 
     # Operationen ohne Sdoc-Dokument
 
-    if ($op eq 'code-style') {
+    if ($op eq 'codestyle-file') {
         if (@$argA == 0 || @$argA > 2) {
             $self->help(11,'ERROR: Wrong number of arguments');
         }
@@ -116,14 +120,32 @@ sub main {
         if (defined($output) && $output ne '-') {
             $output = Sdoc::Core::Path->absolute($output);
         }
-        my $styleCode = Sdoc::Core::Html::Pygments->css($style,$opt->selector);
+        my ($styleCode,$bgColor) = Sdoc::Core::Html::Pygments->css(
+            $style,$opt->selector);
         my $styleFile = sprintf '%s/%s/%s.css',
             $self->cacheDir($opt),'style-code',$style;
         Sdoc::Core::Path->write($styleFile,$styleCode,-recursive=>1);
         $self->showResult($styleFile,$output,$opt->textViewer);
         return;
     }
-    elsif ($op eq 'code-styles') {
+    elsif ($op eq 'codestyle-page') {
+        if (@$argA < 2) {
+            $self->help(11,'ERROR: Wrong number of arguments');
+        }
+        my ($lang,$file,$output) = @$argA;
+        if (defined($output) && $output ne '-') {
+            $output = Sdoc::Core::Path->absolute($output);
+        }
+        my $code = Sdoc::Core::Path->read($file);
+        my $h = Sdoc::Core::Html::Tag->new;
+        my $html = Sdoc::Core::Html::Pygments->stylesPage($h,$lang,$code);
+        my $htmlFile = sprintf '%s/codestyle-page/codestyle-page.html',
+            $self->cacheDir($opt);
+        Sdoc::Core::Path->write($htmlFile,$html,-recursive=>1);
+        $self->showResult($htmlFile,$output,$opt->browser);
+        return;
+    }
+    elsif ($op eq 'codestyle-names') {
         if (@$argA) {
             $self->help(11,'ERROR: Wrong number of arguments');
         }
@@ -183,6 +205,7 @@ sub main {
     my $doc = Sdoc::Document->parse($sdocFile,
         -quiet => 0, # Sdoc-Warnings zeigen wir immer an
         -shellEscape => $opt->shellEscape,
+        -codeStyle => $opt->codeStyle,
     );
 
     if ($op eq 'validate') {

@@ -129,11 +129,13 @@ sub parse {
 
     # Optionen
 
+    my $codeStyle = 'default',
     my $markup = 'sdoc';
     my $quiet = 0;
     my $shellEscape = 0;
 
     Sdoc::Core::Option->extract(\@_,
+        -codeStyle => \$codeStyle,
         -markup => \$markup,
         -quiet => \$quiet,
         -shellEscape => \$shellEscape,
@@ -158,6 +160,7 @@ sub parse {
 
     my $doc = Sdoc::Node::Document->new(undef,$par,undef,undef);
     $doc->set(
+        codeStyle => $codeStyle,
         input => $input,
         quiet => $quiet,
         shellEscape => $shellEscape,

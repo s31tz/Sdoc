@@ -445,6 +445,37 @@ sub rulesFromObject {
 
 =head2 Klassenmethoden
 
+=head3 makeFlat() - Mache CSS-Regeln einzeilig
+
+=head4 Synopsis
+
+    $rules = $this->makeFlat($rules);
+
+=head4 Arguments
+
+=over 4
+
+=item $rules
+
+CSS-Regeln (String)
+
+=back
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub makeFlat {
+    my ($this,$rules) = @_;
+
+    $rules =~ s/\s+/ /g;
+    $rules =~ s/\} /}\n/g;
+
+    return $rules;
+}
+
+# -----------------------------------------------------------------------------
+
 =head3 style() - Generiere StyleSheet-Tags
 
 =head4 Synopsis
