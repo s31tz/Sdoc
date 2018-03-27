@@ -115,6 +115,85 @@ sub new {
 
 =head2 Formate
 
+=head3 css() - Generiere CSS-Code
+
+=head4 Synopsis
+
+    $code = $toc->css($c,$global);
+
+=head4 Arguments
+
+=over 4
+
+=item $c
+
+Generator für CSS.
+
+=item $global
+
+Wenn gesetzt, werden die globalen CSS-Regeln zum Knotentyp
+geliefert.
+
+=back
+
+=head4 Returns
+
+CSS-Code (String)
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub css {
+    my ($self,$c,$global) = @_;
+
+    my $doc = $self->root;
+
+    if ($global) {
+        # Liefere die globalen CSS-Regeln des Knoten-Typs
+
+        my $indent = $doc->htmlIndentation;
+        my $code = $c->restrictedRules('.sdoc-tableofcontents',
+            # Abstand zum Inhaltsverzeichnis-Baum verkleinern
+            'h3' => [
+                marginTop => 0,
+                marginBottom => '8px',
+            ],
+            '> ul' => [
+                marginTop => '8px',
+                marginBottom => 0,
+            ],
+            # Zusätzlichen Abstand zwischen Abschnittsnummer
+            # und Abschnittstitel hinzufügen
+            'span.number' => [
+                paddingRight => '2px',
+            ],
+            # Unterschiedliche Einrücktiefe für numerierte und
+            # unnumerierte Abschnittsebenen
+            'ul.bullet' => [
+                listStyleType => 'disc',
+                paddingLeft => ($indent+16).'px',
+            ],
+            'ul.number' => [
+                listStyleType => 'none',
+                paddingLeft => $indent.'px',
+            ],
+            # Abstand zwischen den Inhaltsverzeichnis-Zeilen hinzufügen
+            'li' => [
+                marginTop => '2px',
+                marginBottom => '2px',
+            ],
+        );
+
+        return $code;
+    }
+
+    # FIXME
+    return '';
+}
+
+# -----------------------------------------------------------------------------
+
 =head3 html() - Generiere HTML-Code
 
 =head4 Synopsis

@@ -2151,15 +2151,19 @@ C{Document.indentMode=0} gesetzt ist.
 
 = HTML/CSS
 
+Im Folgenden ist für jeden Block-Typ der Aufbau seines HTML-Codes und
+eine Liste von CCS-Selektoren wiedergegeben, mit denen das Aussehen
+des Blocks beeinflusst werden kann.
+
 == Document
 
 === HTML
 
 %Code: lang=HTML
   <div class="sdoc-document">
-    <h1>...</h1>
+    <h1>TITLE</h1>
     <p>
-      <span class="author">...</span>, <span class="date">...</date>
+      <span class="author">AUTHOR</span>, <span class="date">DATE</date>
     </p>
   </div>
 .
@@ -2167,6 +2171,7 @@ C{Document.indentMode=0} gesetzt ist.
 === CSS
 
 %Table:
+  border=hvHV
   Selektor               Bereich
   ---------------------- ----------------------------------------
   .sdoc-document         Gesamter Kopf des Dokuments
@@ -2178,7 +2183,7 @@ C{Document.indentMode=0} gesetzt ist.
 
 === Beispiele
 
-====* Dokument-Kopf zentieren (ähnl. LaTeX)
+==== Dokument-Kopf zentieren (ähnl. LaTeX)
 
 %Code: lang=CSS
   .sdoc-document {
@@ -2186,7 +2191,7 @@ C{Document.indentMode=0} gesetzt ist.
   }
 .
 
-====* Titel vergrößern, Abstand zum Info-Text verkleinern
+==== Titel vergrößern, Abstand zum Info-Text verkleinern
 
 %Code: lang=CSS
   .sdoc-document h1 {
@@ -2198,11 +2203,66 @@ C{Document.indentMode=0} gesetzt ist.
   }
 .
 
-====* Größerer Info-Text
+==== Größerer Info-Text
 
 %Code: lang=CSS
   .sdoc-document p {
       font-size: 115%;
+  }
+.
+
+== TableOfContents
+
+=== HTML
+
+%Code: lang=HTML
+  <div class="sdoc-tableofcontents">
+    [<h3>TITLE</h3>]
+    <ul class="TYPE">
+      <li>
+        [<span class="number">NUMBER</span>]<a href="#ID">SECTION</a>
+        ...
+      </li>
+      ...
+    </ul>
+  </div>
+.
+
+* Die Überschrift TITLE ist optional
+* Die Abschnittsnummer NUMBER existiert nur bei numerierten
+  Abschnittsebenen
+
+=== CSS
+
+%Table:
+  border=hvHV
+  Selektor                          Bereich
+  --------------------------------- ----------------------------------------
+  .sdoc-tableofcontents             Inhaltsverzeichnis insgesamt
+  .sdoc-tableofcontents h3          Überschrift Inhaltsverzeichnis
+  .sdoc-tableofcontents ul.bullet   Ebene mit Abschnittsnummern
+  .sdoc-tableofcontents ul.number   Ebene ohne Abschnittsnummern
+  .sdoc-tableofcontents span.number Abschnittsnummer
+.
+
+=== Beispiele
+
+==== Abschnittsummern fett hervorheben
+
+%Code: lang=CSS
+  .sdoc-tableofcontents span.number {
+      font-weight: bold;
+  }
+.
+
+==== Inhaltsverzeichnis als hervorgehobener Block
+
+%Code: lang=CSS
+  .sdoc-tableofcontents {
+      display: inline-block;
+      border: 1px solid black;
+      background-color: #f0f0f0;
+      padding: 4px 8px 4px 4px;
   }
 .
 

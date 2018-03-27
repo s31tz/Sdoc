@@ -13,7 +13,6 @@ use Sdoc::Core::LaTeX::Code;
 use Sdoc::Core::AnsiColor;
 use Sdoc::Core::TreeFormatter;
 use Sdoc::Core::LaTeX::Figure;
-use Sdoc::Core::Css;
 
 # -----------------------------------------------------------------------------
 
@@ -1423,18 +1422,24 @@ sub htmlTableOfContents {
     my $doc = $self->root;
 
     my $html = '';
-    my $sectionNumber; # zeigt an, ob Ebene mit Abschnittsnummern
+    my $hasSectionNumbers = 0;
     for my $node ($self->childs) {
         if ($node->type eq 'Section' &&
                 $node->level <= $toc->maxLevel && !$node->notToc) {
 
-            my $title = $node->expandText($h,'titleS');
+            # Abschnittsnummer erzeugen, falls die Ebene
+            # Abschnittsnummern hat
+
+            my $sectionNumber;
             if ($node->level <= $doc->sectionNumberLevel) {
+                $hasSectionNumbers++;
                 $sectionNumber = $h->tag('span',
                     class => 'number',
                     $node->sectionNumber
                 ).' ';
             }
+
+            # Inhaltsverzeichnis und seine Subeinträge hinzufügen
 
             $html .= $h->tag('li',
                 $h->cat(
@@ -1442,7 +1447,7 @@ sub htmlTableOfContents {
                     $h->tag('a',
                         -nl => 1,
                         href => '#'.$node->linkId,
-                        $title
+                        $node->expandText($h,'titleS')
                     ),
                     $node->htmlTableOfContents($h,$toc),
                 ),
@@ -1451,56 +1456,24 @@ sub htmlTableOfContents {
     }
     if ($html) {
         $html = $h->tag('ul',
-            class => $sectionNumber? 'number': 'bullet',
+            class => $hasSectionNumbers? 'number': 'bullet',
             $html
         );
 
         if ($self->type eq 'Document') {
-            my $id = 'toc';
-            my $indent = $doc->htmlIndentation;
-            
-            $html = $h->cat(
-                $h->tag('style',
-                    Sdoc::Core::Css->new('flat')->restrictedRules("#$id",
-                        '> ul' => [
-                            marginTop => '8px',
-                        ],
-                        'ul.bullet' => [
-                            listStyleType => 'disc',
-                            paddingLeft => ($indent+16).'px',
-                        ],
-                        'ul.number' => [
-                            listStyleType => 'none',
-                            paddingLeft => $indent.'px',
-                        ],
-                        # FIXME: ins Default-Stylesheet verlegen
-                        'h3' => [
-                            marginBottom => '8px',
-                        ],
-                        'li' => [
-                            marginTop => '2px',
-                            marginBottom => '2px',
-                        ],
-                        'span.number' => [
-                            paddingRight => '2px',
-                        ],
-                    )
-                ),
-                $h->tag('div',
-                    class => 'sdoc-tableofcontents',
-                    id => $id,
-                    '-',
-                    do {
-                        my $tag = '';
-                        if ($toc->htmlTitle) {
-                            my $title = $doc->language eq 'german'?
-                                'Inhaltsverzeichnis': 'Contents';
-                            $tag = $h->tag('h3',$title);
-                        }
-                        $tag;
-                    },
-                    $html
-                ),
+            $html = $h->tag('div',
+                class => 'sdoc-tableofcontents',
+                '-',
+                do {
+                    my $tag = '';
+                    if ($toc->htmlTitle) {
+                        my $title = $doc->language eq 'german'?
+                            'Inhaltsverzeichnis': 'Contents';
+                        $tag = $h->tag('h3',$title);
+                    }
+                    $tag;
+                },
+                $html
             );
         }
     }
