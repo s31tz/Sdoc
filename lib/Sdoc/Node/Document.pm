@@ -60,13 +60,18 @@ Autor des Dokuments nach Parsing der Segmente.
 
 Array der direkten Kind-Knoten.
 
-=item codeStyle => $style (Default: 'default')
+=item codeStyle => $style
 
-Der Style, in dem das Syntax-Highlighting von Code-Blöcken
-erfolgt, wenn das Attribut C<lang> gesetzt ist. Die Liste der
+Der Style, in dem das Syntax-Highlighting erfolgt, wenn in einem
+Code-Block das Attribut C<lang> gesetzt ist. Die Liste der
 verfügbaren Styles liefert das Kommando
 
     $ pygmentize -L styles
+
+=item configH => $conf
+
+Referenz auf ein Objekt der Klasse Sdoc::Core::Hash, das
+die Werte einer Konfigurationsdatei enthält.
 
 =item copyComments => $bool (Default: 1)
 
@@ -282,6 +287,11 @@ ein Titelabschnitt erzeugt.
 
 Titel des Dokuments nach Parsing der Segmente.
 
+=item userH => $opt
+
+Referenz auf ein Objekt der Klasse Sdoc::Core::Hash, das
+Aufruf-Optionen des Benutzers enthält.
+
 =back
 
 =head1 METHODS
@@ -370,7 +380,8 @@ sub new {
         author => undef,
         authorS => undef,
         childA => [],
-        codeStyle => 'default',
+        codeStyle => undef, # User, Attribute, Config, Default
+        configH => undef,
         copyComments => 1,
         countCode => 0,
         countGraphic => 0,
@@ -404,8 +415,10 @@ sub new {
         tableOfContents => 1,
         title => undef,
         titleS => undef,
+        userH => undef,
         # memoize
         anchorA => undef,
+        attributeH => undef,
         doneNumberSections => undef,
         graphicH => undef,
         highestSectionLevel => undef,
@@ -424,7 +437,7 @@ sub new {
 
 =head2 Analyse
 
-=head3 analyze() - Information über Dokument-Baum
+=head3 analyze() - Information über Dokument-Baum (memoize)
 
 =head4 Synopsis
 
@@ -447,67 +460,73 @@ welche LaTeX-Pakete benötigt werden.
 sub analyze {
     my $self = shift;
 
-    my $h = Sdoc::Core::Hash->new(
-        sections => 0,
-        lists => 0,
-        tables =>0,
-        captions => 0,
-        graphics => 0,
-        sourceCode => 0,
-        verbatim => 0,
-        lineNumbers => 0,
-        links => 0,
-        section4 => 0,
-        quotes => 0
-    );
+    my $att = $self->memoize('attributeH',sub {
+        my ($self,$key) = @_;
 
-    # Dokument-Eigenschaften ermitteln
+        my $att = Sdoc::Core::Hash->new(
+            sections => 0,
+            lists => 0,
+            tables =>0,
+            captions => 0,
+            graphics => 0,
+            sourceCode => 0,
+            verbatim => 0,
+            lineNumbers => 0,
+            links => 0,
+            section4 => 0,
+            quotes => 0
+        );
 
-    for my $node ($self->nodes) {
-        if ($node->type eq 'Section') {
-            $h->{'sections'}++;
-            if ($node->level == 4) { # LaTeX: \paragraph
-                $h->{'section4'}++;
-            }
-        }
-        elsif ($node->type eq 'List') {
-            $h->{'lists'}++;
-        }
-        elsif ($node->type eq 'Table') {
-            $h->{'tables'}++;
-            if ($node->caption) {
-                $h->{'captions'}++;
-            }
-        }
-        elsif ($node->type eq 'Graphic') {
-            $h->{'graphics'}++;
-            if ($node->caption) {
-                $h->{'captions'}++;
-            }
-        }
-        elsif ($node->type eq 'Quote') {
-            $h->{'quotes'}++;
-        }
-        elsif ($node->type eq 'Code') {
-            if ($node->lang) {
-                $h->{'sourceCode'}++;
-            }
-            else {
-                $h->{'verbatim'}++;
-            }
-            if ($node->ln) {
-                $h->{'lineNumbers'}++;
-            }
-        }
-        if ($node->exists('linkA') && @{$node->linkA}) {
-            $h->{'links'}++;
-        }
-        if ($node->exists('graphicA') && @{$node->graphicA}) {
-            $h->{'graphics'}++;
-        }
-    }
+        # Dokument-Eigenschaften ermitteln
 
-    return $h;
+        for my $node ($self->nodes) {
+            if ($node->type eq 'Section') {
+                $att->{'sections'}++;
+                if ($node->level == 4) { # LaTeX: \paragraph
+                    $att->{'section4'}++;
+                }
+            }
+            elsif ($node->type eq 'List') {
+                $att->{'lists'}++;
+            }
+            elsif ($node->type eq 'Table') {
+                $att->{'tables'}++;
+                if ($node->caption) {
+                    $att->{'captions'}++;
+                }
+            }
+            elsif ($node->type eq 'Graphic') {
+                $att->{'graphics'}++;
+                if ($node->caption) {
+                    $att->{'captions'}++;
+                }
+            }
+            elsif ($node->type eq 'Quote') {
+                $att->{'quotes'}++;
+            }
+            elsif ($node->type eq 'Code') {
+                if ($node->lang) {
+                    $att->{'sourceCode'}++;
+                }
+                else {
+                    $att->{'verbatim'}++;
+                }
+                if ($node->ln) {
+                    $att->{'lineNumbers'}++;
+                }
+            }
+            if ($node->exists('linkA') && @{$node->linkA}) {
+                $att->{'links'}++;
+            }
+            if ($node->exists('graphicA') && @{$node->graphicA}) {
+                $att->{'graphics'}++;
+            }
+        }
+
+        return $att;
+    });
+
+    return $att;
 }
 
 # -----------------------------------------------------------------------------
@@ -1327,7 +1346,8 @@ Ergänze das Dokument $doc um ein Inhaltsverzeichnis, wenn
 
 =item 1.
 
-Dokument-Option C<tableOfContents=1> gesetzt ist,
+Dokument-Option C<tableOfContents=1> gesetzt ist (dies ist per
+Default der Fall),
 
 =item 2.
 
@@ -1347,8 +1367,8 @@ sub createTableOfContentsNode {
     my $self = shift;
 
     if ($self->tableOfContents && !$self->tableOfContentsNode) {
-        my $h = $self->analyze;
-        if ($h->sections) {
+        my $att = $self->analyze;
+        if ($att->sections) {
             my $toc = Sdoc::Node::TableOfContents->Sdoc::Node::new(
                 'TableOfContents',0,$self,$self,
                 htmlTitle => 1,
@@ -1706,13 +1726,12 @@ sub html {
 
     my %seen;
     for my $node ($self->nodes) {
-        if (!$seen{$node->type}) {
+        if (!$seen{$node->type}++) {
             $style .= $node->css($c,1);
         }
     }
 
     # Knotenspezifische CSS-Regeln
-    # $style .= $self->generate('css',$c,0),
 
     for my $node ($self->nodes) {
         $style .= $node->css($c,0);
@@ -1756,7 +1775,7 @@ sub latex {
     my ($self,$l) = @_;
 
     # Dokumenteigenschaften ermitteln
-    my $h = $self->analyze;
+    my $att = $self->analyze;
 
     # Globale Information
 
@@ -1770,7 +1789,7 @@ sub latex {
     # Pakete laden und Einstellungen vornehmen
 
     my (@packages,@preamble);
-    if ($h->sections && $pageStyle) {
+    if ($att->sections && $pageStyle) {
         push @packages,
             lastpage => 1, # für Seitenangabe
         ; 
@@ -1829,12 +1848,12 @@ sub latex {
             ;
         }
     }
-    if ($h->lists) {
+    if ($att->lists) {
         push @packages,
             enumitem => 1, # Ersatz für itemize, enumerate, description
         ;
     }
-    if ($h->tables) {
+    if ($att->tables) {
         push @packages,
             longtable => 1, # umbrechbare Tabellen
             array => 1, # Erweiterung array-Umgebung
@@ -1846,19 +1865,19 @@ sub latex {
             $l->c('\setlength{\extrarowheight}{2pt}'),
         ;
     }
-    if ($h->graphics) {
+    if ($att->graphics) {
         push @packages,
             graphicx => 1, # Grafiken
             float => 1, # besseres Float Environment
         ;
     }
-    if ($h->quotes) {
+    if ($att->quotes) {
         push @packages,
             quoting => ['leftmargin=1.3em','font=itshape','vskip=1ex'],
         ;
     }
 
-    if ($h->tables || $h->links || $toc) {
+    if ($att->tables || $att->links || $toc) {
        push @packages,
             xcolor => [ # Farben
                 'table',
@@ -1866,7 +1885,7 @@ sub latex {
             ],
        ;       
     }
-    if ($h->captions) {
+    if ($att->captions) {
         push @packages,
             caption => 1,
         ;
@@ -1882,21 +1901,21 @@ sub latex {
             ]),
         ;
     }
-    if ($h->sourceCode) {
+    if ($att->sourceCode) {
         push @packages,
             minted => 1, # Syntax Highligheting
         ;
         push @preamble,
             $l->comment('languages syntax highlighting'),
-            $l->c('\usemintedstyle{%s}',$self->codeStyle),
-        ;
+            $l->c('\usemintedstyle{%s}',
+                $self->getUserConfigAttribute('codeStyle'));
     }
-    elsif ($h->verbatim) {
+    elsif ($att->verbatim) {
         push @packages,
             fancyvrb => 1, # Literaler Text
         ;
     }
-    if ($smallerMonospacedFont && ($h->sourceCode || $h->verbatim)) {
+    if ($smallerMonospacedFont && ($att->sourceCode || $att->verbatim)) {
         push @preamble,
             $l->comment('smaller monospaced font'),
             # * Größe des Font in Verbatim- und minted-Umgebungen (optional)
@@ -1904,7 +1923,7 @@ sub latex {
         ;
     }
 
-    if ($h->lineNumbers) {
+    if ($att->lineNumbers) {
         push @preamble,
             $l->comment('line numbers'),
             # * Breite des Leerraums zw. Zeilennummer und Quelltext
@@ -1935,7 +1954,7 @@ sub latex {
             },
         ;
     }
-    if ($toc || $h->links) {
+    if ($toc || $att->links) {
         push @packages,
             varioref => 1, # intelligente Verweise
             hyperref => 1, # Verlinkung (laut Doku als letztes Paket laden)
@@ -1954,7 +1973,7 @@ sub latex {
             showframe => 1, # Kennzeichnung Seitenbereiche
         ;
     }
-    if ($documentClass =~ /^scr/ && $h->section4) {
+    if ($documentClass =~ /^scr/ && $att->section4) {
         push @preamble,
             # * \paragraph umdefinieren
             $l->c('\RedeclareSectionCommand[%s]{paragraph}',[
@@ -1974,7 +1993,7 @@ sub latex {
         title => $self->expandText($l,'titleS') // '',
         author => $self->expandText($l,'authorS') // '',
         date => $self->expandText($l,'dateS') // '',
-        secNumDepth => $h->sections? $self->sectionNumberLevel: undef,
+        secNumDepth => $att->sections? $self->sectionNumberLevel: undef,
         tocDepth => $toc? $toc->maxLevel: undef,
         titlePageStyle => $titlePageStyle,
         parSkip => $self->latexParSkip,

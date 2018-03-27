@@ -137,6 +137,84 @@ sub new {
 
 # -----------------------------------------------------------------------------
 
+=head2 Attribute
+
+=head3 getUserConfigAttribute() - Liefere Attributwert
+
+=head4 Synopsis
+
+    $val = $doc->getUserConfigAttribute($key,$default);
+
+=head4 Arguments
+
+=over 4
+
+=item $key
+
+Name des Attributs
+
+=item $default
+
+Defaultwert, wenn das Attribut nirgends gegeben ist.
+
+=back
+
+=head4 Returns
+
+=over 4
+
+=item $val
+
+Attributwert (String)
+
+=back
+
+=head4 Description
+
+Suche nach dem Wert des Attributs $key über mehreren Objekten und
+liefere den ersten definierten Wert zurück. Die Suchreihenfolge ist:
+
+=over 4
+
+=item 1.
+
+Aufrufoption vom Benutzer ($doc->userH)
+
+=item 2.
+
+Attribut des rufenden Objekts ($self)
+
+=item 3.
+
+Setzung in Konfigurationsdatei ($doc->configH)
+
+=back
+
+Besitzt keines der Objekte einen definierten Wert für das Attribut
+$key, wird der beim Aufruf angegebene Defaultwert $default geliefert.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub getUserConfigAttribute {
+    my ($self,$key,$default) = @_;
+
+    my $doc = $self->root;
+    for my $h ($doc->userH,$self,$doc->configH) {
+        if ($h) {
+            my $val = $h->get($key);
+            if (defined $val) {
+                return $val;
+            }
+        }
+    }
+
+    return $default;
+}
+
+# -----------------------------------------------------------------------------
+
 =head2 Navigation
 
 =head3 nextNode() - Liefere nächsten Knoten

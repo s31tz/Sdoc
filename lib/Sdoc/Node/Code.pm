@@ -284,14 +284,14 @@ sub css {
 
         my $doc = $self->root;
 
-        # Dokumenteigenschaften ermitteln
+        # Dokumenteigenschaften
         my $att = $doc->analyze;
 
         my $code = '';
         if ($att->sourceCode) {
             # CSS-Regeln für Syntax Highlighting erzeugen
 
-            my $codeStyle = $doc->codeStyle;
+            my $codeStyle = $doc->getUserConfigAttribute('codeStyle');
             $code .= eval{Sdoc::Core::Html::Pygments->css($codeStyle,
                 '.sdoc-code table')} // '';
             if ($@) {

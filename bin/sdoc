@@ -31,11 +31,11 @@ sdoc [OPTIONS] tree INPUT.sdoc [OUTPUT]
 
 sdoc [OPTIONS] convert INPUT.sdoc2 [OUTPUT.sdoc3]
 
-sdoc [OPTIONS] codestyle-names
+sdoc [OPTIONS] code-style-names
 
-sdoc [OPTIONS] codestyle-page LANG FILE.EXT [OUTPUT.html]
+sdoc [OPTIONS] code-style-page LANG FILE.EXT [OUTPUT.html]
 
-sdoc [OPTIONS] codestyle-file NAME [OUTPUT.css]
+sdoc [OPTIONS] code-style-file NAME [OUTPUT.css]
 
 sdoc [OPTIONS] cleanup
 
@@ -47,7 +47,7 @@ sdoc [OPTIONS] cleanup
 
 Kennzeichne die Ausgabe mit ANSI Colercodes.
 
-=item --codestyle=NAME (Default: siehe ~/.sdoc.conf)
+=item --code-style=NAME (Default: siehe ~/.sdoc.conf)
 
 Name des verwendeten Code-Style.
 
@@ -63,7 +63,7 @@ Viewer zum Anzeigen des erzeugten PDF.
 =item --selector=SELECTOR (Default: '.sdoc-code text')
 
 CSS-Selektor, der den Style-Regeln für das Syntax-Highlighting
-vorangestellt wird (s. Operation C<codestyle-file>).
+vorangestellt wird (s. Operation C<code-style-file>).
 
 =item --shell-escape[=BOOL] (Default: siehe ~/.sdoc.conf)
 
@@ -188,23 +188,23 @@ Konvertiere eine Sdoc2-Datei in eine Sdoc3-Datei:
 
 Die Liste der Namen aller verfügbaren Code-Styles:
 
-    $ sdoc codestyle-names
+    $ sdoc code-style-names
 
 Erzeuge eine HTML-Seite mit einer Darstellung aller Code-Styles
 für den Programmcode in Datei FILE der Programmiersprache LANG
 und zeige die Seite im Browser an:
 
-    $ sdoc codestyle-page LANG FILE
+    $ sdoc code-style-page LANG FILE
 
 Erzeuge eine Style-Datei für das Syntax Highlighting:
 
-    $ sdoc codestyle-file emacs emacs.css
+    $ sdoc code-style-file emacs emacs.css
 
 Erzeuge im aktuellen Verzeichnis alle Style-Dateien für das
 Syntax-Highlighting:
 
-    $ for s in `sdoc codestyle-names`; \
-        do sdoc codestyle-file $s $s.css; done
+    $ for s in `sdoc code-style-names`; \
+        do sdoc code-style-file $s $s.css; done
 
 Lösche (nach Rückfrage) das Cache-Verzeichnis des aufrufenden
 Benutzers:

@@ -2202,7 +2202,7 @@ C{Document.indentMode=0} gesetzt ist.
 
 %Code: lang=CSS
   .sdoc-document p {
-      font-size: 110%;
+      font-size: 115%;
   }
 .
 
@@ -2626,13 +2626,13 @@ Beispiel: Eigenschaft C{language} der Klasse Sdoc::Node::Document.
 
 Die Liste der Namen der verfügbaren Code-Styles liefert das Kommando
 
-   $ sdoc codestyle-names
+   $ sdoc code-style-names
 
 Eine HTML-Seite mit einer Darstellung aller Code-Styles
-für den Programmcode in Datei FILE der Programmiersprache LANG
+für den Programmcode der Programmiersprache LANG in Datei FILE
 liefert das Kommando:
 
-   $ sdoc codestyle-page LANG FILE
+   $ sdoc code-style-page LANG FILE
 
 == Übersicht
 

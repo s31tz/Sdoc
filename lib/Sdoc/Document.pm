@@ -74,7 +74,7 @@ Klasse Sdoc::Node::Document oder deren Basisklasse Sdoc::Node.
 
 =item $file
 
-Pfad einer Sdoc-Datei.
+Sdoc-Quelltext in einer Datei.
 
 =item $str
 
@@ -94,6 +94,11 @@ Liste von Optionen.
 
 =over 4
 
+=item -configH => $conf
+
+Referenz auf ein Objekt der Klasse Sdoc::Core::Hash, das
+die Werte einer Konfigurationsdatei enthält.
+
 =item -markup => $markup (Default: 'sdoc')
 
 Markup-Variante. Mögliche Werte: 'sdoc'.
@@ -102,10 +107,10 @@ Markup-Variante. Mögliche Werte: 'sdoc'.
 
 Gib keine Warnungen aus.
 
-=item -shellEscape => $bool (Default: 0)
+=item -userH => $opt
 
-Muss als Option angegeben werden, wenn externe Programme aufgerufen
-werden müssen, um das Dokument zu übersetzen.
+Referenz auf ein Objekt der Klasse Sdoc::Core::Hash, das
+Aufruf-Optionen des Benutzers enthält.
 
 =back
 
@@ -129,16 +134,18 @@ sub parse {
 
     # Optionen
 
-    my $codeStyle = 'default',
+    my $configH = undef;
     my $markup = 'sdoc';
     my $quiet = 0;
     my $shellEscape = 0;
+    my $userH = undef;
 
     Sdoc::Core::Option->extract(\@_,
-        -codeStyle => \$codeStyle,
+        -configH => \$configH,
         -markup => \$markup,
         -quiet => \$quiet,
         -shellEscape => \$shellEscape,
+        -userH => \$userH,
     );
 
     # Relativen Pfad in absoluten Pfad wandeln
@@ -160,10 +167,11 @@ sub parse {
 
     my $doc = Sdoc::Node::Document->new(undef,$par,undef,undef);
     $doc->set(
-        codeStyle => $codeStyle,
+        configH => $configH,
         input => $input,
         quiet => $quiet,
         shellEscape => $shellEscape,
+        userH => $userH,
     );
     $doc->weaken(root=>$doc); # Verweis auf sich selbst
 
