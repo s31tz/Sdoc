@@ -1678,7 +1678,7 @@ sub css {
     if ($global) {
         # Globale CSS-Regeln der Knoten-Klasse
 
-        my $code = $c->restrictedRules('.'.$self->cssClass,
+        return $c->restrictedRules('.'.$self->cssClass,
             # * Font Titel, Author, Date vergrößern
             # * Abstand zwischen Titel und Author, Date verkleinern
             h1 => [
@@ -1690,8 +1690,6 @@ sub css {
                 marginTop => '10px',
             ],
         );
-
-        return $code;
     }
 
     # Lokale CSS-Regeln der Knoten-Instanz

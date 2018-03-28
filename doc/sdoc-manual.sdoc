@@ -2509,7 +2509,7 @@ auch nicht Ziel von CSS-Regeln.
 
 ==== Beispiele
 
-====* Alle Zitate in kursiver Schrift
+====* Alle Zitate in kursiver Schrift (wie LaTeX)
 
 %Code: lang=CSS
   .sdoc-quote {
