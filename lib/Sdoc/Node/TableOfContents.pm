@@ -29,10 +29,14 @@ Inhaltsverzeichnis-Knoten folgende zusätzliche Attribute:
 
 =over 4
 
+=item htmlIndent => $bool (Default: undef)
+
+Rücke das Inhaltsverzeichnis ein.
+
 =item htmlTitle => $bool (Default: 1)
 
-Wenn gesetzt, wird in HTML das Inhaltsverzeichnis mit einer
-Überschrift ("Inhaltsverzeichnis" oder "Contents") versehen.
+(Default: 1) Versieh das Inhaltsverzeichnis in HTML mit einer
+Überschrift ("Inhaltsverzeichnis" oder "Contents").
 
 =item maxLevel => $n (Default: 3)
 
@@ -103,12 +107,74 @@ sub new {
     # Objekt instantiieren
 
     my $self = $class->SUPER::new('TableOfContents',$variant,$root,$parent,
+        htmlIndent => undef,
         htmlTitle => 1,
         maxLevel => 3,
     );
     $self->setAttributes(%$attribH);
 
     return $self;
+}
+
+# -----------------------------------------------------------------------------
+
+=head2 Objektmethoden
+
+=head3 htmlTitle() - Inhaltsverzeichnis-Überschrift
+
+=head4 Synopsis
+
+    $str = $toc->htmlTitle;
+
+=head4 Returns
+
+Überschrift (String)
+
+=head4 Description
+
+Prüfe, ob das Attribut C<htmlTitle=BOOL> wahr ist. Wenn ja,
+liefere die Überschrift für das Inhaltsverzeichnis passend
+zur Dokument-Sprache (C<Document.language=LANGUAGE>).
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub htmlTitle {
+    my $self = shift;
+
+    my $title;
+    if ($self->get('htmlTitle')) {
+        my $doc = $self->root;
+        $title = $doc->language eq 'german'? 'Inhaltsverzeichnis': 'Contents';
+    }
+
+    return $title;
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 indentBlock() - Prüfe, ob Inhaltsverzeichnis eingrückt wird
+
+=head4 Synopsis
+
+    $bool = $toc->indentBlock;
+
+=head4 Returns
+
+Bool
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub indentBlock {
+    my $self = shift;
+
+    my $indentMode = $self->root->indentMode;
+    my $htmlIndent = $self->htmlIndent;
+
+    return $htmlIndent || $indentMode && !defined $htmlIndent? 1: 0;
 }
 
 # -----------------------------------------------------------------------------
@@ -152,40 +218,36 @@ sub css {
     if ($global) {
         # Liefere die globalen CSS-Regeln des Knoten-Typs
 
-        my $indent = $doc->htmlIndentation;
-        my $code = $c->restrictedRules('.sdoc-tableofcontents',
-            # Abstand zum Inhaltsverzeichnis-Baum verkleinern
+        return $c->restrictedRules('.sdoc-tableofcontents',
             'h3' => [
                 marginTop => 0,
+                # Abstand zum Inhaltsverzeichnis-Baum verkleinern
                 marginBottom => '8px',
             ],
-            '> ul' => [
-                marginTop => '8px',
-                marginBottom => 0,
-            ],
-            # Zusätzlichen Abstand zwischen Abschnittsnummer
-            # und Abschnittstitel hinzufügen
-            'span.number' => [
-                paddingRight => '2px',
-            ],
-            # Unterschiedliche Einrücktiefe für numerierte und
-            # unnumerierte Abschnittsebenen
-            'ul.bullet' => [
-                listStyleType => 'disc',
-                paddingLeft => ($indent+16).'px',
-            ],
-            'ul.number' => [
+            'ul' => [
                 listStyleType => 'none',
-                paddingLeft => $indent.'px',
+            ],
+            '> ul' => [
+                margin => 0,
+                paddingLeft => 0,
+            ],
+            '> ul.indent' => [
+                marginLeft => $doc->htmlIndentation.'px',
+            ],
+            'ul ul' => [
+                paddingLeft => '22px',
             ],
             # Abstand zwischen den Inhaltsverzeichnis-Zeilen hinzufügen
             'li' => [
                 marginTop => '2px',
                 marginBottom => '2px',
             ],
+            # Zusätzlichen Abstand zwischen Abschnittsnummer
+            # und Abschnittstitel hinzufügen
+            'span.number' => [
+                paddingRight => '2px',
+            ],
         );
-
-        return $code;
     }
 
     # FIXME

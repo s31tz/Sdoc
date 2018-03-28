@@ -3,9 +3,10 @@
   author="Frank Seitz, L{http://fseitz.de/}"
   date="today"
   indentMode=1
+  sectionNumberLevel=4
 
 %TableOfContents:
-  maxLevel=4
+  maxLevel=3
 
 ---PageBreak---
 
@@ -356,6 +357,8 @@ Das Inhaltsverzeichnis wird an die Stelle plaziert, wo der
 TableOfContents-Block steht.
 
   %TableOfContents:
+    htmlTitle=BOOL
+    htmlIndent=BOOL
     maxLevel=N
 
 Der TableOfContents-Block ist optional. Kommt er im Dokument nicht
@@ -370,6 +373,14 @@ dies nicht statt und das Dokument erhält kein Inhaltsverzeichnis.
   regex="Dokument.*/Eigenschaften"
 
 === Eigenschaften
+
+[htmlIndent=BOOL]:
+  (Default: undef) Forciere die Einrückung (wenn auf 1 gesetzt)
+  oder Nicht-Einrückung (wenn auf 0 gesetzt).
+
+[htmlTitle=BOOL]:
+  (Default: 1) Versieh das Inhaltsverzeichnis in HTML mit einer
+  Überschrift ("Inhaltsverzeichnis" oder "Contents").
 
 [maxLevel=N]:
   (Default: 3) Tiefe, bis zu welcher Abschnitte ins Inhaltsverzeichnis
@@ -2149,125 +2160,6 @@ C{Document.indentMode=0} gesetzt ist.
 
 ---PageBreak---
 
-= HTML/CSS
-
-Im Folgenden ist für jeden Block-Typ der Aufbau seines HTML-Codes und
-eine Liste von CCS-Selektoren wiedergegeben, mit denen das Aussehen
-des Blocks beeinflusst werden kann.
-
-== Document
-
-=== HTML
-
-%Code: lang=HTML
-  <div class="sdoc-document">
-    <h1>TITLE</h1>
-    <p>
-      <span class="author">AUTHOR</span>, <span class="date">DATE</date>
-    </p>
-  </div>
-.
-
-=== CSS
-
-%Table:
-  border=hvHV
-  Selektor               Bereich
-  ---------------------- ----------------------------------------
-  .sdoc-document         Gesamter Kopf des Dokuments
-  .sdoc-document h1      Titel des Dokuments
-  .sdoc-document p       Info-Bereich
-  .sdoc-document .author Autor
-  .sdoc-document .date   Datum
-.
-
-=== Beispiele
-
-==== Dokument-Kopf zentieren (ähnl. LaTeX)
-
-%Code: lang=CSS
-  .sdoc-document {
-      text-align: center;
-  }
-.
-
-==== Titel vergrößern, Abstand zum Info-Text verkleinern
-
-%Code: lang=CSS
-  .sdoc-document h1 {
-      font-size: 230%;
-      margin-bottom: 10px;
-  }
-  .sdoc-document p {
-      margin-top: 10px;
-  }
-.
-
-==== Größerer Info-Text
-
-%Code: lang=CSS
-  .sdoc-document p {
-      font-size: 115%;
-  }
-.
-
-== TableOfContents
-
-=== HTML
-
-%Code: lang=HTML
-  <div class="sdoc-tableofcontents">
-    [<h3>TITLE</h3>]
-    <ul class="TYPE">
-      <li>
-        [<span class="number">NUMBER</span>]<a href="#ID">SECTION</a>
-        ...
-      </li>
-      ...
-    </ul>
-  </div>
-.
-
-* Die Überschrift TITLE ist optional
-* Die Abschnittsnummer NUMBER existiert nur bei numerierten
-  Abschnittsebenen
-
-=== CSS
-
-%Table:
-  border=hvHV
-  Selektor                          Bereich
-  --------------------------------- ----------------------------------------
-  .sdoc-tableofcontents             Inhaltsverzeichnis insgesamt
-  .sdoc-tableofcontents h3          Überschrift Inhaltsverzeichnis
-  .sdoc-tableofcontents ul.bullet   Ebene mit Abschnittsnummern
-  .sdoc-tableofcontents ul.number   Ebene ohne Abschnittsnummern
-  .sdoc-tableofcontents span.number Abschnittsnummer
-.
-
-=== Beispiele
-
-==== Abschnittsummern fett hervorheben
-
-%Code: lang=CSS
-  .sdoc-tableofcontents span.number {
-      font-weight: bold;
-  }
-.
-
-==== Inhaltsverzeichnis als hervorgehobener Block
-
-%Code: lang=CSS
-  .sdoc-tableofcontents {
-      display: inline-block;
-      border: 1px solid black;
-      background-color: #f0f0f0;
-      padding: 4px 8px 4px 4px;
-  }
-.
-
----PageBreak---
-
 = Verweise
 
 Ein Verweis (Link) referenziert eine andere Stelle im selben Dokument
@@ -2365,6 +2257,133 @@ Seitenangabe natürlich nicht.
 ---PageBreak---
 
 = Formate
+
+== HTML/CSS
+
+Im Folgenden ist für jeden Block-Typ der Aufbau seines HTML-Codes und
+eine Liste von CCS-Selektoren wiedergegeben, mit denen das Aussehen
+des Blocks beeinflusst werden kann. Die Liste der Selektoren zeigt
+exemplarisch, wie der Block und seine Bestandteile adressiert werden
+können.
+
+=== Document
+
+==== HTML
+
+%Code: lang=HTML
+  <div class="sdoc-document">
+    <h1>TITLE</h1>
+    <p>
+      <span class="author">AUTHOR</span>, <span class="date">DATE</date>
+    </p>
+  </div>
+.
+
+Alle drei Bestandteile des Dokument-Kopfs - TITLE, AUTHOR, DATE - sind
+optional. Sind alle drei Bestandteile nicht gegeben, entfällt der
+Dokument-Kopf.
+
+==== CSS
+
+%Table:
+  border=hvHV
+  Selektor               Ziel
+  ---------------------- ----------------------------------------
+  .sdoc-document         Gesamter Kopf des Dokuments
+  .sdoc-document h1      Titel des Dokuments
+  .sdoc-document p       Info-Bereich
+  .sdoc-document .author Autor
+  .sdoc-document .date   Datum
+.
+
+==== Beispiele
+
+====* Dokument-Kopf zentieren (ähnl. LaTeX)
+
+%Code: lang=CSS
+  .sdoc-document {
+      text-align: center;
+  }
+.
+
+====* Titel vergrößern, Abstand zu Author, Date verkleinern
+
+%Code: lang=CSS
+  .sdoc-document h1 {
+      font-size: 230%;
+      margin-bottom: 10px;
+  }
+  .sdoc-document p {
+      margin-top: 10px;
+  }
+.
+
+====* Author, Date in größerer Schrift
+
+%Code: lang=CSS
+  .sdoc-document p {
+      font-size: 115%;
+  }
+.
+
+=== TableOfContents
+
+==== HTML
+
+%Code: lang=HTML
+  <div class="sdoc-tableofcontents">
+    [<h3>TITLE</h3>]
+    <ul [class="indent"]>
+      <li>
+        [<span class="number">NUMBER</span>]<a href="#ID">SECTION</a>
+        ...
+      </li>
+      ...
+    </ul>
+  </div>
+.
+
+Die Überschrift TITLE ist optional. Die Abschnittsnummer NUMBER
+existiert nur bei numerierten Abschnittsebenen.
+
+==== CSS
+
+%Table:
+  border=hvHV
+  Selektor                          Ziel
+  --------------------------------- ----------------------------------------
+  .sdoc-tableofcontents             Inhaltsverzeichnis insgesamt
+  .sdoc-tableofcontents h3          Überschrift Inhaltsverzeichnis
+  .sdoc-tableofcontents ul          Alle Abschnittsebenen
+  .sdoc-tableofcontents > ul        Erste Abschnittsebene
+  .sdoc-tableofcontents > ul.indent Erste Abschnittsebene bei Einrückung
+  .sdoc-tableofcontents ul ul       Untergeordnete Abschnittsebenen
+  .sdoc-tableofcontents li          Eintrag
+  .sdoc-tableofcontents span.number Abschnittsnummer
+.
+
+==== Beispiele
+
+====* Abschnittsummern in fetter Schrift
+
+%Code: lang=CSS
+  .sdoc-tableofcontents span.number {
+      font-weight: bold;
+  }
+.
+
+====* Inhaltsverzeichnis als hervorgehobener Block
+
+%Code: lang=CSS
+  .sdoc-tableofcontents {
+      display: inline-block;
+      border: 1px solid black;
+      background-color: #f0f0f0;
+      padding: 4px 8px 4px 4px;
+  }
+.
+
+---PageBreak---
 
 == LaTeX
 

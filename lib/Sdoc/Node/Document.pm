@@ -1371,6 +1371,7 @@ sub createTableOfContentsNode {
         if ($att->sections) {
             my $toc = Sdoc::Node::TableOfContents->Sdoc::Node::new(
                 'TableOfContents',0,$self,$self,
+                htmlIndent => undef,
                 htmlTitle => 1,
                 maxLevel => 3,
             );
@@ -1636,6 +1637,61 @@ sub expandPath {
 # -----------------------------------------------------------------------------
 
 =head2 Formate
+
+=head3 css() - Generiere CSS-Code
+
+=head4 Synopsis
+
+    $code = $doc->css($c,$global);
+
+=head4 Arguments
+
+=over 4
+
+=item $c
+
+Generator für CSS.
+
+=item $global
+
+Wenn gesetzt, werden die globalen CSS-Regeln zum Knotentyp
+geliefert.
+
+=back
+
+=head4 Returns
+
+CSS-Code (String)
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub css {
+    my ($self,$c,$global) = @_;
+
+    if ($global) {
+        # Liefere die globalen CSS-Regeln des Knoten-Typs
+
+        my $code = $c->restrictedRules('.sdoc-document',
+            h1 => [
+                fontSize => '230%',
+                marginBottom => '10px',
+            ],
+            p => [
+                marginTop => '10px',
+                fontSize => '115%',
+            ],
+        );
+
+        return $code;
+    }
+
+    # FIXME
+    return '';
+}
+
+# -----------------------------------------------------------------------------
 
 =head3 html() - Generiere HTML-Code
 

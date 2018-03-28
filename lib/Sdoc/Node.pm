@@ -1422,7 +1422,6 @@ sub htmlTableOfContents {
     my $doc = $self->root;
 
     my $html = '';
-    my $hasSectionNumbers = 0;
     for my $node ($self->childs) {
         if ($node->type eq 'Section' &&
                 $node->level <= $toc->maxLevel && !$node->notToc) {
@@ -1432,7 +1431,6 @@ sub htmlTableOfContents {
 
             my $sectionNumber;
             if ($node->level <= $doc->sectionNumberLevel) {
-                $hasSectionNumbers++;
                 $sectionNumber = $h->tag('span',
                     class => 'number',
                     $node->sectionNumber
@@ -1455,24 +1453,22 @@ sub htmlTableOfContents {
         }
     }
     if ($html) {
-        $html = $h->tag('ul',
-            class => $hasSectionNumbers? 'number': 'bullet',
-            $html
-        );
-
         if ($self->type eq 'Document') {
             $html = $h->tag('div',
                 class => 'sdoc-tableofcontents',
                 '-',
-                do {
-                    my $tag = '';
-                    if ($toc->htmlTitle) {
-                        my $title = $doc->language eq 'german'?
-                            'Inhaltsverzeichnis': 'Contents';
-                        $tag = $h->tag('h3',$title);
-                    }
-                    $tag;
-                },
+                $h->tag('h3',
+                    -ignoreIfNull => 1,
+                    $toc->htmlTitle
+                ),
+                $h->tag('ul',
+                    class => $toc->indentBlock? 'indent': undef,
+                    $html
+                ),
+            );
+        }
+        else {
+            $html = $h->tag('ul',
                 $html
             );
         }
