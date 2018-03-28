@@ -181,9 +181,9 @@ und liefere diesen zurück.
 
 sub css {
     my ($self,$c,$global) = @_;
-
+    
     if ($global) {
-        # Globale CSS-Regeln des Knoten-Typs
+        # Globale CSS-Regeln der Knoten-Klasse
         return '';
     }
 

@@ -2462,6 +2462,61 @@ N ist eine ganze Zahl von 1 bis 6.
   .sdoc-paragraph                   Alle Paragraphen
 .
 
+=== Style
+
+Ein Style-Block fügt CSS-Code zum Dokument hinzu, ist selbst jedoch
+nicht visuell repräsentiert und daher auch nicht Ziel von CSS-Regeln.
+
+=== Comment
+
+==== HTML
+
+Einzeiliger Kommentar:
+
+%Code: lang=HTML
+  <!-- TEXT -->
+.
+
+Mehrzeiliger Kommentar:
+
+%Code: lang=HTML
+  <!--
+    TEXT
+  -->
+.
+
+==== CSS
+
+Ein Comment-Block ist in HTML nicht visuell repräsentiert und daher
+auch nicht Ziel von CSS-Regeln.
+
+=== Quote
+
+%Code: lang=HTML
+  <blockquote class="sdoc-quote">
+    TEXT
+  </blockquote>
+.
+
+==== CSS
+
+%Table:
+  border=hvHV
+  Selektor                          Ziel
+  --------------------------------- ---------------------------------------
+  .sdoc-quote                       Alle Zitat-Blöcke
+.
+
+==== Beispiele
+
+====* Alle Zitate in kursiver Schrift
+
+%Code: lang=CSS
+  .sdoc-quote {
+      font-style: italic;
+  }
+.
+
 ---PageBreak---
 
 == LaTeX

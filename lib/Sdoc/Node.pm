@@ -1541,6 +1541,51 @@ Die Implementierung hier in der Basisklasse generiert keinen
 CSS-Code. Sie existiert nur, um in abgeleiteten Klassen
 überschrieben zu werden.
 
+Knoten-Klassen, die aktuell keinen CSS-Code liefern, also keine
+eigene Methode css() benötigen:
+
+=over 2
+
+=item *
+
+BridgeHead
+
+=item *
+
+Comment
+
+=item *
+
+Paragraph
+
+=item *
+
+Quote
+
+=item *
+
+Section
+
+=back
+
+Klassen, die eine eigene Methode css() implementieren:
+
+=over 2
+
+=item *
+
+Document
+
+=item *
+
+Style
+
+=item *
+
+TableOfContents
+
+=back
+
 =cut
 
 # -----------------------------------------------------------------------------

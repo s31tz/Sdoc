@@ -153,54 +153,6 @@ sub new {
 
 =head2 Formate
 
-=head3 css() - Generiere CSS-Code
-
-=head4 Synopsis
-
-    $code = $par->css($c,$global);
-
-=head4 Arguments
-
-=over 4
-
-=item $c
-
-Generator für CSS.
-
-=item $global
-
-Wenn gesetzt, werden die globalen CSS-Regeln der Knoten-Klasse
-geliefert, sonst die lokalen CSS-Regeln der Knoten-Instanz.
-
-=back
-
-=head4 Returns
-
-CSS-Code (String)
-
-=head4 Description
-
-Generiere den CSS-Code der Knoten-Klasse oder der Knoten-Instanz
-und liefere diesen zurück.
-
-=cut
-
-# -----------------------------------------------------------------------------
-
-sub css {
-    my ($self,$c,$global) = @_;
-    
-    if ($global) {
-        # Globale CSS-Regeln der Knoten-Klasse
-        return '';
-    }
-
-    # Lokale CSS-Regeln der Knoten-Instanz
-    return '';
-}
-
-# -----------------------------------------------------------------------------
-
 =head3 html() - Generiere HTML-Code
 
 =head4 Synopsis
