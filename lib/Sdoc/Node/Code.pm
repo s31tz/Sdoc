@@ -263,14 +263,19 @@ Generator für CSS.
 
 =item $global
 
-Wenn gesetzt, werden die globalen CSS-Regeln zum Knotentyp
-geliefert.
+Wenn gesetzt, werden die globalen CSS-Regeln der Knoten-Klasse
+geliefert, sonst die lokalen CSS-Regeln der Knoten-Instanz.
 
 =back
 
 =head4 Returns
 
 CSS-Code (String)
+
+=head4 Description
+
+Generiere den CSS-Code der Knoten-Klasse oder der Knoten-Instanz
+und liefere diesen zurück.
 
 =cut
 
@@ -280,7 +285,7 @@ sub css {
     my ($self,$c,$global) = @_;
 
     if ($global) {
-        # Liefere die globalen CSS-Regeln des Knoten-Typs
+        # Globale CSS-Regeln der Knoten-Klasse
 
         my $doc = $self->root;
 
@@ -302,7 +307,7 @@ sub css {
         return $code;
     }
 
-    # FIXME
+    # Lokale CSS-Regeln der Knoten-Instanz
     return '';
 }
 

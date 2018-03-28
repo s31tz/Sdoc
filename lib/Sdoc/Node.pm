@@ -1523,8 +1523,8 @@ Generator für CSS.
 
 =item $global
 
-Wenn gesetzt, werden die globalen CSS-Regeln zum Knotentyp
-geliefert.
+Wenn gesetzt, werden die globalen CSS-Regeln der Knoten-Klasse
+geliefert, sonst die lokalen CSS-Regeln der Knoten-Instanz.
 
 =back
 
@@ -1534,8 +1534,8 @@ CSS-Code (String)
 
 =head4 Description
 
-Generiere den CSS-Code der Knoten-Klasse oder des Knotens und
-liefere diesen zurück.
+Generiere den CSS-Code der Knoten-Klasse oder der Knoten-Instanz
+und liefere diesen zurück.
 
 Die Implementierung hier in der Basisklasse generiert keinen
 CSS-Code. Sie existiert nur, um in abgeleiteten Klassen
@@ -1546,7 +1546,14 @@ CSS-Code. Sie existiert nur, um in abgeleiteten Klassen
 # -----------------------------------------------------------------------------
 
 sub css {
-    my ($self,$c) = @_;
+    my ($self,$c,$global) = @_;
+    
+    if ($global) {
+        # Globale CSS-Regeln der Knoten-Klasse
+        return '';
+    }
+
+    # Lokale CSS-Regeln der Knoten-Instanz
     return '';
 }
 

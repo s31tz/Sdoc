@@ -161,14 +161,19 @@ Generator für CSS.
 
 =item $global
 
-Wenn gesetzt, werden die I<globalen> CSS-Regeln des Knotentyps
-geliefert.
+Wenn gesetzt, werden die globalen CSS-Regeln der Knoten-Klasse
+geliefert, sonst die lokalen CSS-Regeln der Knoten-Instanz.
 
 =back
 
 =head4 Returns
 
 CSS-Code (String)
+
+=head4 Description
+
+Generiere den CSS-Code der Knoten-Klasse oder der Knoten-Instanz
+und liefere diesen zurück.
 
 =cut
 
@@ -182,6 +187,7 @@ sub css {
         return '';
     }
 
+    # Lokale CSS-Regeln der Knoten-Instanz
     return $c->makeFlat($self->code);
 }
 

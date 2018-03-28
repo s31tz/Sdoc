@@ -2289,9 +2289,9 @@ Dokument-Kopf.
   border=hvHV
   Selektor               Ziel
   ---------------------- ----------------------------------------
-  .sdoc-document         Gesamter Kopf des Dokuments
+  .sdoc-document         Kopf des Dokuments insgesamt
   .sdoc-document h1      Titel des Dokuments
-  .sdoc-document p       Info-Bereich
+  .sdoc-document p       Bereich aus Autor und Datum
   .sdoc-document .author Autor
   .sdoc-document .date   Datum
 .
@@ -2381,6 +2381,85 @@ existiert nur bei numerierten Abschnittsebenen.
       background-color: #f0f0f0;
       padding: 4px 8px 4px 4px;
   }
+.
+
+=== Section
+
+==== HTML
+
+%Code: lang=HTML
+  <hN class="sdoc-section">TITLE</hN>
+.
+
+N ist eine ganze Zahl von 1 bis 6.
+
+==== CSS
+
+%Table:
+  border=hvHV
+  Selektor                          Ziel
+  --------------------------------- ---------------------------------------
+  .sdoc-section                     Alle Abschnittsüberschriften
+  hN.sdoc-section                   Abschnittsüberschriften der Ebene N
+.
+
+==== Beispiele
+
+====* Alle Überschriften des Dokuments grau hinterlegen
+
+%Code: lang=CSS
+  .sdoc-document h1, .sdoc-section {
+      background-color: #f0f0f0;
+  }
+.
+
+=== BridgeHead
+
+==== HTML
+
+%Code: lang=HTML
+  <hN class="sdoc-bridgehead">TITLE</hN>
+.
+
+N ist eine ganze Zahl von 1 bis 6.
+
+==== CSS
+
+%Table:
+  border=hvHV
+  Selektor                          Ziel
+  --------------------------------- ---------------------------------------
+  .sdoc-bridgehead                  Alle Zwischenüberschriften
+  hN.sdoc-section                   Zwischenüberschriften der Ebene N
+.
+
+==== Beispiele
+
+====* Alle Zwischenüberschriften in dunkelgrauer Schrift
+
+%Code: lang=CSS
+  .sdoc-bridgehead {
+      color: #404040;
+  }
+.
+
+=== Paragraph
+
+==== HTML
+
+%Code: lang=HTML
+  <p class="sdoc-paragraph">
+    TEXT
+  </p>
+.
+
+==== CSS
+
+%Table:
+  border=hvHV
+  Selektor                          Ziel
+  --------------------------------- ---------------------------------------
+  .sdoc-paragraph                   Alle Paragraphen
 .
 
 ---PageBreak---

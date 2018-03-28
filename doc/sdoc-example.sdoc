@@ -1,4 +1,10 @@
 %Style:
+  .sdoc-document h1, .sdoc-section {
+    background-color: #f0f0f0;
+  }
+  .sdoc-bridgehead {
+    color: #404040;
+  }
 .
 
 %Document:
@@ -17,6 +23,8 @@ wie B{I{fett und kursiv}} möglich.
 
 Mit dem Satz des Pythagoras M~c^2 = a^2 + b^2~ berechnen wir die Länge
 der Hypotenuse: M~c = \sqrt{a^2 + b^2}~.
+
+===* BridgeHead
 
 %Graphic:
   source="+/sdoc-graphic-illusion"
