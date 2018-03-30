@@ -139,7 +139,7 @@ sub html {
 
     return $h->tag('div',
         -nl => 1,
-        style => 'page-break-before: always;',
+        style => 'page-break-before: always',
     );
 }
 

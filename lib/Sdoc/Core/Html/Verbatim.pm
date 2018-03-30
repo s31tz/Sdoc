@@ -23,32 +23,20 @@ L<Sdoc::Core::Hash>
 =head1 DESCRIPTION
 
 Ein Objekt der Klasse repräsentiert einen Verbatim-Block in
-HTML. Ein Verbatim-Block gibt einen Text TEXT in einem monospaced
-Font mit allen Leerzeichen und Zeilenumbrüchen identisch
-wieder. Der Verbatim-Block kann mit oder ohne Zeilennummern
-ausgestattet sein.
+HTML. Ein Verbatim-Block gibt einen Text TEXT in
+Festbreitenschrift mit allen Leerzeichen und Zeilenumbrüchen
+identisch wieder. Innerhalb von TEXT ist HTML erlaubt. Der
+Verbatim-Block kann mit Zeilennummern ausgestattet werden.
 
-Aufbau eines Verbatim-Abschnitts I<ohne> Zeilennummern:
+Aufbau eines Verbatim-Blocks:
 
-    <div class="CLASS">
+    <div class="CLASS" [id="ID"] [style="STYLE"]>
       <table>
       <tr>
-        <td class="text">
-          <pre>TEXT</pre>
-        </td>
-      </tr>
-      </table>
-    </div>
-
-Aufbau eines Verbatim-Abschnitts I<mit> Zeilennummern:
-
-    <div class="CLASS">
-      <table>
-      <tr>
-        <td class="ln">
+        [<td class="ln">
           <pre>ZEILENNUMMERN</pre>
         </td>
-        <td class="margin"></td>
+        <td class="margin"></td>]
         <td class="text">
           <pre>TEXT</pre>
         </td>
@@ -56,41 +44,43 @@ Aufbau eines Verbatim-Abschnitts I<mit> Zeilennummern:
       </table>
     </div>
 
+Die in eckige Klammern eingefassten Bestandteile ([...]) sind
+optional.
+
 Das umgebende C<div> ermöglicht, dass der Hintergrund des
-Abschnitts über die gesamte Breite der Seite farbig hinterlegt
+Blocks über die gesamte Breite der Seite farbig hinterlegt
 werden kann.
 
-Das Aussehen des Verbatim-Abschnitts kann via CSS gestaltet werden.
-Hier die Selektoren, mit denen die einzelnen Bestandteile des
+Das Aussehen des Verbatim-Block kann via CSS gestaltet werden.
+Hier die Selektoren, mit denen einzelne Bestandteile des
 Konstrukts in CSS angesprochen werden können:
 
-[.CLASS]
-
-    Die Klasse des umgebenden C{div} (Default: 'verbatim').
-
 =over 4
+
+=item .CLASS
+
+Der gesamte Block.
 
 =item .CLASS table
 
 Die Tabelle.
 
-=item .CLASS ln
+=item .CLASS .ln
 
-Die Zeilennummern-Spalte der Tabelle.
+Die Zeilennummern-Spalte.
 
-=item .CLASS margin
+=item .CLASS .margin
 
-Die Trenn-Spalte der Tabelle zwischen Zeilennummer- und
-Text-Spalte.
+Die Trenn-Spalte zwischen Zeilennummer- und Text-Spalte.
 
-=item .CLASS text
+=item .CLASS .text
 
-Die Text-Spalte der Tabelle.
+Die Text-Spalte.
 
 =back
 
 Hierbei ist CLASS der über das Attribut C<class> änderbare
-CSS-Klassenname. Default für den CSS-Klassenname ist 'verbatim'.
+CSS-Klassenname. Default-Klassenname ist 'verbatim'.
 
 =head1 ATTRIBUTES
 
@@ -98,12 +88,11 @@ CSS-Klassenname. Default für den CSS-Klassenname ist 'verbatim'.
 
 =item class => $name (Default: 'verbatim')
 
-CSS-Klasse des Verbatim-Abschnitts. Subelemente erhalten diesen
-Klassennamen als Präfix.
+CSS-Klasse des Verbatim-Blocks.
 
-=item id => $name
+=item id => $id
 
-Die CSS-Id des Verbatim-Abschnitts.
+Die CSS-Id des Verbatim-Blocks.
 
 =item ln => $n (Default: 0)
 
@@ -112,12 +101,12 @@ beginnend Zeilennummer $n.
 
 =item style => $style
 
-CSS-Properties des Verbatim-Abschnitts.
+CSS-Properties des Verbatim-Blocks (<div>).
 
 =item text => $text
 
-Der dargestellt Text. Ist $text leer (C<undef> oder Leerstring),
-wird kein Verbatim-Abschnitt erzeugt, d.h. die Methode $obj->html()
+Der dargestellte Text. Ist $text leer (C<undef> oder Leerstring),
+wird kein Verbatim-Block erzeugt, d.h. die Methode $obj->html()
 liefert einen Leerstring.
 
 =back
@@ -126,7 +115,7 @@ liefert einen Leerstring.
 
 =head2 Konstruktor
 
-=head3 new() - Instantiiere Verbatim-Abschnitts-Objekt
+=head3 new() - Instantiiere Verbatim-Block-Objekt
 
 =head4 Synopsis
 
@@ -155,7 +144,7 @@ Verbatim-Abschnitts-Objekt (Referenz)
 
 =head4 Description
 
-Instantiiere ein Verbatim-Abschnitts-Objekt und liefere eine
+Instantiiere ein Verbatim-Block-Objekt und liefere eine
 Referenz auf dieses Objekt zurück.
 
 =cut
@@ -196,7 +185,7 @@ sub new {
 =item $h
 
 Objekt für die HTML-Generierung, d.h. eine Instanz der Klasse
-Sdoc::Core::Html::Tag).
+Sdoc::Core::Html::Tag.
 
 =item @keyVal
 
@@ -210,7 +199,7 @@ HTML-Code (String)
 
 =head4 Description
 
-Generiere den HTML-Code des Verbatim-Abschnitts und liefere diesen
+Generiere den HTML-Code des Verbatim-Blocks und liefere diesen
 zurück. Als Klassenmethode gerufen, wird das Objekt intern
 mit den Attributen @keyVal instantiiert.
 

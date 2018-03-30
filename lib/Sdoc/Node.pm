@@ -1541,30 +1541,38 @@ Die Implementierung hier in der Basisklasse generiert keinen
 CSS-Code. Sie existiert nur, um in abgeleiteten Klassen
 überschrieben zu werden.
 
-Knoten-Klassen, die aktuell keinen CSS-Code liefern, also keine
+Knoten-Klassen, die aktuell keinen CSS-Code liefern, also I<keine>
 eigene Methode css() benötigen:
 
 =over 2
 
 =item *
 
-BridgeHead
+BridgeHead - <hN> ohne Anpassungen
 
 =item *
 
-Comment
+Comment - unsichtbares <!-- ... -->
 
 =item *
 
-Paragraph
+Include - keine eigene Darstellung in HTML
 
 =item *
 
-Quote
+Link - keine Darstellung in HTML
 
 =item *
 
-Section
+PageBreak - unsichtbares <div>
+
+=item *
+
+Paragraph - <p> ohne Anpassungen
+
+=item *
+
+Section - <hN> ohne Anpassungen
 
 =back
 
@@ -1575,6 +1583,10 @@ Klassen, die eine eigene Methode css() implementieren:
 =item *
 
 Document
+
+=item *
+
+Quote
 
 =item *
 
