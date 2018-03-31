@@ -154,7 +154,9 @@ sub htmlTitle {
 
 # -----------------------------------------------------------------------------
 
-=head3 indentBlock() - Prüfe, ob Inhaltsverzeichnis eingrückt wird
+=head2 Einrückung
+
+=head3 indentBlock() - Prüfe, ob Inhaltsverzeichnis eingerückt werden soll
 
 =head4 Synopsis
 

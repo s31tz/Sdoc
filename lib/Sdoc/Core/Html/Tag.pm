@@ -593,6 +593,13 @@ my %Element = (
     var=>'i',        # Text ist Variablenname
 );
 
+# Default-Optionen
+
+my %DefaultOptions = (
+    p => [-ignoreIfNull=>1],
+    span => [-ignoreIfNull=>1],
+);
+
 # Default-Attribute von Elementen allgemein
 
 my %DefaultAttributes = (
@@ -1003,7 +1010,13 @@ Liefere Leerstring, wenn Bedingung $bool erfüllt ist.
 
 =item -ignoreIfNull => $bool (Default: 0)
 
-Liefere Leerstring, wenn $content null (Leerstring oder undef) ist.
+Liefere Leerstring, wenn $content null (Leerstring oder undef)
+ist. Für verschiedene Tags ist C<< -ignoreIfNull=>1 >> der
+Default. Siehe Hash C<%DefaultOptions>. MEMO: Dieser Hash ist
+nicht vollständig erstellt und kann (soll) nach Bedarf ergänzt
+werden, insbesondere hinsichtlich der Option C<-ignoreIfNull>.
+Für zahlreiche weitere Tags dürfte dies ein sinnvoller Default
+sein (aber nicht für alle).
 
 =item -ignoreTagIf => $bool (Default: 0)
 
@@ -1239,6 +1252,10 @@ sub tag {
     my $str = '';
 
     # Optionen und Attribute verarbeiten
+
+    if (my $arr = $DefaultOptions{$tag}) {
+        unshift @_,@$arr;
+    }
 
     while (@_) {
         if (@_ == 1) {

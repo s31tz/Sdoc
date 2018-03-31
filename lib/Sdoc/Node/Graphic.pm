@@ -6,9 +6,7 @@ use warnings;
 
 our $VERSION = 3.00;
 
-use Sdoc::Core::File::Image;
-use Sdoc::Core::Math;
-use Sdoc::Core::Css;
+use Sdoc::Core::Html::Image;
 use Sdoc::Core::LaTeX::Figure;
 
 # -----------------------------------------------------------------------------
@@ -120,8 +118,9 @@ als Inline-Grafik genutzt), andernfalls 1.
 
 =item source => $path
 
-Pfad der Bilddatei. Beginnt der Pfad mit C<+/>, wird das
-Pluszeichen zum Pfad des Dokumentverzeichnisses expandiert.
+Pfad der Bilddatei I<ohne> Extension. Beginnt der Pfad mit C<+/>,
+wird das Pluszeichen zum Pfad des Dokumentverzeichnisses
+expandiert.
 
 =item useCount => $n
 
@@ -349,6 +348,33 @@ sub latexLinkCode {
 
 # -----------------------------------------------------------------------------
 
+=head2 Einrückung
+
+=head3 indentBlock() - Prüfe, ob Abbildung eingrückt werden soll
+
+=head4 Synopsis
+
+    $bool = $toc->indentBlock;
+
+=head4 Returns
+
+Bool
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub indentBlock {
+    my $self = shift;
+
+    my $indentMode = $self->root->indentMode;
+    my $indent = $self->indent;
+
+    return $indent || $indentMode && !defined $indent? 1: 0;
+}
+
+# -----------------------------------------------------------------------------
+
 =head2 Formate
 
 =head3 html() - Generiere HTML-Code
@@ -380,112 +406,46 @@ sub html {
 
     my $doc = $self->root;
 
-    if (!defined($self->show) && $self->useCount > 0) {
+    # Prüfe, ob der Block an Ort und Stelle angezeigt werden soll.
+
+    my $show = $self->show;
+    if (defined($show) && !$show || !defined($show) && $self->useCount > 0) {
         return '';
     }
 
-    # HTML-Code erzeugen
+    # Ermittele Pfad der Bilddatei
 
-    # FIXME: analog zu latexLinkCode() in Methode auslagern
-
-    my ($href,$linkText);
-    my $n = $self->linkN;
-    if (defined $n) {
-        my $h = $self->linkA->[$n]->[1];
-        my $type = $h->type;
-        if ($type eq 'external') {
-            $href = $h->destText;
-            $linkText = $h->text;
-        }
-        elsif ($type eq 'internal') {
-            $href = sprintf '#'.$h->destNode->linkId;
-            $linkText = $h->text;
-        }
-    }
-
-    my $path = $doc->expandPath($self->source);
-    if (!-e $path) {
-        for my $ext (qw/png gif jpg/) {
-            if (-e "$path.$ext") {
-                $path = "$path.$ext";
-                last;
-            }
-        }
-    }
-
-    my $width = $self->width;
-    my $height = $self->height;
-    if (!$width || !$height) {
-        ($width,$height) = Sdoc::Core::File::Image->new($path)->size;
-        if (my $scale = $self->scale) {
-            $width = Sdoc::Core::Math->roundToInt($width*$scale);
-            $height = Sdoc::Core::Math->roundToInt($height*$scale);
-        }
-    }
-
-    # FIXME: oberhalb reimplementieren
-
-    my $id = sprintf 'gph%02d',$self->number;
-
-    # Positionierung der Grafik
-
-    my @divStyle = (
-        marginTop => '18px',
-        marginBottom => '16px',
+    my $imgFile = $self->getLocalPath('source',
+        -extensions => [qw/png jpg gif/],
     );
-    if (substr($self->align,0,1) eq 'c') {
-        push @divStyle,textAlign=>'center';
-    }
-    elsif ($self->indent || $doc->indentMode && !defined $self->indent) {
-        push @divStyle,marginLeft=>sprintf('%spx',$doc->htmlIndentation+4);
+
+    # Bildunterschrift
+
+    my $caption = $self->caption;
+    my $captionPrefix;
+    if ($caption) {
+        $captionPrefix = sprintf $doc->language eq 'german'? 'Abbildung %s: ':
+            'Figure %s: ',$self->number;
     }
 
-    my @imgStyle;
-    if (my $padding = $self->padding) {
-        push @imgStyle,padding=>$padding;
-    }
-    if ($self->border) {
-        push @imgStyle,border=>'1px solid black';
-    }
+    # Prüfe, ob die Abbildung eingerückt werden soll. Wenn ja, fügen
+    # wir die CSS-Klasse 'indent' hinzu.
 
-    # HTML-Code erzeugen
-
-    my $caption;
-    if ($caption = $self->caption) {
-        my $str = sprintf $doc->language eq 'german'? 'Abbildung %s':
-            'figure %s',$self->number;
-        $caption = $h->tag('b',"$str: ").$caption;
+    my $cssClass = $self->cssClass;
+    my $align = $self->align;
+    if ($align eq 'left' && $self->indentBlock) {
+        $cssClass .= ' indent';
     }
 
-    return $h->cat(
-        $h->tag('style',
-            Sdoc::Core::Css->new('flat')->restrictedRules("#$id",
-                '' => \@divStyle,
-                'img' => \@imgStyle,
-            )
-        ),
-        $h->tag('div',
-            class => 'sdoc-graphic',
-            id => $id,
-            $h->tag('a',
-                -ignoreTagIf => !$href,
-                href => $href,
-                $h->cat(
-                    $h->tag('img',
-                        -nl=>0,
-                        src => $path,
-                        alt => $self->name || $linkText,
-                        width => $width,
-                        height => $height,
-                    ),
-                    $h->tag('p',
-                        -ignoreIfNull => 1,
-                        style => 'margin-top: 4px; font-size: smaller',
-                        $caption,
-                    ),
-                ),
-            ),
-        ),
+    # Erzeuge HTML-Code
+
+    return Sdoc::Core::Html::Image->html($h,
+        caption => $caption,
+        captionPrefix => $captionPrefix,
+        class => $cssClass,
+        height => $self->height,
+        src => $imgFile,
+        width => $self->width,
     );
 }
 

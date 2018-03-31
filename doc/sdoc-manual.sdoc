@@ -741,8 +741,8 @@ In der Beschriftung (C{caption}) einer Abbildung können alle Segmente
   Inline-Grafik genutzt), andernfalls 1.
 
 [source=PATH]:
-  Pfad der Bilddatei. Beginnt der Pfad mit C{+/}, wird das
-  Pluszeichen zum Pfad des Dokumentverzeichnisses expandiert.
+  Pfad der Bilddatei I{ohne} Extension. Beginnt der Pfad mit C{+/},
+  wird das Pluszeichen zum Pfad des Dokumentverzeichnisses expandiert.
 
 [width=INTEGER]:
   Breite in Pixeln (ohne Angabe einer Einheit), auf die das Bild

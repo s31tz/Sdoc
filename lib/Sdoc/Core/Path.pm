@@ -67,7 +67,7 @@ sub append {
 
 # -----------------------------------------------------------------------------
 
-=head3 compare() - Prüfe, ob Inhalt der Dateien differiert
+=head3 compare() - Prüfe, ob Inhalt differiert
 
 =head4 Synopsis
 

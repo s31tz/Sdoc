@@ -6,6 +6,7 @@ use warnings;
 
 our $VERSION = 3.00;
 
+use Sdoc::Core::Option;
 use Digest::SHA ();
 use Scalar::Util ();
 use Sdoc::Core::Html::Tag;
@@ -226,6 +227,12 @@ sub getUserConfigAttribute {
 
 Knoten-Objekt oder C<undef>
 
+=head4 Description
+
+Liefere den nächsten Kindknoten des Elternknotens von $node.
+Dies ist der auf Knoten $node folgende Knoten auf der gleichen
+Hierarchieebene.
+
 =cut
 
 # -----------------------------------------------------------------------------
@@ -395,6 +402,86 @@ sub setAttributes {
     }
 
     return;
+}
+
+# -----------------------------------------------------------------------------
+
+=head2 Dateien
+
+=head3 getLocalPath() - Ermittele lokalen Dateipfad
+
+=head4 Synopsis
+
+    $path = $node->getLocalPath($key,@opt);
+
+=head4 Arguments
+
+=over 4
+
+=item $key
+
+Knoten-Attribut, das den Quellpfad enthält.
+
+=back
+
+=head4 Options
+
+=over 4
+
+=item -extensions => \@ext
+
+Liste von Dateiextensions, die durchgeprüft werden, wenn der
+Pfad unvollständig ist. Diese Option wird beim Suchen von
+Bilddateien genutzt.
+
+=back
+
+=head4 Returns
+
+Pfad (String)
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub getLocalPath {
+    my ($self,$key) = splice @_,0,2;
+    # @_: @opt
+
+    my $doc = $self->root;
+
+    # Optionen
+
+    my $extensionA = undef;
+
+    Sdoc::Core::Option->extract(\@_,
+        -extensions => \$extensionA,
+    );
+
+    # Ermittele Datei-Pfad
+
+    my $path;
+    my $source = $doc->expandPath($self->get($key));
+    if (-e $source) {
+        # Pfad gefunden
+        $path = $source;
+    }
+    elsif ($extensionA) {
+        # Pfad nicht gefunden, wir prüfen die gegebenen Dateiendungen
+        # durch
+
+        for my $ext (@$extensionA) {
+            if (-e "$source.$ext") {
+                $path = "$source.$ext";
+                last;
+            }
+        }
+    }
+    if (!$path) {
+        $self->warn("File not found: $source");
+    }
+
+    return $path;
 }
 
 # -----------------------------------------------------------------------------
