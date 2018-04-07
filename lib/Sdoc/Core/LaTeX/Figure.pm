@@ -61,7 +61,7 @@ des Werts wird interpretiert.
 
 Zeichne einen Rahmen um die Abbildung.
 
-=item padding => $length (Default: '0mm')
+=item padding => $length (Default: '0pt')
 
 Zeichne den Rahmen (Attribut C<border>) mit dem angegebenen
 Abstand um die Abbildung.
@@ -161,7 +161,7 @@ sub new {
         label => undef,
         link => undef,
         options => undef, # $str | \@opt
-        padding => '0mm',
+        padding => '0pt',
         position => 'H',
         postVSpace => undef,
         scale => undef,
@@ -215,14 +215,13 @@ sub latex {
         # $scale hat Priorität gegenüber width und height
         push @opt,"scale=$scale";
     }
-    elsif ($width && $height) {
-        # Umrechnung von px in pt (1px = 0.75pt)
-
-        $width *= 0.75;
-        $height *= 0.75;
-
-        push @opt,"width=${width}pt";
-        push @opt,"height=${height}pt";
+    else {
+        if ($width) {
+            push @opt,"width=$width";
+        }
+        if ($height) {
+            push @opt,"height=$height";
+        }
     }
     if (defined $options) {
         if (Sdoc::Core::Reference->isArrayRef($options)) {

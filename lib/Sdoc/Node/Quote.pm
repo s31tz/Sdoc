@@ -55,6 +55,14 @@ Text des Paragraphen mit geparsten Segmenten.
 
 =back
 
+=cut
+
+# -----------------------------------------------------------------------------
+
+our $Abbrev = 'quo';
+
+# -----------------------------------------------------------------------------
+
 =head1 METHODS
 
 =head2 Konstruktor

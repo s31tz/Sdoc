@@ -52,8 +52,8 @@ angezeigt und verarbeitet wird, ist in Abschnitt L{+Dieses Dokument
   source="+/sdoc-example"
   latexOptions="width=0.965\textwidth"
   scale=0.55
-  border=1
   padding=2mm
+  border=1
   indent=0
 
 ---PageBreak---
@@ -66,8 +66,8 @@ angezeigt und verarbeitet wird, ist in Abschnitt L{+Dieses Dokument
   source="+/sdoc-example-html"
   latexOptions="width=0.965\textwidth"
   scale=0.55
-  border=1
   padding=2mm
+  border=1
   indent=0
 
 ---PageBreak---
@@ -726,7 +726,13 @@ In der Beschriftung (C{caption}) einer Abbildung können alle Segmente
   und bei Inline-Grafiken von Bedeutung.
 
 [padding=LENGTH]:
-  (Default: 0mm) Zeichne den Rahmen (Attribut C{border}) mit dem
+  (Default: 0) Füge Leerraum der Breite LENGTH um die Grafik
+  hinzu. Der Leerraum befindet sich zwischen Grafik und Rahmen
+  (Attribut C{border}). Der Abstand LENGTH muss, sofern nicht 0, mit
+  einer Einheit wie px oder mm versehen werden. Ein Pixelwert wird für
+  LaTeX nach pt gewandelt.
+
+Zeichne den Rahmen (Attribut C{border}) mit dem
   angegebenen Abstand um die Abbildung.
 
 [scale=FLOAT]:

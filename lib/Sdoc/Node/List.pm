@@ -6,8 +6,6 @@ use warnings;
 
 our $VERSION = 3.00;
 
-use Sdoc::Core::Css;
-
 # -----------------------------------------------------------------------------
 
 =encoding utf8
@@ -50,6 +48,14 @@ Wenn nicht gesetzt, wird der Wert vom ersten List-Item gesetzt.
 Nummer der Liste. Wird automatisch hochgezählt.
 
 =back
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+our $Abbrev = 'lst';
+
+# -----------------------------------------------------------------------------
 
 =head1 METHODS
 
@@ -147,6 +153,99 @@ sub new {
 
 =head2 Formate
 
+=head3 css() - Generiere CSS-Code
+
+=head4 Synopsis
+
+    $code = $lst->css($c,$global);
+
+=head4 Arguments
+
+=over 4
+
+=item $c
+
+Generator für CSS.
+
+=item $global
+
+Wenn gesetzt, werden die globalen CSS-Regeln der Knoten-Klasse
+geliefert, sonst die lokalen CSS-Regeln der Knoten-Instanz.
+
+=back
+
+=head4 Returns
+
+CSS-Code (String)
+
+=head4 Description
+
+Generiere den CSS-Code der Knoten-Klasse oder der Knoten-Instanz
+und liefere diesen zurück.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub css {
+    my ($self,$c,$global) = @_;
+    
+    if ($global) {
+        # Globale CSS-Regeln der Knoten-Klasse
+
+        my $doc = $self->root;
+        my $cssClass = $self->cssClass;
+
+        if ($self->listType eq 'description') {
+            # Description List
+
+            return $c->rules(
+                ".$cssClass dt" => [
+                    fontWeight => 'bold',
+                ],
+                ".$cssClass dd" => [
+                    marginLeft => ($doc->htmlIndentation+4).'px',
+                ],
+                ".$cssClass.noindent dd" => [
+                    marginLeft => 0,
+                ],
+                # Kompakter Leerraum vor dem ersten und nach
+                # dem letzten Element
+                ".$cssClass dd > *:first-child" => [
+                    marginTop => '2px',
+                ],
+                ".$cssClass dd > *:last-child" => [
+                    marginBottom => '6px',
+                ],
+            );
+        }
+
+        # Ordered- und Unordered List
+
+        return $c->rules(
+            ".$cssClass" => [
+                paddingLeft => ($doc->htmlIndentation+19).'px',
+            ],
+            ".$cssClass.noindent" => [
+                paddingLeft => '15px',
+            ],
+            # Kompakter Leerraum vor dem ersten und nach
+            # dem letzten Element
+            ".$cssClass li > *:first-child" => [
+                marginTop => '4px',
+            ],
+            ".$cssClass li > *:last-child" => [
+                marginBottom => '4px',
+            ],
+        );
+    }
+
+    # Lokale CSS-Regeln der Knoten-Instanz
+    return '';
+}
+
+# -----------------------------------------------------------------------------
+
 =head3 html() - Generiere HTML-Code
 
 =head4 Synopsis
@@ -174,44 +273,29 @@ HTML-Code (String)
 sub html {
     my ($self,$h) = @_;
 
-    my $doc = $self->root;
+    # Abbildung Sdoc-Aufzählungstypen auf HTML-Aufzählungstypen
 
-    my $id = sprintf 'lst%02d',$self->number;
-
-    # Abbildung der Sdoc-Aufzählungstypen auf HTML-Aufzählungstypen
-
-    my $listType = $self->listType;
     my $tag = {
         ordered => 'ol',
         unordered => 'ul',
         description => 'dl',
-    }->{$listType};
+    }->{$self->listType};
 
-    my @style;
-    if ($doc->indentMode) {
-        push @style,paddingLeft=>sprintf('%spx',$doc->htmlIndentation+19);
+    # Einrückung. Wir setzen CSS-Klasse "noindent", wenn *keine*
+    # Einrückung erfolgen soll.
+
+    my $cssClass = $self->cssClass;
+    my $indent = $self->indent;
+    if (defined $indent && $indent eq '0') {
+        $cssClass .= ' noindent';
     }
-
+    
     # Generiere HTML
 
-    return $h->cat(
-        $h->tag('style',
-            Sdoc::Core::Css->new('flat')->restrictedRules("#$id",
-                '' => \@style,
-                # FIXME: In Default-Stylesheet verlagern
-                'li > *:first-child' => [
-                    marginTop => '4px',
-                ],
-                'li > *:last-child' => [
-                    marginBottom => '4px',
-                ],
-            )
-        ),
-        $h->tag($tag,
-            class => "sdoc-list-$listType",
-            id => $id,
-            $self->generateChilds('html',$h)
-        ),
+    return $h->tag($tag,
+        class => $cssClass,
+        id => $self->cssId,
+        $self->generateChilds('html',$h)
     );
 }
 

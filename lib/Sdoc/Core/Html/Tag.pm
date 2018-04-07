@@ -1150,6 +1150,8 @@ explizit gesetzt werden müssen.
 # -----------------------------------------------------------------------------
 
 # Setze Formatiereigenschaften
+# FIXME: Das Bündel *aller* Eigenschaften setzen, da eine Umschaltung
+# zwischen beliebigen Status vorkommen kann.
 
 my $setFmtDefaults = sub {
     my ($fmt,$fmtR,$indR,$endTagR,$nlR) = @_;
@@ -1160,6 +1162,7 @@ my $setFmtDefaults = sub {
     }
     elsif ($fmt eq 'e') {
         $$endTagR = 0;
+        $$nlR = 1;
     }
     elsif ($fmt eq 'E') {
         $$fmtR = 'e';
@@ -1169,6 +1172,9 @@ my $setFmtDefaults = sub {
     elsif ($fmt eq 'M') {
         $$fmtR = 'm';
         $$indR = 0;
+    }
+    elsif ($fmt eq 'v') {
+        $$nlR = 1;
     }
 
     return;

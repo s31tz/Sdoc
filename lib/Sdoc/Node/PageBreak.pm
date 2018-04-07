@@ -29,6 +29,14 @@ Inhaltsverzeichnis-Knoten folgende zusätzliche Attribute:
 
 I<keine>
 
+=cut
+
+# -----------------------------------------------------------------------------
+
+our $Abbrev = 'pbr';
+
+# -----------------------------------------------------------------------------
+
 =head1 METHODS
 
 =head2 Konstruktor

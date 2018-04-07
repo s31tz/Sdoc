@@ -46,6 +46,14 @@ kein Inhaltsverzeichnis.
 
 =back
 
+=cut
+
+# -----------------------------------------------------------------------------
+
+our $Abbrev = 'toc';
+
+# -----------------------------------------------------------------------------
+
 =head1 METHODS
 
 =head2 Konstruktor
@@ -333,14 +341,17 @@ sub latex {
     }
 
     my $code = $l->c('{\hypersetup{hidelinks}\tableofcontents}');
-    if (my $nextNode = $self->nextNode) {
-        # Wenn der nächste Knoten kein Abschnitt ist, fügen wir
-        # vertikalen Leerraum hinzu, da der Inhalt sonst direkt unter
-        # dem Inhaltsverzeichnis "klebt".
 
-        my $type = $nextNode->type;
+    # Wenn der nächste Knoten kein Abschnitt ist, fügen wir
+    # vertikalen Leerraum hinzu, da der Inhalt sonst direkt unter
+    # dem Inhaltsverzeichnis "klebt". Wir überlesen alle Knoten,
+    # die keine visuelle Repräsentation haben.
+
+    if (my $node = $self->nextVisibleNode) {
+        my $type = $node->type;
         if (!($type eq 'Section' || $type eq 'BridgeHead')) {
             $code .= $l->c('\vspace{4ex}');
+            
         }
     }
 

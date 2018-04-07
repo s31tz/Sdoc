@@ -6,7 +6,10 @@ use warnings;
 
 our $VERSION = 3.00;
 
+use Sdoc::Core::File::Image;
+use Sdoc::Core::Math;
 use Sdoc::Core::Html::Image;
+use Sdoc::Core::Converter;
 use Sdoc::Core::LaTeX::Figure;
 
 # -----------------------------------------------------------------------------
@@ -93,10 +96,13 @@ Nummer der Grafik. Wird automatisch hochgezählt.
 Rücke die Grafik ein. Das Attribut ist nur bei C<< align =>
 'left' >> oder bei Inline-Grafiken von Bedeutung.
 
-=item padding => $length (Default: '0mm')
+=item padding => $length (Default: 0)
 
-Zeichne den Rahmen (Attribut C<border>) mit dem angegebenen
-Abstand um die Abbildung.
+Füge Leerraum der Breite $length um die Grafik hinzu. Der Leerraum
+befindet sich zwischen Grafik und Rahmen (Attribut C<border>). Der
+Abstand $length muss, sofern nicht 0, mit einer Einheit wie px
+oder mm versehen werden. Ein Pixelwert wird für LaTeX nach pt
+gewandelt.
 
 =item referenced => $n (Default: 0)
 
@@ -135,6 +141,14 @@ Breite in Pixeln (ohne Angabe einer Einheit), auf die das Bild
 skaliert wird.
 
 =back
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+our $Abbrev = 'gph';
+
+# -----------------------------------------------------------------------------
 
 =head1 METHODS
 
@@ -213,7 +227,7 @@ sub new {
         linkA => [],
         name => undef,
         number => $root->increment('countGraphic'),
-        padding => '0mm',
+        padding => 0,
         referenced => 0,
         scale => undef,
         show => undef,
@@ -296,6 +310,47 @@ sub linkText {
 
 # -----------------------------------------------------------------------------
 
+=head3 htmlHref() - URL für Verweis
+
+=head4 Synopsis
+
+    $href = $gph->htmlHref;
+
+=head4 Returns
+
+URL (String)
+
+=head4 Description
+
+Liefere den URL, wenn die Abbildung mit einem Verweis
+hinterlegt ist (Attribut C<link> ist gesetzt).
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub htmlHref {
+    my $self = shift;
+
+    my $href;
+    
+    my $n = $self->linkN;
+    if (defined $n) {
+        my $obj = $self->linkA->[$n]->[1];
+        my $type = $obj->type;
+        if ($type eq 'external') {
+            $href = $obj->destText;
+        }
+        elsif ($type eq 'internal') {
+            $href = sprintf '#'.$obj->destNode->linkId;
+        }
+    }
+
+    return $href;
+}
+
+# -----------------------------------------------------------------------------
+
 =head3 latexLinkCode() - LaTeX-Code für einen Verweis
 
 =head4 Synopsis
@@ -304,7 +359,7 @@ sub linkText {
 
 =head4 Returns
 
-LaTeX-Code
+LaTeX-Code (String)
 
 =head4 Description
 
@@ -377,6 +432,102 @@ sub indentBlock {
 
 =head2 Formate
 
+=head3 css() - Generiere CSS-Code
+
+=head4 Synopsis
+
+    $code = $gph->css($c,$global);
+
+=head4 Arguments
+
+=over 4
+
+=item $c
+
+Generator für CSS.
+
+=item $global
+
+Wenn gesetzt, werden die globalen CSS-Regeln der Knoten-Klasse
+geliefert, sonst die lokalen CSS-Regeln der Knoten-Instanz.
+
+=back
+
+=head4 Returns
+
+CSS-Code (String)
+
+=head4 Description
+
+Generiere den CSS-Code der Knoten-Klasse oder der Knoten-Instanz
+und liefere diesen zurück.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub css {
+    my ($self,$c,$global) = @_;
+
+    my $doc = $self->root;
+
+    if ($global) {
+        # Globale CSS-Regeln der Knoten-Klasse
+
+        my $cssClass = $self->cssClass;
+
+        my $rules .= $c->restrictedRules(".$cssClass",
+            # Default-Layout der Bildunterschrift
+            # * Text verkleinert
+            # * Abstand zwischen Bild und Text verkleinert
+            # * Präfix fett
+            'p' => [
+                fontSize => 'smaller',
+                marginTop => '4px',
+            ],
+            'span.prefix' => [
+                fontWeight => 'bold',
+            ],
+        );
+        $rules .= $c->rule(
+            ".$cssClass.indent" => [
+                marginLeft => sprintf('%spx',$doc->htmlIndentation+4),
+            ]
+        );
+
+        return $rules;
+    }
+
+    # Lokale CSS-Regeln der Knoten-Instanz
+
+    my (@divProp,@imgProp);
+
+    # * Bild zentrieren
+
+    if (substr($self->align,0,1) eq 'c') {
+        push @divProp,textAlign=>'center';
+    }
+
+    # * Bild einrahmen
+
+    if ($self->border) {
+        push @imgProp,border=>'1px solid black';
+    }
+
+    # * Bild mit Leerraum umgeben
+
+    if (my $padding = $self->padding) {
+        push @imgProp,padding=>$padding;
+    }
+
+    return $c->restrictedRules('#'.$self->cssId,
+        '' => \@divProp,
+        'img' => \@imgProp,
+    );
+}
+
+# -----------------------------------------------------------------------------
+
 =head3 html() - Generiere HTML-Code
 
 =head4 Synopsis
@@ -406,18 +557,43 @@ sub html {
 
     my $doc = $self->root;
 
+    # Prüfe, ob die Abbildung eingerückt werden soll. Wenn ja, fügen
+    # wir die CSS-Klasse 'indent' hinzu.
+
+    my $cssClass = $self->cssClass;
+    my $align = $self->align;
+    if ($align eq 'left' && $self->indentBlock) {
+        $cssClass .= ' indent';
+    }
+
     # Prüfe, ob der Block an Ort und Stelle angezeigt werden soll.
+    # Wenn nein, erzeugen wir keinen Code.
 
     my $show = $self->show;
     if (defined($show) && !$show || !defined($show) && $self->useCount > 0) {
         return '';
     }
 
-    # Ermittele Pfad der Bilddatei
+    # Pfad der Bilddatei
 
     my $imgFile = $self->getLocalPath('source',
         -extensions => [qw/png jpg gif/],
     );
+
+    # Breite/Höhe ermitteln
+
+    my $width = $self->width;
+    my $height = $self->height;
+    if (!$width || !$height) {
+        ($width,$height) = Sdoc::Core::File::Image->new($imgFile)->size;
+    }
+
+    # Skalieren
+
+    if (my $scale = $self->scale) {
+        $width = Sdoc::Core::Math->roundToInt($width*$scale);
+        $height = Sdoc::Core::Math->roundToInt($height*$scale);
+    }
 
     # Bildunterschrift
 
@@ -428,24 +604,18 @@ sub html {
             'Figure %s: ',$self->number;
     }
 
-    # Prüfe, ob die Abbildung eingerückt werden soll. Wenn ja, fügen
-    # wir die CSS-Klasse 'indent' hinzu.
-
-    my $cssClass = $self->cssClass;
-    my $align = $self->align;
-    if ($align eq 'left' && $self->indentBlock) {
-        $cssClass .= ' indent';
-    }
-
     # Erzeuge HTML-Code
 
     return Sdoc::Core::Html::Image->html($h,
+        alt => $self->name,
         caption => $caption,
         captionPrefix => $captionPrefix,
         class => $cssClass,
-        height => $self->height,
+        height => $height,
+        href => $self->htmlHref,
+        id => $self->cssId, # FIXME: ggf. von indiv. CSS-Regeln abh. machen
         src => $imgFile,
-        width => $self->width,
+        width => $width,
     );
 }
 
@@ -484,6 +654,20 @@ sub latex {
         return '';
     }
 
+    # Breite
+
+    my $width;
+    if ($width = $self->width) {
+        $width = Sdoc::Core::Converter->pxToPt($width).'pt';
+    }
+
+    # Höhe
+
+    my $height;
+    if ($height = $self->height) {
+        $height = Sdoc::Core::Converter->pxToPt($height).'pt';
+    }
+
     # Einrückung
 
     my $indent;
@@ -498,15 +682,15 @@ sub latex {
         border => $self->border,
         caption => $self->expandText($l,'captionS'),
         file => $doc->expandPath($self->source),
-        height => $self->height,
+        height => $height,
         indent => $indent,
         label => $self->referenced? $self->linkId: undef,
         link => $self->latexLinkCode($l),
         options => $self->latexOptions,
-        padding => $self->padding,
+        padding => $l->toLength($self->padding),
         postVSpace => $l->modifyLength($doc->latexParSkip,'*-2'),
         scale => $self->scale,
-        width => $self->width,
+        width => $width,
     )."\n";
 }
 

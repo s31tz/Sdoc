@@ -40,6 +40,14 @@ das Pluszeichen zum Pfad des Dokumentverzeichnisses expandiert.
 
 =back
 
+=cut
+
+# -----------------------------------------------------------------------------
+
+our $Abbrev = 'sty';
+
+# -----------------------------------------------------------------------------
+
 =head1 METHODS
 
 =head2 Konstruktor
@@ -188,7 +196,13 @@ sub css {
     }
 
     # Lokale CSS-Regeln der Knoten-Instanz
-    return $c->makeFlat($self->code);
+
+    my $code = $self->code;
+    if ($code) {
+        $code .= "\n";
+    }
+
+    return $c->makeFlat($code);
 }
 
 # -----------------------------------------------------------------------------

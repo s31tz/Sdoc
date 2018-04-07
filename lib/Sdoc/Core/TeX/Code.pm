@@ -9,6 +9,8 @@ our $VERSION = 1.125;
 use Sdoc::Core::Option;
 use Scalar::Util ();
 use Sdoc::Core::Unindent;
+use Sdoc::Core::Math;
+use Sdoc::Core::Converter;
 
 # -----------------------------------------------------------------------------
 
@@ -533,6 +535,68 @@ sub modifyLength {
     }
 
     return $length;
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 toLength() - Wandele Länge in TeX-Länge
+
+=head4 Synopsis
+
+    $length = $this->toLength($val);
+
+=head4 Arguments
+
+=over 4
+
+=item $val
+
+Länge, die in die TeX-Länge umgerechnet wird.
+
+=back
+
+=head4 Returns
+
+TeX-Länge (String)
+
+=head4 Examples
+
+Keine Angabe:
+
+    $class->toLength(undef);
+    # undef
+
+Angabe in Pixeln ohne Einheit:
+
+    $class->toLength(100);
+    # '75pt'
+
+Angabe in Pixeln mit Einheit:
+
+    $class->toLength('100px');
+    # '75pt'
+
+Alle anderen Werte bleiben unverändert:
+
+    $class->toLength($val);
+    # $val
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub toLength {
+    my ($this,$val) = @_;
+
+    if (defined $val) {
+        $val =~ s/px$//; # Einheit Pixel entfernen wir
+        if (Sdoc::Core::Math->isNumber($val)) {
+            # Keine Einheit: Pixel -> Punkt
+            $val = Sdoc::Core::Converter->pxToPt($val).'pt';
+        }
+    }
+
+    return $val;
 }
 
 # -----------------------------------------------------------------------------

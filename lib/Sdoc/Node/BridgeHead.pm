@@ -75,6 +75,14 @@ Titel des Zwischenüberschrift nach Parsing der Segmente.
 
 =back
 
+=cut
+
+# -----------------------------------------------------------------------------
+
+our $Abbrev = 'brk';
+
+# -----------------------------------------------------------------------------
+
 =head1 METHODS
 
 =head2 Konstruktor

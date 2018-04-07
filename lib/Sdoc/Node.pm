@@ -215,6 +215,43 @@ sub getUserConfigAttribute {
 
 # -----------------------------------------------------------------------------
 
+=head2 Kurzbezeichnung
+
+=head3 abbrev() - Kurzbezeichnung des Knotentyps
+
+=head4 Synopsis
+
+    $abbrev = $this->abbrev;
+
+=head4 Returns
+
+Abkürzung (String)
+
+=head4 Description
+
+Liefere die Kurzbezeichnung des Knotentyps. Dies ist für jeden
+Knoten eine Zeichenkette aus drei Buchstaben.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub abbrev {
+    my $this = shift;
+
+    no strict 'refs';
+
+    my $class = ref($this) || $this;
+    my $abbrev = ${$class.'::Abbrev'};
+    if (!$abbrev) {
+        $this->throw;
+    }
+
+    return $abbrev;
+}
+
+# -----------------------------------------------------------------------------
+
 =head2 Navigation
 
 =head3 nextNode() - Liefere nächsten Knoten
@@ -248,6 +285,47 @@ sub nextNode {
     }
 
     $self->throw;
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 nextVisibleNode() - Liefere nächsten sichtbaren Knoten
+
+=head4 Synopsis
+
+    $nextNode = $node->nextVisibleNode;
+
+=head4 Returns
+
+Knoten-Objekt oder C<undef>
+
+=head4 Description
+
+Liefere den nächsten Knoten, der eine visuelle Repräsenation hat.
+D.h. wir überlesen Knoten vom Typ
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub nextVisibleNode {
+    my $self = shift;
+
+    my $node = $self->nextNode;
+    while ($node) {
+        my $type = $node->type;
+        if ($type =~ /^$/) {
+            $node = $node->nextNode;
+            next;
+        }
+        elsif ($type eq 'Include') {
+            $node = $node->childs->[0];
+            next;
+        }
+        last;
+    }
+
+    return $node;
 }
 
 # -----------------------------------------------------------------------------
@@ -1267,7 +1345,7 @@ sub expandSegmentsToLatex {
                     $root->latexIndentation.'em': undef,
                 link => $gph->latexLinkCode($l),
                 options => $gph->latexOptions,
-                padding => $gph->padding,
+                padding => $l->toLength($gph->padding),
                 scale => $gph->scale,
                 width => $gph->width,
             );
@@ -1579,9 +1657,11 @@ CSS-Klassenname (String)
 =head4 Description
 
 Liefere den CSS-Klassennamen des Knotens. Alle Knoten desselben
-Typs haben denselben CSS-Klassennamen. Der CSS-Klassenname setzt
-sich zusammen aus dem CSS-Klassenpräfix, den der Dokument-Knoten
-definiert, und dem Namen des Knotentyps.
+Typs haben denselben CSS-Klassennamen (außer List-Knoten
+s.u.). Der CSS-Klassenname setzt sich zusammen aus dem
+CSS-Klassenpräfix, den der Dokument-Knoten definiert, und dem
+Namen des Knotentyps. Im Falle einer Liste kommt ferner der
+Listentyp hinzu.
 
 =cut
 
@@ -1589,7 +1669,36 @@ definiert, und dem Namen des Knotentyps.
 
 sub cssClass {
     my $self = shift;
-    return lc sprintf '%s-%s',$self->root->cssClassPrefix,$self->type;
+
+    my $doc = $self->root;
+
+    my $cssClass = lc sprintf '%s-%s',$doc->cssClassPrefix,$self->type;
+    if ($self->type eq 'List') {
+        $cssClass .= '-'.$self->listType;
+    }
+
+    return $cssClass;
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 cssId() - CSS-Id des Knotens
+
+=head4 Synopsis
+
+    $cssId = $node->cssId;
+
+=head4 Returns
+
+Id (String)
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub cssId {
+    my $self = shift;
+    return lc sprintf '%s%03d',$self->abbrev,$self->number;
 }
 
 # -----------------------------------------------------------------------------

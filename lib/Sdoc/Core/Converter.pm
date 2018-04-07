@@ -185,6 +185,100 @@ sub intToWord {
 
 # -----------------------------------------------------------------------------
 
+=head2 Längen
+
+=head3 ptToPx() - Rechne Punkt (pt) in Pixel (px) um
+
+=head4 Synopsis
+
+    $px = $this->ptToPx($pt);
+
+=head4 Alias
+
+pointToPixel()
+
+=head4 Arguments
+
+=over 4
+
+=item $pt (Number)
+
+Punkt-Wert
+
+=back
+
+=head4 Returns
+
+Pixel-Wert (Number)
+
+=head4 Description
+
+Rechne Punkt in Pixel um und liefere das Resultat zurück.
+
+    1 Punkt = 1/0.75 Pixel
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub ptToPx {
+    my ($this,$pt) = @_;
+    return $pt*(1/0.75);
+}
+
+{
+    no warnings 'once';
+    *pointToPixel = \&ptToPx;
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 pxToPt() - Rechne Pixel (px) in Punkt (pt) um
+
+=head4 Synopsis
+
+    $pt = $this->pxToPt($px);
+
+=head4 Alias
+
+pixelToPoint()
+
+=head4 Arguments
+
+=over 4
+
+=item $px (Number)
+
+Pixel-Wert
+
+=back
+
+=head4 Returns
+
+Punkt-Wert (Number)
+
+=head4 Description
+
+Rechne Pixel in Punkt um und liefere das Resultat zurück.
+
+    1 Pixel = 0.75 Punkt
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub pxToPt {
+    my ($this,$px) = @_;
+    return $px*0.75;
+}
+
+{
+    no warnings 'once';
+    *pixelToPoint = \&pxToPt;
+}
+
+# -----------------------------------------------------------------------------
+
 =head2 Zeitdarstellung
 
 =head3 epochToDuration() - Wandele Sekunden in (lesbare) Angabe einer Dauer

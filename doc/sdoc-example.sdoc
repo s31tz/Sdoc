@@ -1,9 +1,3 @@
-%Style:
-  .sdoc-document h1, .sdoc-section {
-    background-color: #f0f0f0;
-  }
-.
-
 %Document:
   title="Ein Beispieldokument"
   author="Nico Laus"
@@ -24,10 +18,10 @@ der Hypotenuse: M~c = \sqrt{a^2 + b^2}~.
 %Graphic:
   source="+/sdoc-graphic-illusion"
   caption="Illusion"
+  latexAlign="center"
   width=100
   height=100
   border=1
-  latexAlign="center"
 
 Programm-Quelltexte können wir mit Q{Syntax-Highlighting} darstellen:
 
@@ -42,6 +36,13 @@ Programm-Quelltexte können wir mit Q{Syntax-Highlighting} darstellen:
 
 Auf eine andere Stelle im Dokument zu verweisen ist einfach. Hier ist
 ein Verweis auf die L{Einleitung}.
+
+[255 239 213]:
+  PapayaWhip
+[188 143 143]:
+  RosyBrown
+[255 218 185]:
+  PeachPuff
 
 * Apfel
 * Birne

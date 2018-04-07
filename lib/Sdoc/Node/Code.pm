@@ -11,7 +11,6 @@ use Sdoc::Core::Path;
 use Sdoc::Core::Shell;
 use Sdoc::Core::Ipc;
 use Sdoc::Core::Html::Pygments;
-use Sdoc::Core::Css;
 use Sdoc::Core::Html::Verbatim;
 
 # -----------------------------------------------------------------------------
@@ -97,6 +96,14 @@ Nummer des Codeblocks. Wird automatisch hochgezählt.
 Text des Code-Blocks.
 
 =back
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+our $Abbrev = 'cod';
+
+# -----------------------------------------------------------------------------
 
 =head1 METHODS
 
@@ -245,6 +252,33 @@ sub new {
 
 # -----------------------------------------------------------------------------
 
+=head2 Einrückung
+
+=head3 indentBlock() - Prüfe, ob Abbildung eingrückt werden soll
+
+=head4 Synopsis
+
+    $bool = $cod->indentBlock;
+
+=head4 Returns
+
+Bool
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub indentBlock {
+    my $self = shift;
+
+    my $indentMode = $self->root->indentMode;
+    my $indent = $self->indent;
+
+    return $indent || $indentMode && !defined $indent? 1: 0;
+}
+
+# -----------------------------------------------------------------------------
+
 =head2 Formate
 
 =head3 css() - Generiere CSS-Code
@@ -292,13 +326,37 @@ sub css {
         # Dokumenteigenschaften
         my $att = $doc->analyze;
 
-        my $code = '';
+        my $cssClass = $self->cssClass;
+
+        my $code .= $c->rules(
+            ".$cssClass" => [
+                marginTop => '16px',
+                marginBottom => '16px',
+            ],
+            ".$cssClass table" => [
+                borderCollapse => 'collapse',
+            ],
+            ".$cssClass td.ln" => [
+                paddingLeft => 0,
+            ],
+            ".$cssClass td.margin" => [
+                width => '4px',
+            ],
+            ".$cssClass td pre" => [
+                margin => 0,
+                lineHeight => '125%', # für Chrome, sonst Zeilen zu eng
+            ],
+            ".$cssClass.indent" => [
+                marginLeft => ($doc->htmlIndentation+4).'px',
+            ],
+        );                
+
         if ($att->sourceCode) {
             # CSS-Regeln für Syntax Highlighting erzeugen
 
             my $codeStyle = $doc->getUserConfigAttribute('codeStyle');
             $code .= eval{Sdoc::Core::Html::Pygments->css($codeStyle,
-                '.sdoc-code table')} // '';
+                ".$cssClass table")} // '';
             if ($@) {
                 $doc->warn('Unknown code style: %s',$codeStyle);
             }
@@ -342,9 +400,7 @@ sub html {
 
     my $doc = $self->root;
 
-    my $indent = $self->indent;
-    my $ln = $self->ln;
-    my $id = sprintf 'cod%02d',$self->number;
+    # Text ermitteln
 
     my $text;
     if (my $lang = $self->lang) {
@@ -354,33 +410,21 @@ sub html {
         $text = $h->protect($self->text);
     }
 
-    my $marginLeft;
-    if ($self->indent || $doc->indentMode && !defined $self->indent) {
-        $marginLeft = sprintf('%spx',$doc->htmlIndentation);
+    # Prüfe, ob der Code eingerückt werden soll. Wenn ja, fügen
+    # wir die CSS-Klasse 'indent' hinzu.
+
+    my $cssClass = $self->cssClass;
+    if ($self->indentBlock) {
+        $cssClass .= ' indent';
     }
 
     # HTML-Code erzeugen
 
-    return $h->cat(
-        $h->tag('style',
-            Sdoc::Core::Css->new('flat')->restrictedRules("#$id",
-                '' => [
-                    marginTop => '16px',
-                    marginBottom => '16px',
-                    marginLeft => $marginLeft,
-                ],
-                'td pre' => [
-                    margin => 0,
-                    lineHeight => '125%', # für Chrome, sonst Zeilen zu eng
-                ],
-            )
-        ),
-        Sdoc::Core::Html::Verbatim->html($h,
-            class => 'sdoc-code',
-            id => $id,
-            ln => $self->ln,
-            text => $text,
-        ),
+    return Sdoc::Core::Html::Verbatim->html($h,
+        class => $cssClass,
+        id => $self->cssId,
+        ln => $self->ln,
+        text => $text,
     );
 }
 

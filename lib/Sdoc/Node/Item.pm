@@ -55,6 +55,14 @@ Array mit Informationen über die im Key vorkommenden Links.
 
 =back
 
+=cut
+
+# -----------------------------------------------------------------------------
+
+our $Abbrev = 'itm';
+
+# -----------------------------------------------------------------------------
+
 =head1 METHODS
 
 =head2 Konstruktor
@@ -281,7 +289,7 @@ sub html {
         my $mark = {
             'o' => 'circle',
             '+' => 'square',
-        }->{$key};
+        }->{$self->key};
 
         return $h->tag('li',
             style => $mark? "list-style-type:$mark": undef,

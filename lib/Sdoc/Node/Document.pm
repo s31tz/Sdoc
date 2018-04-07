@@ -294,6 +294,14 @@ Aufruf-Optionen des Benutzers enthält.
 
 =back
 
+=cut
+
+# -----------------------------------------------------------------------------
+
+our $Abbrev = 'doc';
+
+# -----------------------------------------------------------------------------
+
 =head1 METHODS
 
 =head2 Konstruktor
@@ -1783,11 +1791,12 @@ sub html {
     my $style;
     my $c = Sdoc::Core::Css->new('flat');
 
-    # Globale CSS-Regeln aller Knoten-Typen
+    # Globale CSS-Regeln aller CSS-Klassen (!= Knoten-Typen,
+    # da es mehrere CSS-Klassen für Listen gibt)
 
     my %seen;
     for my $node ($self->nodes) {
-        if (!$seen{$node->type}++) {
+        if (!$seen{$node->cssClass}++) {
             $style .= $node->css($c,1);
         }
     }
