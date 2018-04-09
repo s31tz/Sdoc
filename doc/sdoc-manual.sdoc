@@ -703,7 +703,7 @@ In der Beschriftung (C{caption}) einer Abbildung können alle Segmente
   Höhe in Pixeln (ohne Angabe einer Einheit), auf die das Bild
   skaliert wird.
 
-[latexAlign=left|center]
+[latexAlign=left|center]:
   Horizontale Ausrichtung des Bildes in LaTeX.
 
 [latexOptions=STRING]:
@@ -731,9 +731,6 @@ In der Beschriftung (C{caption}) einer Abbildung können alle Segmente
   (Attribut C{border}). Der Abstand LENGTH muss, sofern nicht 0, mit
   einer Einheit wie px oder mm versehen werden. Ein Pixelwert wird für
   LaTeX nach pt gewandelt.
-
-Zeichne den Rahmen (Attribut C{border}) mit dem
-  angegebenen Abstand um die Abbildung.
 
 [scale=FLOAT]:
   Skalierungsfaktor. Der Skalierungsfaktor hat bei LaTeX Priorität

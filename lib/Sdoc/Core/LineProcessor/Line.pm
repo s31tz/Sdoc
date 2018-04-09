@@ -278,6 +278,30 @@ sub append {
 
 # -----------------------------------------------------------------------------
 
+=head3 trim() - Entferne Whitespace am Anfang und Ende
+
+=head4 Synopsis
+
+    $ln->trim;
+
+=head4 Description
+
+Entferne Whitespace am Anfang und am Ende der Zeile. Die Methode
+liefert keinen Wert zurück.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub trim {
+    my $self = shift;
+    $self->[0] =~ s/^\s+//;
+    $self->[0] =~ s/\s+$//;
+    return;
+}
+
+# -----------------------------------------------------------------------------
+
 =head3 unindent() - Entferne Einrückung
 
 =head4 Synopsis
