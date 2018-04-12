@@ -7,7 +7,6 @@ use warnings;
 our $VERSION = 3.00;
 
 use Sdoc::Core::AsciiTable;
-use Sdoc::Core::Css;
 use Sdoc::Core::Html::Table::List;
 use Sdoc::Core::LaTeX::LongTable;
 
@@ -33,6 +32,10 @@ Ein Objekt der Klasse repräsentiert eine Tabelle.
 Tabellen-Knoten folgende zusätzliche Attribute:
 
 =over 4
+
+=item align => 'left'|'center' (Default: 'left')
+
+Horizontale Ausrichtung der Tabelle.
 
 =item anchor => $anchor (Default: undef)
 
@@ -197,6 +200,7 @@ sub new {
     # funktionieren
 
     my $self = $class->SUPER::new('Table',$variant,$root,$parent,
+        align => 'left',
         anchor => undef,
         asciiTable => undef,
         border => undef,
@@ -308,7 +312,175 @@ sub linkText {
 
 # -----------------------------------------------------------------------------
 
+=head2 Einrückung
+
+=head3 indentBlock() - Prüfe, ob Tabelle eingrückt werden soll
+
+=head4 Synopsis
+
+    $bool = $tab->indentBlock;
+
+=head4 Returns
+
+Bool
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub indentBlock {
+    my $self = shift;
+
+    if (substr($self->align,0,1) eq 'c') {
+        return 0;
+    }
+
+    my $indentMode = $self->root->indentMode;
+    my $indent = $self->indent;
+
+    return $indent || $indentMode && !defined $indent? 1: 0;
+}
+
+# -----------------------------------------------------------------------------
+
 =head2 Formate
+
+=head3 css() - Generiere CSS-Code
+
+=head4 Synopsis
+
+    $code = $tab->css($c,$global);
+
+=head4 Arguments
+
+=over 4
+
+=item $c
+
+Generator für CSS.
+
+=item $global
+
+Wenn gesetzt, werden die globalen CSS-Regeln der Knoten-Klasse
+geliefert, sonst die lokalen CSS-Regeln der Knoten-Instanz.
+
+=back
+
+=head4 Returns
+
+CSS-Code (String)
+
+=head4 Description
+
+Generiere den CSS-Code der Knoten-Klasse oder der Knoten-Instanz
+und liefere diesen zurück.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub css {
+    my ($self,$c,$global) = @_;
+
+    my $doc = $self->root;
+
+    if ($global) {
+        # Globale CSS-Regeln der Knoten-Klasse
+
+        my $cssClass = $self->cssClass;
+
+        return $c->rules(
+            ".$cssClass.indent" => [
+                marginLeft => sprintf('%spx',$doc->htmlIndentation+4),
+            ],
+            ".$cssClass table" => [
+                borderCollapse => 'collapse',
+            ],
+            ".$cssClass table th" => [
+                padding => '4px',
+            ],
+            ".$cssClass table td" => [
+                padding => '4px',
+            ],
+            # Default-Layout der Bildunterschrift
+            # * Text verkleinert
+            # * Abstand zwischen Bild und Text verkleinert
+            # * Präfix fett
+            ".$cssClass p" => [
+                # fontSize => 'smaller',
+                marginTop => '6px',
+            ],
+            ".$cssClass span.prefix" => [
+                fontWeight => 'bold',
+            ],
+        );
+    }
+
+    # Lokale CSS-Regeln der Tabellen-Instanz
+
+    my $atb = $self->asciiTable;
+    my (@div,@table,@thead,@th,@tr,@td,@tdLast);
+
+    # Titelfarbe
+
+    if (my $color = $self->titleColor) {
+        push @thead,backgroundColor=>$color;
+    }
+
+    # Ausrichtung der Tabelle als Ganzes
+
+    if (substr($self->align,0,1) eq 'c') {
+        push @div,textAlign=>'center';
+        push @table,margin=>'0 auto';
+    }
+
+    # Umrandung
+
+    my $border = $self->border;
+    if (!defined $border) {
+        $border = $atb->multiLine? 'hvHV': 'hHV';
+    }
+
+    my $bh = index($border,'h') >= 0;
+    my $bt = index($border,'t') >= 0;
+    my $bv = index($border,'v') >= 0;
+    my $bH = index($border,'H') >= 0;
+    my $bV = index($border,'V') >= 0;
+    my $b = '1px solid black';
+    
+    if ($bh) {
+        push @td,borderTop=>$b;
+    }
+    elsif ($bt) {
+        push @th,borderBottom=>$b;
+    }
+    if ($bv) {
+        push @td,borderRight=>$b;
+        push @th,borderRight=>$b;
+        push @tdLast,borderRight=>'1px none black';
+    }
+    if ($bH && $bV) {
+        push @table,border=>$b;
+    }
+    elsif ($bH) {
+        push @table,borderTop=>$b,borderBottom=>$b;
+    }
+    elsif ($bV) {
+        push @table,borderLeft=>$b,borderRight=>$b;
+    }
+
+    return $c->restrictedRules('#'.$self->cssId,
+        '' => \@div,
+        'table' => \@table,
+        'table thead' => \@thead,
+        'table th' => \@th,
+        'table td' => \@td,
+        'table td:last-child' => \@tdLast,
+        'table th:last-child' => \@tdLast,
+    );
+}
+
+# -----------------------------------------------------------------------------
 
 =head3 html() - Generiere HTML-Code
 
@@ -337,85 +509,64 @@ HTML-Code (String)
 sub html {
     my ($self,$h) = @_;
 
+    my $doc = $self->root;
     my $atb = $self->asciiTable;
-    my $cssId = sprintf 'table%03d',$self->number;
-    my $border = $self->border;
-    if (!defined $border) {
-        $border = $atb->multiLine? 'hvHV': 'hHV';
+
+    # Prüfe, ob die Tabelle eingerückt werden soll. Wenn ja, fügen
+    # wir die CSS-Klasse 'indent' hinzu.
+
+    my $cssClass = $self->cssClass;
+    if ($self->indentBlock) {
+        $cssClass .= ' indent';
     }
 
-    my (@table,@thead,@th,@tr,@td,@tdLast);
-    push @table,borderCollapse=>'collapse';
-    push @th,padding=>'4px';
-    push @td,padding=>'4px';
+    # Tabellenunterschrift
 
-    my $bh = index($border,'h') >= 0;
-    my $bt = index($border,'t') >= 0;
-    my $bv = index($border,'v') >= 0;
-    my $bH = index($border,'H') >= 0;
-    my $bV = index($border,'V') >= 0;
-    my $b = '1px solid black';
-    
-    if ($bh) {
-        push @td,borderTop=>$b;
-    }
-    elsif ($bt) {
-        push @th,borderBottom=>$b;
-    }
-    if ($bv) {
-        push @td,borderRight=>$b;
-        push @th,borderRight=>$b;
-        push @tdLast,borderRight=>'1px none black';
-    }
-    if ($bH && $bV) {
-        push @table,border=>$b;
-    }
-    elsif ($bH) {
-        push @table,borderLeft=>$b,borderRight=>$b;
-    }
-    elsif ($bV) {
-        push @table,borderTop=>$b,borderBottom=>$b;
-    }
-    if (my $color = $self->titleColor) {
-        push @thead,backgroundColor=>$color;
+    my $caption = $self->caption;
+    my $captionPrefix;
+    if ($caption) {
+        $captionPrefix = sprintf $doc->language eq 'german'? 'Tabelle %s: ':
+            'Table %s: ',$self->number;
     }
 
-    my $html = $h->tag('style',
-        Sdoc::Core::Css->new('flat')->restrictedRules("#$cssId",
-            '' => \@table,
-            thead => \@thead,
-            th => \@th,
-            td => \@td,
-            'td:last-child' => \@tdLast,
-            'th:last-child' => \@tdLast,
-        )
+    return $h->tag('div',
+        class => $cssClass,
+        id => $self->cssId,
+        '-',
+        Sdoc::Core::Html::Table::List->html($h,
+            border => undef,
+            allowHtml => 1,
+            cellpadding => undef,
+            cellspacing => undef,
+            align => scalar $atb->alignments('html'),
+            # FIXME: verbessern
+            titles => [map { $self->expandText($h,\$_);
+                s/\n/$h->tag('br')/ge; $_ } $atb->titles],
+            rows => scalar $atb->rows,
+            rowCallbackArguments => [$self],
+            rowCallback => sub {
+                my ($row,$i,$node) = @_;
+                my @row;
+                for (@$row) {
+                    my $text = $node->expandText($h,\$_);
+                    $text =~ s/\n/$h->tag('br')/ge;
+                    push @row,$text;
+                }
+                return (undef,@row);
+            },
+        ),
+        $h->tag('p',
+            '-',
+            $h->tag('span',
+                class => 'prefix',
+                $captionPrefix
+            ),
+            $h->tag('span',
+                class => 'caption',
+                $caption
+            ),
+        ),
     );
-    $html .= Sdoc::Core::Html::Table::List->html($h,
-        class => 'sdoc-table',
-        id => $cssId,
-        border => undef,
-        allowHtml => 1,
-        cellpadding => undef,
-        cellspacing => undef,
-        align => scalar $atb->alignments('html'),
-        # FIXME: verbessern
-        titles => [map { $self->expandText($h,\$_);
-            s/\n/$h->tag('br')/ge; $_ } $atb->titles],
-        rows => scalar $atb->rows,
-        rowCallbackArguments => [$self],
-        rowCallback => sub {
-            my ($row,$i,$node) = @_;
-            my @row;
-            for (@$row) {
-                my $text = $node->expandText($h,\$_);
-                $text =~ s/\n/$h->tag('br')/ge;
-                push @row,$text;
-            }
-            return (undef,@row);
-        },
-    );
-
-    return $html;
 }
 
 # -----------------------------------------------------------------------------
@@ -468,7 +619,7 @@ sub latex {
     # LaTeX-Code erzeugen
 
     return Sdoc::Core::LaTeX::LongTable->latex($l,
-        align => 'l',
+        align => $self->align,
         alignments => scalar $atb->alignments('latex'),
         border => $border,
         callbackArguments => [$self],

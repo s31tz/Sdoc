@@ -16,7 +16,7 @@
     .sdoc-tableofcontents ul ul { padding-left: 22px; }
     .sdoc-tableofcontents li { margin-top: 2px; margin-bottom: 2px; }
     .sdoc-tableofcontents span.number { padding-right: 2px; }
-    .sdoc-graphic p { font-size: smaller; margin-top: 4px; }
+    .sdoc-graphic p { margin-top: 4px; }
     .sdoc-graphic span.prefix { font-weight: bold; }
     .sdoc-graphic.indent { margin-left: 24px; }
     .sdoc-code { margin-top: 16px; margin-bottom: 16px; }
@@ -90,15 +90,20 @@
     .sdoc-code table .vi { color: #00688B }
     .sdoc-code table .vm { color: #00688B }
     .sdoc-code table .il { color: #B452CD }
-    .sdoc-list-description dt { font-weight: bold; }
-    .sdoc-list-description dd { margin-left: 24px; }
-    .sdoc-list-description.noindent dd { margin-left: 0; }
-    .sdoc-list-description dd > *:first-child { margin-top: 2px; }
-    .sdoc-list-description dd > *:last-child { margin-bottom: 6px; }
-    .sdoc-list-unordered { padding-left: 39px; }
-    .sdoc-list-unordered.noindent { padding-left: 15px; }
-    .sdoc-list-unordered li > *:first-child { margin-top: 4px; }
-    .sdoc-list-unordered li > *:last-child { margin-bottom: 4px; }
+    .sdoc-list { margin-top: 16px; margin-bottom: 16px; }
+    .sdoc-list.noindent > ul:first-child { padding-left: 15px; }
+    .sdoc-list.noindent > ol:first-child { padding-left: 15px; }
+    .sdoc-list.noindent > dl > dd { margin-left: 0; }
+    .sdoc-list ul { margin-top: 0; margin-bottom: 0; }
+    .sdoc-list li > *:first-child { margin-top: 4px; }
+    .sdoc-list li > *:last-child { margin-bottom: 4px; }
+    .sdoc-list ol { margin-top: 0; margin-bottom: 0; }
+    .sdoc-list dl { margin-top: 0; margin-bottom: 0; }
+    .sdoc-list dt { font-weight: bold; }
+    .sdoc-list dd { margin-left: 24px; }
+    .sdoc-list dd > *:first-child { margin-top: 2px; }
+    .sdoc-list dd > *:last-child { margin-bottom: 6px; }
+    .sdoc-list p { margin-top: 4px; margin-bottom: 4px; }
     #gph001 img { border: 1px solid black; }
   </style>
 </head>
@@ -106,7 +111,7 @@
   <div class="sdoc-document">
     <h1>Ein Beispieldokument</h1>
     <p>
-      <span class="author">Nico Laus</span>, <span class="date">8. April 2018</span>
+      <span class="author">Nico Laus</span>, <span class="date">11. April 2018</span>
     </p>
   </div>
   <div class="sdoc-tableofcontents">
@@ -161,43 +166,25 @@
     Auf eine andere Stelle im Dokument zu verweisen ist einfach. Hier ist
     ein Verweis auf die <a href="#fqLOIvxTkpshE8fyCET5oOaNzRU">Einleitung</a>.
   </p>
-  <dl class="sdoc-list-description" id="lst001">
-    <dt>255 239 213</dt>
-    <dd>
-      <p class="sdoc-paragraph">
-        PapayaWhip
-      </p>
-    </dd>
-    <dt>188 143 143</dt>
-    <dd>
-      <p class="sdoc-paragraph">
-        RosyBrown
-      </p>
-    </dd>
-    <dt>255 218 185</dt>
-    <dd>
-      <p class="sdoc-paragraph">
-        PeachPuff
-      </p>
-    </dd>
-  </dl>
-  <ul class="sdoc-list-unordered" id="lst002">
-    <li>
-      <p class="sdoc-paragraph">
-        Apfel
-      </p>
-    </li>
-    <li>
-      <p class="sdoc-paragraph">
-        Birne
-      </p>
-    </li>
-    <li>
-      <p class="sdoc-paragraph">
-        Pflaume
-      </p>
-    </li>
-  </ul>
+  <div class="sdoc-list" id="lst001">
+    <ul>
+      <li>
+        <p class="sdoc-paragraph">
+          Apfel
+        </p>
+      </li>
+      <li>
+        <p class="sdoc-paragraph">
+          Birne
+        </p>
+      </li>
+      <li>
+        <p class="sdoc-paragraph">
+          Pflaume
+        </p>
+      </li>
+    </ul>
+  </div>
   <p class="sdoc-paragraph">
     Das ist eine einfache Aufzählung. Aufzählungen können beliebig
     geschachtelt werden.

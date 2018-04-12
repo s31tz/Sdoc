@@ -151,6 +151,42 @@ sub new {
 
 # -----------------------------------------------------------------------------
 
+=head2 Test
+
+=head3 isEmbedded() - Prüfe, ob Liste in andere Liste eingebettet ist
+
+=head4 Synopsis
+
+    $bool = $lst->isEmbedded;
+
+=head4 Returns
+
+Bool
+
+=head4 Description
+
+Prüfe, ob die Liste in einer anderen Liste untergeordnet ist. Wenn
+ja liefere 1, wenn nein, liefere 0.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub isEmbedded {
+    my $self = shift;
+
+    my $node = $self;
+    while ($node = $node->parent) {
+        if ($node->type eq 'List') {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+# -----------------------------------------------------------------------------
+
 =head2 Formate
 
 =head3 css() - Generiere CSS-Code
@@ -196,45 +232,59 @@ sub css {
         my $doc = $self->root;
         my $cssClass = $self->cssClass;
 
-        if ($self->listType eq 'description') {
-            # Description List
+        # FIXME: Dieses Regelwerk ist noch nicht richtig ausgearbeitet
 
-            return $c->rules(
-                ".$cssClass dt" => [
-                    fontWeight => 'bold',
-                ],
-                ".$cssClass dd" => [
-                    marginLeft => ($doc->htmlIndentation+4).'px',
-                ],
-                ".$cssClass.noindent dd" => [
-                    marginLeft => 0,
-                ],
-                # Kompakter Leerraum vor dem ersten und nach
-                # dem letzten Element
-                ".$cssClass dd > *:first-child" => [
-                    marginTop => '2px',
-                ],
-                ".$cssClass dd > *:last-child" => [
-                    marginBottom => '6px',
-                ],
-            );
-        }
-
-        # Ordered- und Unordered List
-
-        return $c->rules(
-            ".$cssClass" => [
-                paddingLeft => ($doc->htmlIndentation+19).'px',
+        return $c->restrictedRules(".$cssClass",
+            '' => [
+                # Rand ober- und unterhalb der Liste
+                marginTop => '16px',
+                marginBottom => '16px',
             ],
-            ".$cssClass.noindent" => [
+            \'.noindent > ul:first-child' => [
                 paddingLeft => '15px',
             ],
-            # Kompakter Leerraum vor dem ersten und nach
-            # dem letzten Element
-            ".$cssClass li > *:first-child" => [
+            \'.noindent > ol:first-child' => [
+                paddingLeft => '15px',
+            ],
+            \'.noindent > dl > dd' => [
+                marginLeft => 0,
+            ],
+            'ul' => [
+                marginTop => 0,
+                marginBottom => 0,
+            ],
+            'li > *:first-child' => [
+                # Kompakter Leerraum vor dem ersten Element
                 marginTop => '4px',
             ],
-            ".$cssClass li > *:last-child" => [
+            'li > *:last-child' => [
+                # Kompakter Leerraum nach dem letzen Element
+                marginBottom => '4px',
+            ],
+            'ol' => [
+                marginTop => 0,
+                marginBottom => 0,
+            ],
+            'dl' => [
+                marginTop => 0,
+                marginBottom => 0,
+            ],
+            'dt' => [
+                fontWeight => 'bold',
+            ],
+            'dd' => [
+                marginLeft => ($doc->htmlIndentation+4).'px',
+            ],
+            'dd > *:first-child' => [
+                # Kompakter Leerraum vor dem ersten Element
+                marginTop => '2px',
+            ],
+            'dd > *:last-child' => [
+                # Kompakter Leerraum nach dem letzen Element
+                marginBottom => '6px',
+            ],
+            'p' => [
+                marginTop => '4px',
                 marginBottom => '4px',
             ],
         );
@@ -242,6 +292,44 @@ sub css {
 
     # Lokale CSS-Regeln der Knoten-Instanz
     return '';
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 htmlTag() - HTML-Tag der Liste
+
+=head4 Synopsis
+
+    $tag = $lst->htmlTag;
+
+=head4 Returns
+
+HTML Tag (String)
+
+=head4 Description
+
+Liefere den HTML-Tag der Liste. Der Tag ergibt sich aus dem Typ
+der Liste:
+
+    List-Type   HTML-Tag
+    ----------- --------
+    ordered        ol
+    unordered      ul
+    description    dl
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+my %ListTag = (
+    ordered => 'ol',
+    unordered => 'ul',
+    description => 'dl',
+);
+
+sub htmlTag {
+    my $self = shift;
+    return $ListTag{$self->listType} // $self->throw;
 }
 
 # -----------------------------------------------------------------------------
@@ -273,30 +361,32 @@ HTML-Code (String)
 sub html {
     my ($self,$h) = @_;
 
-    # Abbildung Sdoc-Aufzählungstypen auf HTML-Aufzählungstypen
+    # HTML der Liste erzeugen
 
-    my $tag = {
-        ordered => 'ol',
-        unordered => 'ul',
-        description => 'dl',
-    }->{$self->listType};
-
-    # Einrückung. Wir setzen CSS-Klasse "noindent", wenn *keine*
-    # Einrückung erfolgen soll.
-
-    my $cssClass = $self->cssClass;
-    my $indent = $self->indent;
-    if (defined $indent && $indent eq '0') {
-        $cssClass .= ' noindent';
-    }
-    
-    # Generiere HTML
-
-    return $h->tag($tag,
-        class => $cssClass,
-        id => $self->cssId,
+    my $html = $h->tag($self->htmlTag,
         $self->generateChilds('html',$h)
     );
+
+    # Wenn oberste Liste, Struktur in <div> einfassen
+
+    if (!$self->isEmbedded) {
+        # Einrückung. Wir setzen CSS-Klasse "noindent", wenn *keine*
+        # Einrückung erfolgen soll.
+
+        my $cssClass = $self->cssClass;
+        my $indent = $self->indent;
+        if (defined $indent && $indent eq '0') {
+            $cssClass .= ' noindent';
+        }
+
+        $html = $h->tag('div',
+            class => $cssClass,
+            id => $self->cssId,
+            $html
+        );
+    }
+    
+    return $html;
 }
 
 # -----------------------------------------------------------------------------

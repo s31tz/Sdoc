@@ -235,11 +235,13 @@ sub css {
 
         return $c->restrictedRules('.'.$self->cssClass,
             'h3' => [
+                # Kein Rand oberhalb des Inhaltsverzeichnisses
                 marginTop => 0,
-                # Abstand zum Inhaltsverzeichnis-Baum verkleinern
+                # Abstand zw. Überschrift und Baum verkleinern
                 marginBottom => '8px',
             ],
             'ul' => [
+                # Kein Item-Symbol
                 listStyleType => 'none',
             ],
             '> ul' => [
@@ -247,19 +249,20 @@ sub css {
                 paddingLeft => 0,
             ],
             '> ul.indent' => [
+                # Abstand vom linken Rand, wenn Einrückung
                 marginLeft => $doc->htmlIndentation.'px',
             ],
             'ul ul' => [
+                # Einrückung der tieferen Ebenen
                 paddingLeft => '22px',
             ],
-            # Abstand zwischen den Inhaltsverzeichnis-Zeilen hinzufügen
             'li' => [
+                # Abstand zwischen den Inhaltsverzeichnis-Zeilen
                 marginTop => '2px',
                 marginBottom => '2px',
             ],
-            # Zusätzlichen Abstand zwischen Abschnittsnummer
-            # und Abschnittstitel hinzufügen
             'span.number' => [
+                # zus. Abstand zw. Abschnittsnummer und Abschnittstitel
                 paddingRight => '2px',
             ],
         );

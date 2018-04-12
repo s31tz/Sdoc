@@ -184,7 +184,7 @@ Dokument-Bock angegeben:
     author=STRING
     codeStyle=STYLE
     copyComments=BOOL
-    cssClassPrefix=NAME
+    cssPrefix=NAME
     date=STRING
     htmlDocumentStyle=NAME
     htmlIndentation=INTEGER
@@ -246,7 +246,7 @@ verwendet werden:
   Zielformats zu finden, die aus einem bestimmten Sdoc-Konstrukt
   hervorgegangen ist.
 
-[cssClassPrefix=NAME]
+[cssPrefix=NAME]
   (Default: 'sdoc') Präfix für die CSS-Klassen der Elemente des
   Dokuments.
 
@@ -2525,7 +2525,7 @@ Gegenstand von CSS-Regeln.
 ==== HTML
 
 %Code: lang=HTML
-  <div style="page-break-before: always" />
+  <div style="page-break-before: always"></div>
 .
 
 ==== CSS
@@ -2545,20 +2545,101 @@ Ein Include-Block bindet einen externen Sdoc-Quelltext ein, hat aber
 selbst keine Darstellung in HTML und ist daher auch nicht Gegenstand
 von CSS-Regeln.
 
-=== Graphic
+=== List
 
-FIXME: fortsetzen
+==== HTML
+
+====* unordered
 
 %Code: lang=HTML
-  <style type="text/css">
-    RULES
-  </style>
+  <div class="sdoc-list [noindent]" id="ID">
+    <ul>
+      <li>
+        ...
+      </li>
+      ...
+    </ul>
+  </div>
+.
+
+====* ordered
+
+%Code: lang=HTML
+  <div class="sdoc-list [noindent]" id="ID">
+    <ol>
+      <li>
+        ...
+      </li>
+      ...
+    </ol>
+  </div>
+.
+
+====* description
+
+%Code: lang=HTML
+  <div class="sdoc-list [noindent]" id="ID">
+    <dl>
+      <dt>...</dt>
+      <dd>
+        ...
+      </dd>
+      ...
+    </dl>
+  </div>
+.
+
+Die drei Listenarten können beliebig verschachtelt auftreten. Das
+C{<div>} wird nur um die oberste Liste herum gesetzt.
+
+==== CSS
+
+Im Folgenden ist LTAG C{ul}, C{ol} oder C{dl} und ITAG C{li} oder
+C{dd}.
+
+%Table:
+  border=hvHV
+  Selektor                          Ziel
+  --------------------------------- ----------------------------------------
+  .sdoc-list                        Das Konstrukt insgesamt
+  .sdoc-list.noindent               Das Konstrukt ohne Einrückung
+  .sdoc-list LTAG                   Alle Listen vom Typ TAG
+  .sdoc-list > LTAG                 Die oberste Liste (vom Typ TAG)
+  .sdoc-list ITAG > *:first-child   Erstes Sub-Element eines Item
+  .sdoc-list ITAG > *:last-child    Letztes Sub-Element eines Item
+.
+
+==== Beispiele
+
+====* Terme einer Definitionsliste fett darstellen
+
+%Code: lang=CSS
+  .sdoc-list dt {
+      font-weight: bold;
+  }
+.
+
+=== Graphic
+
+==== HTML
+
+%Code: lang=HTML
   <div class="sdoc-graphic [indent]" id="ID">
     <img src="SOURCE" width="WIDTH" height="HEIGHT" alt="ALTTEXT" />
     [<p>
       <span class="prefix">PREFIX:</span> <span class="caption">CAPTION</span>
     </p>]
   </div>
+.
+
+==== CSS
+
+%Table:
+  border=hvHV
+  Selektor                          Ziel
+  --------------------------------- ----------------------------------------
+  .sdoc-graphic                     Das Konstrukt insgesamt
+  .sdoc-graphic.noindent            Das Konstrukt ohne Einrückung
 .
 
 ---PageBreak---
@@ -2876,6 +2957,14 @@ In den Methoden der Klasse kann die Eigenschaft abgefragt werden mit:
    $val = $node->ATTRIBUTE;
 
 Beispiel: Eigenschaft C{language} der Klasse Sdoc::Node::Document.
+
+== User/Config/Node-Eigenschaft einführen
+
+1. Knoten-Eigenschaft hinzufügen (siehe L{Knoten-Eigenschaft hinzufügen})
+2. Aufruf-Option zu sdoc hinzufügen
+3. Konfigurationsvariable hinzufügen
+
+Beispiel: Attribut C{codeStyle}
 
 ---PageBreak---
 

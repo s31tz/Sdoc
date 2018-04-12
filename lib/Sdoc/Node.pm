@@ -1657,11 +1657,9 @@ CSS-Klassenname (String)
 =head4 Description
 
 Liefere den CSS-Klassennamen des Knotens. Alle Knoten desselben
-Typs haben denselben CSS-Klassennamen (außer List-Knoten
-s.u.). Der CSS-Klassenname setzt sich zusammen aus dem
-CSS-Klassenpräfix, den der Dokument-Knoten definiert, und dem
-Namen des Knotentyps. Im Falle einer Liste kommt ferner der
-Listentyp hinzu.
+Typs haben denselben CSS-Klassennamen. Der CSS-Klassenname setzt
+sich zusammen aus dem CSS-Klassenpräfix, den der Dokument-Knoten
+definiert, und dem Namen des Knotentyps.
 
 =cut
 
@@ -1669,15 +1667,9 @@ Listentyp hinzu.
 
 sub cssClass {
     my $self = shift;
-
-    my $doc = $self->root;
-
-    my $cssClass = lc sprintf '%s-%s',$doc->cssClassPrefix,$self->type;
-    if ($self->type eq 'List') {
-        $cssClass .= '-'.$self->listType;
-    }
-
-    return $cssClass;
+    return lc sprintf '%s-%s',
+        $self->root->getUserConfigAttribute('cssPrefix'),
+        $self->type;
 }
 
 # -----------------------------------------------------------------------------

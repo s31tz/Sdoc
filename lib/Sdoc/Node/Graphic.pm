@@ -476,26 +476,26 @@ sub css {
 
         my $cssClass = $self->cssClass;
 
-        my $rules .= $c->restrictedRules(".$cssClass",
+        return $c->restrictedRules(".$cssClass",
+            '' => [
+                marginTop => '16px',
+                marginBottom => '16px',
+            ],
+            \'.indent' => [
+                marginLeft => sprintf('%spx',$doc->htmlIndentation+4),
+            ],
             # Default-Layout der Bildunterschrift
             # * Text verkleinert
             # * Abstand zwischen Bild und Text verkleinert
             # * Präfix fett
             'p' => [
-                fontSize => 'smaller',
+                # fontSize => 'smaller',
                 marginTop => '4px',
             ],
             'span.prefix' => [
                 fontWeight => 'bold',
             ],
         );
-        $rules .= $c->rule(
-            ".$cssClass.indent" => [
-                marginLeft => sprintf('%spx',$doc->htmlIndentation+4),
-            ]
-        );
-
-        return $rules;
     }
 
     # Lokale CSS-Regeln der Knoten-Instanz

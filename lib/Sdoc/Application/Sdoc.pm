@@ -57,6 +57,7 @@ sub main {
     my $ansiColorDefault = 1;
     my $browserDefault = 'chromium --disable-gpu --new-window';
     my $codeStyleDefault = 'default';
+    my $cssPrefixDefault = 'sdoc';
     my $cacheDirDefault = '/tmp/sdoc/%U';
     my $pdfViewerDefault = 'evince -s';
     my $shellEscapeDefault = 0;
@@ -70,6 +71,7 @@ sub main {
             ansiColor => $ansiColorDefault,
             browser => $browserDefault,
             codeStyle => $codeStyleDefault,
+            cssPrefix => $cssPrefixDefault,
             cacheDir => $cacheDirDefault,
             pdfViewer => $pdfViewerDefault,
             shellEscape => $shellEscapeDefault,
@@ -87,6 +89,7 @@ sub main {
         -browser => $conf->try('browser') // $browserDefault,
         -cacheDir => $conf->try('cacheDir') // $cacheDirDefault,
         -codeStyle => undef, # Sdoc-Eigenschaft
+        -cssPrefix => undef, # Sdoc-Eigenschaft
         -convert => 0,
         -pdfViewer => $conf->try('pdfViewer') // $pdfViewerDefault,
         -selector => '.sdoc-code text',

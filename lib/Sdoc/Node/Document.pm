@@ -68,6 +68,10 @@ verfügbaren Styles liefert das Kommando
 
     $ pygmentize -L styles
 
+=item cssPrefix => $prefix
+
+Der Präfix, der den CSS-Klassen des Dokuments vorangestellt wird.
+
 =item configH => $conf
 
 Referenz auf ein Objekt der Klasse Sdoc::Core::Hash, das
@@ -100,9 +104,9 @@ hochgezählt.
 Anzahl der Tabellen-Knoten. Der Wert wird während des Parsings
 hochgezählt.
 
-=item cssClassPrefix => $name (Default: 'sdoc')
+=item cssPrefix => $name (Default: 'sdoc')
 
-Präfix für die CSS-Klassen der Elemente des Dokuments.
+Präfix für die CSS-Klassen des Dokuments.
 
 =item date => $date
 
@@ -395,7 +399,7 @@ sub new {
         countGraphic => 0,
         countList => 0,
         countTable => 0,
-        cssClassPrefix => 'sdoc',
+        cssPrefix => 'sdoc', # User, Attribute, Config, Default
         date => undef,
         dateS => undef,
         firstAppendixSection => undef,

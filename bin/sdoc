@@ -57,6 +57,10 @@ Dokument-Eigenschaft C<codeStyle>.
 Konvertiere die Eingabedatei vor der Verarbeitung von Sdoc2 nach
 Sdoc3.
 
+=item --css-prefix=PREFIX (Default: siehe ~/.sdoc.conf)
+
+Präfix für die CSS-Klassen des Dokuments.
+
 =item --pdf-viewer=PROGRAM (Default: siehe ~/.sdoc.conf)
 
 Viewer zum Anzeigen des erzeugten PDF.
@@ -118,6 +122,7 @@ angegebenen Optionen überschrieben werden. Aufbau der Datei:
     ansiColor => 1,
     cacheDir => '/tmp/sdoc/%U',
     codeStyle => 'default',
+    cssPrefix => 'sdoc',
     browser => 'google-chrome --new-window',
     pdfViewer => 'evince',
     shellEscape => 0,

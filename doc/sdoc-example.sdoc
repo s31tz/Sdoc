@@ -37,13 +37,6 @@ Programm-Quelltexte können wir mit Q{Syntax-Highlighting} darstellen:
 Auf eine andere Stelle im Dokument zu verweisen ist einfach. Hier ist
 ein Verweis auf die L{Einleitung}.
 
-[255 239 213]:
-  PapayaWhip
-[188 143 143]:
-  RosyBrown
-[255 218 185]:
-  PeachPuff
-
 * Apfel
 * Birne
 * Pflaume

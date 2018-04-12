@@ -3,6 +3,7 @@ use base qw/Sdoc::Core::Hash/;
 
 use strict;
 use warnings;
+use utf8;
 
 our $VERSION = 1.125;
 
@@ -51,7 +52,7 @@ produziert
     Links & Rechts & Zentriert \\ \hline
     \endhead
     \hline
-    \multicolumn{3}{r}{\emph{weiter}} \
+    \multicolumn{3}{r}{\emph{weiter nächste Seite}} \
     \endfoot
     \caption{Ein Test}
     \endlastfoot
@@ -353,7 +354,8 @@ sub latex {
     # \endfoot
 
     $body .= $HBorder? $l->c('\hline'): '';
-    $msg = $language eq 'german'? 'weiter': 'next';
+    $msg = $language eq 'german'? 'weiter nächste Seite':
+        'continued next page';
     $body .= $l->c('\multicolumn{%s}{r}{\\emph{%s}} \\\\',$width,$msg);
     $body .= $l->c('\endfoot');
 

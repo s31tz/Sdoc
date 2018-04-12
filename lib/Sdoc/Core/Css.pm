@@ -291,9 +291,14 @@ sub rules {
 Selector, der allen folgenden Selektoren vorangestellt wird.
 Z.B. '#table01'.
 
-=item $selector
+=item $selector -or- \$selector
 
-CSS-Selector. Z.B. 'p.abstract'.
+Sub-Selector, der dem $localSelector mit einem Leerzeichen
+getrennt, nachgestellt wird. Wenn Leerstring (''), wird der
+Sub-Selector fortgelassen, die @properties also direkt dem
+$localSelector zugeordnet. Ist eine Referenz auf den Sub-Selector
+angegeben, werden $localSelector und $selector ohne trennendes
+Leerzeichen konkateniert.
 
 =item \@properties
 
@@ -322,7 +327,15 @@ sub restrictedRules {
     my $rules = '';
     while (@_) {
         my $selector = shift;
-        $selector = $selector? "$localSelector $selector": $localSelector;
+        if (ref $selector) {
+            $selector = $localSelector.$$selector;
+        }
+        elsif ($selector eq '') {
+            $selector = $localSelector;
+        }
+        else {
+            $selector = "$localSelector $selector";
+        }
         $rules .= $self->rule($selector,shift);
     }
 
