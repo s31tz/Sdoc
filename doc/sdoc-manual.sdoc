@@ -2958,13 +2958,23 @@ In den Methoden der Klasse kann die Eigenschaft abgefragt werden mit:
 
 Beispiel: Eigenschaft C{language} der Klasse Sdoc::Node::Document.
 
-== User/Config/Node-Eigenschaft einführen
+== Nutzer/Konfiguration/Knoten-Eigenschaft hinzufügen
+
+Eine Nutzer/Konfiguration/Knoten-Eigenschaft zeichnet sich dadurch aus,
+dass ihr Wert in folgender Reihenfolge bestimmt wird:
+
+1. Setzung per Option durch den Nutzer bei Aufruf von sdoc
+2. Setzung im Dokument durch Knoten-Attribut
+3. Setzung durch Eintrag in Konfigurationsdatei (~/.sdoc.conf)
+
+Eine Nutzer/Konfiguration/Knoten-Eigenschaft wird hinzugefügt durch
+die Schritte:
 
 1. Knoten-Eigenschaft hinzufügen (siehe L{Knoten-Eigenschaft hinzufügen})
 2. Aufruf-Option zu sdoc hinzufügen
 3. Konfigurationsvariable hinzufügen
 
-Beispiel: Attribut C{codeStyle}
+Beispiel: Attribute C{codeStyle}, C{cssPrefix}
 
 ---PageBreak---
 
