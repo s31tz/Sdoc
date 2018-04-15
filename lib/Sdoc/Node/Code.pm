@@ -328,25 +328,25 @@ sub css {
 
         my $cssClass = $self->cssClass;
 
-        my $code .= $c->rules(
-            ".$cssClass" => [
+        my $code .= $c->restrictedRules(".$cssClass",
+            '' => [
                 marginTop => '16px',
                 marginBottom => '16px',
             ],
-            ".$cssClass table" => [
+            'table' => [
                 borderCollapse => 'collapse',
             ],
-            ".$cssClass td.ln" => [
+            'td.ln' => [
                 paddingLeft => 0,
             ],
-            ".$cssClass td.margin" => [
+            'td.margin' => [
                 width => '4px',
             ],
-            ".$cssClass td pre" => [
+            'td pre' => [
                 margin => 0,
                 lineHeight => '125%', # für Chrome, sonst Zeilen zu eng
             ],
-            ".$cssClass.indent" => [
+            '&.indent' => [
                 marginLeft => $doc->htmlIndentation.'px',
             ],
         );                

@@ -2352,13 +2352,37 @@ N ist eine ganze Zahl von 1 bis 6.
   </div>
 .
 
-====* CSS
+==== CSS
+
+====* Allgemein
 
 %Table:
   border=hvHV
   Selektor                          Ziel
   --------------------------------- ---------------------------------------
   .sdoc-code                        Alle Code-Blöcke
+  .sdoc-code.indent                 Eingerückte Code-Blöcke
+.
+
+====* Ohne Zeilennummern
+
+%Table:
+  border=hvHV
+  Selektor                          Ziel
+  --------------------------------- ---------------------------------------
+  .sdoc-code > pre                  Quelltext ohne Zeilennummern
+.
+
+====* Mit Zeilennummern
+
+%Table:
+  border=hvHV
+  Selektor                          Ziel
+  --------------------------------- ---------------------------------------
+  .sdoc-code table                  Tabelle als Ganzes
+  .sdoc-code td.ln                  Zeilennummern-Kolumne
+  .sdoc-code td.margin              Margen-Kolumne
+  .sdoc-code td.text                Text-Kolumne
 .
 
 ==== Beispiele
@@ -2368,6 +2392,15 @@ N ist eine ganze Zahl von 1 bis 6.
 %Code: lang=CSS
   .sdoc-code {
      background-color: yellow;
+  }
+.
+
+====* Abstände oberhalb und unterhalb des Konstrukts
+
+%Code: lang=CSS
+  .sdoc-code {
+     margin-top: 16px;
+     margin-bottom: 16px;
   }
 .
 
