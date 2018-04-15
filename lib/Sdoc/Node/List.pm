@@ -246,13 +246,13 @@ sub css {
             '> ol:first-child' => [
                 paddingLeft => ($htmlIndentation+16).'px',
             ],
-            \'.noindent > ul:first-child' => [
+            '&.noindent > ul:first-child' => [
                 paddingLeft => '15px',
             ],
-            \'.noindent > ol:first-child' => [
+            '&.noindent > ol:first-child' => [
                 paddingLeft => '15px',
             ],
-            \'.noindent > dl > dd' => [
+            '&.noindent > dl > dd' => [
                 marginLeft => 0,
             ],
             'ul' => [

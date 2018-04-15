@@ -1800,6 +1800,15 @@ können die Setzungen des externen StyleSheet also modifiziert oder
 Für mehrere externe StyleSheets müssen mehrere Style-Blöcke
 definiert werden.
 
+Innerhalb des Stylesheet-Code wird die Zeichenfolge C{$PREFIX}
+durch den cssPrefix des Dokuments ersetzt. Z.B.
+
+  %Style:
+    .$PREFIX-code {
+       background-color: yellow;
+    }
+  .
+
 === Eigenschaften
 
   %Style:
@@ -2313,7 +2322,54 @@ N ist eine ganze Zahl von 1 bis 6.
   }
 .
 
-=== (Code) ====================================================================
+=== Code (FIXME: Selektoren und Beispiele ergänzen) ===========================
+
+==== HTML
+
+====* Ohne Zeilennummern
+
+%Code: lang=HTML
+  <div class="sdoc-code [indent]">
+    <pre>TEXT</pre>
+  </div>
+.
+
+====* Mit Zeilennummern
+
+%Code: lang=HTML
+  <div class="sdoc-code [indent]">
+    <table>
+    <tr>
+      <td class="ln">
+        <pre>LINENUMBERS</pre>
+      </td>
+      <td class="margin"></td>
+      <td class="text">
+        <pre>TEXT</pre>
+      </td>
+    </tr>
+    </table>
+  </div>
+.
+
+====* CSS
+
+%Table:
+  border=hvHV
+  Selektor                          Ziel
+  --------------------------------- ---------------------------------------
+  .sdoc-code                        Alle Code-Blöcke
+.
+
+==== Beispiele
+
+====* Alle Code-Blöcke farbig hinterlegen
+
+%Code: lang=CSS
+  .sdoc-code {
+     background-color: yellow;
+  }
+.
 
 === Comment ===================================================================
 

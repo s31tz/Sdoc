@@ -199,6 +199,9 @@ sub css {
 
     my $code = $self->code;
     if ($code) {
+        my $cssPrefix = $self->root->getUserNodeConfigAttribute('cssPrefix',
+            'sdoc');
+        $code =~ s/\$PREFIX/$cssPrefix/g;
         $code .= "\n";
     }
 

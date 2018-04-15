@@ -481,7 +481,7 @@ sub css {
                 marginTop => '16px',
                 marginBottom => '16px',
             ],
-            \'.indent' => [
+            '&.indent' => [
                 marginLeft => $doc->htmlIndentation.'px',
             ],
             # Default-Layout der Bildunterschrift

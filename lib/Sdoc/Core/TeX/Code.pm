@@ -155,7 +155,6 @@ sub c {
     }
 
     # Codezeile erzeugen und zurückliefern
-
     return ("\n" x $pnl).sprintf($fmt,@_).("\n" x $nl);
 }
 

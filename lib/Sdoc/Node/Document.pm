@@ -1983,7 +1983,7 @@ sub latex {
         push @preamble,
             $l->comment('languages syntax highlighting'),
             $l->c('\usemintedstyle{%s}',
-                $self->getUserNodeConfigAttribute('codeStyle'),'default');
+                $self->getUserNodeConfigAttribute('codeStyle'));
     }
     elsif ($att->verbatim) {
         push @packages,
