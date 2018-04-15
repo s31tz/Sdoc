@@ -271,7 +271,7 @@ Bool
 sub indentBlock {
     my $self = shift;
 
-    my $indentMode = $self->root->indentMode;
+    my $indentMode = $self->root->getUserNodeAttribute('indentMode');
     my $indent = $self->indent;
 
     return $indent || $indentMode && !defined $indent? 1: 0;
@@ -347,14 +347,15 @@ sub css {
                 lineHeight => '125%', # für Chrome, sonst Zeilen zu eng
             ],
             ".$cssClass.indent" => [
-                marginLeft => ($doc->htmlIndentation+4).'px',
+                marginLeft => $doc->htmlIndentation.'px',
             ],
         );                
 
         if ($att->sourceCode) {
             # CSS-Regeln für Syntax Highlighting erzeugen
 
-            my $codeStyle = $doc->getUserConfigAttribute('codeStyle');
+            my $codeStyle = $doc->getUserNodeConfigAttribute('codeStyle',
+                'default');
             $code .= eval{Sdoc::Core::Html::Pygments->css($codeStyle,
                 ".$cssClass table")} // '';
             if ($@) {
@@ -461,7 +462,8 @@ sub latex {
     my $text = $self->text;
 
     # Einrückung
-    my $indent = $self->indent || $doc->indentMode && !defined $self->indent;
+    my $indent = $self->indent || $doc->getUserNodeAttribute('indentMode') &&
+        !defined $self->indent;
 
     my @opt;
     if (my $ln = $self->ln) {

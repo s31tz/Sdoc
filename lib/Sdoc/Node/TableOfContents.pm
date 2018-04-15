@@ -181,7 +181,7 @@ Bool
 sub indentBlock {
     my $self = shift;
 
-    my $indentMode = $self->root->indentMode;
+    my $indentMode = $self->root->getUserNodeAttribute('indentMode');
     my $htmlIndent = $self->htmlIndent;
 
     return $htmlIndent || $indentMode && !defined $htmlIndent? 1: 0;
@@ -234,6 +234,11 @@ sub css {
         # Globale CSS-Regeln der Knoten-Klasse
 
         return $c->restrictedRules('.'.$self->cssClass,
+            '' => [
+                # Leerraum unter- und oberhalb des Konstrukts
+                marginTop => '8px',
+                marginBottom => '26px',
+            ],
             'h3' => [
                 # Kein Rand oberhalb des Inhaltsverzeichnisses
                 marginTop => 0,

@@ -422,7 +422,7 @@ Bool
 sub indentBlock {
     my $self = shift;
 
-    my $indentMode = $self->root->indentMode;
+    my $indentMode = $self->root->getUserNodeAttribute('indentMode');
     my $indent = $self->indent;
 
     return $indent || $indentMode && !defined $indent? 1: 0;
@@ -482,7 +482,7 @@ sub css {
                 marginBottom => '16px',
             ],
             \'.indent' => [
-                marginLeft => sprintf('%spx',$doc->htmlIndentation+4),
+                marginLeft => $doc->htmlIndentation.'px',
             ],
             # Default-Layout der Bildunterschrift
             # * Text verkleinert
@@ -671,7 +671,8 @@ sub latex {
     # Einrückung
 
     my $indent;
-    if ($self->indent || $doc->indentMode && !defined $self->indent) {
+    if ($self->indent || $doc->getUserNodeAttribute('indentMode') &&
+            !defined $self->indent) {
         $indent = $doc->latexIndentation.'pt';
     }
     

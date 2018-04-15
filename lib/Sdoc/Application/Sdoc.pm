@@ -91,9 +91,12 @@ sub main {
         -codeStyle => undef, # Sdoc-Eigenschaft
         -cssPrefix => undef, # Sdoc-Eigenschaft
         -convert => 0,
+        -indentMode => undef, # Document.indentMode
         -pdfViewer => $conf->try('pdfViewer') // $pdfViewerDefault,
+        -sectionNumberLevel => undef, # Document.sectionNumberLevel
         -selector => '.sdoc-code text',
         -shellEscape => $conf->try('shellEscape') // $shellEscapeDefault,
+        -tableOfContents => undef, # Document.tableOfContents
         -textViewer => $conf->try('textViewer') // $textViewerDefault,
         -verbose => $conf->try('verbose') // $verboseDefault,
         -help => 0,

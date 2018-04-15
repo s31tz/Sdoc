@@ -335,8 +335,8 @@ verwendet werden:
 
 [sectionNumberLevel=N]:
   (Default: 3) Die Abschnittsebene, bis zu welcher Abschnitte
-  numeriert werden.  Mögliche Werte: -2, -1, 0, 1, 2, 3, 4. -2
-  bedeutet: Die Abschnitte des Dokuments werden nicht numeriert.
+  nummeriert werden.  Mögliche Werte: -2, -1, 0, 1, 2, 3, 4. -2
+  bedeutet: Die Abschnitte des Dokuments werden nicht nummeriert.
 
 [smallerMonospacedFont=BOOL]:
   Wähle einen kleineren Monospaced Font als standardmäßig.
@@ -429,7 +429,7 @@ Ebene 1, bei dem auf das = ein Pluszeichen (+) folgt:
 
 Alle folgenden Abschnitte und Unterabschnitte werden als Appendizes
 angesehen (unabhängig davon, ob sie mit + ausgezeichnet oder nicht) und
-entsprechend mit A. A.1. A.2 ... B. B.1. usw.  numeriert. Sonst gibt
+entsprechend mit A. A.1. A.2 ... B. B.1. usw.  nummeriert. Sonst gibt
 es keinen Unterschied zwischen Abschnitten und Appendizes.
 
 === Unterabschnitte vom Inhaltsverzeichnis ausschließen
@@ -772,9 +772,9 @@ produziert:
 * Birne
 * Pflaume
 
-=== Numerierungsliste
+=== Nummerierungsliste
 
-Eine Numerierungsliste (oder I{ordered list}) ist eine Abfolge von
+Eine Nummerierungsliste (oder I{ordered list}) ist eine Abfolge von
 Punkten, deren erste Zeile jeweils mit einer Zahl gefolgt von einem
 Punkt (C{.}) beginnt.
 
@@ -1339,7 +1339,7 @@ gleichtief eingerückt ist.
 == Code (Code)
 
 Ein Code-Abschnitt ist ein literaler Textblock, der, abgesehen von
-Einrückung, Farbgebung oder Zeilennumerierung, im Zielformat exakt so
+Einrückung, Farbgebung oder Zeilennummerierung, im Zielformat exakt so
 wiedergegeben wird wie er in der Quelle steht, einschließlich
 Leerzeichen und Zeilenumbrüchen.
 
@@ -2347,7 +2347,7 @@ Dokument-Kopf.
 .
 
 Die Überschrift TITLE ist optional. Die Abschnittsnummer NUMBER
-existiert nur bei numerierten Abschnittsebenen.
+existiert nur bei nummerierten Abschnittsebenen.
 
 ==== CSS
 

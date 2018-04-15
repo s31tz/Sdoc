@@ -232,13 +232,19 @@ sub css {
         my $doc = $self->root;
         my $cssClass = $self->cssClass;
 
-        # FIXME: Dieses Regelwerk ist noch nicht richtig ausgearbeitet
+        my $htmlIndentation = $doc->htmlIndentation;
 
         return $c->restrictedRules(".$cssClass",
             '' => [
                 # Rand ober- und unterhalb der Liste
                 marginTop => '16px',
                 marginBottom => '16px',
+            ],
+            '> ul:first-child' => [
+                paddingLeft => ($htmlIndentation+14).'px',
+            ],
+            '> ol:first-child' => [
+                paddingLeft => ($htmlIndentation+16).'px',
             ],
             \'.noindent > ul:first-child' => [
                 paddingLeft => '15px',
@@ -273,7 +279,7 @@ sub css {
                 fontWeight => 'bold',
             ],
             'dd' => [
-                marginLeft => ($doc->htmlIndentation+4).'px',
+                marginLeft => ($htmlIndentation+4).'px',
             ],
             'dd > *:first-child' => [
                 # Kompakter Leerraum vor dem ersten Element

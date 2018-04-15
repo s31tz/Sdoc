@@ -139,11 +139,11 @@ sub new {
 
 =head2 Attribute
 
-=head3 getUserConfigAttribute() - Liefere Attributwert
+=head3 getUserNodeConfigAttribute() - Liefere Attributwert
 
 =head4 Synopsis
 
-    $val = $doc->getUserConfigAttribute($key,$default);
+    $val = $doc->getUserNodeConfigAttribute($key,$default);
 
 =head4 Arguments
 
@@ -171,33 +171,35 @@ Attributwert (String)
 
 =head4 Description
 
-Suche nach dem Wert des Attributs $key über mehreren Objekten und
+Suche nach dem Wert des Attributs $key über den Aufruf-Optionen,
+den Knoten-Eigenschaften und Konfigurations-Variable und
 liefere den ersten definierten Wert zurück. Die Suchreihenfolge ist:
 
 =over 4
 
 =item 1.
 
-Aufrufoption vom Benutzer ($doc->userH)
+Option des Programm-Aufrufs ($doc->userH)
 
 =item 2.
 
-Attribut des rufenden Objekts ($self)
+Attribut des rufenden Knotens ($self)
 
 =item 3.
 
-Setzung in Konfigurationsdatei ($doc->configH)
+Variable in Konfigurationsdatei ($doc->configH)
+
+=item 4.
+
+Wert des Aufrufparameters $default
 
 =back
-
-Besitzt keines der Objekte einen definierten Wert für das Attribut
-$key, wird der beim Aufruf angegebene Defaultwert $default geliefert.
 
 =cut
 
 # -----------------------------------------------------------------------------
 
-sub getUserConfigAttribute {
+sub getUserNodeConfigAttribute {
     my ($self,$key,$default) = @_;
 
     my $doc = $self->root;
@@ -211,6 +213,71 @@ sub getUserConfigAttribute {
     }
 
     return $default;
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 getUserNodeAttribute() - Liefere Attributwert
+
+=head4 Synopsis
+
+    $val = $doc->getUserNodeAttribute($key);
+
+=head4 Arguments
+
+=over 4
+
+=item $key
+
+Name des Attributs
+
+=back
+
+=head4 Returns
+
+=over 4
+
+=item $val
+
+Attributwert (String)
+
+=back
+
+=head4 Description
+
+Wie getUserNodeConfigAttribute(), nur dass die Konfigurationsdatei
+nicht konsultiert wird (da das Attribut dort nicht vorkommt).
+
+Die Suchreihenfolge ist also:
+
+=over 4
+
+=item 1.
+
+Option des Programm-Aufrufs ($doc->userH)
+
+=item 2.
+
+Attribut des rufenden Knotens ($self)
+
+=back
+
+Ein Defaultwert-Parameter wird hier nicht benötigt. Der
+Defaultwert wird auf dem Knotenattribut gesetzt.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub getUserNodeAttribute {
+    my ($self,$key) = @_;
+
+    my $val;
+    if (my $obj = $self->root->userH) {
+        $val = $obj->get($key);
+    }
+
+    return $val // $self->get($key);
 }
 
 # -----------------------------------------------------------------------------
@@ -1525,7 +1592,8 @@ sub htmlSectionCode {
     # Erzeuge Abschnittstitel. Ein Bridgehead hat keine Abschnittsnummer.
 
     my $title = $self->expandText($h,'titleS');
-    if ($self->type eq 'Section' && $self->level <= $doc->sectionNumberLevel) {
+    if ($self->type eq 'Section' &&
+            $self->level <= $doc->getUserNodeAttribute('sectionNumberLevel')) {
         $title = $self->sectionNumber.' '.$title;
     }
 
@@ -1595,7 +1663,8 @@ sub htmlTableOfContents {
             # Abschnittsnummern hat
 
             my $sectionNumber;
-            if ($node->level <= $doc->sectionNumberLevel) {
+            if ($node->level <=
+                    $doc->getUserNodeAttribute('sectionNumberLevel')) {
                 $sectionNumber = $h->tag('span',
                     class => 'number',
                     $node->sectionNumber
@@ -1620,7 +1689,7 @@ sub htmlTableOfContents {
     if ($html) {
         if ($self->type eq 'Document') {
             $html = $h->tag('div',
-                class => 'sdoc-tableofcontents',
+                class => $toc->cssClass,
                 '-',
                 $h->tag('h3',
                     -ignoreIfNull => 1,
@@ -1668,7 +1737,7 @@ definiert, und dem Namen des Knotentyps.
 sub cssClass {
     my $self = shift;
     return lc sprintf '%s-%s',
-        $self->root->getUserConfigAttribute('cssPrefix'),
+        $self->root->getUserNodeConfigAttribute('cssPrefix','sdoc'),
         $self->type;
 }
 

@@ -260,9 +260,9 @@ ob für das Dokument ein Anker erzeugt werden muss.
 
 =item sectionNumberLevel => $n (Default: 3)
 
-Abschnittsebene, bis zu welcher Abschnitte numeriert werden.
+Abschnittsebene, bis zu welcher Abschnitte nummeriert werden.
 Mögliche Werte: -2, -1, 0, 1, 2, 3, 4. -2 = keine
-Abschnittsnumerierung.
+Abschnittsnummerierung.
 
 =item sectionA => \@sections (memoize)
 
@@ -1378,7 +1378,8 @@ das Dokument mindestens einen Abschnitt enthält.
 sub createTableOfContentsNode {
     my $self = shift;
 
-    if ($self->tableOfContents && !$self->tableOfContentsNode) {
+    if (!$self->tableOfContentsNode &&
+            $self->getUserNodeAttribute('tableOfContents')) {
         my $att = $self->analyze;
         if ($att->sections) {
             my $toc = Sdoc::Node::TableOfContents->Sdoc::Node::new(
@@ -1787,7 +1788,7 @@ sub html {
     }
     $code = $h->tag('div',
         -ignoreIfNull => 1,
-        class => 'sdoc-document',
+        class => $self->cssClass,
         $code
     );
     $code .= $self->generateChilds('html',$h);
@@ -1982,7 +1983,7 @@ sub latex {
         push @preamble,
             $l->comment('languages syntax highlighting'),
             $l->c('\usemintedstyle{%s}',
-                $self->getUserConfigAttribute('codeStyle'));
+                $self->getUserNodeConfigAttribute('codeStyle'),'default');
     }
     elsif ($att->verbatim) {
         push @packages,
@@ -2067,7 +2068,8 @@ sub latex {
         title => $self->expandText($l,'titleS') // '',
         author => $self->expandText($l,'authorS') // '',
         date => $self->expandText($l,'dateS') // '',
-        secNumDepth => $att->sections? $self->sectionNumberLevel: undef,
+        secNumDepth => $att->sections?
+            $self->getUserNodeAttribute('sectionNumberLevel'): undef,
         tocDepth => $toc? $toc->maxLevel: undef,
         titlePageStyle => $titlePageStyle,
         parSkip => $self->latexParSkip,
