@@ -27,16 +27,24 @@ HTML. Ein Verbatim-Block gibt einen Text TEXT in
 Festbreitenschrift mit allen Leerzeichen und Zeilenumbrüchen
 identisch wieder. Innerhalb von TEXT ist HTML erlaubt. Der
 Verbatim-Block kann mit Zeilennummern ausgestattet werden.
+In dem Fall wird das HTML-Konstrukt um eine <table> ergänzt
+und dadurch komplexer.
 
-Aufbau eines Verbatim-Blocks:
+Aufbau eines Verbatim-Blocks I<ohne> Zeilennummern:
+
+    <div class="CLASS" [id="ID"] [style="STYLE"]>
+      <pre>TEXT</pre>
+    </div>
+
+Aufbau eines Verbatim-Blocks I<mit> Zeilennummern:
 
     <div class="CLASS" [id="ID"] [style="STYLE"]>
       <table>
       <tr>
-        [<td class="ln">
+        <td class="ln">
           <pre>ZEILENNUMMERN</pre>
         </td>
-        <td class="margin"></td>]
+        <td class="margin"></td>
         <td class="text">
           <pre>TEXT</pre>
         </td>
@@ -47,9 +55,9 @@ Aufbau eines Verbatim-Blocks:
 Die in eckige Klammern eingefassten Bestandteile ([...]) sind
 optional.
 
-Das umgebende C<div> ermöglicht, dass der Hintergrund des
-Blocks über die gesamte Breite der Seite farbig hinterlegt
-werden kann.
+Das umgebende C<div> klammert das gesamte Konstrukt und ermöglicht
+auch im Falle von Zeilennummer, dass der Hintergrund des Blocks
+über die gesamte Breite der Seite farbig hinterlegt werden kann.
 
 Das Aussehen des Verbatim-Block kann via CSS gestaltet werden.
 Hier die Selektoren, mit denen einzelne Bestandteile des
@@ -61,9 +69,13 @@ Konstrukts in CSS angesprochen werden können:
 
 Der gesamte Block.
 
+=item .CLASS > pre
+
+Der Verbatim-Text im Falle einer Darstellung ohne Zeilennummern.
+
 =item .CLASS table
 
-Die Tabelle.
+Die Tabelle im Falle von Zeilennummern.
 
 =item .CLASS .ln
 
@@ -220,9 +232,9 @@ sub html {
         return '';
     }
 
-    my @cols;
+    my $html;
     if ($ln) {
-        # Zeilennummern- und Margin-Kolumne
+        # Zeilennummern-, Margin, Code-Kolumne
 
         my $lnCount = $text =~ tr/\n//;
         if (substr($text,-1,1) ne "\n") {
@@ -240,29 +252,37 @@ sub html {
             }
             $tmp .= sprintf '%*d',$lnMaxWidth,$i;
         }
-        push @cols,
+        push my @cols,
             [class=>"ln",$h->tag('pre',$tmp)],
             [class=>"margin",''],
         ;
-    }
-    
-    # Text-Kolumne
-    push @cols,[class=>"text",$h->tag('pre',$text)];
 
-    # Erzeuge Tabelle
+        # Text-Kolumne
+        push @cols,[class=>"text",$h->tag('pre',$text)];
 
-    return $h->tag('div',
-        class => $class,
-        id => $id,
-        style => $style,
-        Sdoc::Core::Html::Table::Simple->html($h,
+        # Erzeuge Tabelle
+
+        $html = Sdoc::Core::Html::Table::Simple->html($h,
             border => undef,
             cellpadding => undef,
             cellspacing => undef,
             rows => [
                 [@cols],
             ],
-        )
+        );
+    }
+    else {
+        $html = $h->tag('pre',
+            $text
+        );
+    }
+
+    return $h->tag('div',
+        class => $class,
+        id => $id,
+        style => $style,
+        '-',
+        $html
     );
 }
 

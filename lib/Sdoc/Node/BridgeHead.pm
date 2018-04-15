@@ -145,6 +145,7 @@ sub new {
 
         my $level = length $1;
         my $title = $3;
+        $title =~ s/\s*=+$//; # trailing =+ entfernen
         $title =~ s/^\s+//g;
         $title =~ s/\s+$//g;
         $title =~ s/\s{2,}/ /g;

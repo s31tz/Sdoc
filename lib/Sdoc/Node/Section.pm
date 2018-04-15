@@ -177,6 +177,7 @@ sub new {
         my $isAppendix = index($2,'+') >= 0? 1: 0;
         my $tocStop = index($2,'!') >= 0? 1: 0;
         my $title = $3;
+        $title =~ s/\s*=+$//; # trailing =+ entfernen
         $title =~ s/^\s+//g;
         $title =~ s/\s+$//g;
         $title =~ s/\s{2,}/ /g;

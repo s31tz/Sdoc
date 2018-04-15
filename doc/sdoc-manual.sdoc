@@ -403,6 +403,13 @@ werden.
 
   === Dies ist ein Abschnitt der Ebene 3
 
+Um einen Abschnittsbeginn im Quelltext hervorzuheben kann die Zeile
+mit einer Folge von Gleichheitszeichen (=) beliebiger Länge beendet
+werden. Die Folge von Gleichheitszeichen ist nicht Teil des Titels,
+sie wird automatisch entfernt.
+
+  = Dies ist ein Abschnitt der Ebene 1 ==================================
+
 Abschnitte werden optional mit 1. 1.1. 1.2. ... 2. 2.1. usw.
 durchnummeriert, wenn das %Document-Attribut C{sectionNumberLevel}
 auf einen Wert > -2 gesetzt wird.
@@ -505,6 +512,13 @@ produziert:
 ===* Zwischenüberschrift Stufe 3
 
 ====* Zwischenüberschrift Stufe 4
+
+Wie ein Abschnitt kann eine Zwischenüberschrift im Quelltext
+hervorgehoben werden, indem sie mit einer Folge von Gleichheitszeichen
+(=) beliebiger Länge beendet wird. Die Folge von Gleichheitszeichen
+ist nicht Teil des Titels, sie wird automatisch entfernt.
+
+  ==* Zwischenüberschrift Stufe 2 =======================================
 
 === Segmente
 
@@ -2269,7 +2283,62 @@ des Blocks beeinflusst werden kann. Die Liste der Selektoren zeigt
 exemplarisch, wie der Block und seine Bestandteile adressiert werden
 können.
 
-=== Document
+=== BridgeHead ================================================================
+
+==== HTML
+
+%Code: lang=HTML
+  <hN class="sdoc-bridgehead">TITLE</hN>
+.
+
+N ist eine ganze Zahl von 1 bis 6.
+
+==== CSS
+
+%Table:
+  border=hvHV
+  Selektor                          Ziel
+  --------------------------------- ---------------------------------------
+  .sdoc-bridgehead                  Alle Zwischenüberschriften
+  hN.sdoc-section                   Zwischenüberschriften der Ebene N
+.
+
+==== Beispiele
+
+====* Alle Zwischenüberschriften in dunkelgrauer Schrift
+
+%Code: lang=CSS
+  .sdoc-bridgehead {
+      color: #404040;
+  }
+.
+
+=== (Code) ====================================================================
+
+=== Comment ===================================================================
+
+==== HTML
+
+Einzeiliger Kommentar:
+
+%Code: lang=HTML
+  <!-- TEXT -->
+.
+
+Mehrzeiliger Kommentar:
+
+%Code: lang=HTML
+  <!--
+    TEXT
+  -->
+.
+
+==== CSS
+
+Ein Comment-Block ist visuell nicht repräsentiert und daher auch nicht
+Gegenstand von CSS-Regeln.
+
+=== Document ==================================================================
 
 ==== HTML
 
@@ -2329,25 +2398,18 @@ Dokument-Kopf.
   }
 .
 
-=== TableOfContents
+=== (Graphic) =================================================================
 
 ==== HTML
 
 %Code: lang=HTML
-  <div class="sdoc-tableofcontents">
-    [<h3>TITLE</h3>]
-    <ul [class="indent"]>
-      <li>
-        [<span class="number">NUMBER</span>]<a href="#ID">SECTION</a>
-        ...
-      </li>
-      ...
-    </ul>
+  <div class="sdoc-graphic [indent]" id="ID">
+    <img src="SOURCE" width="WIDTH" height="HEIGHT" alt="ALTTEXT" />
+    [<p>
+      <span class="prefix">PREFIX:</span> <span class="caption">CAPTION</span>
+    </p>]
   </div>
 .
-
-Die Überschrift TITLE ist optional. Die Abschnittsnummer NUMBER
-existiert nur bei nummerierten Abschnittsebenen.
 
 ==== CSS
 
@@ -2355,197 +2417,23 @@ existiert nur bei nummerierten Abschnittsebenen.
   border=hvHV
   Selektor                          Ziel
   --------------------------------- ----------------------------------------
-  .sdoc-tableofcontents             Inhaltsverzeichnis insgesamt
-  .sdoc-tableofcontents h3          Überschrift Inhaltsverzeichnis
-  .sdoc-tableofcontents ul          Alle Abschnittsebenen
-  .sdoc-tableofcontents > ul        Erste Abschnittsebene
-  .sdoc-tableofcontents > ul.indent Erste Abschnittsebene bei Einrückung
-  .sdoc-tableofcontents ul ul       Untergeordnete Abschnittsebenen
-  .sdoc-tableofcontents li          Eintrag
-  .sdoc-tableofcontents span.number Abschnittsnummer
+  .sdoc-graphic                     Das Konstrukt insgesamt
+  .sdoc-graphic.noindent            Das Konstrukt ohne Einrückung
 .
 
-==== Beispiele
-
-====* Abschnittsummern in fetter Schrift
-
-%Code: lang=CSS
-  .sdoc-tableofcontents span.number {
-      font-weight: bold;
-  }
-.
-
-====* Inhaltsverzeichnis als hervorgehobener Block
-
-%Code: lang=CSS
-  .sdoc-tableofcontents {
-      display: inline-block;
-      border: 1px solid black;
-      background-color: #f0f0f0;
-      padding: 4px 8px 4px 4px;
-  }
-.
-
-=== Section
-
-==== HTML
-
-%Code: lang=HTML
-  <hN class="sdoc-section">TITLE</hN>
-.
-
-N ist eine ganze Zahl von 1 bis 6.
-
-==== CSS
-
-%Table:
-  border=hvHV
-  Selektor                          Ziel
-  --------------------------------- ---------------------------------------
-  .sdoc-section                     Alle Abschnittsüberschriften
-  hN.sdoc-section                   Abschnittsüberschriften der Ebene N
-.
-
-==== Beispiele
-
-====* Alle Überschriften des Dokuments grau hinterlegen
-
-%Code: lang=CSS
-  .sdoc-document h1, .sdoc-section {
-      background-color: #f0f0f0;
-  }
-.
-
-=== BridgeHead
-
-==== HTML
-
-%Code: lang=HTML
-  <hN class="sdoc-bridgehead">TITLE</hN>
-.
-
-N ist eine ganze Zahl von 1 bis 6.
-
-==== CSS
-
-%Table:
-  border=hvHV
-  Selektor                          Ziel
-  --------------------------------- ---------------------------------------
-  .sdoc-bridgehead                  Alle Zwischenüberschriften
-  hN.sdoc-section                   Zwischenüberschriften der Ebene N
-.
-
-==== Beispiele
-
-====* Alle Zwischenüberschriften in dunkelgrauer Schrift
-
-%Code: lang=CSS
-  .sdoc-bridgehead {
-      color: #404040;
-  }
-.
-
-=== Paragraph
-
-==== HTML
-
-%Code: lang=HTML
-  <p class="sdoc-paragraph">
-    TEXT
-  </p>
-.
-
-==== CSS
-
-%Table:
-  border=hvHV
-  Selektor                          Ziel
-  --------------------------------- ---------------------------------------
-  .sdoc-paragraph                   Alle Paragraphen
-.
-
-=== Style
-
-Ein Style-Block fügt CSS-Code zum Dokument hinzu, ist selbst jedoch
-nicht visuell repräsentiert und daher auch nicht Ziel von CSS-Regeln.
-
-=== Comment
-
-==== HTML
-
-Einzeiliger Kommentar:
-
-%Code: lang=HTML
-  <!-- TEXT -->
-.
-
-Mehrzeiliger Kommentar:
-
-%Code: lang=HTML
-  <!--
-    TEXT
-  -->
-.
-
-==== CSS
-
-Ein Comment-Block ist visuell nicht repräsentiert und daher auch nicht
-Gegenstand von CSS-Regeln.
-
-=== Quote
-
-%Code: lang=HTML
-  <blockquote class="sdoc-quote">
-    TEXT
-  </blockquote>
-.
-
-==== CSS
-
-%Table:
-  border=hvHV
-  Selektor                          Ziel
-  --------------------------------- ---------------------------------------
-  .sdoc-quote                       Alle Zitat-Blöcke
-.
-
-==== Beispiele
-
-====* Alle Zitate in kursiver Schrift (wie LaTeX)
-
-%Code: lang=CSS
-  .sdoc-quote {
-      font-style: italic;
-  }
-.
-
-=== PageBreak
-
-==== HTML
-
-%Code: lang=HTML
-  <div style="page-break-before: always"></div>
-.
-
-==== CSS
-
-Ein Seitenumbruch ist als HTML-Konstukt Q{atomar} und daher nicht
-nicht Gegenstand von CSS-Regeln.
-
-=== Link
-
-Ein Link-Block definiert einen Verweis, hat aber selbst keine
-Darstellung in HTML und ist daher auch nicht Gegenstand von
-CSS-Regeln.
-
-=== Include
+=== Include ===================================================================
 
 Ein Include-Block bindet einen externen Sdoc-Quelltext ein, hat aber
 selbst keine Darstellung in HTML und ist daher auch nicht Gegenstand
 von CSS-Regeln.
 
-=== List
+=== Link ======================================================================
+
+Ein Link-Block definiert einen Verweis, hat aber selbst keine
+Darstellung in HTML und ist daher auch nicht Gegenstand von
+CSS-Regeln.
+
+=== List/Item =================================================================
 
 ==== HTML
 
@@ -2619,17 +2507,27 @@ C{dd}.
   }
 .
 
-=== Graphic
+=== PageBreak =================================================================
 
 ==== HTML
 
 %Code: lang=HTML
-  <div class="sdoc-graphic [indent]" id="ID">
-    <img src="SOURCE" width="WIDTH" height="HEIGHT" alt="ALTTEXT" />
-    [<p>
-      <span class="prefix">PREFIX:</span> <span class="caption">CAPTION</span>
-    </p>]
-  </div>
+  <div style="page-break-before: always"></div>
+.
+
+==== CSS
+
+Ein Seitenumbruch ist als HTML-Konstukt Q{atomar} und daher nicht
+nicht Gegenstand von CSS-Regeln.
+
+=== Paragraph
+
+==== HTML
+
+%Code: lang=HTML
+  <p class="sdoc-paragraph">
+    TEXT
+  </p>
 .
 
 ==== CSS
@@ -2637,9 +2535,129 @@ C{dd}.
 %Table:
   border=hvHV
   Selektor                          Ziel
+  --------------------------------- ---------------------------------------
+  .sdoc-paragraph                   Alle Paragraphen
+.
+
+=== Section ===================================================================
+
+==== HTML
+
+%Code: lang=HTML
+  <hN class="sdoc-section">TITLE</hN>
+.
+
+N ist eine ganze Zahl von 1 bis 6.
+
+==== CSS
+
+%Table:
+  border=hvHV
+  Selektor                          Ziel
+  --------------------------------- ---------------------------------------
+  .sdoc-section                     Alle Abschnittsüberschriften
+  hN.sdoc-section                   Abschnittsüberschriften der Ebene N
+.
+
+==== Beispiele
+
+====* Alle Überschriften des Dokuments grau hinterlegen
+
+%Code: lang=CSS
+  .sdoc-document h1, .sdoc-section {
+      background-color: #f0f0f0;
+  }
+.
+
+=== Quote =====================================================================
+
+%Code: lang=HTML
+  <blockquote class="sdoc-quote">
+    TEXT
+  </blockquote>
+.
+
+==== CSS
+
+%Table:
+  border=hvHV
+  Selektor                          Ziel
+  --------------------------------- ---------------------------------------
+  .sdoc-quote                       Alle Zitat-Blöcke
+.
+
+==== Beispiele
+
+====* Alle Zitate in kursiver Schrift (wie LaTeX)
+
+%Code: lang=CSS
+  .sdoc-quote {
+      font-style: italic;
+  }
+.
+
+=== Style =====================================================================
+
+Ein Style-Block fügt CSS-Code zum Dokument hinzu, ist selbst jedoch
+nicht visuell repräsentiert und daher auch nicht Ziel von CSS-Regeln.
+
+=== (Table) ===================================================================
+
+=== TableOfContents ===========================================================
+
+==== HTML
+
+%Code: lang=HTML
+  <div class="sdoc-tableofcontents">
+    [<h3>TITLE</h3>]
+    <ul [class="indent"]>
+      <li>
+        [<span class="number">NUMBER</span>]<a href="#ID">SECTION</a>
+        ...
+      </li>
+      ...
+    </ul>
+  </div>
+.
+
+Die Überschrift TITLE ist optional. Die Abschnittsnummer NUMBER
+existiert nur bei nummerierten Abschnittsebenen.
+
+==== CSS
+
+%Table:
+  border=hvHV
+  Selektor                          Ziel
   --------------------------------- ----------------------------------------
-  .sdoc-graphic                     Das Konstrukt insgesamt
-  .sdoc-graphic.noindent            Das Konstrukt ohne Einrückung
+  .sdoc-tableofcontents             Inhaltsverzeichnis insgesamt
+  .sdoc-tableofcontents h3          Überschrift Inhaltsverzeichnis
+  .sdoc-tableofcontents ul          Alle Abschnittsebenen
+  .sdoc-tableofcontents > ul        Erste Abschnittsebene
+  .sdoc-tableofcontents > ul.indent Erste Abschnittsebene bei Einrückung
+  .sdoc-tableofcontents ul ul       Untergeordnete Abschnittsebenen
+  .sdoc-tableofcontents li          Eintrag
+  .sdoc-tableofcontents span.number Abschnittsnummer
+.
+
+==== Beispiele
+
+====* Abschnittsummern in fetter Schrift
+
+%Code: lang=CSS
+  .sdoc-tableofcontents span.number {
+      font-weight: bold;
+  }
+.
+
+====* Inhaltsverzeichnis als hervorgehobener Block
+
+%Code: lang=CSS
+  .sdoc-tableofcontents {
+      display: inline-block;
+      border: 1px solid black;
+      background-color: #f0f0f0;
+      padding: 4px 8px 4px 4px;
+  }
 .
 
 ---PageBreak---
