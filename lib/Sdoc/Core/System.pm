@@ -155,6 +155,10 @@ Encoding sollten Ausgaben auf das Terminal gewandelt werden.
 Wir ermitteln das Encoding durch Aufruf der internen Funktion
 _get_locale_encoding() des Pragmas encoding.
 
+=head4 See Also
+
+Pragma encoding
+
 =head4 Example
 
 Gib non-ASCII-Zeichen im Encoding der Umgebung auf STDOUT aus:
@@ -162,10 +166,6 @@ Gib non-ASCII-Zeichen im Encoding der Umgebung auf STDOUT aus:
     my $encoding = Sdoc::Core::System->encoding;
     binmode STDOUT,":encoding($encoding)";
     print "äöüßÄÖÜ\n";
-
-=head4 See Also
-
-Pragma encoding
 
 =cut
 

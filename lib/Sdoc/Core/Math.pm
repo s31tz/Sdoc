@@ -377,18 +377,6 @@ Der Berechnung liegt die Formel zugrunde:
         cos($lat1*pi/180)*cos($lat2*pi/180)*cos(($lon2-$lon1)*pi/180)
     )
 
-=head4 Examples
-
-Abstand zw. zwei Längengraden (359. und 360.) am Äquator:
-
-    sprintf '%.2f',Sdoc::Core::Math->geoDistance(0,359,0,360);
-    # -> 111.12
-
-Abstand zw. zwei Längengraden am Pol:
-
-    Sdoc::Core::Math->geoDistance(90,359,90,360);
-    # -> 0
-
 =head4 See Also
 
 =over 2
@@ -402,6 +390,18 @@ L<Prof. Dirk Reichhardt - Hinweise zur Berechnung von Abständen|http://wwwlehre
 L<Blog Martin Kompf - Entfernungsberechnung|http://www.kompf.de/gps/distcalc.html>
 
 =back
+
+=head4 Examples
+
+Abstand zw. zwei Längengraden (359. und 360.) am Äquator:
+
+    sprintf '%.2f',Sdoc::Core::Math->geoDistance(0,359,0,360);
+    # -> 111.12
+
+Abstand zw. zwei Längengraden am Pol:
+
+    Sdoc::Core::Math->geoDistance(90,359,90,360);
+    # -> 0
 
 =cut
 

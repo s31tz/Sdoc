@@ -2395,7 +2395,7 @@ N ist eine ganze Zahl von 1 bis 6.
   }
 .
 
-====* Abstände oberhalb und unterhalb des Konstrukts
+====* Abstand zu anderen Blöcken
 
 %Code: lang=CSS
   .sdoc-code {

@@ -887,9 +887,9 @@ sub find {
                     last;
                 }
             }
-	    if ($ok) {
-		push @arr,$paths[$i];
-	    }
+            if ($ok) {
+                push @arr,$paths[$i];
+            }
         }
         @paths = @arr;
     }
