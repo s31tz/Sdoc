@@ -3,6 +3,7 @@ use base qw/Sdoc::Core::Object/;
 
 use strict;
 use warnings;
+use v5.10.0;
 
 our $VERSION = 1.125;
 
@@ -31,6 +32,10 @@ L<Sdoc::Core::Object>
 
     $dir = $this->cwd;
     $this->cwd($dir);
+
+=head4 Alias
+
+cd()
 
 =head4 Description
 
@@ -73,6 +78,11 @@ sub cwd {
     };
 
     return;
+}
+
+{
+    no warnings 'once';
+    *cd = \&cwd;
 }
 
 # -----------------------------------------------------------------------------

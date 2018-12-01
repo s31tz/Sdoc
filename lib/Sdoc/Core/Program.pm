@@ -3,6 +3,7 @@ use base qw/Sdoc::Core::Process Sdoc::Core::Hash/;
 
 use strict;
 use warnings;
+use v5.10.0;
 
 our $VERSION = 1.125;
 
@@ -478,6 +479,11 @@ sub encode {
 =head4 Synopsis
 
     ($error,$optH,$argA) = $prg->options(@keyVal);
+
+=head4 Description
+
+FIXME: Veraltete Methode. Alle Stellen, wo die Methode options()
+genutzt wird, auf parameters() portieren.
 
 =cut
 

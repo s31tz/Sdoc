@@ -6,6 +6,7 @@ use base qw/Sdoc::Core::Hash/;
 
 use strict;
 use warnings;
+use v5.10.0;
 use utf8;
 
 our $VERSION = 1.125;
@@ -16,6 +17,7 @@ use Sdoc::Core::Converter;
 use Sdoc::Core::Path;
 use Sdoc::Core::Process;
 use Cwd ();
+use Sdoc::Core::AnsiColor;
 
 # -----------------------------------------------------------------------------
 
@@ -46,6 +48,11 @@ L<Sdoc::Core::Hash>
 =item cmdPrefix => $str (Default: '')
 
 Zeichenkette, der jeder Kommandozeile im Log vorangestellt wird.
+
+=item cmdAnsiColor => $str (Default: '')
+
+ANSI Escape-Sequenz, die auf eine Kommandozeile angewendet wird,
+z.B. 'bold red'.
 
 =item dryRun => $bool (Default: 0)
 
@@ -97,6 +104,7 @@ sub new {
 
     my $self = $class->SUPER::new(
         cmdPrefix=>'',
+        cmdAnsiColor=>undef, 
         dryRun=>0,
         dirStack=>[],
         log=>0,
@@ -315,9 +323,7 @@ sub exec {
     my $log = $self->{'log'};
 
     if ($log || $dryRun) {
-        my $pre = $self->{'cmdPrefix'};
-        my $fd = $self->{'logDest'};
-        print $fd "$pre$cmd\n";
+        $self->_logCmd($cmd);
     }
 
     # Kommando ausführen
@@ -397,9 +403,7 @@ sub cd {
     my $log = $self->{'log'};
 
     if ($log || $dryRun) {
-        my $pre = $self->{'cmdPrefix'};
-        my $fd = $self->{'logDest'};
-        print $fd "${pre}cd $dir\n";
+        $self->_logCmd("cd $dir");
     }
 
     my $cwd = Sdoc::Core::Process->cwd;
@@ -442,9 +446,7 @@ sub back {
     my $log = $self->{'log'};
 
     if ($log || $dryRun) {
-        my $pre = $self->{'cmdPrefix'};
-        my $fd = $self->{'logDest'};
-        print $fd "${pre}cd $dir\n";
+        $self->_logCmd("cd $dir");
     }
 
     unless ($dryRun) {
@@ -530,6 +532,42 @@ sub checkError {
         Cwd=>Cwd::getcwd,
         ErrorMessage=>$errMsg,
     );
+}
+
+# -----------------------------------------------------------------------------
+
+=head2 Private Methoden
+
+=head3 _logCmd() - Logge Kommandozeile
+
+=head4 Synopsis
+
+    $sh->_logCmd($cmd);
+
+=head4 Description
+
+Schreibe die Kommandozeile $cmd auf die Loghandle.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub _logCmd {
+    my ($self,$cmd) = @_;
+
+    my $pre = $self->{'cmdPrefix'};
+    my $fd = $self->{'logDest'};
+
+    my $esc = $self->{'cmdAnsiColor'};
+    if ($esc) {
+        my $a = Sdoc::Core::AnsiColor->new(1);
+        printf $fd "%s%s\n",$pre,$a->str($esc,$cmd);
+    }
+    else {
+        printf $fd "%s%s\n",$pre,$cmd;
+    }
+
+    return;
 }
 
 # -----------------------------------------------------------------------------

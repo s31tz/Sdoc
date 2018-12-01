@@ -3,10 +3,12 @@ use base qw/Sdoc::Core::Object/;
 
 use strict;
 use warnings;
+use v5.10.0;
 use utf8;
 
 our $VERSION = 1.125;
 
+use Encode ();
 use Sdoc::Core::Reference;
 use Sdoc::Core::Math;
 
@@ -167,6 +169,32 @@ sub compare {
         bless(\@arr2,$class),
         bless(\@arr,$class),
     );
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 decode() - Dekodiere Array
+
+=head4 Synopsis
+
+    $arr->decode($encoding);
+    $class->decode(\@arr,$encoding);
+
+=head4 Description
+
+Dekodiere die Elemente des Arrays gemäß Encoding $encoding.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub decode {
+    my $arr = ref $_[0]? CORE::shift: CORE::splice @_,0,2;
+    my $encoding = CORE::shift;
+
+    @$arr = map {Encode::decode($encoding,$_)} @$arr;
+
+    return;
 }
 
 # -----------------------------------------------------------------------------

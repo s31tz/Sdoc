@@ -3,6 +3,7 @@ use base qw/Sdoc::Core::Hash/;
 
 use strict;
 use warnings;
+use v5.10.0;
 
 our $VERSION = 3.00;
 
@@ -1817,6 +1818,10 @@ Include - keine eigene Darstellung in HTML
 
 =item *
 
+Item - <li> oder <dt><dd> ohne Anpassungen
+
+=item *
+
 Link - keine Darstellung in HTML
 
 =item *
@@ -1826,6 +1831,10 @@ PageBreak - unsichtbares <div>
 =item *
 
 Paragraph - <p> ohne Anpassungen
+
+=item *
+
+PostProcessor - keine Darstellung in HTML
 
 =item *
 
@@ -1839,7 +1848,19 @@ Klassen, die eine eigene Methode css() implementieren:
 
 =item *
 
+Code
+
+=item *
+
 Document
+
+=item *
+
+Graphic
+
+=item *
+
+List
 
 =item *
 
@@ -1848,6 +1869,10 @@ Quote
 =item *
 
 Style
+
+=item *
+
+Table
 
 =item *
 

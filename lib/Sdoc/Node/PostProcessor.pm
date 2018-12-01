@@ -1,4 +1,4 @@
-package Sdoc::Node::Style;
+package Sdoc::Node::PostProcessor;
 use base qw/Sdoc::Node/;
 
 use strict;
@@ -13,7 +13,7 @@ our $VERSION = 3.00;
 
 =head1 NAME
 
-Sdoc::Node::Style - Style-Knoten
+Sdoc::Node::PostProcessor - PostProcessor-Knoten
 
 =head1 BASE CLASS
 
@@ -21,23 +21,20 @@ L<Sdoc::Node>
 
 =head1 DESCRIPTION
 
-Ein Objekt der Klasse repräsentiert Stylesheet-Code
+Ein Objekt der Klasse repräsentiert einen Postprocessor.
+Der Postprocessor definiert Perl-Code, der nach der Erzeugung
+des Dokumentcodes im Zielformat auf dieses angewendet wird.
 
 =head1 ATTRIBUTES
 
 Über die Attribute der Basisklasse hinaus besitzt ein
-Stylesheet-Knoten folgende zusätzliche Attribute:
+PostProcessor-Knoten folgende zusätzliche Attribute:
 
 =over 4
 
 =item code => $code
 
-Stylesheet-Code aus dem Rumpf des Style-Blocks.
-
-=item source => $path
-
-Pfad zu einer Stylesheet-Datei. Beginnt der Pfad mit C<+/>, wird
-das Pluszeichen zum Pfad des Dokumentverzeichnisses expandiert.
+Perl-Code im Postprocessor-Block.
 
 =back
 
@@ -45,7 +42,7 @@ das Pluszeichen zum Pfad des Dokumentverzeichnisses expandiert.
 
 # -----------------------------------------------------------------------------
 
-our $Abbrev = 'sty';
+our $Abbrev = 'ppr';
 
 # -----------------------------------------------------------------------------
 
@@ -53,11 +50,11 @@ our $Abbrev = 'sty';
 
 =head2 Konstruktor
 
-=head3 new() - Instantiiere Stylesheet-Knoten
+=head3 new() - Instantiiere Postprocessor-Knoten
 
 =head4 Synopsis
 
-    $sty = $class->new($par,$variant,$root,$parent);
+    $ppr = $class->new($par,$variant,$root,$parent);
 
 =head4 Arguments
 
@@ -99,21 +96,20 @@ sub new {
 
     my $attribH;
     if ($variant == 0) {
-        # %Style:
+        # %PostProcessor:
         #   KEY=VAL
         # CODE
         # .
         $attribH = $par->readBlock('code');
     }
     elsif ($markup eq 'sdoc') {
-        # kommt nicht vor
+        # kommt nicht vor 
     }
 
     # Objekt instantiieren
 
-    my $self = $class->SUPER::new('Style',$variant,$root,$parent,
+    my $self = $class->SUPER::new('PostProcessor',$variant,$root,$parent,
         code => '',
-        source => undef,
     );
     $self->setAttributes(%$attribH);
 
@@ -122,100 +118,69 @@ sub new {
 
 # -----------------------------------------------------------------------------
 
-=head2 Prüfung
+=head2 Ausführung
 
-=head3 validate() - Prüfe Knoten auf Korrektheit
+=head3 execute() - Postprozessiere generiertes Dokument
 
 =head4 Synopsis
 
-    $sty->validate;
+    $code = $ppr->execute($format,$code);
+
+=head4 Arguments
+
+=over 4
+
+=item $format
+
+Das Format des generierten Dokument-Codes.
+
+=item $code
+
+Der Code des generierten Dokuments.
+
+=back
+
+=head4 Returns
+
+Dokument-Code (String)
+
+=head4 Description
+
+Wende den PostProcessor-Code auf den Dokument-Code $code im Format
+$format an und liefere den resultierenden Dokumentcode zurück.
 
 =cut
 
 # -----------------------------------------------------------------------------
 
-sub validate {
-    my $self = shift;
+sub execute {
+    my ($self,$format,$code) = @_;
 
-    my $doc = $self->root;
-
-    # Prüfe, dass die angegebene StyleSheet-Datei existiert
-
-    if (my $path = $doc->expandPath($self->source)) {
-        if (!-f $path) {
-            $self->warn('StyleSheet does not exist: %s',$path);
-        }
+    @_ = ($self->root,$format,$code);
+    $code = eval "no warnings 'all'; ".$self->code.'; $code;';
+    if ($@) {
+        $self->throw(
+            q~SDOC-00001: Execution of PostProcessor code failed~,
+            Error => $@,
+            Code => $self->code,
+            Input => $self->input,
+            Line => $self->lineNum,
+            -stacktrace => 0,
+        );
     }
 
-    return;
+    return $code;
 }
 
 # -----------------------------------------------------------------------------
 
 =head2 Formate
 
-=head3 css() - Generiere CSS-Code
-
-=head4 Synopsis
-
-    $code = $sty->css($c,$global);
-
-=head4 Arguments
-
-=over 4
-
-=item $c
-
-Generator für CSS.
-
-=item $global
-
-Wenn gesetzt, werden die globalen CSS-Regeln der Knoten-Klasse
-geliefert, sonst die lokalen CSS-Regeln der Knoten-Instanz.
-
-=back
-
-=head4 Returns
-
-CSS-Code (String)
-
-=head4 Description
-
-Generiere den CSS-Code der Knoten-Klasse oder der Knoten-Instanz
-und liefere diesen zurück.
-
-=cut
-
-# -----------------------------------------------------------------------------
-
-sub css {
-    my ($self,$c,$global) = @_;
-    
-    if ($global) {
-        # Globale CSS-Regeln der Knoten-Klasse
-        return '';
-    }
-
-    # Lokale CSS-Regeln der Knoten-Instanz
-
-    my $code = $self->code;
-    if ($code) {
-        my $cssPrefix = $self->root->getUserNodeConfigAttribute('cssPrefix',
-            'sdoc');
-        $code =~ s/\$PREFIX/$cssPrefix/g;
-        $code .= "\n";
-    }
-
-    return $c->makeFlat($code);
-}
-
-# -----------------------------------------------------------------------------
-
 =head3 html() - Generiere HTML-Code
 
 =head4 Synopsis
 
-    $code = $sty->html($gen);
+    $code = $lnk->html($gen);
 
 =head4 Arguments
 
@@ -229,7 +194,12 @@ Generator für HTML.
 
 =head4 Returns
 
-HTML-Code (String)
+Leerstring ('')
+
+=head4 Description
+
+Ein Link-Knoten hat keine Darstellung, daher liefert die Methode
+konstant einen Leersting.
 
 =cut
 
@@ -246,7 +216,7 @@ sub html {
 
 =head4 Synopsis
 
-    $code = $pbr->latex($gen);
+    $code = $lnk->latex($gen);
 
 =head4 Arguments
 
@@ -260,7 +230,12 @@ Generator für LaTeX.
 
 =head4 Returns
 
-LaTeX-Code (String)
+Leerstring ('')
+
+=head4 Description
+
+Ein Link-Knoten hat keine Darstellung, daher liefert die Methode
+konstant einen Leersting.
 
 =cut
 

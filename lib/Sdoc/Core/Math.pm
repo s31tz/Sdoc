@@ -3,6 +3,7 @@ use base qw/Sdoc::Core::Object/;
 
 use strict;
 use warnings;
+use v5.10.0;
 
 our $VERSION = 1.125;
 
@@ -251,7 +252,7 @@ sub radToDegree {
 
 Array von Geo-Koordinaten. Eine einzelne Geo-Koordinate ist ein
 Tipel [$latitude,$logitude,$weight], wobei die Gewichtung $weight
-optial ist. Wenn die Gewichtung fehlt, wird als Wert 1 angenommen.
+optional ist. Fehlt die Gewichtung, wird als Wert 1 angenommen.
 
 =back
 
@@ -438,7 +439,8 @@ sub geoDistance {
 
 Liefere den Abstand zwischen zwei Längengraden bei Breitengrad $lat.
 Die Methode ist eigentlich nicht nötig, da sie einen Spezialfall der
-Mehode geoDistance() behandelt. Die Formel stammt von Herrn Petersen.
+Mehode geoDistance() behandelt. Die Formel stammt von
+Wilhelm Petersen.
 
 =cut
 

@@ -3,6 +3,8 @@ use base qw/Sdoc::Core::Object/;
 
 use strict;
 use warnings;
+use v5.10.0;
+use utf8;
 
 our $VERSION = 1.125;
 
@@ -95,12 +97,14 @@ sub new {
     my $class = shift;
     my $sec = shift || 0;
 
-    if ($sec !~ /^[0-9.:dhms]+$/) {
-        $class->throw(
-            q~DURATION-00002: Illegal duration~,
-            Duration => $sec,
-        );
-    }
+    # Schlägt unerwünschterweise bei Zahl mit Exponentialdarstellung zu
+    #
+    #if ($sec !~ /^[0-9.:dhms]+$/) {
+    #    $class->throw(
+    #        q~DURATION-00002: Illegal duration~,
+    #        Duration => $sec,
+    #    );
+    #}
 
     if ($sec =~ tr/:dhms//) {
         $sec = $class->stringToSeconds($sec);

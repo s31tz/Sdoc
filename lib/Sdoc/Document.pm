@@ -3,6 +3,7 @@ use base qw/Sdoc::Core::Object/;
 
 use strict;
 use warnings;
+use v5.10.0;
 
 our $VERSION = 3.00;
 
@@ -17,6 +18,7 @@ use Sdoc::Node::Link;
 use Sdoc::Node::List;
 use Sdoc::Node::PageBreak;
 use Sdoc::Node::Paragraph;
+use Sdoc::Node::PostProcessor;
 use Sdoc::Node::Quote;
 use Sdoc::Node::Section;
 use Sdoc::Node::Style;

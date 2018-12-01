@@ -3,11 +3,13 @@ use base qw/Sdoc::Core::Object/;
 
 use strict;
 use warnings;
+use v5.10.0;
 use utf8;
 
 our $VERSION = 1.125;
 
 use Sdoc::Core::Option;
+use Sdoc::Core::Path;
 use Scalar::Util ();
 use Sdoc::Core::Perl;
 use Fcntl qw(:flock);
@@ -79,6 +81,11 @@ open()
 
 =over 4
 
+=item -createDir => $bool (Default: 0)
+
+Erzeuge den Verzeichnispfad einer Datei, die geschrieben wird,
+falls er nicht existiert.
+
 =item -lock => 'EX'|'SH'|'EXNB'|'SHNB' (Default: kein Lock)
 
 Locke die Dateihandle nach dem Öffnen im angegebenen Lock-Modus.
@@ -122,16 +129,30 @@ Schreiben nach STDOUT:
 
 sub new {
     my $class = shift;
-    # @_: ($globRef,@opt) -oder- ($mode,$file,@opt)
+    # @_: ($globRef,@opt) -oder- ($mode,$path,@opt)
 
-    my ($self,$path);
+    my ($self,$mode,$path);
     if (ref $_[0] eq 'GLOB') {      # GLOB-Referenz
         $self = shift;
     }
     else {                          # Datei öffnen
-        my $mode = shift;
-        my $path = shift;
+        $mode = shift;
+        $path = shift;
+    }
 
+    # Optionen
+
+    my $lock;
+    my $createDir;
+
+    if (@_) {
+        Sdoc::Core::Option->extract(\@_,
+            -createDir=>\$createDir,
+            -lock=>\$lock,
+        );
+    }
+
+    if ($mode) {
         if ($mode eq '<' && (!$path || $path eq '-')) {
             $self = \*STDIN;
         }
@@ -148,6 +169,10 @@ sub new {
                 $path = \(my $tmp = $$path);
             }
 
+            if ($mode eq '>' && $createDir) {
+                Sdoc::Core::Path->mkdir($path,-createParent=>1);
+            }
+
             unless (open $self,$mode,$path) {
                 $class->throw(
                     q~FH-00001: Kann Datei nicht öffnen~,
@@ -158,15 +183,6 @@ sub new {
         }
     }
     $self = bless $self,$class;
-
-    # Optionen
-
-    my $lock;
-    if (@_) {
-        Sdoc::Core::Option->extract(\@_,
-            -lock=>\$lock,
-        );
-    }
 
     # Datei locken
 
@@ -464,6 +480,10 @@ sub slurp {
 
     $fh->print(@data);
 
+=head4 Alias
+
+write()
+
 =head4 Description
 
 Schreibe Daten @data auf Dateihandle $fh. Die Methode liefert
@@ -478,6 +498,11 @@ sub print {
     # @_: @data
     Sdoc::Core::Perl->print($self,@_);
     return;
+}
+
+{
+    no warnings 'once';
+    *write = \&print;
 }
 
 # -----------------------------------------------------------------------------

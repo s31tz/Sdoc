@@ -3,6 +3,7 @@ use base qw/Sdoc::Core::Program/;
 
 use strict;
 use warnings;
+use v5.10.0;
 
 our $VERSION = 3.00;
 
@@ -69,13 +70,13 @@ sub main {
             # Sdoc configuration
 
             ansiColor => $ansiColorDefault,
-            browser => $browserDefault,
-            codeStyle => $codeStyleDefault,
-            cssPrefix => $cssPrefixDefault,
-            cacheDir => $cacheDirDefault,
-            pdfViewer => $pdfViewerDefault,
+            browser => '$browserDefault',
+            codeStyle => '$codeStyleDefault',
+            cssPrefix => '$cssPrefixDefault',
+            cacheDir => '$cacheDirDefault',
+            pdfViewer => '$pdfViewerDefault',
             shellEscape => $shellEscapeDefault,
-            textViewer => $textViewerDefault,
+            textViewer => '$textViewerDefault',
             verbose => $verboseDefault,
 
             # eof

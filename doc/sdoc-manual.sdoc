@@ -1450,11 +1450,11 @@ Der Text des Code-Abschnitts wird bei Angabe von C{load=PATH} aus
 Datei C{PATH} gelesen. Ist C{PATH} ein relativer Pfad, wird diesem das
 Verzeichnis der Dokumentdatei vorangestellt.
 
-  %Code: load="/etc/timezone"
+  %Code: load="/etc/issue"
 
 produziert:
 
-%Code: load="/etc/timezone"
+%Code: load="/etc/issue"
 
 === Text von Programmaufruf
 
@@ -1822,6 +1822,55 @@ durch den cssPrefix des Dokuments ersetzt. Z.B.
 [source=PATH]:
   Pfad einer externen Stylesheet-Datei. Beginnt der Pfad mit C{+/},
   wird das Pluszeichen zum Pfad des Dokumentverzeichnisses expandiert.
+
+---PageBreak---
+
+== Nachverarbeitung (PostProcessor)
+
+Durch ein oder mehrere Post-Prozessoren kann das resultierende
+Dokument (in einem konkreten Format) nachträglich manipuliert werden. 
+Die Sprache, in der dies geschieht, ist Perl.
+
+  %PostProcessor:
+    my ($doc,$format,$code) = @_;
+
+    CODE
+  .
+
+Der Post-Prozessor erhält drei Parameter:
+
+[$doc]:
+  Eine Referenz auf den Wurzelknoten des Dokumentbaums.
+
+[$format]:
+  Den Bezeicher für das Format konkreten Dokuments. Mögliche
+  Werte: 'latex', 'html'.
+
+[$code]:
+  Der Quelltext in dem angegebenen Format.
+
+Beispiel:
+
+  %PostProcessor:
+    my ($doc,$format,$code) = @_;
+
+    if ($format eq 'latex') {
+        # Für die LaTeX-Titelseite ist das Autor-Feld zu lang, daher
+        # ersetzen wir das erste Komma durch einen Zeilenumbruch
+        $code =~ s/(\\author\{.*?),\s*/$1\\\\/;
+    }
+  .
+
+=== Eigenschaften
+
+  %PostProcessor:
+  my ($doc,$format,$code) = @_;
+
+  CODE
+  .
+
+[CODE]:
+  Perl-Code.
 
 ---PageBreak---
 

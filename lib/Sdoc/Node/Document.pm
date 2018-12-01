@@ -3,6 +3,7 @@ use base qw/Sdoc::Node/;
 
 use strict;
 use warnings;
+use v5.10.0;
 
 our $VERSION = 3.00;
 
@@ -1586,6 +1587,59 @@ sub numberSections {
 
 # -----------------------------------------------------------------------------
 
+=head2 Generierung
+
+=head3 generate() - Generiere Knoten-Code
+
+=head4 Synopsis
+
+    $code = $doc->generate($format,@args);
+
+=head4 Arguments
+
+=over 4
+
+=item $format
+
+Das Zielformat. Mögliche Werte: 'html', 'latex', 'tree'.
+
+=back
+
+=head4 Returns
+
+Code (String)
+
+=head4 Description
+
+Generiere Code im Format $format für Knoten $node und seine
+Unterknoten und liefere diesen zurück. Auf den Wurzelknoten des
+Parsingbaums angewendet, liefert die Methode den Code für das
+gesamte Dokument.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub generate {
+    my $self = shift;
+    my $format = shift;
+    # @_: @args
+
+    my $code = $self->SUPER::generate($format,@_);
+
+    # Wende etwaige Post-Prozessoren auf den generierten Code an
+
+    for my $node ($self->nodes) {
+        if ($node->type eq 'PostProcessor') {
+            $code = $node->execute($format,$code);
+        }
+    }
+
+    return $code;
+}
+
+# -----------------------------------------------------------------------------
+
 =head2 Pfade
 
 =head3 expandPath() - Expandiere Pfad
@@ -1698,9 +1752,14 @@ sub css {
                 fontSize => '230%',
                 marginBottom => '10px',
             ],
+            'div.author' => [
+            ],
+            'div.date' => [
+                marginTop => '0.2em',
+            ],
             p => [
                 fontSize => '115%',
-                marginTop => '10px',
+                marginBottom => '10px',
             ],
         );
     }
@@ -1748,15 +1807,12 @@ sub html {
     }
     my $info;
     if (my $author = $self->expandText($h,'authorS')) {
-        $info .= $h->tag('span',
+        $info .= $h->tag('div',
             class => 'author',
             $author
         );
     }
     if (my $date = $self->expandText($h,'dateS')) {
-        if ($info) {
-            $info .= ', ';
-        }
         # Spezielle Datumswerte:
         # * today
         # * now
@@ -1776,15 +1832,16 @@ sub html {
         elsif ($date eq 'now') {
             $date = '%Y-%m-%d %H:%M:%S';
         }
-        $info .= $h->tag('span',
+        $info .= $h->tag('div',
             class => 'date',
             POSIX::strftime($date,localtime)
         );
     }
     if ($info) {
-        $code .= $h->tag('p',
-            $info
-        );
+        #$code .= $h->tag('p',
+        #    $info
+        #);
+        $code .= $info;
     }
     $code = $h->tag('div',
         -ignoreIfNull => 1,

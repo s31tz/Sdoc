@@ -3,11 +3,13 @@ use base qw/Sdoc::Core::Hash/;
 
 use strict;
 use warnings;
+use v5.10.0;
 use utf8;
 
 our $VERSION = 1.125;
 
 use Sdoc::Core::Path;
+use Sdoc::Core::Option;
 use Scalar::Util ();
 use Sdoc::Core::Reference;
 
@@ -22,18 +24,6 @@ Sdoc::Core::Template - Klasse für HTML/XML/Text-Generierung
 =head1 BASE CLASS
 
 L<Sdoc::Core::Hash>
-
-=head1 ATTRIBUTES
-
-=over 4
-
-=item singleReplace => $bool (Default: 0)
-
-Ersetze bei replace() immer nur den ersten von mehreren identischen
-Platzhaltern. Dies ist z.B. in HTML bei Ersetzung von mehreren
-Checkboxen mit gleichem Namen nützlich.
-
-=back
 
 =head1 EXAMPLE
 
@@ -77,8 +67,46 @@ Resultat C<$str>:
 
 =head4 Synopsis
 
-    $tpl = Sdoc::Core::Template->new($type,$file);
-    $tpl = Sdoc::Core::Template->new($type,\$str);
+    $tpl = Sdoc::Core::Template->new($type,$file,@opt);
+    $tpl = Sdoc::Core::Template->new($type,\$str,@opt);
+
+=head4 Options
+
+=over 4
+
+=item --lineContinuation => $type (Default: undef)
+
+Art der Zeilenfortsetzung. Mögliche Werte:
+
+=over 4
+
+=item undef
+
+Keine Zeilenfortsetzung.
+
+=item 'backslash'
+
+Endet eine Zeile mit einem Backslash, entferne Whitespace am
+Anfang der Folgezeile und füge den Rest zur Zeile hinzu.
+
+Dies kann für eine Zeile unterdrückt werden, indem der Backslash am
+Ende der Zeile durch einen davorgestellten Backslash maskiert wird.
+In dem Fall wird statt einer Fortsetzung der Zeile der maskierende
+Backslash entfernt.
+
+Diese Option ist nützlich, wenn ein Template-Text im Editor auf
+eine bestimmte Breite (z.B. 80 Zeichen/Zeile) begrenzt sein soll,
+aber der generierte Text breiter sein darf.
+
+=back
+
+=item -singleReplace => $bool (Default: 0)
+
+Ersetze bei replace() immer nur den ersten von mehreren identischen
+Platzhaltern. Dies ist z.B. in HTML bei Ersetzung von mehreren
+Checkboxen mit gleichem Namen nützlich.
+
+=back
 
 =head4 Description
 
@@ -113,16 +141,40 @@ sub new {
     my $class = shift;
     my $type = shift;
     my $arg = shift;
-    # @_: @keyVal
+    # @_: @opt
+
+    # Optionen
+
+    my $lineContinuation = undef;
+    my $singleReplace = 0;
+
+    Sdoc::Core::Option->extract(\@_,
+        -lineContinuation => \$lineContinuation,
+        -singleReplace => \$singleReplace,
+    );
+
+    # Operation ausführen
 
     my $str = ref $arg? $$arg: Sdoc::Core::Path->read($arg);
     $str =~ s/\s+$//; # WS am Ende entfernen
 
+    if ($lineContinuation) {
+        if ($lineContinuation eq 'backslash') {
+            $str =~ s/(?<!\\)\\\n[ \t]*//g;
+        }
+        else {
+            $class->throw(
+                q~TEMPLATE-00001: Ungüliger Wert für Option -lineContinuation~,
+                Value => $lineContinuation,
+            );
+        }
+    }
+
     my $self = $class->SUPER::new(
-        type=>$type,
-        string=>$str,
-        protect=>1,
-        singleReplace=>0,
+        type => $type,
+        string => $str,
+        protect => 1,
+        singleReplace => $singleReplace,
     );
     $self->set(@_);
 
@@ -450,6 +502,10 @@ sub value {
     elsif (Sdoc::Core::Reference->isCodeRef($arg)) {
         # Subroutine-Referenz -> Wert berechnen
         return $self->value($arg->());
+    }
+    else {
+        # Stringreferenz: Wir liefern den Wert unverändert
+        return $$arg
     }
 
     $self->throw;

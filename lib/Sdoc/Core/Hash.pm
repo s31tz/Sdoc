@@ -3,6 +3,7 @@ use base qw/Sdoc::Core::Object/;
 
 use strict;
 use warnings;
+use v5.10.0;
 use utf8;
 
 our $VERSION = 1.125;
@@ -114,7 +115,7 @@ werden alle Werte auf C<undef> gesetzt.
 
 =item [5]
 
-Blesse den Hash %hash auf Klasse Sdoc::Core::Hash.
+Blesse den Hash %hash auf Klasse $class.
 
 =back
 

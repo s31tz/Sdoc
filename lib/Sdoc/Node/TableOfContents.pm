@@ -3,6 +3,7 @@ use base qw/Sdoc::Node/;
 
 use strict;
 use warnings;
+use v5.10.0;
 
 our $VERSION = 3.00;
 
@@ -236,7 +237,8 @@ sub css {
         return $c->restrictedRules('.'.$self->cssClass,
             '' => [
                 # Leerraum unter- und oberhalb des Konstrukts
-                marginTop => '8px',
+                # marginTop => '8px',
+                marginTop => '16px',
                 marginBottom => '26px',
             ],
             'h3' => [

@@ -3,6 +3,7 @@ use base qw/Sdoc::Core::Hash/;
 
 use strict;
 use warnings;
+use v5.10.0;
 use utf8;
 
 our $VERSION = 1.125;
@@ -73,7 +74,7 @@ Klasse, auf die die Zeilen des Dokuments geblesst werden.
 
 =item -lineContinuation => $type (Default: undef)
 
-Art der Zeilenfortsetzung. Mögliche Werte
+Art der Zeilenfortsetzung. Mögliche Werte:
 
 =over 4
 

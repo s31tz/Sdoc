@@ -3,6 +3,7 @@ use base qw/Sdoc::Core::Object/;
 
 use strict;
 use warnings;
+use v5.10.0;
 use utf8;
 
 our $VERSION = 1.125;
@@ -200,6 +201,9 @@ sub set {
     }
     elsif ($_[0] eq 'ymd') {
         ($y,$mo,$d) = $_[1] =~ /^(\d+)\D+(\d+)\D+(\d+)$/;
+        if (!$y) {
+            ($y,$mo,$d) = $_[1] =~ /^(\d{4})(\d{2})(\d{2})$/;
+        }
         $h = $mi = $s = 0;
     }
     elsif ($_[0] eq 'ymdhm') {
