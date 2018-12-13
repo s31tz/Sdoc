@@ -358,6 +358,54 @@ sub latex {
 
 # -----------------------------------------------------------------------------
 
+=head3 mediawiki() - Generiere MediaWiki-Code
+
+=head4 Synopsis
+
+    $code = $itm->mediawiki($gen);
+
+=head4 Arguments
+
+=over 4
+
+=item $gen
+
+Generator für MediaWiki.
+
+=back
+
+=head4 Returns
+
+MediaWiki-Code (String)
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub mediawiki {
+    my ($self,$m) = @_;
+
+    # MEMO: Es gibt Item-spezifischen Code in den
+    # mediawiki()-Methoden von Paragraph und List
+
+    # Sdoc-Listentyp auf MediaWiki-Listentyp abbilden
+
+    my $type = {
+        unordered => '*',
+        ordered => '#',
+        description => ';',
+    }->{$self->parent->listType} || $self->throw;
+
+    my $childs = $self->generateChilds('mediawiki',$m);
+    if ($type eq ';') {
+        return $m->item($type,$self->expandText($m,'keyS'),$childs);
+    }
+
+    return $m->item($type,$childs);
+}
+
+# -----------------------------------------------------------------------------
+
 =head1 VERSION
 
 3.00

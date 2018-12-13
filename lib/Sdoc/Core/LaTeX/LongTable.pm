@@ -280,6 +280,12 @@ sub latex {
     # Anzahl Kolumnen
     my $width = @$alignA;
 
+    # Alignment
+
+    if ($align) {
+        $align = substr $align,0,1; # nur erstes Zeichen
+    }
+
     # Default-Umrandung
 
     if (!defined $border) {

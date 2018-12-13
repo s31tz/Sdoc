@@ -408,6 +408,45 @@ sub latex {
 
 # -----------------------------------------------------------------------------
 
+=head3 mediawiki() - Generiere MediaWiki-Code
+
+=head4 Synopsis
+
+    $code = $sec->mediawiki($gen);
+
+=head4 Arguments
+
+=over 4
+
+=item $gen
+
+Generator für MediaWiki.
+
+=back
+
+=head4 Returns
+
+MediaWiki-Code (String)
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub mediawiki {
+    my ($self,$m) = @_;
+
+    my $doc = $self->root;
+
+    my $level = $self->level+(1-$doc->highestSectionLevel);
+    my $title = $self->expandText($m,'titleS');
+    my $code = $m->section(($level,$title));
+    $code .= $self->generateChilds('mediawiki',$m);
+
+    return $code;
+}
+
+# -----------------------------------------------------------------------------
+
 =head1 VERSION
 
 3.00

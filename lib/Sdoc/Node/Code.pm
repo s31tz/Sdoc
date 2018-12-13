@@ -172,7 +172,7 @@ sub new {
         my $text = '';
         while (@$lineA) {
             my $str = $lineA->[0]->text;
-            if (substr($str,0,1) ne ' ') {
+            if ($str ne '' && substr($str,0,1) ne ' ') {
                 last;
             }
             $text .= "$str\n";
@@ -242,8 +242,8 @@ sub new {
             && !$root->shellEscape) {
         $self->throw(
             q~SDOC-00006: Option shellEscape (--shell-escape) must be set~,
-            file => $self->input,
-            line => $self->lineNum,
+            File => $self->input,
+            Line => $self->lineNum,
             -stacktrace => 0,
         );
     }
@@ -494,6 +494,37 @@ sub latex {
         -indent => 0,
         -nl => 2,
     );
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 mediawiki() - Generiere MediaWiki-Code
+
+=head4 Synopsis
+
+    $code = $cod->mediawiki($gen);
+
+=head4 Arguments
+
+=over 4
+
+=item $gen
+
+Generator für MediaWiki.
+
+=back
+
+=head4 Returns
+
+MediaWiki-Code (String)
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub mediawiki {
+    my ($self,$m) = @_;
+    return $m->code($self->text);
 }
 
 # -----------------------------------------------------------------------------

@@ -475,6 +475,45 @@ sub latex {
 
 # -----------------------------------------------------------------------------
 
+=head3 mediawiki() - Generiere MediaWiki-Code
+
+=head4 Synopsis
+
+    $code = $lst->mediawiki($gen);
+
+=head4 Arguments
+
+=over 4
+
+=item $gen
+
+Generator für MediaWiki.
+
+=back
+
+=head4 Returns
+
+MediaWiki-Code (String)
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub mediawiki {
+    my ($self,$m) = @_;
+
+    my $code = $self->generateChilds('mediawiki',$m);
+    if ($self->parent->type ne 'Item') {
+        # Sind wir eine Unterliste, fügen wir keinen
+        # zusätzlichen Zeilenumbruch an
+        $code .= "\n";
+    }
+
+    return $code;
+}
+
+# -----------------------------------------------------------------------------
+
 =head1 VERSION
 
 3.00

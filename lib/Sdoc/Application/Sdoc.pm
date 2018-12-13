@@ -114,7 +114,7 @@ sub main {
 
     my $op = 'pdf';
     if ($argA->[0] =~ /^(anchors|cleanup|convert|html|latex|links|pdf|
-            code-style-(names|page|file)|tree|validate)$/x) {
+            mediawiki|code-style-(names|page|file)|tree|validate)$/x) {
         $op = shift @$argA;
     }
 
@@ -277,7 +277,7 @@ sub main {
         # Ermittele/erzeuge Arbeitsverzeichnis
         my $docDir = $self->docDir('html',$basename,$opt);
 
-        # Erzeuge LaTeX-Datei
+        # Erzeuge HTML-Datei
 
         my $htmlFile = sprintf '%s/%s.html',$docDir,$basename;
         my $fh = Sdoc::Core::FileHandle->new('>',$htmlFile);
@@ -330,6 +330,26 @@ sub main {
 
             $self->showResult("$basename.pdf",$output,$opt->pdfViewer);
         }
+    }
+    elsif ($op eq 'mediawiki') {
+        # Ermittele/erzeuge Arbeitsverzeichnis
+        my $docDir = $self->docDir('mediawiki',$basename,$opt);
+
+        # Erzeuge MediaWiki-Datei
+
+        my $mediaWikiFile = sprintf '%s/%s.mediawiki',$docDir,$basename;
+        my $fh = Sdoc::Core::FileHandle->new('>',$mediaWikiFile);
+        $fh->setEncoding('utf-8');
+        $fh->print($doc->generate('mediawiki'));
+        $fh->close;
+
+        # Wechsele in Arbeitsverzeichnis
+
+        my $sh = Sdoc::Core::Shell->new(quiet=>!$opt->verbose);
+        $sh->cd($docDir);
+
+        # Zeige/kopiere Ergebnis
+        $self->showResult("$basename.mediawiki",$output,$opt->textViewer);
     }
     else {
         $self->throw(

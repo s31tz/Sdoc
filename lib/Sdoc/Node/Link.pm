@@ -211,6 +211,42 @@ sub latex {
 
 # -----------------------------------------------------------------------------
 
+=head3 mediawiki() - Generiere MediaWiki-Code
+
+=head4 Synopsis
+
+    $code = $lnk->mediawiki($gen);
+
+=head4 Arguments
+
+=over 4
+
+=item $gen
+
+Generator für MediaWiki.
+
+=back
+
+=head4 Returns
+
+Leerstring ('')
+
+=head4 Description
+
+Ein Link-Knoten hat keine Darstellung, daher liefert die Methode
+konstant einen Leersting.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub mediawiki {
+    my ($self,$l) = @_;
+    return '';
+}
+
+# -----------------------------------------------------------------------------
+
 =head1 VERSION
 
 3.00

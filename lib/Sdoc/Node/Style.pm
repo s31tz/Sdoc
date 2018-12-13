@@ -227,9 +227,10 @@ Generator für HTML.
 
 =back
 
-=head4 Returns
+=head4 Description
 
-HTML-Code (String)
+Ein Style-Knoten hat in HTML keine Darstellung, daher liefert
+die Methode konstant einen Leersting.
 
 =cut
 
@@ -246,7 +247,7 @@ sub html {
 
 =head4 Synopsis
 
-    $code = $pbr->latex($gen);
+    $code = $sty->latex($gen);
 
 =head4 Arguments
 
@@ -258,9 +259,10 @@ Generator für LaTeX.
 
 =back
 
-=head4 Returns
+=head4 Description
 
-LaTeX-Code (String)
+Ein Style-Knoten hat in LaTeX keine Darstellung, daher liefert
+die Methode konstant einen Leersting.
 
 =cut
 
@@ -268,6 +270,42 @@ LaTeX-Code (String)
 
 sub latex {
     my ($self,$l) = @_;
+    return '';
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 mediawiki() - Generiere MediaWiki-Code
+
+=head4 Synopsis
+
+    $code = $sty->mediawiki($gen);
+
+=head4 Arguments
+
+=over 4
+
+=item $gen
+
+Generator für MediaWiki.
+
+=back
+
+=head4 Returns
+
+Leerstring ('')
+
+=head4 Description
+
+Ein Style-Knoten hat in MediaWiki keine Darstellung, daher liefert
+die Methode konstant einen Leersting.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub mediawiki {
+    my ($self,$m) = @_;
     return '';
 }
 

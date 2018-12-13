@@ -370,6 +370,40 @@ sub latex {
 
 # -----------------------------------------------------------------------------
 
+=head3 mediawiki() - Generiere MediaWiki-Code
+
+=head4 Synopsis
+
+    $code = $toc->mediawiki($gen);
+
+=head4 Arguments
+
+=over 4
+
+=item $gen
+
+Generator für MediaWiki.
+
+=back
+
+=head4 Returns
+
+MediaWiki-Code (String)
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub mediawiki {
+    my ($self,$m) = @_;
+
+    # MEMO: Ein Inhaltsverzeichnis kann nicht mit : eingerückt werden
+
+    return $m->tableOfContents($self->maxLevel >= -1);
+}
+
+# -----------------------------------------------------------------------------
+
 =head1 VERSION
 
 3.00

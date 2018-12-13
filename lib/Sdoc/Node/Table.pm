@@ -604,6 +604,7 @@ sub latex {
     my $atb = $self->asciiTable;
 
     # Einrückung
+    # FIXME: Test durch $self->indentBlock ersetzen
 
     my $indent;
     if ($self->indent || $doc->getUserNodeAttribute('indentMode') &&
@@ -647,6 +648,69 @@ sub latex {
             return $node->expandText($l,\$title);
         },
     )."\n";
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 mediawiki() - Generiere MediaWiki-Code
+
+=head4 Synopsis
+
+    $code = $tab->mediawiki($gen);
+
+=head4 Arguments
+
+=over 4
+
+=item $gen
+
+Generator für MediaWiki.
+
+=back
+
+=head4 Returns
+
+MediaWiki-Code (String)
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub mediawiki {
+    my ($self,$m) = @_;
+
+    my $doc = $self->root;
+    my $atb = $self->asciiTable;
+
+    my $caption = $self->caption;
+    if ($caption) {
+        my $info = sprintf '%s %s',
+            $doc->language eq 'german'? 'Tabelle': 'Table',
+            $self->number;
+        $caption = sprintf "%s: %s",$m->fmt('bold',$info),$caption;
+    }
+
+    # Einrückung
+
+    my $code;
+    if ($self->indentBlock) {
+        $code .= $m->indent(1);
+    }
+
+    # Tabelle erzeugen
+
+    $code .= $m->table(
+        alignments => scalar $atb->alignments('html'),
+        caption => $caption,
+        rows => scalar $atb->rows,
+        titleBackground => $self->titleColor,
+        titles => scalar $atb->titles,
+        valueCallback => sub {
+            return $self->expandText($m,\shift);
+        },
+    );
+
+    return $code;
 }
 
 # -----------------------------------------------------------------------------

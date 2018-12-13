@@ -12,6 +12,7 @@ use Digest::SHA ();
 use Scalar::Util ();
 use Sdoc::Core::Html::Tag;
 use Sdoc::Core::LaTeX::Code;
+use Sdoc::Core::MediaWiki::Markup;
 use Sdoc::Core::AnsiColor;
 use Sdoc::Core::TreeFormatter;
 use Sdoc::Core::LaTeX::Figure;
@@ -833,11 +834,21 @@ sub warn {
 
     my $quiet = $self->root->quiet;
     if (!$quiet) {
-        warn sprintf "WARNING: %s (%%%s: +%s %s)\n",
+        # warn sprintf "WARNING: %s (%%%s: +%s %s)\n",
+        #     sprintf($fmt,@_),
+        #     $self->type,
+        #     $self->lineNum,
+        #     $self->input;
+
+        printf STDERR 'WARNING: %s (%%%s:',
             sprintf($fmt,@_),
-            $self->type,
-            $self->lineNum,
-            $self->input;
+            $self->type;
+        if (my $lineNum = $self->lineNum) {
+            printf STDERR ' +%s %s',
+                $self->lineNum,
+                $self->input;
+        }
+        printf STDERR ")\n";
     }
     
     return;
@@ -955,7 +966,7 @@ sub getCounts {
 
 =item $format
 
-Das Zielformat. Mögliche Werte: 'html', 'latex', 'tree'.
+Das Zielformat. Mögliche Werte: 'html', 'latex','mediawiki', 'tree'.
 
 =back
 
@@ -989,6 +1000,10 @@ sub generate {
     elsif ($format eq 'latex') {
         my $l = Sdoc::Core::LaTeX::Code->new;
         return $self->latex($l);
+    }
+    elsif ($format eq 'mediawiki') {
+        my $m = Sdoc::Core::MediaWiki::Markup->new;
+        return $self->mediawiki($m);
     }
     $self->throw(
         q~SDOC-00004: Unknown format~,
@@ -1168,6 +1183,9 @@ sub expandText {
         }
         elsif ($gen->isa('Prty::LaTeX::Code')) {
             $meth = 'expandSegmentsToLatex';
+        }
+        elsif ($gen->isa('Prty::MediaWiki::Markup')) {
+            $meth = 'expandSegmentsToMediaWiki';
         }
 
         # Expandiere Segmente mittels Zielformat-spezifischer Methode
@@ -1478,6 +1496,164 @@ sub expandSegmentsToLatex {
     }
     elsif ($seg eq 'Q') {
         return "``$val''";
+    }
+
+    $self->throw(
+        q~SDOC-00001: Unknown segment~,
+        Segment => $seg,
+        Code => "$seg\{$val\}",
+        Input => $self->input,
+        Line => $self->lineNum,
+    );
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 expandSegmentsToMediaWiki() - Expandiere Segmente zu MediaWiki-Code
+
+=head4 Synopsis
+
+    $code = $node->expandSegmentsToMediaWiki($gen,$segment,$val);
+
+=head4 Arguments
+
+=over 4
+
+=item $gen
+
+Generator für HTML
+
+=item $segment
+
+Segment-Bezeichner (ein Buchstabe)
+
+=item $val
+
+Wert innerhalb der Segment-Klammern.
+
+=back
+
+=head4 Returns
+
+MediaWiki-Code (String)
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub expandSegmentsToMediaWiki {
+    my ($self,$m,$seg,$val) = @_;
+
+    my $root = $self->root;
+
+    if ($seg eq 'A') {
+        # Darf es eigentlich nicht geben. Entweder wurde A{} verwendet,
+        # wo es nicht vorgesehen ist, oder A{} wurde in einem Block
+        # mehr als einmal verwendet. Entsprechende Warnungen
+        # wurden an anderer Stelle erzeugt.
+        return sprintf 'A\{%s\}',$val;
+    }
+    elsif ($seg eq 'B') {
+        # Wert darf kein Newline enthalten
+        $val =~ s/\n/ /g;
+        return $m->fmt('bold',$val);
+    }
+    elsif ($seg eq 'C') {
+        if ($self->type eq 'Paragraph' && $root->smallerMonospacedFont) {
+            # Ist dies in MediaWiki möglich?
+        }
+        return $m->fmt('code',$val);
+    }
+    elsif ($seg eq 'I') {
+        # Wert darf kein Newline enthalten
+        $val =~ s/\n/ /g;
+        return $m->fmt('italic',$val);
+    }
+    elsif ($seg eq 'G') {
+        my $code;
+
+        if ($val !~ /^\d+$/) {
+            # G hat als Wert keinen Index, also ist G{} auf
+            # diesem Knoten kein erwartetes Segment. Siehe auch
+            # Methode parseSegments(). Wir liefern den Text
+            # unverändert.
+            return sprintf 'G\{%s\}',$val;
+        }
+        my ($name,$gph) = @{$self->graphicA->[$val]};
+        if ($gph) {
+            $self->warn('G-Segment not implemented for MediaWiki');
+            $code = sprintf 'G\{%s\}',$name;
+        }
+        else {
+            $code = sprintf 'G\{%s\}',$name;
+        }
+
+        return $code;
+    }
+    elsif ($seg eq 'L') {
+        my $code;
+
+        if ($val !~ /^\d+$/) {
+            # L hat als Wert keinen Index, also ist L{} auf
+            # diesem Knoten kein erwartetes Segment. Siehe auch
+            # Methode parseSegments(). Wir liefern den Text
+            # unverändert.
+            return sprintf 'L\{%s\}',$val;
+        }
+
+        my ($linkText,$h) = @{$self->linkA->[$val]};
+        if ($h->type eq 'external') {
+            $code = $m->link('external',
+                $m->protect($h->destText),
+                $m->protect($h->text)
+            );
+        }
+        elsif ($h->type eq 'internal') {
+            my $destNode = $h->destNode;
+
+            # Abschnittstitel werden bei MediaWiki automatisch
+            # mit Ankern ausgestattet. In dem Fall steuern wir
+            # den Abschnittstitel direkt an.
+
+            my $linkId = $destNode->type eq 'Section'?
+                $destNode->linkText($m): $destNode->linkId;
+
+            if ($h->attribute eq '+') {
+                $code = $m->link('internal',
+                    $linkId,
+                    $destNode->linkText($m)
+                );
+            }
+            else {
+                $code = $m->link('internal',
+                    $linkId,
+                    $m->protect($h->text)
+                );
+            }
+        }
+        elsif ($h->type eq 'unresolved') {
+            $code = sprintf 'L\{%s\}',$m->protect($linkText);
+        }
+
+        return $code;
+    }
+    elsif ($seg eq 'M') {
+        if ($val !~ /^\d+$/) {
+            # M hat als Wert keinen Index, also ist M{} auf
+            # diesem Knoten kein erwartetes Segment. Siehe auch
+            # Methode parseSegments(). Wir liefern das
+            # Segment als Text.
+            return sprintf 'M~%s~',$val;
+        }
+
+        $self->warn('M-Segment not implemented for MediaWiki');
+        return sprintf 'M~%s~',$val;
+    }
+    elsif ($seg eq 'N') {
+        return $m->fmt('nl',$val);
+    }
+    elsif ($seg eq 'Q') {
+        return $m->fmt('quote',$val);
     }
 
     $self->throw(

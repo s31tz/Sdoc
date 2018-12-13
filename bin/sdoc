@@ -22,6 +22,8 @@ sdoc [OPTIONS] [pdf] INPUT.sdoc [OUTPUT.pdf]
 
 sdoc [OPTIONS] html INPUT.sdoc [OUTPUT.html]
 
+sdoc [OPTIONS] mediawiki INPUT.sdoc [OUTPUT.mediawiki]
+
 sdoc [OPTIONS] validate INPUT.sdoc
 
 sdoc [OPTIONS] anchors INPUT.sdoc

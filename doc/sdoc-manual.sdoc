@@ -2954,6 +2954,38 @@ CTAN: L{https://ctan.org/pkg/xcolor}
 
 ---PageBreak---
 
+== MediaWiki
+
+MediaWiki ist ein eher umständlicher Wiki-Dialekt, der die meisten
+Sdoc-Konstrukte umsetzen kann, wenn auch mit Einschränkungen.
+
+Da das Zielformat von MediaWiki ausschließlich HTML ist, ist die
+Wiki-Sprache durchsetzt mit HTML- und Stylesheet-Code.
+
+=== CSS
+
+Globaler Stylesheet-Code ist nur möglich, wenn der Administrator
+dies zulässt. Auf der Seite selbst kann Stylesheet-Code portabel
+nur durch Setzung des style-Attributs definiert werden.
+
+=== Listen
+
+Listen haben eine Reihe von Einschränkungen:
+
+* Der Inhalt eines Listenelements kann nur ein einzelner
+  Text (Paragraph) sein.
+* Der Text muss einzelig sein.
+* Listen können geschachtelt werden, was oft aber nicht
+  besonders gut aussieht, da die Einrückung der verschiedenen
+  Listenarten unterschiedlich ist. Insbesondere die Defintionsliste
+  ist, wenn sie eingebettet ist, nicht tief genug.
+
+=== Einschränkungen
+
+Z.Zt. noch nicht dokumentiert.
+
+---PageBreak---
+
 = Sonstiges
 
 == Warnungen

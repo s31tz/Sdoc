@@ -180,7 +180,7 @@ sub execute {
 
 =head4 Synopsis
 
-    $code = $lnk->html($gen);
+    $code = $ppr->html($gen);
 
 =head4 Arguments
 
@@ -198,7 +198,7 @@ Leerstring ('')
 
 =head4 Description
 
-Ein Link-Knoten hat keine Darstellung, daher liefert die Methode
+Ein PostProcessor-Knoten hat keine Darstellung, daher liefert die Methode
 konstant einen Leersting.
 
 =cut
@@ -216,7 +216,7 @@ sub html {
 
 =head4 Synopsis
 
-    $code = $lnk->latex($gen);
+    $code = $ppr->latex($gen);
 
 =head4 Arguments
 
@@ -234,7 +234,7 @@ Leerstring ('')
 
 =head4 Description
 
-Ein Link-Knoten hat keine Darstellung, daher liefert die Methode
+Ein PostProcessor-Knoten hat keine Darstellung, daher liefert die Methode
 konstant einen Leersting.
 
 =cut
@@ -243,6 +243,32 @@ konstant einen Leersting.
 
 sub latex {
     my ($self,$l) = @_;
+    return '';
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 mediawiki() - Generiere MediaWiki-Code
+
+=head4 Synopsis
+
+    $code = $ppr->mediawiki($gen);
+
+=head4 Returns
+
+Leerstring ('')
+
+=head4 Description
+
+Ein PostProcessor-Knoten hat keine Darstellung, daher liefert die Methode
+konstant einen Leersting.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub mediawiki {
+    my ($self,$m) = @_;
     return '';
 }
 

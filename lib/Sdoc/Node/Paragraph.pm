@@ -228,6 +228,46 @@ sub latex {
 
 # -----------------------------------------------------------------------------
 
+=head3 mediawiki() - Generiere MediaWiki-Code
+
+=head4 Synopsis
+
+    $code = $par->mediawiki($gen);
+
+=head4 Arguments
+
+=over 4
+
+=item $gen
+
+Generator für MediaWiki.
+
+=back
+
+=head4 Returns
+
+MediaWiki-Code (String)
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub mediawiki {
+    my ($self,$m) = @_;
+
+    my $text = $self->expandText($m,'textS');
+    $text = $m->paragraph($text);
+    if ($self->parent->type eq 'Item') {
+        # Sind wir der Paragraph eines Items, entfernen wir
+        # den zusätzlichen Zeilenumbruch
+        chomp $text;
+    }
+
+    return $text;
+}
+
+# -----------------------------------------------------------------------------
+
 =head1 VERSION
 
 3.00
