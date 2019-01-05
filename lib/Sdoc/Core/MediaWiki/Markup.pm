@@ -1373,9 +1373,13 @@ Syntax: L<https://www.mediawiki.org/wiki/Help:Formatting>
 
 =back
 
-=head4 Example
+=head4 Examples
 
-Interner Link:
+=over 2
+
+=item *
+
+Interner Link
 
     $gen->link('internal','Transaktionssicherheit',
         'Abschnitt Transaktiossicherheit');
@@ -1384,13 +1388,17 @@ erzeugt
 
     [[#Transaktionssicherheit|Abschnitt Transaktiossicherheit]]
 
-Externer Link:
+=item *
 
-    $gen->link('external','http::/fseitz.de/','Homepage Frank Seitz');
+Externer Link
+
+    $gen->link('external','http::/fseitz.de','Homepage Frank Seitz');
 
 erzeugt
 
     [http::/fseitz.de/ Homepage Frank Seitz]
+
+=back
 
 =cut
 

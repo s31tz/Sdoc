@@ -988,7 +988,8 @@ sub resolveLinks {
             $linkText =~ s/[\n\t]/ /g;
             $linkText =~ s/  +/ /g;
 
-            # Ein etwaiges Link-Attribut entfernen wir hier
+            # Ein etwaiges Link-Attribut entfernen wir
+            # hier aus dem Linktext
             (my $text = $linkText) =~ s/^([+])?//;
             my $attribute = $1 // '';
 

@@ -397,8 +397,11 @@ sub mediawiki {
     }->{$self->parent->listType} || $self->throw;
 
     my $childs = $self->generateChilds('mediawiki',$m);
+    $childs =~ s/\n/ /g;
     if ($type eq ';') {
-        return $m->item($type,$self->expandText($m,'keyS'),$childs);
+        my $key = $self->expandText($m,'keyS');
+        $key =~ s/:/&#58;/g;
+        return $m->item($type,$key,$childs);
     }
 
     return $m->item($type,$childs);
