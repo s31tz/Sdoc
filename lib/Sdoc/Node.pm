@@ -1178,13 +1178,13 @@ sub expandText {
         # Ermittele Zielformat-spezifische Methode
 
         my $meth = 'unknown';
-        if ($gen->isa('Prty::Html::Tag')) {
+        if ($gen->isa('Quiq::Html::Tag')) {
             $meth = 'expandSegmentsToHtml';
         }
-        elsif ($gen->isa('Prty::LaTeX::Code')) {
+        elsif ($gen->isa('Quiq::LaTeX::Code')) {
             $meth = 'expandSegmentsToLatex';
         }
-        elsif ($gen->isa('Prty::MediaWiki::Markup')) {
+        elsif ($gen->isa('Quiq::MediaWiki::Markup')) {
             $meth = 'expandSegmentsToMediaWiki';
         }
 
@@ -2084,7 +2084,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2018 Frank Seitz
+Copyright (C) 2019 Frank Seitz
 
 =head1 LICENSE
 

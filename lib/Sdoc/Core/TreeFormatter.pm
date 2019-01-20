@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use v5.10.0;
 
-our $VERSION = 1.125;
+our $VERSION = 1.131;
 
 use Sdoc::Core::Option;
 
@@ -80,17 +80,16 @@ produziert
 
 Ein Objekt der Klasse repräsentiert einen Baum, der mit
 Methoden der Klasse dargestellt (visualisiert) werden kann. Die
-Baumstruktur wird als eine Liste von Tripeln an den Konstruktor
-übergeben. Ein Tripel besteht aus der Angabe des Knotens und seiner
-Ebene und einem Stop-Kennzeichen, ob der Subbaum des Knotens ausgeblendet
-wurde [$level, $node, $stop]. Der Subbaum eines Knotens wird
-typischerweise ausgeblendet, wenn die Ausgangsstruktur kein Baum sondern
-ein Netz ist. Diese Information kann in der getText-Callback-Methode
-genutzt werden, um den betreffenden Knoten besonders darzustellen.
-Der Knoten $node kann ein Objekt oder ein Text sein. Die Ebene $level
-ist eine natürliche Zahl im Wertebereich von 0 (Wurzelknoten) bis n.
-Die Paar-Liste kann aus irgendeiner Baumstruktur mit einer rekursiven
-Funktion erzeugt werden (siehe Abschnitt L</EXAMPLE>).
+Baumstruktur wird als eine Liste von (minestens zweielementigen) Tupeln
+[$level,$node,...] an den Konstruktor übergeben. Ein Tupel besteht aus der
+Angabe der Ebene des Knotens, des Knotens selbst und optional weiteren
+- frei definierbaren - Informationen, z.B. ob der Subbaum des Knotens
+ausgeblendet wurde. Die zusätzliche Information kann in der
+getText-Callback-Methode genutzt werden, um den betreffenden Knoten
+besonders darzustellen. Der Knoten $node kann ein Objekt oder ein Text
+sein. Die Ebene $level ist eine natürliche Zahl im Wertebereich von
+0 (Wurzelknoten) bis n. Die Paar-Liste kann aus irgendeiner Baumstruktur
+mit einer rekursiven Funktion erzeugt werden (siehe Abschnitt L</EXAMPLE>).
 
 =head1 EXAMPLE
 
@@ -146,7 +145,7 @@ im Baum durch eine anonyme Subroutine produziert wird.
 Die Subroutine wird mittels der Option C<-getText> an $t->asText()
 übergeben:
 
-    my $cls = $cop->findEntity('Prty/ContentProcessor/Type');
+    my $cls = $cop->findEntity('Quiq/ContentProcessor/Type');
     my $arrA = $cls->classHierarchy;
     print Sdoc::Core::TreeFormatter->new($arrA)->asText(
         -getText => sub {
@@ -166,7 +165,7 @@ Die Subroutine wird mittels der Option C<-getText> an $t->asText()
 
 Ein Ausschnitt aus der produzierten Ausgabe:
 
-    +--Prty/ContentProcessor/Type
+    +--Quiq/ContentProcessor/Type
        : Erzeugung
        :   create()
        : Objektmethoden
@@ -230,16 +229,16 @@ Ein Ausschnitt aus der produzierten Ausgabe:
 
 =head4 Synopsis
 
-    $t = $class->new(\@triples);
+    $t = $class->new(\@tuples);
 
 =head4 Arguments
 
 =over 4
 
-=item @triples
+=item @tuples
 
-Liste von Tripeln [$level, $node, $stop]. Das Kennzeichen $stop
-kann auch weggelassen werden.
+Liste von Tripeln [$level, $node, ...]. Die Komponenten ... werden
+transparent weitergereicht.
 
 =back
 
@@ -259,17 +258,17 @@ Objekt zurück.
 sub new {
     my ($class,$tripleA) = @_;
 
-    # Tripel in interne Liste umkopieren. Die interne Liste besitzt
-    # ein weiteres Feld mit einem "Verbindungskennzeichen". Die
-    # Felder: Level, Verbindungskennzeichen, Knoten (Objekt oder Text),
-    # Stop-Kennzeichen. Das Verbindungskennzeichen gibt an, ob ein
+    # Tupel in interne Liste umkopieren. Die interne Liste besitzt
+    # am Anfang ein weiteres Feld mit einem "Verbindungskennzeichen". Die
+    # Felder Verbindungskennzeichen, Level, Knoten (Objekt oder Text),
+    # und sonstige Infomation. Das Verbindungskennzeichen gibt an, ob ein
     # Folgeknoten auf gleicher Ebene vorhanden ist. Wir initialisieren
     # dessen Wert hier auf 0.
 
     my @arr;
-    for my $p (@$tripleA) {
-        # [$level,$follow,$node]
-        push @arr,[$p->[0],0,$p->[1],$p->[2]//0];
+    for (@$tripleA) {
+        # [$follow,$level,$node,...]
+        push @arr,[0,@$_];
     }
 
     # Setze die Kolumne mit Verbindungs-Kennzeichen auf 1, wenn
@@ -277,11 +276,11 @@ sub new {
     # Knoten einer niedrigeren Ebene dazwischen liegt.
 
     for (my $i = 0; $i < @arr-1; $i++) {
-        my $iLevel = $arr[$i][0];
+        my $iLevel = $arr[$i][1];
         for (my $j = $i+1; $j < @arr; $j++) {
-            my $jLevel = $arr[$j][0];
+            my $jLevel = $arr[$j][1];
             if ($jLevel == $iLevel) {
-               $arr[$i][1] = 1;
+               $arr[$i][0] = 1;
                last;
             }
             elsif ($jLevel < $iLevel) {
@@ -303,7 +302,7 @@ sub new {
 
 =head4 Synopsis
 
-    $str = $class->asText(@opt);
+    $str = $t->asText(@opt);
 
 =head4 Options
 
@@ -313,7 +312,7 @@ sub new {
 
 Format der Ausgabe (s.u.)
 
-=item -getText => sub { my ($node,$stop) = @_; ... return $text }
+=item -getText => sub { my ($node,@args) = @_; ... return $text }
 
 Callback-Funktion zum Ermitteln des Textes des Knotens. Der Text
 kann mehrzeilig sein.
@@ -417,7 +416,7 @@ sub asText {
         my @follow;
 
         for (my $i = 0; $i < @$lineA; $i++) {
-            my ($level,$follow,$node,$stop) = @{$lineA->[$i]};
+            my ($follow,$level,$node,@args) = @{$lineA->[$i]};
             $follow[$level] = $follow; # Verbindungskennzeichen für $level
 
             # Einrückungs-Block erzeugen. Der Einrückungs-Block
@@ -443,7 +442,7 @@ sub asText {
             # X existiert nicht beim ersten Knoten, sonst ist X
             # konstant ein |.
 
-            my ($line1,$rest) = split /\n/,$getText->($node,$stop),2;
+            my ($line1,$rest) = split /\n/,$getText->($node,@args),2;
             my $block = sprintf "%s+--%s\n",$i? "|\n": '',$line1;
 
             if ($rest) {
@@ -464,19 +463,19 @@ sub asText {
     }
     elsif ($format eq 'debug') {
         for (@$lineA) {
-            my ($level,$follow,$node,$stop) = @$_;
+            my ($follow,$level,$node,@args) = @$_;
             $str .= sprintf "%d %d %s%s%s\n",
                 $level,
                 $follow,
                 '  ' x $level,
                 $node,
-                $stop? ' ...': '';
+                @args? join(' ',@args): '';
         }
     }
     elsif ($format eq 'compact') {
         for (@$lineA) {
-            my ($level,$follow,$node,$stop) = @$_;
-            my ($line1,$rest) = split /\n/,$getText->($node,$stop),2;
+            my ($follow,$level,$node,@args) = @$_;
+            my ($line1,$rest) = split /\n/,$getText->($node,@args),2;
             $str .= sprintf "%s%s\n",'  ' x $level,$line1;
         }
     }
@@ -494,7 +493,7 @@ sub asText {
 
 =head1 VERSION
 
-1.125
+1.131
 
 =head1 AUTHOR
 
@@ -502,7 +501,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2018 Frank Seitz
+Copyright (C) 2019 Frank Seitz
 
 =head1 LICENSE
 

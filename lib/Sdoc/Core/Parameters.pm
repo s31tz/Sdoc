@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use v5.10.0;
 
-our $VERSION = 1.125;
+our $VERSION = 1.131;
 
 use Sdoc::Core::Converter;
 use Sdoc::Core::Hash;
@@ -92,13 +92,13 @@ Optionswert zugewiesen.
 
 =over 4
 
-=item $opt
-
-Hash-Objekt mit den Optionen aus @params gemäß @optVal.
-
 =item $argA
 
 Array-Objekt mit den (maximal $maxArgs) Argumenten aus @params.
+
+=item $opt
+
+Hash-Objekt mit den Optionen aus @params gemäß @optVal.
 
 =back
 
@@ -275,7 +275,7 @@ sub extract {
 =head2 Spezialisierte Methoden
 
 Die nachfolgenden Methoden sind auf Basis der Methode extract()
-implementiert. Sie realsieren eine Vereinfachung für bestimmte
+implementiert. Sie realsieren Vereinfachungen für bestimmte
 Anwendungsfälle.
 
 =head3 extractPropertiesToVariables() - Extrahiere Properties und weise sie an Variablen zu
@@ -306,7 +306,8 @@ Nichts.
 
 Extrahiere Properties (und Optionen) aus der Parameterliste @params.
 Enthält die Parameterliste unbekannte Properties (oder Optionen),
-wird eine Exception geworfen.
+wird eine Exception geworfen. Die Methode wird typischerweise
+zur Verarbeitung von Methodenparametern genutzt.
 
 =head4 Example
 
@@ -346,7 +347,10 @@ sub extractPropertiesToVariables {
 
     $class->extract(1,1,undef,$paramA,0,@_);
     if (@$paramA) {
-        die "ERROR: Unexpected parameter(s): @$paramA\n";
+        $class->throw(
+            q~PARAM-00099: Unexpected parameter(s)~,
+            Parameters => "@$paramA",
+        );
     }
 
     return;
@@ -354,9 +358,97 @@ sub extractPropertiesToVariables {
 
 # -----------------------------------------------------------------------------
 
+=head3 extractToVariables() - Extrahiere Parameter und weise Optionen Variablen zu
+
+=head4 Synopsis
+
+    @args | $argA = $class->extractToVariables(\@params,$minArgs,$maxArgs,@optRef);
+
+=head4 Arguments
+
+=over 4
+
+=item @params
+
+Parameterliste, z.B. @_.
+
+=item $minArgs
+
+Mindestanzahl an Argumenten.
+
+$ maxArgs
+Maximale Anzahl an Argumenten, C<undef> bedeutet beliebig viele.
+
+=item @optRef
+
+Liste der Optionen und ihrer Variablenreferenzen.
+
+=back
+
+=head4 Returns
+
+=over 4
+
+=item $argA
+
+Referenz auf die Liste der extrahierten Argumente.
+
+=back
+
+=head4 Description
+
+Extrahiere Argumente und Optionen aus der Parameterliste @params.
+Enthält die Parameterliste unbekannte Optionen oder zu wenige
+oder zu viele Argumente, wird eine Exception geworfen.
+
+=head4 Example
+
+Konstruktor mit einer variablen Anzahl an Argumenten und zwei Optionen:
+
+    sub new {
+        my $class = shift;
+        # @_: $url,@opt -or- $url,$user,$passw,@opt
+    
+    
+        my $color = 1;
+        my $debug = 0;
+    
+        my $argA = Sdoc::Core::Parameters->extractToVariables(\@_,1,3,
+            -color => \$color,
+            -debug => \$debug,
+        );
+        my ($url,$user,$password) = @$argA;
+        ...
+    }
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub extractToVariables {
+    my ($class,$paramA,$minArgs,$maxArgs) = splice @_,0,4;
+
+    my $argA = $class->extract(1,0,undef,$paramA,$maxArgs,@_);
+    if (@$argA < $minArgs) {
+        $class->throw(
+            q~PARAM-00099: not enough arguments~,
+        );
+    }
+    elsif (@$paramA) {
+        $class->throw(
+            q~PARAM-00099: Unexpected parameter(s)~,
+            Parameters => "@_",
+        );
+    }
+
+    return wantarray? @$argA: $argA;
+}
+
+# -----------------------------------------------------------------------------
+
 =head1 VERSION
 
-1.125
+1.131
 
 =head1 AUTHOR
 
@@ -364,7 +456,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2018 Frank Seitz
+Copyright (C) 2019 Frank Seitz
 
 =head1 LICENSE
 

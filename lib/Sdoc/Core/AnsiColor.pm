@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use v5.10.0;
 
-our $VERSION = 1.125;
+our $VERSION = 1.131;
 
 use Term::ANSIColor ();
 
@@ -80,16 +80,18 @@ sind im Debian-Repository enthalten.
 
 =head4 Synopsis
 
+    $a = $class->new;
     $a = $class->new($bool);
 
 =head4 Arguments
 
 =over 4
 
-=item $bool
+=item $bool (Default: 1)
 
 Wenn wahr, findet eine Auszeichnung mit ANSI Colorcodes durch die
-Klasse statt, wenn falsch, nicht.
+Klasse statt, wenn falsch, nicht. Ist das Argument nicht angegeben,
+ist dies gleichbedeutend mit wahr.
 
 =back
 
@@ -108,13 +110,39 @@ ANSI Colorcodes umgeschaltet werden.
 # -----------------------------------------------------------------------------
 
 sub new {
-    my ($class,$bool) = @_;
+    my $class = shift;
+    my $bool = @_? shift: 1;
+
     return bless \$bool,$class;
 }
 
 # -----------------------------------------------------------------------------
 
 =head2 Objektmethoden
+
+=head3 active() - Farbdarstellung eingeschaltet
+
+=head4 Synopsis
+
+    $bool = $a->active;
+
+=head4 Returns
+
+Bool
+
+=head4 Description
+
+Liefere wahr, wenn ANSI Colorcodes aktiviert sind, anderfalls falsch.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub active {
+    return ${$_[0]};
+}
+
+# -----------------------------------------------------------------------------
 
 =head3 str() - Formatiere String mit Colorcodes
 
@@ -168,7 +196,7 @@ sub str {
 
 =head1 VERSION
 
-1.125
+1.131
 
 =head1 AUTHOR
 
@@ -176,7 +204,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2018 Frank Seitz
+Copyright (C) 2019 Frank Seitz
 
 =head1 LICENSE
 

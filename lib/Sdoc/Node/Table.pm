@@ -690,16 +690,11 @@ sub mediawiki {
         $caption = sprintf "%s: %s",$m->fmt('bold',$info),$caption;
     }
 
-    # Einrückung
+    # Erzeuge Tabelle
+    # MEMO: Einrückung einer Tabelle per $m->indent(1) ist möglich,
+    # aber nicht sinnvoll, da andere Elemente sich nicht einrücken lassen.
 
-    my $code;
-    if ($self->indentBlock) {
-        $code .= $m->indent(1);
-    }
-
-    # Tabelle erzeugen
-
-    $code .= $m->table(
+    my $code = $m->table(
         alignments => scalar $atb->alignments('html'),
         caption => $caption,
         rows => scalar $atb->rows,
@@ -725,7 +720,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2018 Frank Seitz
+Copyright (C) 2019 Frank Seitz
 
 =head1 LICENSE
 

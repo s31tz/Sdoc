@@ -6,7 +6,7 @@ use warnings;
 use v5.10.0;
 use utf8;
 
-our $VERSION = 1.125;
+our $VERSION = 1.131;
 
 use Sdoc::Core::Unindent;
 use Sdoc::Core::Parameters;
@@ -368,15 +368,15 @@ Typ der Liste. Mögliche Typen einer Liste:
 
 =over 4
 
-=item *
+=item Zeichen: *
 
 Punktliste.
 
-=item #
+=item Zeichen: #
 
 Nummerierungsliste.
 
-=item ;
+=item Zeichen: ;
 
 Definitionsliste.
 
@@ -542,15 +542,15 @@ Typ der Liste. Mögliche Werte:
 
 =over 4
 
-=item *
+=item Zeichen: *
 
 Punktliste.
 
-=item #
+=item Zeichen: #
 
 Numerierungsliste.
 
-=item ;
+=item Zeichen: ;
 
 Definitionsliste.
 
@@ -911,10 +911,7 @@ CSS der Klasse "wikitable": L<https://www.mediawiki.org/wiki/Manual:CSS>
 
 Der Code
 
-    use Sdoc::Core::MediaWiki::Markup;
-    use Sdoc::Core::MediaWiki::Markup;
-    
-    my $tab = Sdoc::Core::MediaWiki::Markup->new(
+    $gen->table(
         alignments => ['left','right','center'],
         caption => 'Eine Tabelle',
         titles => ['L','R','Z'],
@@ -925,9 +922,6 @@ Der Code
             ['ABCD',1234,'P'],
         ],
     );
-    
-    my $m = Sdoc::Core::MediaWiki::Markup->new;
-    my $code = $tab->mediawiki($m);
 
 produziert
 
@@ -955,7 +949,7 @@ produziert
     | style="background-color: #ffffff; text-align: center" |P
     |}
 
-was in der Darstellung in etwa so aussieht
+was in der Darstellung so aussieht
 
     +-------+--------------------+
     | L     |      R |     Z     |
@@ -968,7 +962,7 @@ was in der Darstellung in etwa so aussieht
     +----------------------------+
     | ABCD  |   1234 |     P     |
     +----------------------------+
-              Eine Tabelle
+             Eine Tabelle
 
 =cut
 
@@ -1599,7 +1593,7 @@ sub testPage {
             my ($class,$dir) = @_;
  
             my $max;
-            my $dh = Prty::DirHandle->new($dir);
+            my $dh = Quiq::DirHandle->new($dir);
             while (my $file = $dh->next) {
                if ($file eq '.' || $file eq '..') {
                     next;
@@ -1621,7 +1615,7 @@ sub testPage {
             '''my''' ($''class'',$''dir'') = @_;
  
             '''my''' $''max'';
-            '''my''' $''dh'' = '''Prty::DirHandle'''->'''new'''($''dir'');
+            '''my''' $''dh'' = '''Quiq::DirHandle'''->'''new'''($''dir'');
             while ('''my''' $''file'' = $''dh''->'''next''') {
                if ($''file'' '''eq''' '.' || $''file'' '''eq''' '..') {
                     '''next''';
@@ -1675,7 +1669,7 @@ sub testPage {
 
 =head1 VERSION
 
-1.125
+1.131
 
 =head1 AUTHOR
 
@@ -1683,7 +1677,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2018 Frank Seitz
+Copyright (C) 2019 Frank Seitz
 
 =head1 LICENSE
 

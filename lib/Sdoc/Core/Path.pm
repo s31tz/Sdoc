@@ -9,7 +9,7 @@ use warnings;
 use v5.10.0;
 use utf8;
 
-our $VERSION = 1.125;
+our $VERSION = 1.131;
 
 use Sdoc::Core::Option;
 use Sdoc::Core::FileHandle;
@@ -20,9 +20,9 @@ use Fcntl qw/:DEFAULT/;
 use Sdoc::Core::Perl;
 use Sdoc::Core::Unindent;
 use File::Find ();
+use Sdoc::Core::Shell;
 use Sdoc::Core::DirHandle;
 use Cwd ();
-use Sdoc::Core::Shell;
 use Sdoc::Core::Process;
 
 # -----------------------------------------------------------------------------
@@ -94,6 +94,37 @@ Wert zurück.
 
 sub append {
     shift->write($_[0],$_[1],-append=>1);
+    return;
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 checkFileSecurity() - Prüfe, ob Datei nur für Owner lesbar ist
+
+=head4 Synopsis
+
+    $this->checkFileSecurity($file);
+
+=head4 Description
+
+Prüfe, ob die Datei $file nur für ihren Owner lesbar ist.
+Wenn nicht, wirf eine Exception.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub checkFileSecurity {
+    my ($this,$file) = @_;
+
+    my $mode = $this->mode($file);
+    if ($mode & 00044) {
+        $this->throw(
+            q~PATH-00099: File is readable for others~,
+            File => $file,
+        );
+    }
+
     return;
 }
 
@@ -610,9 +641,10 @@ sub read {
 
     # Datei lesen
 
-    my $data = '';
+    $file = $class->expandTilde($file);
     my $fh = Sdoc::Core::FileHandle->new('<',$file);
 
+    my $data = '';
     if ($maxLines || $skip || $skipLines) {
         my $i = 0;
         my $j = 0;
@@ -703,6 +735,9 @@ sub write {
     }
 
     my $ref = ref $data? $data: \$data;
+
+    # Tilde-Expansion
+    $file = $class->expandTilde($file);
 
     # Erzeuge Verzeichnis, wenn nötig
 
@@ -1044,6 +1079,57 @@ sub find {
 
 # -----------------------------------------------------------------------------
 
+=head3 findProgram() - Ermittele Pfad zu Programm
+
+=head4 Synopsis
+
+    $path = $class->findProgram($program);
+    $path = $class->findProgram($program,$sloppy);
+
+=head4 Arguments
+
+=over 4
+
+=item $program
+
+Name des Programms.
+
+=item $sloppy
+
+Wenn wahr, wird keine Exception geworfen, wenn das Programm nicht
+gefunden wird, sondern undef zurück geliefert.
+
+=back
+
+=head4 Returns
+
+Programmpfad (String)
+
+=head4 Description
+
+Suche Programm $program über den Suchpfad der Shell und liefere
+den vollständigen Pfad zurück. Wird das Programm nicht gefunden,
+wird eine Exception geworfen, sofern $sloppy nicht wahr ist.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub findProgram {
+    my ($class,$program,$sloppy) = @_;
+
+    my $cmd = "which $program";
+    my $path = qx/$cmd/;
+    chomp $path;
+    if (!$sloppy) {
+        Sdoc::Core::Shell->checkError($?,$!,$cmd);
+    }
+
+    return $path eq ''? undef: $path;
+}
+
+# -----------------------------------------------------------------------------
+
 =head3 maxFilename() - Liefere den lexikalisch größten Dateinamen
 
 =head4 Synopsis
@@ -1199,7 +1285,7 @@ werden, wird eine Exception ausgelöst.
 
 sub mkdir {
     my $class = shift;
-    my $dir = shift;
+    my $dir = $class->expandTilde(shift);
     # @_: @opt
 
     my $createParent = 0;
@@ -1458,6 +1544,8 @@ Die Methode liefert keinen Wert zurück.
 sub delete {
     my ($class,$path) = @_;
 
+    $path = $class->expandTilde($path);
+
     if (!defined($path) || $path eq '' || !-e $path && !-l $path) {
         # bei Nichtexistenz nichts tun, aber nur, wenn es
         # kein Symlink ist. Bei Symlinks schlägt -e fehl, wenn
@@ -1490,6 +1578,28 @@ sub delete {
 
 # -----------------------------------------------------------------------------
 
+=head3 exists() - Prüfe Existenz
+
+=head4 Synopsis
+
+    $bool = $this->exists($path);
+
+=head4 Description
+
+Prüfe, ob Pfad $path existiert und liefere den entsprechenden
+Wahrheitswert zurück. Die Methode expandiert ~ am Pfadanfang.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub exists {
+    my ($this,$path) = @_;
+    return -e $this->expandTilde($path)? 1: 0;
+}
+
+# -----------------------------------------------------------------------------
+
 =head3 expandTilde() - Expandiere Tilde
 
 =head4 Synopsis
@@ -1515,7 +1625,7 @@ sub expandTilde {
     # Unter einem Daemon ist $HOME typischerweise nicht gesetzt, daher
     # prüfen wir zunächst, ob wir $HOME überhaupt expandieren müssen
 
-    if ($path =~ /^~/) {
+    if ($path && substr($path,0,2) eq '~/') {
         if (!exists $ENV{'HOME'}) {
             $class->throw(
                 q~PATH-00016: Environment-Variable HOME existiert nicht~,
@@ -1659,22 +1769,45 @@ sub isEmpty {
 
 =head4 Synopsis
 
-    $mode = $class->mode($path);
+    $mode = $this->mode($path);
 
 =head4 Description
 
 Liefere die Zugriffsrechte des Pfads $path.
+
+=head4 Examples
+
+=over 2
+
+=item *
+
+Permissions oktal anzeigen
+
+    printf "%04o\n",Sdoc::Core::Path->mode('/etc/passwd');
+    0644
+
+=item *
+
+Prüfen, ob eine Datei für andere lesbar oder schreibbar ist
+
+    if ($mode & 00066) {
+        die "ERROR: File ist readable or writable for others\n";
+    }
+
+=back
 
 =cut
 
 # -----------------------------------------------------------------------------
 
 sub mode {
-    my ($class,$path) = @_;
+    my ($this,$path) = @_;
+
+    $path = $this->expandTilde($path);
 
     my @stat = CORE::stat $path;
     unless (@stat) {
-        $class->throw(
+        $this->throw(
             q~PATH-00001: stat ist fehlgeschlagen~,
             Path=>$path,
         );
@@ -1706,7 +1839,7 @@ angegebenen Wert. In dem Fall muss der Pfad existieren.
 
 sub mtime {
     my $class = shift;
-    my $path = shift;
+    my $path = $class->expandTilde(shift);
     # @_: $mtime
 
     if (@_) {
@@ -2134,7 +2267,7 @@ sub symlinkRelative {
 
 =head1 VERSION
 
-1.125
+1.131
 
 =head1 AUTHOR
 
@@ -2142,7 +2275,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2018 Frank Seitz
+Copyright (C) 2019 Frank Seitz
 
 =head1 LICENSE
 

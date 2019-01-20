@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use v5.10.0;
 
-our $VERSION = 1.125;
+our $VERSION = 1.131;
 
 # -----------------------------------------------------------------------------
 
@@ -36,23 +36,23 @@ Erzeugung von Exceptions.
 
 Folgendes Beispielprogramm (test.pl)
 
-     1: #!/usr/bin/env perl
-     2: 
-     3: use Sdoc::Core::Stacktrace;
-     4: 
-     5: sub a {
-     6:     b();
-     7: }
-     8: 
-     9: sub b {
-    10:     c();
-    11: }
-    12: 
-    13: sub c {
-    14:     print Sdoc::Core::Stacktrace->asString,"\n";
-    15: }
-    16: 
-    17: a();
+    #!/usr/bin/env perl
+    
+    use Sdoc::Core::Stacktrace;
+    
+    sub a {
+        b();
+    }
+    
+    sub b {
+        c();
+    }
+    
+    sub c {
+        print Sdoc::Core::Stacktrace->asString,"\n";
+    }
+    
+    a();
 
 erzeugt die Ausgabe
 
@@ -190,7 +190,7 @@ sub asString {
 
 =head1 VERSION
 
-1.125
+1.131
 
 =head1 AUTHOR
 
@@ -198,7 +198,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2018 Frank Seitz
+Copyright (C) 2019 Frank Seitz
 
 =head1 LICENSE
 

@@ -6,7 +6,7 @@ use warnings;
 use v5.10.0;
 use utf8;
 
-our $VERSION = 1.125;
+our $VERSION = 1.131;
 
 use Scalar::Util ();
 use Hash::Util ();
@@ -615,7 +615,7 @@ sub AUTOLOAD {
 
     if (!exists $this->{$key}) {
         $this->throw(
-            q~HASH-00001: Hash-Schlüssel existiert nicht~,
+            q~HASH-00001: Hash-Schlüssel oder Methode existiert nicht~,
             Attribute=>$key,
             Class=>ref($this)? ref($this): $this,
         );
@@ -1374,8 +1374,8 @@ Zugriffsmethoden:
     B - Hash: eval{$h->{$k}}
     C - Restricted Hash: $h->{$k}
     D - Restricted Hash: eval{$h->{$k}}
-    E - Prty::Hash: $h->{$k}
-    F - Prty::Hash: $h->get($k)
+    E - Quiq::Hash: $h->{$k}
+    F - Quiq::Hash: $h->get($k)
     
            Rate    F    D    B    E    C    A
     F 1401111/s   -- -71% -74% -82% -83% -84%
@@ -1405,11 +1405,11 @@ Das Benchmark-Programm (bench-hash):
     
     use Benchmark;
     use Hash::Util;
-    use Prty::Hash;
+    use Quiq::Hash;
     
     my $h1 = {0=>'a',1=>'b',2=>'c',3=>'d',4=>'e',5=>'f'};
     my $h2 = Hash::Util::lock_ref_keys({0=>'a',1=>'b',2=>'c',3=>'d',4=>'e',5=>'f'});
-    my $h3 = Prty::Hash->new({0=>'a',1=>'b',2=>'c',3=>'d',4=>'e',5=>'f'});
+    my $h3 = Quiq::Hash->new({0=>'a',1=>'b',2=>'c',3=>'d',4=>'e',5=>'f'});
     
     my $i = 0;
     Benchmark::cmpthese(-10,{
@@ -1435,7 +1435,7 @@ Das Benchmark-Programm (bench-hash):
 
 =head1 VERSION
 
-1.125
+1.131
 
 =head1 AUTHOR
 
@@ -1443,7 +1443,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2018 Frank Seitz
+Copyright (C) 2019 Frank Seitz
 
 =head1 LICENSE
 

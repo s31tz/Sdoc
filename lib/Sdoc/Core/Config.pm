@@ -5,11 +5,11 @@ use strict;
 use warnings;
 use v5.10.0;
 
-our $VERSION = 1.125;
+our $VERSION = 1.131;
 
 use Sdoc::Core::Option;
-use Sdoc::Core::Reference;
 use Sdoc::Core::Path;
+use Sdoc::Core::Reference;
 use Sdoc::Core::Unindent;
 use Sdoc::Core::Perl;
 use Sdoc::Core::Process;
@@ -100,6 +100,11 @@ Verzeichnis über einen Dienst wie FTP:
 Falls die Konfigurationsdatei nicht existert, erzeuge sie mit
 dem Inhalt $text.
 
+=item -secure => $bool (Default: 0)
+
+Prüfe die Sicherheit der Datei. Wenn gesetzt, wird geprüft,
+ob die Datei nur für den Benutzer lesbar/schreibbar ist.
+
 =back
 
 =head4 Description
@@ -131,9 +136,11 @@ sub new {
     # Optionen
 
     my $create = undef;
+    my $secure = 0;
 
     Sdoc::Core::Option->extract(\@_,
         -create => \$create,
+        -secure => \$secure,
     );
 
     # Operation ausführen
@@ -148,19 +155,21 @@ sub new {
     else {
         # $file -or- \@dirs,$file
 
+        my $p = Sdoc::Core::Path->new;
+
         # Datei suchen
 
         my $dirA;
         if (Sdoc::Core::Reference->isArrayRef($_[0])) { # \@dirs
             $dirA = shift;
         }
-        my $cfgFile = Sdoc::Core::Path->expandTilde(shift);
+        my $cfgFile = $p->expandTilde(shift);
 
         # Configdatei suchen, wenn \@dirs
 
         if ($dirA) {
             for (@$dirA) {
-                my $dir = Sdoc::Core::Path->expandTilde($_);
+                my $dir = $p->expandTilde($_);
                 my $file = $dir? "$dir/$cfgFile": $cfgFile;
                 if (-e $file) {
                     $cfgFile = $file;
@@ -168,7 +177,11 @@ sub new {
                 }
             }
         }
- 
+
+        if ($secure) {
+            $p->checkFileSecurity($cfgFile);
+        }
+
         if (substr($cfgFile,0,1) ne '/') {
             # Wenn der Dateiname kein absoluter Pfad ist,
             # müssen wir ./ voranstellen, weil perlDoFile()
@@ -287,7 +300,7 @@ sub try {
 
 =head1 VERSION
 
-1.125
+1.131
 
 =head1 AUTHOR
 
@@ -295,7 +308,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2018 Frank Seitz
+Copyright (C) 2019 Frank Seitz
 
 =head1 LICENSE
 

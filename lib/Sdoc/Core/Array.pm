@@ -6,7 +6,7 @@ use warnings;
 use v5.10.0;
 use utf8;
 
-our $VERSION = 1.125;
+our $VERSION = 1.131;
 
 use Encode ();
 use Sdoc::Core::Reference;
@@ -527,7 +527,7 @@ Subroutine muss einen boolschen Wert liefern.
 # -----------------------------------------------------------------------------
 
 sub select {
-    my ($class,$arr) = Prty::Object->this(CORE::shift); # Wir brauchen $class
+    my ($class,$arr) = Quiq::Object->this(CORE::shift); # Wir brauchen $class
     $arr ||= CORE::shift;
     my $test = CORE::shift;
 
@@ -806,7 +806,7 @@ $arr keine Elemente, liefere undef.
 # -----------------------------------------------------------------------------
 
 sub standardDeviation {
-    my ($class,$arr) = Prty::Object->this(CORE::shift); # Wir brauchen $class
+    my ($class,$arr) = Quiq::Object->this(CORE::shift); # Wir brauchen $class
     $arr ||= CORE::shift;
 
     return undef if !@$arr;
@@ -832,7 +832,7 @@ keine Elemente, liefere undef.
 # -----------------------------------------------------------------------------
 
 sub variance {
-    my ($class,$arr) = Prty::Object->this(CORE::shift); # Wir brauchen $class
+    my ($class,$arr) = Quiq::Object->this(CORE::shift); # Wir brauchen $class
     $arr ||= CORE::shift;
 
     return undef if !@$arr;
@@ -994,7 +994,7 @@ sub restore {
 
 =head1 VERSION
 
-1.125
+1.131
 
 =head1 AUTHOR
 
@@ -1002,7 +1002,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2018 Frank Seitz
+Copyright (C) 2019 Frank Seitz
 
 =head1 LICENSE
 
