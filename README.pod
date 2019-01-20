@@ -6,18 +6,18 @@ Sdoc - Auszeichnungssprache für Druck- und Online-Dokumente
 
 =head1 DESCRIPTION
 
-Sdoc ist eine leichtgewichtige Auszeichnungssprache zum Verfassen von
+Sdoc ist eine leichtgewichtige Auszeichnungssprache zum Erstellen von
 Dokumenten. Ein Dokument, das in Sdoc geschrieben ist, kann portabel
 in eine Online-Fassung (HTML) und in eine Druck-Fassung (PDF)
 übersetzt werden.
 
-Die Online-Fassung ist für die Wiedergabe in einem Browser vorgesehen.
+Die Online-Fassung ist für die Wiedergabe in einem Webbrowser gedacht.
 Ihr Aussehen kann via CSS gestaltet werden.
 
 Die Druck-Fassung wird von LaTeX gesetzt und besitzt eine entsprechend
 hohe Qualität für die Wiedergabe auf Papier. In einem PDF-Viewer kann
-die Druck-Fassung auch interaktiv genutzt werden, da sie mit
-Hyperlinks versehen ist.
+die Druck-Fassung ebenso wie die Online-Fassung interaktiv genutzt werden,
+da sie mit Hyperlinks versehen ist.
 
 =head1 AUTHOR
 
