@@ -12,6 +12,8 @@ use Sdoc::Core::Math;
 use Sdoc::Core::Html::Image;
 use Sdoc::Core::Converter;
 use Sdoc::Core::LaTeX::Figure;
+use Sdoc::Core::MediaWiki::Markup;
+use Sdoc::Core::Path;
 
 # -----------------------------------------------------------------------------
 
@@ -694,6 +696,49 @@ sub latex {
         scale => $self->scale,
         width => $width,
     )."\n";
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 mediawiki() - Generiere MediaWiki-Code
+
+=head4 Synopsis
+
+    $code = $gph->mediawiki($gen);
+
+=head4 Arguments
+
+=over 4
+
+=item $gen
+
+Generator für MediaWiki.
+
+=back
+
+=head4 Returns
+
+MediaWiki-Code (String)
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub mediawiki {
+    my ($self,$m) = @_;
+
+    if (!defined($self->show) && $self->useCount > 0) {
+        return '';
+    }
+
+    # Rudimentäre Implementierung (FIXME: Erweitern, die Methode
+    # Sdoc::Core::MediaWiki::Markup->image() kann mehr)
+
+    return $m->image(
+        file => Sdoc::Core::Path->filename($self->source),
+        height => $self->height,
+        width => $self->width,
+    );
 }
 
 # -----------------------------------------------------------------------------
