@@ -72,7 +72,7 @@ Zeichenkette, die jeder Meldung im Log vorangestellt wird.
 
 =item quiet => $bool
 
-Unterdrck stdout und stderr.
+Unterdrücke stdout und stderr.
 
 =item time => $bool (Default: 0)
 
