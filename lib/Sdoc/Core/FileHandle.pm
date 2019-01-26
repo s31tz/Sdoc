@@ -8,8 +8,8 @@ use utf8;
 
 our $VERSION = 1.131;
 
-use Sdoc::Core::Option;
 use Sdoc::Core::Path;
+use Sdoc::Core::Option;
 use Scalar::Util ();
 use Sdoc::Core::Perl;
 use Fcntl qw(:flock);
@@ -137,7 +137,7 @@ sub new {
     }
     else {                          # Datei öffnen
         $mode = shift;
-        $path = shift;
+        $path = Sdoc::Core::Path->expandTilde(shift);
     }
 
     # Optionen

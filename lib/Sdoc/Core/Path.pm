@@ -146,7 +146,9 @@ Ist dies der Fall, liefere I<wahr>, andernfalls I<falsch>.
 # -----------------------------------------------------------------------------
 
 sub compare {
-    my ($class,$file1,$file2) = @_;
+    my $class = shift;
+    my $file1 = $class->expandTilde(shift);
+    my $file2 = $class->expandTilde(shift);
 
     if (-s $file1 != -s $file2) {
         return 1;
