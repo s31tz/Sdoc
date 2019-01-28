@@ -2192,6 +2192,7 @@ sub mediawiki {
     $code .= $self->generateChilds('mediawiki',$m);
 
     return Sdoc::Core::Record->toString(
+        -format => '@',
         Title => $title,
         Content => $code,
         -space => 1,
