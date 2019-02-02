@@ -6,7 +6,7 @@ use warnings;
 use v5.10.0;
 use utf8;
 
-our $VERSION = 1.132;
+our $VERSION = 1.133;
 
 use Sdoc::Core::Path;
 use Sdoc::Core::Option;
@@ -814,7 +814,7 @@ sub captureStderr {
 
 =head1 VERSION
 
-1.132
+1.133
 
 =head1 AUTHOR
 

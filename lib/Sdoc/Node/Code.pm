@@ -471,6 +471,7 @@ sub latex {
         my $c = chr(length($ln + $text =~ tr/\n// - 1) + 96); # a, b, c, d
         my $i = $indent? 'i': '';
         push @opt,'linenos',"firstnumber=$ln","xleftmargin=\\lnwidth$c$i";
+     # push @opt,'numbers=left',"firstnumber=$ln","xleftmargin=\\lnwidth$c$i";
     }
     elsif ($indent) {
         push @opt,'xleftmargin='.$doc->latexIndentation.'pt';
