@@ -812,6 +812,31 @@ sub captureStderr {
 
 # -----------------------------------------------------------------------------
 
+=head3 slurpFromStdin() - Lies Eingaben von STDIN
+
+=head4 Synopsis
+
+    $data = $class->slurpFromStdin;
+
+=head4 Returns
+
+String
+
+=head4 Description
+
+Lies alle Eingaben von STDIN und liefere diese als eine
+Zeichenkette zurück.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub slurpFromStdin {
+    return shift->new('<')->slurp;
+}
+
+# -----------------------------------------------------------------------------
+
 =head1 VERSION
 
 1.133
