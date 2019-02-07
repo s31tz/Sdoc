@@ -81,19 +81,42 @@ sub new {
 
 =head4 Synopsis
 
-    $class->append($file,$data);
+    $this->append($file,$data,@opt);
+
+=head4 Arguments
+
+=over 4
+
+=item $file
+
+Pfad der Datei.
+
+=item $data
+
+Daten, die auf die Datei geschrieben werden.
+
+=back
+
+=head4 Options
+
+=over 4
+
+=item -lock => $bool (Default: 0)
+
+Locke die Datei während des Schreibens exklusiv.
+
+=back
 
 =head4 Description
 
-Hänge Daten $data an Datei $file an. Die Methode liefert keinen
-Wert zurück.
+Hänge Daten $data an Datei $file an.
 
 =cut
 
 # -----------------------------------------------------------------------------
 
 sub append {
-    shift->write($_[0],$_[1],-append=>1);
+    shift->write(@_,-append=>1);
     return;
 }
 
@@ -680,6 +703,43 @@ sub read {
 
 # -----------------------------------------------------------------------------
 
+=head3 truncate() - Kürze Datei
+
+=head4 Synopsis
+
+    $this->truncate($file);
+
+=head4 Arguments
+
+=over 4
+
+=item $file
+
+Pfad der Datei.
+
+=back
+
+=head4 Description
+
+Kürze Datei $file auf Länge 0, falls sie existiert. Existiert die
+Datei nicht, geschieht nichts.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub truncate {
+    my ($this,$file) = @_;
+
+    if ($this->exists($file)) {
+        Sdoc::Core::FileHandle->new('>',$file)->truncate;
+    }
+
+    return;
+}
+
+# -----------------------------------------------------------------------------
+
 =head3 write() - Schreibe Datei
 
 =head4 Synopsis
@@ -699,6 +759,11 @@ sub read {
 =item -encode => $encoding (Default: keiner)
 
 Encodiere $data gemäß dem Encoding $encoding.
+
+=item -lock => $bool (Default: 0)
+
+Setze während des Schreibens einen Exclusive-Lock auf die Datei.
+Dies kann im Fallen von -append sinnvoll sein.
 
 =item -mode => $mode (Default: keiner)
 
@@ -724,6 +789,7 @@ sub write {
 
     my $append = 0;
     my $encode = undef;
+    my $lock = 0;
     my $mode = undef;
     my $recursive = 1;
 
@@ -731,6 +797,7 @@ sub write {
         Sdoc::Core::Option->extract(\@_,
             -append=>\$append,
             -encode=>\$encode,
+            -lock=>\$lock,
             -mode=>\$mode,
             -recursive=>\$recursive,
         );
@@ -744,7 +811,7 @@ sub write {
     # Erzeuge Verzeichnis, wenn nötig
 
     if ($recursive) {
-        my $dir = (Sdoc::Core::Path->split($file))[0];
+        my $dir = ($class->split($file))[0];
         if ($dir && !-d $dir) {
             $class->mkdir($dir,-recursive=>1);
         }
@@ -762,6 +829,16 @@ sub write {
         );
     };
 
+    if ($lock) {
+        flock(F,Fcntl::LOCK_EX) || do {
+            $class->throw(
+                q~PATH-00099: Can't get exclusive lock~,
+                Path=>$file,
+                Error=>"$!",
+            );
+        };
+    }
+
     if ($encode) {
         Sdoc::Core::Perl->binmode(*F,":encoding($encode)");
     }
@@ -773,7 +850,7 @@ sub write {
         print F $$ref or do {
             my $errStr = "$!";
             close F;
-            Sdoc::Core::Path->throw(
+            $class->throw(
                 q~PATH-00007: Schreiben auf Datei fehlgeschlagen~,
                 Path=>$file,
                 Error=>$errStr,
