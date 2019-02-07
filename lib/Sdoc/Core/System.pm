@@ -188,18 +188,22 @@ sub encoding {
 
 =head4 Synopsis
 
+    $user = $this->user;
     $user = $this->user($uid);
 
 =head4 Description
 
-Liefere den Namen des Benutzers mit User-Id (UID) $uid.
+Liefere den Namen des Benutzers mit User-Id (UID) $uid. Ist keine
+User-Id angegeben, verwende die effektive User-Id des laufenden
+Prozesses.
 
 =cut
 
 # -----------------------------------------------------------------------------
 
 sub user {
-    my ($this,$uid) = @_;
+    my $this = shift;
+    my $uid = shift // $>;
 
     return getpwuid($uid) // do {
         $this->throw(
