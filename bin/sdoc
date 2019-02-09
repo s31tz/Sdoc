@@ -48,7 +48,7 @@ sdoc [OPTIONS] cleanup
 
 =item --ansi-color[=BOOL] (Default: siehe ~/.sdoc.conf)
 
-Kennzeichne die Ausgabe mit ANSI Colercodes.
+Färbe die Ausgabe mit ANSI Colorcodes ein.
 
 =item --code-style=NAME (Default: siehe ~/.sdoc.conf)
 

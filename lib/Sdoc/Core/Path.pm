@@ -1197,7 +1197,9 @@ wird eine Exception geworfen, sofern $sloppy nicht wahr ist.
 sub findProgram {
     my ($class,$program,$sloppy) = @_;
 
-    my $cmd = "which $program";
+    # FIXME: PATH selbst absuchen
+
+    my $cmd = "which $program 2>/dev/null";
     my $path = qx/$cmd/;
     chomp $path;
     if (!$sloppy) {

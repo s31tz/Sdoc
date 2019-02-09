@@ -1914,7 +1914,7 @@ definiert, und dem Namen des Knotentyps.
 sub cssClass {
     my $self = shift;
     return lc sprintf '%s-%s',
-        $self->root->getUserNodeConfigAttribute('cssPrefix','sdoc'),
+        $self->root->getUserNodeConfigAttribute('cssPrefix','sdoc3'),
         $self->type;
 }
 

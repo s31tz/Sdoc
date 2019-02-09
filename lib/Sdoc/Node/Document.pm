@@ -402,7 +402,7 @@ sub new {
         countGraphic => 0,
         countList => 0,
         countTable => 0,
-        cssPrefix => 'sdoc', # User, Attribute, Config, Default
+        cssPrefix => 'sdoc3', # User, Attribute, Config, Default
         date => undef,
         dateS => undef,
         firstAppendixSection => undef,
@@ -1758,7 +1758,7 @@ sub css {
             # * Font Titel, Author, Date vergrößern
             # * Abstand zwischen Titel und Author, Date verkleinern
             h1 => [
-                fontSize => '230%',
+                fontSize => '250%',
                 marginBottom => '10px',
             ],
             'div.author' => [

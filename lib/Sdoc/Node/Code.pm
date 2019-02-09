@@ -63,7 +63,7 @@ expandiert.
 
 =item indent => $bool (Default: I<kontextabhängig>)
 
-Rücke den Text ein. Im Falle von Zeilennummern (C<ln=N>) oder
+Rücke den Text ein. Im Falle von Zeilennummern (C<ln=N>)
 wird I<nicht> eingerückt. Sonst wird eingerückt. Durch explizite
 Setzung des Attributs kann der jeweilige Default überschrieben
 werden.
@@ -255,7 +255,7 @@ sub new {
 
 =head2 Einrückung
 
-=head3 indentBlock() - Prüfe, ob Abbildung eingrückt werden soll
+=head3 indentBlock() - Prüfe, ob Code-Abschnitt eingrückt werden soll
 
 =head4 Synopsis
 
@@ -274,6 +274,9 @@ sub indentBlock {
 
     my $indentMode = $self->root->getUserNodeAttribute('indentMode');
     my $indent = $self->indent;
+    if (!defined($indent) && !$self->ln) {
+        $indent = 1;
+    }
 
     return $indent || $indentMode && !defined $indent? 1: 0;
 }
@@ -463,8 +466,7 @@ sub latex {
     my $text = $self->text;
 
     # Einrückung
-    my $indent = $self->indent || $doc->getUserNodeAttribute('indentMode') &&
-        !defined $self->indent;
+    my $indent = $self->indentBlock;
 
     my @opt;
     if (my $ln = $self->ln) {
