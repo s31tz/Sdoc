@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use v5.10.0;
 
-our $VERSION = 1.133;
+our $VERSION = 1.134;
 
 use Sdoc::Core::Reference;
 use Sdoc::Core::Unindent;
@@ -433,7 +433,7 @@ sub latex {
 
 =head1 VERSION
 
-1.133
+1.134
 
 =head1 AUTHOR
 
