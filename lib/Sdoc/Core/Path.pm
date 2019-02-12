@@ -773,6 +773,11 @@ Setze die Permissions der Datei auf $mode. Beispiel: -mode=>0775
 
 Erzeuge übergeordnete Verzeichnisse, wenn nötig.
 
+=item -unindent => $bool (Default: 0)
+
+Wende Sdoc::Core::Unindent->trimNl() auf die Daten $data an. Dies ist für
+inline geschriebenen Text nützlich.
+
 =back
 
 =cut
@@ -792,6 +797,7 @@ sub write {
     my $lock = 0;
     my $mode = undef;
     my $recursive = 1;
+    my $unindent = 0;
 
     if (@_) {
         Sdoc::Core::Option->extract(\@_,
@@ -800,6 +806,7 @@ sub write {
             -lock=>\$lock,
             -mode=>\$mode,
             -recursive=>\$recursive,
+            -unindent=>\$unindent,
         );
     }
 
@@ -847,6 +854,12 @@ sub write {
     # da sonst eine Exception ausgelöst wird.
 
     if (defined($$ref) && $$ref ne '') {
+        # Unindent
+
+        if ($unindent) {
+            $$ref = Sdoc::Core::Unindent->trimNl($$ref);
+        }
+
         print F $$ref or do {
             my $errStr = "$!";
             close F;
