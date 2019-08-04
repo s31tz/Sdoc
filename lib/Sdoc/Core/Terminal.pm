@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use v5.10.0;
 
-our $VERSION = 1.135;
+our $VERSION = '1.154';
 
 use Sdoc::Core::Option;
 use Sdoc::Core::FileHandle;
@@ -134,15 +134,15 @@ sub askUser {
 
     if (@_) {
         Sdoc::Core::Option->extract(\@_,
-            -automatic=>\$automatic,
-            -color=>\$color,
-            -default=>\$default,
-            -inHandle=>\$in,
-            -outHandle=>\$out,
-            -timer=>\$timer,
-            -ttyIn=>\$ttyIn,
-            -ttyOut=>\$ttyOut,
-            -values=>\$values,
+            -automatic => \$automatic,
+            -color => \$color,
+            -default => \$default,
+            -inHandle => \$in,
+            -outHandle => \$out,
+            -timer => \$timer,
+            -ttyIn => \$ttyIn,
+            -ttyOut => \$ttyOut,
+            -values => \$values,
         );
     }
 
@@ -152,7 +152,7 @@ sub askUser {
         }
         else {
             $class->throw(
-                q~ASK-00001: Im Automatikmodus ist Defaultwert erforderlich~,
+                'ASK-00001: Im Automatikmodus ist Defaultwert erforderlich',
             );
         }
     }
@@ -267,15 +267,15 @@ B<Terminal-Eigenschaften>
 
 Rote Schrift:
 
-    Sdoc::Core::Terminal->ansiEsc('red');
+    $esc = Sdoc::Core::Terminal->ansiEsc('red');
 
 Fette weiße Schrift auf rotem Grund:
 
-    Sdoc::Core::Terminal->ansiEsc('bold white on_red');
+    $esc = Sdoc::Core::Terminal->ansiEsc('bold white on_red');
 
 Terminal in den Anfangszustand zurückversetzen:
 
-    Sdoc::Core::Terminal->ansiEsc('reset');
+    $esc = Sdoc::Core::Terminal->ansiEsc('reset');
 
 =cut
 
@@ -290,7 +290,7 @@ sub ansiEsc {
 
 =head1 VERSION
 
-1.135
+1.154
 
 =head1 AUTHOR
 

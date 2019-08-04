@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use v5.10.0;
 
-our $VERSION = 1.135;
+our $VERSION = '1.154';
 
 # -----------------------------------------------------------------------------
 
@@ -57,6 +57,10 @@ HTML-Code, der im Body der Tabelle gesetzt wird, wenn die Liste
 der Elemente leer ist. Wenn auf Leerstring, undef oder 0 gesetzt,
 wird kein Body angezeigt.
 
+=item footer => $bool (Default: 0)
+
+Setze die Titel @titles auch als Footer.
+
 =item rowCallback => $sub (Default: undef)
 
 Referenz auf eine Subroutine, die für jedes Element die
@@ -86,10 +90,10 @@ Attribute von tr- und td-Elemeten setzen. Für jedes Element
 wird eine Arrayreferenz geliefert:
 
     $e = Sdoc::Core::Html::Table::List->new(
-        titles=>[qw/Id Name Vorname/],
-        align=>[qw/right left left/],
-        rows=>\@obj,
-        rowCallback=>sub {
+        titles => [qw/Id Name Vorname/],
+        align => [qw/right left left/],
+        rows => \@obj,
+        rowCallback => sub {
             my ($row,$i) = @_;
     
             my $trA = [class=>'TRCLASS'];
@@ -105,10 +109,10 @@ Lediglich Werte ausgeben. Für das tr-Element wird C<undef> geliefert,
 für die td-Elemente ein skalarer Wert (der Content des Elements):
 
     $e = Sdoc::Core::Html::Table::List->new(
-        titles=>[qw/Id Name Vorname/],
-        align=>[qw/right left left/],
-        rows=>\@obj,
-        rowCallback=>sub {
+        titles => [qw/Id Name Vorname/],
+        align => [qw/right left left/],
+        rows => \@obj,
+        rowCallback => sub {
             my ($row,$i) = @_;
     
             push @arr,$row->get('ATTRIBUTE');
@@ -145,13 +149,14 @@ sub new {
     # Defaultwerte
 
     my $self = $class->SUPER::new(
-        align=>[],
-        allowHtml=>0,
-        empty=>'&nbsp;',
-        rowCallback=>undef,
-        rowCallbackArguments=>[],
-        rows=>[],
-        titles=>[],
+        align => [],
+        allowHtml => 0,
+        empty => '&nbsp;',
+        footer => 0,
+        rowCallback => undef,
+        rowCallbackArguments => [],
+        rows => [],
+        titles => [],
     );
 
     # Werte Konstruktoraufruf
@@ -190,9 +195,9 @@ sub html {
 
     # Attribute
 
-    my ($align,$allowHtml,$empty,$rowCallback,$rowCallbackArgumentA,$rowA,
-        $titleA) = $self->get(qw/align allowHtml empty rowCallback
-        rowCallbackArguments rows titles/);
+    my ($align,$allowHtml,$empty,$footer,$rowCallback,$rowCallbackArgumentA,
+        $rowA,$titleA) = $self->get(qw/align allowHtml empty footer
+        rowCallback rowCallbackArguments rows titles/);
 
     return '' if !@$titleA && !@$rowA;
 
@@ -213,13 +218,13 @@ sub html {
 
     # Kopf
 
+    my $ths;
     if (@$titleA) {
-        my $ths;
         my $i = 0;
         for my $title (@$titleA) {
             $ths .= $h->tag('th',
-                -text=>!$allowHtml{$title},
-                align=>$align->[$i++],
+                -text => !$allowHtml{$title},
+                align => $align->[$i++],
                 '-',
                 $title
             );
@@ -251,8 +256,8 @@ sub html {
         my $j = 0;
         for my $tdA (@tds) {
             $tds .= $h->tag('td',
-                -text=>!(@$titleA? $allowHtml{$titleA->[$j]}: $allowHtml),
-                align=>$align->[$j++],
+                -text => !(@$titleA? $allowHtml{$titleA->[$j]}: $allowHtml),
+                align => $align->[$j++],
                 ref $tdA? @$tdA: $tdA # Array oder skalarer Wert
             );
         }
@@ -266,8 +271,8 @@ sub html {
         # Keine Objekte vorhanden
         $trs = $h->tag('tr',
             $h->tag('td',
-                align=>'center',
-                colspan=>scalar(@$titleA),
+                align => 'center',
+                colspan => scalar(@$titleA),
                 '-',
                 $empty,
             )
@@ -277,6 +282,14 @@ sub html {
         $html .= $h->tag('tbody',$trs);
     }
 
+    # Fuß
+
+    if ($footer && $ths) {
+        $html .= $h->tag('tfoot',
+            $h->tag('tr',$ths),
+        );
+    }
+
     return $self->SUPER::html($h,$html);
 }
 
@@ -284,7 +297,7 @@ sub html {
 
 =head1 VERSION
 
-1.135
+1.154
 
 =head1 AUTHOR
 

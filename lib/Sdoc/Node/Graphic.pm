@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use v5.10.0;
 
-our $VERSION = 3.00;
+our $VERSION = '3.00';
 
 use Sdoc::Core::File::Image;
 use Sdoc::Core::Math;
@@ -738,6 +738,7 @@ sub mediawiki {
         file => Sdoc::Core::Path->filename($self->source),
         height => $self->height,
         width => $self->width,
+        border => $self->border,
     );
 }
 

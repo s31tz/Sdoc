@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use v5.10.0;
 
-our $VERSION = 1.135;
+our $VERSION = '1.154';
 
 use Sdoc::Core::Option;
 
@@ -48,33 +48,33 @@ Der Code
 
 produziert
 
-    +--A
+    A
+    |
+    +--B
+    |  |
+    |  +--C
+    |  |  |
+    |  |  +--D
+    |  |
+    |  +--E
+    |  |
+    |  +--F
+    |     |
+    |     +--G
+    |        |
+    |        +--H
+    |
+    +--I
+    |
+    +--J
+    |  |
+    |  +--K
+    |  |
+    |  +--L
+    |
+    +--M
        |
-       +--B
-       |  |
-       |  +--C
-       |  |  |
-       |  |  +--D
-       |  |
-       |  +--E
-       |  |
-       |  +--F
-       |     |
-       |     +--G
-       |        |
-       |        +--H
-       |
-       +--I
-       |
-       +--J
-       |  |
-       |  +--K
-       |  |
-       |  +--L
-       |
-       +--M
-          |
-          +--N
+       +--N
 
 =head1 DESCRIPTION
 
@@ -89,7 +89,7 @@ getText-Callback-Methode genutzt werden, um den betreffenden Knoten
 besonders darzustellen. Der Knoten $node kann ein Objekt oder ein Text
 sein. Die Ebene $level ist eine natürliche Zahl im Wertebereich von
 0 (Wurzelknoten) bis n. Die Paar-Liste kann aus irgendeiner Baumstruktur
-mit einer rekursiven Funktion erzeugt werden (siehe Abschnitt L</EXAMPLE>).
+mit einer rekursiven Funktion erzeugt werden (siehe Abschnitt L<EXAMPLE|"EXAMPLE">).
 
 =head1 EXAMPLE
 
@@ -149,7 +149,7 @@ Die Subroutine wird mittels der Option C<-getText> an $t->asText()
     my $arrA = $cls->classHierarchy;
     print Sdoc::Core::TreeFormatter->new($arrA)->asText(
         -getText => sub {
-            my ($cls,$stop) = @_;
+            my ($cls,$level,$stop) = @_;
     
             my $str = $cls->name."\n";
             for my $grp ($cls->groups) {
@@ -182,9 +182,9 @@ Ein Ausschnitt aus der produzierten Ausgabe:
        :   needsTest()
        :   needsUpdate()
        |
-       +--Yeah/Type
+       +--Jaz/Type
           |
-          +--Yeah/Type/Export
+          +--Jaz/Type/Export
           |  : Erzeugung
           |  :   create()
           |  : Entitäten
@@ -201,11 +201,11 @@ Ein Ausschnitt aus der produzierten Ausgabe:
           |  :   rewriteRules()
           |  :   export()
           |
-          +--Yeah/Type/Language
+          +--Jaz/Type/Language
           |
-          +--Yeah/Type/Library
+          +--Jaz/Type/Library
           |
-          +--Yeah/Type/Package
+          +--Jaz/Type/Package
           |  : Erzeugung
           |  :   create()
           |  : Eigenschaften
@@ -237,7 +237,7 @@ Ein Ausschnitt aus der produzierten Ausgabe:
 
 =item @tuples
 
-Liste von Tripeln [$level, $node, ...]. Die Komponenten ... werden
+Liste von Tupeln [$level, $node, ...]. Die Komponenten ... werden
 transparent weitergereicht.
 
 =back
@@ -256,7 +256,7 @@ Objekt zurück.
 # -----------------------------------------------------------------------------
 
 sub new {
-    my ($class,$tripleA) = @_;
+    my ($class,$tupleA) = @_;
 
     # Tupel in interne Liste umkopieren. Die interne Liste besitzt
     # am Anfang ein weiteres Feld mit einem "Verbindungskennzeichen". Die
@@ -266,7 +266,7 @@ sub new {
     # dessen Wert hier auf 0.
 
     my @arr;
-    for (@$tripleA) {
+    for (@$tupleA) {
         # [$follow,$level,$node,...]
         push @arr,[0,@$_];
     }
@@ -331,18 +331,18 @@ B<debug>
 
     0 0 A
     1 1   B
-    2 1     C
-    3 0       D
-    2 1     E
-    2 0     F
-    3 0       G
-    4 0         H
+    1 2     C
+    0 3       D
+    1 2     E
+    0 2     F
+    0 3       G
+    0 4         H
     1 1   I
     1 1   J
-    2 1     K
-    2 0     L
-    1 0   M
-    2 0     N
+    1 2     K
+    0 2     L
+    0 1   M
+    0 2     N
 
 B<compact>
 
@@ -363,33 +363,33 @@ B<compact>
 
 B<tree>
 
-    +--A
+    A
+    |
+    +--B
+    |  |
+    |  +--C
+    |  |  |
+    |  |  +--D
+    |  |
+    |  +--E
+    |  |
+    |  +--F
+    |     |
+    |     +--G
+    |        |
+    |        +--H
+    |
+    +--I
+    |
+    +--J
+    |  |
+    |  +--K
+    |  |
+    |  +--L
+    |
+    +--M
        |
-       +--B
-       |  |
-       |  +--C
-       |  |  |
-       |  |  +--D
-       |  |
-       |  +--E
-       |  |
-       |  +--F
-       |     |
-       |     +--G
-       |        |
-       |        +--H
-       |
-       +--I
-       |
-       +--J
-       |  |
-       |  +--K
-       |  |
-       |  +--L
-       |
-       +--M
-          |
-          +--N
+       +--N
 
 =cut
 
@@ -399,16 +399,19 @@ sub asText {
     my $self = shift;
     # @_: @opt
 
+    my $direction = 'down';
     my $format = 'tree';
     my $getText = sub {return shift};
 
     Sdoc::Core::Option->extract(\@_,
+        -direction => \$direction,
         -format => \$format,
         -getText => \$getText,
     );
 
-    my $str = '';
     my $lineA = $self->get('lineA');
+
+    my $str = '';
 
     if ($format eq 'tree') {
         # Array, das für jede Einrückungsspalte angibt, ob dort eine
@@ -437,13 +440,15 @@ sub asText {
             #     Y  $rest
             #
             # wobei "Y  $rest" nur bei einem mehrzeiligen Knoten-Text
-            # existiert. Y ist dann ein |, wenn das Verbindugskennzeichen
+            # existiert. Y ist dann ein |, wenn das Verbindungskennzeichen
             # für Ebene $level gesetzt ist, sonst ein Leerzeichen.
             # X existiert nicht beim ersten Knoten, sonst ist X
-            # konstant ein |.
+            # konstant ein |. Bei Direction 'down' wird X oberhalb,
+            # bei 'up' unterhalb des Blocks hinzugefügt.
 
-            my ($line1,$rest) = split /\n/,$getText->($node,@args),2;
-            my $block = sprintf "%s+--%s\n",$i? "|\n": '',$line1;
+            my ($line1,$rest) = split /\n/,$getText->($node,$level,@args),2;
+
+            my $block = sprintf "+--%s\n",$line1;
 
             if ($rest) {
                 if ($follow[$level]) {
@@ -455,37 +460,58 @@ sub asText {
                 $block .= $rest;
             }
 
+            # Wenn 'down' setzen wir | auf die Zeile davor,
+            # bei 'up' setzen wir | auf die Zeile danach.
+
+            if ($i) {
+                $block = $direction eq 'down'? "|\n$block": "$block|\n";
+            }
+
             # Einrückungs-Block und Knoten-Block zusammenfügen
 
             $block =~ s/^/$indent/mg;
-            $str .= $block;
+
+            if ($direction eq 'down') {
+                $str .= $block;
+            }
+            else { # up
+                $str = $block.$str;
+            }
         }
+
+        $str =~ s/^(\+--|   )//mg;
     }
     elsif ($format eq 'debug') {
         for (@$lineA) {
             my ($follow,$level,$node,@args) = @$_;
             $str .= sprintf "%d %d %s%s%s\n",
-                $level,
                 $follow,
+                $level,
                 '  ' x $level,
-                $node,
-                @args? join(' ',@args): '';
+                $getText->($node,$level,@args), # $node,
+                @args? ' '.join('|',map {$_ // 'undef'} @args): '';
         }
     }
     elsif ($format eq 'compact') {
         for (@$lineA) {
             my ($follow,$level,$node,@args) = @$_;
-            my ($line1,$rest) = split /\n/,$getText->($node,@args),2;
-            $str .= sprintf "%s%s\n",'  ' x $level,$line1;
+            my ($line1,$rest) = split /\n/,$getText->($node,$level,@args),2;
+            my $block = sprintf "%s%s\n",'  ' x $level,$line1;
+            if ($direction eq 'down') {
+                $str .= $block;
+            }
+            else { # up
+                $str = $block.$str;
+            }
         }
     }
     else {
         $self->throw(
-            q~TREE-FORMATTER-00001: Unknown format~,
+            'TREE-FORMATTER-00001: Unknown format',
             Format => $format,
         );
     }
-    
+
     return $str;
 }
 
@@ -493,7 +519,7 @@ sub asText {
 
 =head1 VERSION
 
-1.135
+1.154
 
 =head1 AUTHOR
 

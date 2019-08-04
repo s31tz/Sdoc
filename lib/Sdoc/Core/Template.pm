@@ -6,7 +6,7 @@ use warnings;
 use v5.10.0;
 use utf8;
 
-our $VERSION = 1.135;
+our $VERSION = '1.154';
 
 use Sdoc::Core::Path;
 use Sdoc::Core::Option;
@@ -164,7 +164,7 @@ sub new {
         }
         else {
             $class->throw(
-                q~TEMPLATE-00001: Ungüliger Wert für Option -lineContinuation~,
+                'TEMPLATE-00001: Ungüliger Wert für Option -lineContinuation',
                 Value => $lineContinuation,
             );
         }
@@ -219,7 +219,7 @@ Ersetze alle Platzhalter durch ihre Werte. Platzhalter und
 Werte werden als Paare @keyVal übergeben.
 
 Der Wert kann ein String, eine Arrayrefernz, eine Codereferenz oder
-ein Template-Objekt sein. Siehe Methode L</value>().
+ein Template-Objekt sein. Siehe Methode L<value|"value() - Liefere Platzhalter-Wert als Zeichenkette">().
 
 Es wird für jeden Platzhalter mit einem Wert ungleich C<undef> geprüft,
 ob dieser im Template vorkommt. Wenn nicht, wird eine Exception geworfen.
@@ -230,28 +230,28 @@ Subroutine liefert Platzhalter-Wert:
 
     my $tpl = Sdoc::Core::Template->new('xml',\$Order);
     $tpl->replace(
-        __CUSTNR__=>$kundenNr,
-        __LIEFERNAME__=>$vor->{'liefername'},
-        __LIEFERSTRASSE__=>$lieferstrasse,
-        __LIEFERHAUSNR__=>$lieferhausnr,
-        __LIEFERPLZ__=>$vor->{'lieferplz'},
-        __LIEFERORT__=>$vor->{'lieferort'},
-        __LIEFERLAND_ISO__=>$vor->{'lieferland_iso'},
-        __BESTELLDATUM__=>POSIX::strftime('%Y-%m',localtime),
-        __BESTELLNUMMER__=>$vor->{'vorgang_bestellnummer'},
-        __WAEHRUNG__=>$waehrung,
-        __ENVIRONMENT__=>$test? 'T': 'L',
-        __ORDERLINES__=>sub {
+        __CUSTNR__ => $kundenNr,
+        __LIEFERNAME__ => $vor->{'liefername'},
+        __LIEFERSTRASSE__ => $lieferstrasse,
+        __LIEFERHAUSNR__ => $lieferhausnr,
+        __LIEFERPLZ__ => $vor->{'lieferplz'},
+        __LIEFERORT__ => $vor->{'lieferort'},
+        __LIEFERLAND_ISO__ => $vor->{'lieferland_iso'},
+        __BESTELLDATUM__ => POSIX::strftime('%Y-%m',localtime),
+        __BESTELLNUMMER__ => $vor->{'vorgang_bestellnummer'},
+        __WAEHRUNG__ => $waehrung,
+        __ENVIRONMENT__ => $test? 'T': 'L',
+        __ORDERLINES__ => sub {
             my @arr;
             my $i = 0;
             for my $pos (@$posA) {
                 my $tpl = Sdoc::Core::Template->new('xml',\$OrderLine);
                 $tpl->replace(
-                    __I__=>$i++,
-                    __LIEFERNR__=>$pos->{'posten_liefernr'},
-                    __ARTBE__=>$pos->{'posten_artbe'},
-                    __ANZAHL__=>$pos->{'posten_anzahl'},
-                    __EPREIS__=>$pos->{'posten_epreis'},
+                    __I__ => $i++,
+                    __LIEFERNR__ => $pos->{'posten_liefernr'},
+                    __ARTBE__ => $pos->{'posten_artbe'},
+                    __ANZAHL__ => $pos->{'posten_anzahl'},
+                    __EPREIS__ => $pos->{'posten_epreis'},
                 );
                 push @arr,$tpl;
             }
@@ -262,7 +262,7 @@ Subroutine liefert Platzhalter-Wert:
 Die Subroutine, die den Wert des Platzhalters __ORDERLINES__ berechnet,
 liefert keinen String, sondern eine Referenz auf ein Array von
 Template-Objekten. Wie jeder Platzhalterwert wird dieser von der
-Methode $tpl->L</value>() in einen String (oder C<undef>) umgesetzt.
+Methode $tpl->L<value|"value() - Liefere Platzhalter-Wert als Zeichenkette">() in einen String (oder C<undef>) umgesetzt.
 
 =cut
 
@@ -362,9 +362,9 @@ sub replace {
             #}
  
             $self->throw(
-                q~TMPL-00001: Platzhalter existiert nicht~,
-                # Template=>$str,
-                Placeholder=>$key,
+                'TMPL-00001: Platzhalter existiert nicht',
+                # Template => $str,
+                Placeholder => $key,
             );
         }
     }
@@ -442,7 +442,7 @@ sub key {
 
 =head4 Description
 
-Die Methode liefert die Zeichenkette $str zum (bei L</replace>()
+Die Methode liefert die Zeichenkette $str zum (bei L<replace|"replace() - Ersetze Platzhalter">()
 angegebenen) Platzhalter-Wert $arg.
 
 =over 4
@@ -463,7 +463,7 @@ Returnwerts.
 
 =item Template-Objekt:
 
-Rufe Methode L</asString>() des Objekts auf und liefere
+Rufe Methode L<asString|"asString() - Liefere Inhalt">() des Objekts auf und liefere
 das Resultat zurück.
 
 =back
@@ -803,7 +803,7 @@ sub asStringNL {
 
 =head1 VERSION
 
-1.135
+1.154
 
 =head1 AUTHOR
 

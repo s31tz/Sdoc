@@ -6,7 +6,7 @@ use warnings;
 use v5.10.0;
 use utf8;
 
-our $VERSION = 1.135;
+our $VERSION = '1.154';
 
 use POSIX ();
 use Time::Local ();
@@ -56,7 +56,7 @@ sub newlineToName {
     }
     
     $this->throw(
-        q~PATH-00099: Unknown newline string~,
+        'PATH-00099: Unknown newline string',
         NewlineString => $nl,
     );
 }
@@ -539,7 +539,7 @@ und liefere diesen zurück.
 
 =head4 See Also
 
-L</timestampToEpoch>()
+L<timestampToEpoch|"timestampToEpoch() - Wandele Timestamp in lokaler Zeit nach Epoch">()
 
 =cut
 
@@ -583,16 +583,16 @@ weggelassen werden:
 
     $key=$val
 
+=head4 Caveats
+
+Wenn $val mit einem doppelten Anführungsstrich beginnt, darf $val
+keine doppelten Anführungsstiche enthalten.
+
 =head4 Example
 
     $class->stringToKeyVal(q|var1=val1 var2="val2"|);
     =>
     ('var1','val1','var2','val2a')
-
-=head4 Caveats
-
-Wenn $val mit einem doppelten Anführungsstrich beginnt, darf $val
-keine doppelten Anführungsstiche enthalten.
 
 =cut
 
@@ -616,7 +616,7 @@ sub stringToKeyVal {
 
 =head1 VERSION
 
-1.135
+1.154
 
 =head1 AUTHOR
 

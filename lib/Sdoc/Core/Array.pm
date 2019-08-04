@@ -6,7 +6,7 @@ use warnings;
 use v5.10.0;
 use utf8;
 
-our $VERSION = 1.135;
+our $VERSION = '1.154';
 
 use Encode ();
 use Sdoc::Core::Reference;
@@ -26,11 +26,9 @@ L<Sdoc::Core::Object>
 
 =head1 DESCRIPTION
 
-Ein Objekt der Klasse repräsentiert ein Array.
-
-Jede der Methoden kann sowohl auf ein Objekt der Klasse
-als auch per Aufruf als Klassenmethode auf ein "normales"
-Perl-Array angewendet werden.
+Ein Objekt der Klasse repräsentiert ein Array. Jede der Methoden kann
+sowohl auf ein Objekt der Klasse als auch per Aufruf als Klassenmethode
+auf ein ungeblesstes Perl-Array angewendet werden.
 
 Aufruf als Objektmethode:
 
@@ -54,7 +52,7 @@ Aufruf als Klassenmethode:
 =head4 Description
 
 Instantiiere ein Array-Objekt und liefere eine Referenz auf dieses
-Objekt zurück.  Ohne Angabe einer Array-Referenz wird ein leeres
+Objekt zurück. Ohne Angabe einer Array-Referenz wird ein leeres
 Array-Objekt instantiiert.
 
 =cut
@@ -110,6 +108,8 @@ Die drei Ergebnislisten sind als Mengen zu sehen: Jedes Element taucht
 in einer der drei Listen höchstens einmal auf, auch wenn es in den
 Eingangslisten mehrfach vorkommt.
 
+Die gelieferten Arrays sind auf die Klasse geblesst.
+
 =head4 Example
 
 =over 2
@@ -118,7 +118,7 @@ Eingangslisten mehrfach vorkommt.
 
 Verwalte Objekte auf Datenbank
 
-Die Funktion ist nützlich, wenn eine Menge von Objekten
+Die Methode ist nützlich, wenn eine Menge von Objekten
 auf einer Datenbank identisch zu einer Menge von Elementen
 einer Benutzerauswahl gehalten werden soll. Die Objekte werden
 durch ihre Objekt-Id identifiziert. Die Liste der
@@ -133,7 +133,7 @@ Die Liste der identischen Objekte wird hier nicht benötigt.
 
 =item *
 
-Prüfe, ob zwei Arrays die gleichen Elemente enthalten
+Prüfe zwei Arrays auf Identiät
 
 Prüfe, ob zwei Arrays die gleichen Elemente enthalten, aber nicht
 unbedingt in der gleichen Reihenfolge:
@@ -244,7 +244,9 @@ sub exists {
 =head4 Synopsis
 
     $val = $arr->extractKeyVal($key);
+    $val = $arr->extractKeyVal($key,$step);
     $val = $class->extractKeyVal(\@arr,$key);
+    $val = $class->extractKeyVal(\@arr,$key,$step);
 
 =head4 Alias
 
@@ -252,10 +254,12 @@ extractPair()
 
 =head4 Description
 
-Durchsuche @arr paarweise nach Element $key und liefere das folgende
+Durchsuche @arr nach Element $key und liefere das folgende
 Element $val. Beide Elemente werden aus @arr entfernt. Kommt $key
 in @arr nicht vor, liefere undef und lasse @arr unverändert.
-Vergleichsoperator ist eq.
+Vergleichsoperator ist eq. Per Default wird das Array paarweise
+durchsucht, d.h. der Defaultwert für $step ist 2. Wird $step auf
+1 gesetzt, kann jedes Element den gesuchten $key enthalten.
 
 =cut
 
@@ -264,8 +268,9 @@ Vergleichsoperator ist eq.
 sub extractKeyVal {
     my $arr = ref $_[0]? CORE::shift: CORE::splice @_,0,2;
     my $key = CORE::shift;
+    my $step = CORE::shift // 2;
 
-    for (my $i = 0; $i < @$arr; $i += 2) {
+    for (my $i = 0; $i < @$arr; $i += $step) {
         if ($arr->[$i] eq $key) {
             return scalar CORE::splice @$arr,$i,2;
         }
@@ -643,6 +648,58 @@ sub sort {
 
 # -----------------------------------------------------------------------------
 
+=head3 toHash() - Erzeuge Hash aus Array
+
+=head4 Synopsis
+
+    %hash | $hashH = $arr->toHash;
+    %hash | $hashH = $arr->toHash($val);
+    %hash | $hashH = $class->toHash(\@arr);
+    %hash | $hashH = $class->toHash(\@arr,$val);
+
+=head4 Arguments
+
+=over 4
+
+=item @$arr, @arr
+
+Array.
+
+=item $val (Default: 1)
+
+Wert.
+
+=back
+
+=head4 Returns
+
+Hash. Im Skalarkontext wird eine Referenz auf den Hash geliefert.
+
+=head4 Description
+
+    Erzeuge aus Array @$arr bzw. @arr einen Hash mit den Werten des Array
+    als Schlüssel und dem Wert $val als deren Werte und liefere diesen zurück.
+    Ist $val nicht angegeben, werden alle Werte des Hash auf 1 gesetzt.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub toHash {
+    my $arr = ref $_[0]? CORE::shift: CORE::splice @_,0,2;
+    my $val = shift // 1;
+
+    # FIXME: Ist das schneller?
+    # my %hash;
+    # @hash{@$arr} = ($val) x @$arr;
+
+    my %hash = map {$_=>$val} @$arr;
+
+    return wantarray? %hash: \%hash;
+}
+
+# -----------------------------------------------------------------------------
+
 =head2 Numerische Operationen
 
 =head3 gcd() - Größter gemeinsamer Teiler
@@ -986,8 +1043,8 @@ sub restore {
         return "\r" if $_[0] eq 'r';
 
         $class->throw(
-            q~ARR-00001: Inkorrekte Array-Repräsentation~,
-            EscapeSequence=>"\\$_[0]",
+            'ARR-00001: Inkorrekte Array-Repräsentation',
+            EscapeSequence => "\\$_[0]",
         );
     };
 
@@ -1003,7 +1060,7 @@ sub restore {
 
 =head1 VERSION
 
-1.135
+1.154
 
 =head1 AUTHOR
 

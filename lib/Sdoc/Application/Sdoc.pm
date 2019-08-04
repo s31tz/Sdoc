@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use v5.10.0;
 
-our $VERSION = 3.00;
+our $VERSION = '3.00';
 
 use Sdoc::Core::Config;
 use Sdoc::Core::Path;
@@ -337,7 +337,7 @@ sub main {
 
         # Erzeuge MediaWiki-Datei
 
-        my $mediaWikiFile = sprintf '%s/%s.mediawiki',$docDir,$basename;
+        my $mediaWikiFile = sprintf '%s/%s.mw',$docDir,$basename;
         my $fh = Sdoc::Core::FileHandle->new('>',$mediaWikiFile);
         $fh->setEncoding('utf-8');
         $fh->print($doc->generate('mediawiki'));
@@ -349,11 +349,11 @@ sub main {
         $sh->cd($docDir);
 
         # Zeige/kopiere Ergebnis
-        $self->showResult("$basename.mediawiki",$output,$opt->textViewer);
+        $self->showResult("$basename.mw",$output,$opt->textViewer);
     }
     else {
         $self->throw(
-            q~SDOC-00001: Unknown format/operation~,
+            'SDOC-00001: Unknown format/operation',
             Operation => $op,
         );
     }

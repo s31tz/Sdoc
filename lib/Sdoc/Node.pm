@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use v5.10.0;
 
-our $VERSION = 3.00;
+our $VERSION = '3.00';
 
 use Sdoc::Core::Option;
 use Digest::SHA ();
@@ -1006,7 +1006,7 @@ sub generate {
         return $self->mediawiki($m);
     }
     $self->throw(
-        q~SDOC-00004: Unknown format~,
+        'SDOC-00004: Unknown format',
         Format => $format,
     );
 }
@@ -1344,7 +1344,7 @@ sub expandSegmentsToHtml {
     }
 
     $self->throw(
-        q~SDOC-00001: Unknown segment~,
+        'SDOC-00001: Unknown segment',
         Segment => $seg,
         Code => "$seg\{$val\}",
         Input => $self->input,
@@ -1499,7 +1499,7 @@ sub expandSegmentsToLatex {
     }
 
     $self->throw(
-        q~SDOC-00001: Unknown segment~,
+        'SDOC-00001: Unknown segment',
         Segment => $seg,
         Code => "$seg\{$val\}",
         Input => $self->input,
@@ -1657,7 +1657,7 @@ sub expandSegmentsToMediaWiki {
     }
 
     $self->throw(
-        q~SDOC-00001: Unknown segment~,
+        'SDOC-00001: Unknown segment',
         Segment => $seg,
         Code => "$seg\{$val\}",
         Input => $self->input,
@@ -1721,7 +1721,7 @@ sub latexSectionName {
     }
     else {
         $self->throw(
-            q~SDOC-00005: Unexpected section level~,
+            'SDOC-00005: Unexpected section level',
             Level => $level,
             Input => $self->input,
             Line => $self->lineNum,

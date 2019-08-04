@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use v5.10.0;
 
-our $VERSION = 3.00;
+our $VERSION = '3.00';
 
 # -----------------------------------------------------------------------------
 
@@ -160,7 +160,7 @@ sub execute {
     $code = eval "no warnings 'all'; ".$self->code.'; $code;';
     if ($@) {
         $self->throw(
-            q~SDOC-00001: Execution of PostProcessor code failed~,
+            'SDOC-00001: Execution of PostProcessor code failed',
             Error => $@,
             Code => $self->code,
             Input => $self->input,

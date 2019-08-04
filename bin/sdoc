@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use v5.10.0;
 
-our $VERSION = 3.00;
+our $VERSION = '3.00';
 
 use Sdoc::Core::Program;
 
@@ -22,7 +22,7 @@ sdoc [OPTIONS] [pdf] INPUT.sdoc [OUTPUT.pdf]
 
 sdoc [OPTIONS] html INPUT.sdoc [OUTPUT.html]
 
-sdoc [OPTIONS] mediawiki INPUT.sdoc [OUTPUT.mediawiki]
+sdoc [OPTIONS] mediawiki INPUT.sdoc [OUTPUT.mw]
 
 sdoc [OPTIONS] validate INPUT.sdoc
 

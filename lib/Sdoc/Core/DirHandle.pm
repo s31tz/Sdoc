@@ -6,7 +6,7 @@ use warnings;
 use v5.10.0;
 use utf8;
 
-our $VERSION = 1.135;
+our $VERSION = '1.154';
 
 # -----------------------------------------------------------------------------
 
@@ -60,9 +60,9 @@ sub new {
 
     opendir my $dh,$dir or do {
         $class->throw(
-            q~DIR-00001: Verzeichnis öffnen fehlgeschlagen~,
-            Dir=>$dir,
-            Error=>"$!",
+            'DIR-00001: Verzeichnis öffnen fehlgeschlagen',
+            Dir => $dir,
+            Error => "$!",
         );
     };
 
@@ -90,8 +90,8 @@ sub close {
 
     closedir $self or do {
         $self->throw(
-            q~DIR-00002: Dirhandle schließen fehlgeschlagen~,
-            Error=>"$!",
+            'DIR-00002: Dirhandle schließen fehlgeschlagen',
+            Error => "$!",
         );
     };
 
@@ -128,7 +128,7 @@ sub next {
 
 =head1 VERSION
 
-1.135
+1.154
 
 =head1 AUTHOR
 

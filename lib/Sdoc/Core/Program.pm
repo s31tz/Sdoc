@@ -5,12 +5,13 @@ use strict;
 use warnings;
 use v5.10.0;
 
-our $VERSION = 1.135;
+our $VERSION = '1.154';
 
 use Sdoc::Core::Perl;
 use Encode ();
 use Sdoc::Core::Parameters;
 use Sdoc::Core::Option;
+use Time::HiRes ();
 use Sdoc::Core::FileHandle;
 use PerlIO::encoding;
 use Sdoc::Core::System;
@@ -66,7 +67,7 @@ Optionen und Argumente:
 
     my ($error,$opt,$argA) = $self->options(
         ...
-        -help=>0,
+        -help => 0,
     );
     if ($error) {
         $self->help(10,"ERROR: $error");
@@ -92,7 +93,7 @@ Optionen und Argumente:
 
 =head4 Options
 
-Siehe Methode L</new>()
+Siehe Methode L<new|"new() - Instantiiere Programm-Objekt">()
 
 =cut
 
@@ -155,7 +156,7 @@ sub run {
 Terminiere das Programm mit Exitcode $exitCode. Ist kein Exitcode
 angegeben, terminiere mit dem Exitcode der auf dem Programmobjekt
 gesetzt ist. Die Methode kehrt nicht zurück. Nach ihrem Aufruf wird
-die Methode L</finish>() ausgeführt.
+die Methode L<finish|"finish() - Abschließender Code vor Programmende">() ausgeführt.
 
 =cut
 
@@ -256,7 +257,7 @@ Das Default-Verhalten ist, dass der Exception-Text auf STDERR
 ausgegeben und der Exitcode auf 99 gesetzt wird.
 
 Das Programm terminiert nicht sofort, sondern die Methode
-L</finish>() wird noch ausgeführt.
+L<finish|"finish() - Abschließender Code vor Programmende">() wird noch ausgeführt.
 
 =cut
 
@@ -479,11 +480,19 @@ sub encode {
 
 =head4 Synopsis
 
-    ($argA,$opt) = $prg->parameters($minArgs,$maxArgs,@optVal);
+    [1] ($argA,$opt) = $prg->parameters($sloppy,$minArgs,$maxArgs,@optVal);
+    [2] $opt = $prg->parameters($sloppy,0,0,@optVal);
+    [3] $argA = $prg->parameters($sloppy,$minArgs,$maxArgs,@optVal);
 
 =head4 Arguments
 
 =over 4
+
+=item $sloppy
+
+Wirf keine Exception, wenn unerwartete Parameter (also Optionen und
+Arumente) in @ARGV enthalten sind. Diese Parameter bleiben in @ARGV
+stehen.
 
 =item $minArgs
 
@@ -516,16 +525,22 @@ $maxArgs Argumenten.
 
 =head4 Description
 
-Liefere die Argumente und Optionen des Programmaufs. Sind weniger als
-$minArgs oder mehr als $maxArgs Argumente übergeben oder nicht deklarierte
-Optionen übergeben worden, wird eine Exception geworfen.
+Liefere die Argumente und Optionen des Programmaufs. Werden weniger als
+$minArgs oder mehr als $maxArgs Argumente oder nicht deklarierte
+Optionen übergeben, wird eine Exception geworfen. Ist $sloppy gesetzt,
+wird im Falle überzähliger Parameter I<keine> Exception geworfen.
+Die überzähligen Parameter bleiben in @ARGV erhalten.
+
+Im Skalarkontext wird nur $opt geliefert, wenn keine Argumente erwartet
+werden ($minArgs und $maxArgs sind 0), andernfalls $argA. Letzteres
+ist nützlich, wenn C<-help> die einzige Option ist.
 
 =cut
 
 # -----------------------------------------------------------------------------
 
 sub parameters {
-    my ($self,$minArgs,$maxArgs) = splice @_,0,3;
+    my ($self,$sloppy,$minArgs,$maxArgs) = splice @_,0,4;
 
     my ($argA,$opt) = Sdoc::Core::Parameters->extract(0,0,
         $self->encoding,\@ARGV,$maxArgs,@_);
@@ -535,11 +550,11 @@ sub parameters {
     elsif (@$argA < $minArgs) {
         $self->help(11,'ERROR: Missing arguments');
     }
-    elsif (@ARGV) {
+    elsif (@ARGV && !$sloppy) {
         $self->help(12,"ERROR: Unexpected parameter(s): @ARGV");
     }
 
-    return ($argA,$opt);
+    return wantarray? ($argA,$opt): $maxArgs == 0? $opt: $argA;
 }
 
 # -----------------------------------------------------------------------------
@@ -576,8 +591,8 @@ sub options {
     }
 
     my $optH = eval{Sdoc::Core::Option->extract(
-        -simpleMessage=>1,
-        # -mode=>'sloppy',
+        -simpleMessage => 1,
+        # -mode => 'sloppy',
         $argA,
         @_
     )};
@@ -669,6 +684,103 @@ sub projectDir {
     my $dir = join '/',@path;
 
     return $dir;
+}
+
+# -----------------------------------------------------------------------------
+
+=head2 Zeitmessung
+
+=head3 elapsed() - Vergangene Zeit in Sekunden
+
+=head4 Synopsis
+
+    $sec = $prg->elapsed;
+
+=head4 Returns
+
+Sekunden (Float)
+
+=head4 Description
+
+Ermittele die vergangene Zeit in Sekunden und liefere diese zurück.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub elapsed {
+    my $self = shift;
+    return Time::HiRes::gettimeofday-$self->{'t0'};
+}
+
+# -----------------------------------------------------------------------------
+
+=head2 Logging
+
+=head3 log() - Schreibe Meldung nach STDERR
+
+=head4 Synopsis
+
+    $prg->log($fmt,@args);
+    $prg->log($level,$fmt,@args);
+
+=head4 Description
+
+Schreibe eine Logmeldung nach STDERR, wenn $level größer oder gleich
+dem eingestellten Loglevel ($prg->logLevel) ist. Ist $level nicht
+angegeben, wird 1 angenommen.
+
+Die Logmeldung wird per
+
+    printf STDERR $fmt,@args;
+
+erzeugt. Endet $fmt nicht mit einem Newline, wird es hinzugefügt.
+
+Per Default ist der LogLevel 0. Er wird mit
+
+    $prg->logLevel($n); # $n > 0
+
+eingestellt.
+
+=head4 Caveats
+
+=over 2
+
+=item *
+
+Ist $fmt eine Zahl, muss der Level $level explizit angegeben werden.
+
+=item *
+
+Die Argumente der Methode werden I<immer> ausgewertet, auch wenn
+kein Logging erfolgt. Ist damit ein größerer Aufwand verbunden,
+kann es sinnvoll sein, eine Bedingung zu formulieren:
+
+    if ($level >= $prg->logLevel) {
+        # $msg mit großem Aufwand erzeugen
+        $prg->log($level,$msg);
+    }
+
+=back
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub log {
+    my $self = shift;
+    my $level = $_[0] =~ /^\d+$/? shift: 1;
+    # @_: $fmt,@args
+
+    if ($self->logLevel >= $level) {
+        my $fmt = shift;
+        if (substr($fmt,-1,1) ne "\n") {
+            $fmt .= "\n";
+        }
+        printf STDERR $fmt,@_;
+    }
+
+    return;    
 }
 
 # -----------------------------------------------------------------------------
@@ -818,8 +930,8 @@ sub new {
         }
         else {
             $class->throw(
-                q~PROG-00001: Unbekannte Option~,
-                Option=>$key,
+                'PROG-00001: Unbekannte Option',
+                Option => $key,
             );
         }
     }
@@ -834,9 +946,11 @@ sub new {
     # Objekt instantiieren
 
     return $class->SUPER::new(
-        encoding=>$encoding,
-        exitCode=>0,
-        optH=>Sdoc::Core::Hash->new,
+        encoding => $encoding,
+        exitCode => 0,
+        logLevel => 0,
+        optH => Sdoc::Core::Hash->new,
+        t0 => Time::HiRes::gettimeofday,
     );
 }
 
@@ -844,7 +958,7 @@ sub new {
 
 =head1 VERSION
 
-1.135
+1.154
 
 =head1 AUTHOR
 

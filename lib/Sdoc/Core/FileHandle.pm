@@ -6,12 +6,13 @@ use warnings;
 use v5.10.0;
 use utf8;
 
-our $VERSION = 1.135;
+our $VERSION = '1.154';
 
 use Sdoc::Core::Path;
 use Sdoc::Core::Option;
 use Scalar::Util ();
 use Sdoc::Core::Perl;
+no bytes;
 use Fcntl qw(:flock);
 
 # -----------------------------------------------------------------------------
@@ -42,23 +43,23 @@ Datei lesen:
     }
     $fh->close;
 
-=head1 DESCRIPTION
-
-Ein Objekt der Klasse repräsentiert eine Dateihandle, über die
-Daten gelesen oder geschrieben werden können.
-
-=head1 EXAMPLES
-
 Zähler-Datei mit Locking:
 
-    my $fh = Sdoc::Core::FileHandle->open('+>>',$file,-lock=>'EX');
+    my $fh = Sdoc::Core::FileHandle->new('+>>',$file,-lock=>'EX');
     $fh->seek(0);
     my $count = <$fh> || "0\n";
     chomp $count;
     $fh->truncate;
     $fh->print(++$count,"\n");
+    
+    # Der Lock bleibt so lange bestehen bis $fh aus dem Scope geht
 
 Siehe auch Sdoc::Core::LockedCounter.
+
+=head1 DESCRIPTION
+
+Ein Objekt der Klasse repräsentiert eine Dateihandle, über die
+Daten gelesen oder geschrieben werden können.
 
 =head1 METHODS
 
@@ -175,7 +176,7 @@ sub new {
 
             unless (open $self,$mode,$path) {
                 $class->throw(
-                    q~FH-00001: Kann Datei nicht öffnen~,
+                    'FH-00001: Kann Datei nicht öffnen',
                     Path=>$path,
                     Errstr=>$!,
                 );
@@ -192,7 +193,7 @@ sub new {
                 # Wir haben die Datei geöffnet und schließen sie gleich wieder
                 CORE::close $self;
             }
-            $class->throw(q~FH-00002: Kann Lock nicht setzen~,Errstr=>$!);
+            $class->throw('FH-00002: Kann Lock nicht setzen',Errstr=>$!);
         };
     }
 
@@ -229,7 +230,7 @@ sub destroy {
     my ($self) = @_; # Nicht ändern!
 
     CORE::close $self or do {
-        $self->throw(q~FH-00009: FileHandle schließen fehlgeschlagen~);
+        $self->throw('FH-00009: FileHandle schließen fehlgeschlagen');
     };
     $_[0] = undef;
 
@@ -254,7 +255,7 @@ sub destroy {
 =head4 Description
 
 Lies die nächste die nächsten $n I<Zeichen> von Dateihandle $fh
-und liefere diese zurück.
+und liefere diese zurück. Ist das Dateiende erreicht, liefere undef.
 
 =cut
 
@@ -263,13 +264,69 @@ und liefere diese zurück.
 sub read {
     my ($self,$n) = @_;
 
+    if ($n == 0) {
+        # Der Returnwert 0 von read() zeigt nur dann EOF an, wenn
+        # mehr als 0 Bytes gelesen werden sollen
+        return '';
+    }
+
     undef $!;
-    CORE::read($self,my $data,$n);
-    if (!defined $data and $!) {
-        $self->throw(q~FH-00012: Read fehlgeschlagen~,Errstr=>$!);
+    $n = CORE::read($self,my $data,$n);
+    if (!defined $n) {
+        $self->throw('FH-00012: Read fehlgeschlagen',Errstr=>$!);
+    }
+    elsif ($n == 0) {
+        return undef;
     }
 
     return $data;
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 readData() - Lies Daten mit Längenangabe
+
+=head4 Synopsis
+
+    $data = $fh->readData;
+
+=head4 Description
+
+Lies Daten in der Repräsentation
+
+    <LENGTH><DATA>
+
+und liefere <DATA> zurück. <LENGTH> ist ein 32 Bit Integer und <DATA>
+sind beliebige Daten mit <LENGTH> Bytes Länge.
+
+Wurden die Daten in einem Encoding wie UTF-8 geschrieben, müssen diese
+nach dem Einlesen anscheinend nicht dekodiert werden. Warum?
+
+Wurden die Daten $data in einem Encoding wie UTF-8 geschrieben, müssen
+diese anschließend decodiert werden mit
+
+    Encode::decode('utf-8',$data);
+
+Auf der FileHandle $fh das Encoding zu definieren, ist I<nicht>
+richtig, da die Längenangabe diesem Encoding nicht unterliegt!
+
+=head4 See Also
+
+writeData()
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub readData {
+    my $self = shift;
+
+    my $length = $self->read(4);
+    if (!defined $length) {
+        return undef;
+    }
+
+    return $self->read(unpack 'I',$length);
 }
 
 # -----------------------------------------------------------------------------
@@ -295,7 +352,7 @@ sub readLine {
     undef $!;
     my $line = CORE::readline $self;
     if (!defined $line and $!) {
-        $self->throw(q~FH-00011: ReadLine fehlgeschlagen~,Errstr=>$!);
+        $self->throw('FH-00011: ReadLine fehlgeschlagen',Errstr=>$!);
     }
 
     return $line;
@@ -427,7 +484,7 @@ sub getc {
     undef $!;
     my $c = CORE::getc($self);
     if (!defined($c) && $! ne 'Bad file descriptor') {
-        $self->throw(q~FH-00011: getc() fehlgeschlagen~,Errstr=>$!);
+        $self->throw('FH-00011: getc() fehlgeschlagen',Errstr=>$!);
     }
 
     return $c;
@@ -507,6 +564,45 @@ sub print {
 
 # -----------------------------------------------------------------------------
 
+=head3 writeData() - Schreibe Daten mit Längenangabe
+
+=head4 Synopsis
+
+    $fh->writeData($data);
+
+=head4 Description
+
+Schreibe die Daten $data in der Repräsentation
+
+    <LENGTH><DATA>
+
+Hierbei ist <LENGTH> ein 32 Bit Integer, der die Länge der
+darauffolgenden Daten <DATA> in Bytes angibt.
+
+Liegen die Daten $data in einem Encoding wie UTF-8 vor, müssen diese
+zuvor encodiert werden mit
+
+    Encode::encode('utf-8',$data);
+
+Auf der FileHandle $fh das Encoding zu definieren, ist I<nicht>
+richtig, da die Längenangabe diesem Encoding nicht unterliegt!
+
+=head4 See Also
+
+readData()
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub writeData {
+    my ($self,$str) = @_;
+    Sdoc::Core::Perl->print($self,pack('I',bytes::length($str)),$str);
+    return;
+}
+
+# -----------------------------------------------------------------------------
+
 =head3 truncate() - Kürze Datei
 
 =head4 Synopsis
@@ -529,7 +625,7 @@ sub truncate {
 
     unless (CORE::truncate $self,$length) {
         $self->throw(
-            q~FH-00013: truncate fehlgeschlagen~,
+            'FH-00013: truncate fehlgeschlagen',
             Errstr=>$!,
         );
     }
@@ -564,7 +660,7 @@ sub seek {
     my $whence = shift || 0;
 
     unless (CORE::seek $self,$pos,$whence) {
-        $self->throw(q~FH-00014: seek fehlgeschlagen~,Errstr=>$!);
+        $self->throw('FH-00014: seek fehlgeschlagen',Errstr=>$!);
     }
 
     return;
@@ -592,7 +688,7 @@ sub tell {
 
     my $pos = CORE::tell $self;
     if ($pos < 0) {
-        $self->throw(q~FH-00013: tell fehlgeschlagen~,Errstr=>$!);
+        $self->throw('FH-00013: tell fehlgeschlagen',Errstr=>$!);
     }
 
     return $pos;
@@ -659,7 +755,7 @@ sub lock {
         $lock = Fcntl::LOCK_EX|Fcntl::LOCK_NB;
     }
     else {
-        $self->throw(q~FH-00002: Unbekannter Lock-Modus~,LockMode=>$lockMode);
+        $self->throw('FH-00002: Unbekannter Lock-Modus',LockMode=>$lockMode);
     }
 
     return flock($self,$lock)? 1: 0;
@@ -686,7 +782,7 @@ sub unlock {
     my $self = shift;
 
     unless (flock $self,Fcntl::LOCK_UN) {
-        $self->throw(q~FH-00003: Kann Lock nicht aufheben~,Errstr=>$!);
+        $self->throw('FH-00003: Kann Lock nicht aufheben',Errstr=>$!);
     };
 
     return;
@@ -802,7 +898,7 @@ sub captureStderr {
     CORE::close STDERR;
     CORE::open STDERR,'>',$ref or do {
         $class->throw(
-            q~FH-00001: Abfangen von STDERR fehlgeschlagen~,
+            'FH-00001: Abfangen von STDERR fehlgeschlagen',
             Errstr=>$!,
         );
     };
@@ -839,7 +935,7 @@ sub slurpFromStdin {
 
 =head1 VERSION
 
-1.135
+1.154
 
 =head1 AUTHOR
 

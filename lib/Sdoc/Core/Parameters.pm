@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use v5.10.0;
 
-our $VERSION = 1.135;
+our $VERSION = '1.154';
 
 use Sdoc::Core::Converter;
 use Sdoc::Core::Hash;
@@ -45,8 +45,8 @@ L<Sdoc::Core::Object>
 
 =item $varMode (0 oder 1)
 
-Der erste Parameter entscheidet, ob die Optionswerte an ein
-Optionsobjekt (0) oder an Variablen (1) zugewiesen werden.
+Legt fest, ob die Optionswerte an ein Optionsobjekt (0) oder an
+Variablen (1) zugewiesen werden.
 
 =item $properties (0 oder 1)
 
@@ -157,18 +157,21 @@ sub extract {
 
     my @args;
 
+    # Wir können sofort mit einer leeren Argumentliste zurückkehren,
+    # wenn die Parameterliste leer ist und wir im VarMode sind.
+
+    if (!@$paramA && $varMode) {
+        return \@args;
+    }
+
     # Hash mit allen angegebenen Optionen aufbauen. Wert ist entweder
     # eine Variablen-Referenz (VarMode) oder der Defaultwert der Option.
-    # Wir können uns die Initialisierung des Options-Hash ersparen,
-    # wenn wir im VarMode sind und die Parameterliste leer ist.
 
     my %opt;
-    if (!$varMode || @$paramA) {
-        while (@_) {
-            my $key = shift;
-            $key =~ s/^-+//; # führende Bindestriche entfernen
-            $opt{$key} = shift;
-        }
+    while (@_) {
+        my $key = shift;
+        $key =~ s/^-+//; # führende Bindestriche entfernen
+        $opt{$key} = shift;
     }
 
     # Parameterliste verarbeiten
@@ -242,7 +245,7 @@ sub extract {
             # Existenz der Option prüfen
 
             if (!exists $opt{$key}) {
-                # Option existiert nicht. Wir übergehen die Parameter.
+                # Option existiert nicht. Wir übergehen den Parameter.
 
                 $i += $remove;
                 next;
@@ -348,7 +351,7 @@ sub extractPropertiesToVariables {
     $class->extract(1,1,undef,$paramA,0,@_);
     if (@$paramA) {
         $class->throw(
-            q~PARAM-00099: Unexpected parameter(s)~,
+            'PARAM-00099: Unexpected parameter(s)',
             Parameters => "@$paramA",
         );
     }
@@ -420,7 +423,7 @@ sub extractPropertiesToObject {
     my (undef,$opt) = $class->extract(0,1,undef,$paramA,0,@_);
     if (@$paramA) {
         $class->throw(
-            q~PARAM-00099: Unexpected parameter(s)~,
+            'PARAM-00099: Unexpected parameter(s)',
             Parameters => "@$paramA",
         );
     }
@@ -448,7 +451,8 @@ Parameterliste, z.B. @_.
 
 Mindestanzahl an Argumenten.
 
-$ maxArgs
+=item $maxArgs
+
 Maximale Anzahl an Argumenten, C<undef> bedeutet beliebig viele.
 
 =item @optRef
@@ -503,12 +507,12 @@ sub extractToVariables {
     my $argA = $class->extract(1,0,undef,$paramA,$maxArgs,@_);
     if (@$argA < $minArgs) {
         $class->throw(
-            q~PARAM-00099: not enough arguments~,
+            'PARAM-00099: not enough arguments',
         );
     }
     elsif (@$paramA) {
         $class->throw(
-            q~PARAM-00099: Unexpected parameter(s)~,
+            'PARAM-00099: Unexpected parameter(s)',
             Parameters => "@_",
         );
     }
@@ -518,9 +522,82 @@ sub extractToVariables {
 
 # -----------------------------------------------------------------------------
 
+=head3 extractToObject() - Extrahiere Parameter und speichere Optionen in Objekt
+
+=head4 Synopsis
+
+    ($argA,$opt) = $class->extractToObject(\@params,$minArgs,$maxArgs,@optVal);
+
+=head4 Arguments
+
+=over 4
+
+=item @params
+
+Parameterliste, z.B. @_.
+
+=item $minArgs
+
+Mindestanzahl an Argumenten.
+
+=item $maxArgs
+
+Maximale Anzahl an Argumenten, C<undef> bedeutet beliebig viele.
+
+=item @optVal
+
+Liste der Optionen und ihrer Defaultwerte.
+
+=back
+
+=head4 Returns
+
+=over 4
+
+=item $argA
+
+Referenz auf die Liste der extrahierten Argumente.
+
+=item $opt
+
+Hash-Objekt mit den Optionen aus @params gemäß @optVal.
+
+=back
+
+=head4 Description
+
+Extrahiere Argumente und Optionen aus der Parameterliste @params.
+Enthält die Parameterliste unbekannte Optionen oder zu wenige
+oder zu viele Argumente, wird eine Exception geworfen.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub extractToObject {
+    my ($class,$paramA,$minArgs,$maxArgs) = splice @_,0,4;
+
+    my ($argA,$opt) = $class->extract(0,0,undef,$paramA,$maxArgs,@_);
+    if (@$argA < $minArgs) {
+        $class->throw(
+            'PARAM-00099: not enough arguments',
+        );
+    }
+    elsif (@$paramA) {
+        $class->throw(
+            'PARAM-00099: Unexpected parameter(s)',
+            Parameters => "@_",
+        );
+    }
+
+    return ($argA,$opt);
+}
+
+# -----------------------------------------------------------------------------
+
 =head1 VERSION
 
-1.135
+1.154
 
 =head1 AUTHOR
 

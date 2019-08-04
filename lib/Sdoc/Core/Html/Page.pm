@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use v5.10.0;
 
-our $VERSION = 1.135;
+our $VERSION = '1.154';
 
 use Sdoc::Core::Css;
 use Sdoc::Core::JavaScript;
@@ -30,7 +30,7 @@ L<Sdoc::Core::Html::Base>
     $h = Sdoc::Core::Html::Tag->new;
     
     $obj = Sdoc::Core::Html::Page->new(
-        body=>'hello world!',
+        body => 'hello world!',
     );
     
     $html = $obj->html($h);
@@ -70,6 +70,11 @@ URL oder JavaScript-Code im Head der Seite. Mehrfach-Definition,
 wenn Array-Referenz. Das Attribut kann mehrfach auftreten, die
 Werte werden zu einer Liste zusammengefügt.
 
+=item javaScriptToHead => $bool (Default: 0)
+
+Setze den JavaScrip-Code nicht an das Ende des Body, sondern in
+den Head der HTML-Seite.
+
 =item styleSheet => $spec | \@specs (Default: undef)
 
 Einzelne Style-Spezifikation oder Liste von Style-Spezifikationen.
@@ -105,16 +110,17 @@ sub new {
     # @_: @keyVal
 
     my $self = $class->SUPER::new(
-        body=>'',
-        comment=>undef,
-        encoding=>'utf-8',
-        head=>'',
-        noNewline=>0,
-        placeholders=>[],
-        javaScript=>[],
-        styleSheet=>[],
-        title=>'',
-        topIndentation=>2,
+        body => '',
+        comment => undef,
+        encoding => 'utf-8',
+        head => '',
+        noNewline => 0,
+        placeholders => [],
+        javaScript => [],
+        javaScriptToHead => 0,
+        styleSheet => [],
+        title => '',
+        topIndentation => 2,
     );
 
     while (@_) {
@@ -155,9 +161,9 @@ sub html {
     my $self = ref $this? $this: $this->new(@_);
 
     my ($body,$comment,$encoding,$head,$noNewline,$placeholders,
-        $title,$javaScript,$styleSheet,$topIndentation) =
+        $title,$javaScript,$javaScriptToHead,$styleSheet,$topIndentation) =
         $self->get(qw/body comment encoding head noNewline placeholders
-        title javaScript styleSheet topIndentation/);
+        title javaScript javaScriptToHead styleSheet topIndentation/);
 
     # Stylesheet-Defininition(en)
     my $styleTags = Sdoc::Core::Css->style($h,$styleSheet);
@@ -171,10 +177,10 @@ sub html {
     $body = $h->cat($body);
     if ($body !~ /^<body/i) {
         $body = $h->tag('body',
-            -ind=>$topIndentation,
+            -ind => $topIndentation,
             '-',
             $body,
-            $scriptTags,
+            $javaScriptToHead? (): $scriptTags,
         );
     }
 
@@ -184,19 +190,20 @@ sub html {
         $h->tag('html',
             '-',
             $h->tag('head',
-                -ind=>$topIndentation,
+                -ind => $topIndentation,
                 '-',
                 $h->tag('title',
-                    -ignoreIf=>!$title,
+                    -ignoreIf => !$title,
                     '-',
                     $title,
                 ),
                 $h->tag('meta',
-                    'http-equiv'=>'content-type',
-                    content=>"text/html; charset=$encoding",
+                    'http-equiv' => 'content-type',
+                    content => "text/html; charset=$encoding",
                 ),
                 $h->cat($head),
                 $styleTags,
+                $javaScriptToHead? $scriptTags: (),
             ),
             $body,
         ),
@@ -221,7 +228,7 @@ sub html {
 
 =head1 VERSION
 
-1.135
+1.154
 
 =head1 AUTHOR
 

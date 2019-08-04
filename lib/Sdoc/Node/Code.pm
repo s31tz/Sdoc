@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use v5.10.0;
 
-our $VERSION = 3.00;
+our $VERSION = '3.00';
 
 use Sdoc::Core::Unindent;
 use Sdoc::Core::Path;
@@ -241,7 +241,7 @@ sub new {
     if (($self->lang || $self->exec || $self->filter)
             && !$root->shellEscape) {
         $self->throw(
-            q~SDOC-00006: Option shellEscape (--shell-escape) must be set~,
+            'SDOC-00006: Option shellEscape (--shell-escape) must be set',
             File => $self->input,
             Line => $self->lineNum,
             -stacktrace => 0,

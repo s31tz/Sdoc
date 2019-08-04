@@ -6,7 +6,7 @@ use warnings;
 use v5.10.0;
 use utf8;
 
-our $VERSION = 1.135;
+our $VERSION = '1.154';
 
 use Sdoc::Core::Unindent;
 use Sdoc::Core::Parameters;
@@ -1423,7 +1423,7 @@ sub fmt {
         }
         else {
             $self->throw(
-                q~MEDIAWIKI-00001: Unknown inline format~,
+                'MEDIAWIKI-00001: Unknown inline format',
                 Format => $type,
             );
         }
@@ -1823,7 +1823,7 @@ sub testPage {
 
 =head1 VERSION
 
-1.135
+1.154
 
 =head1 AUTHOR
 

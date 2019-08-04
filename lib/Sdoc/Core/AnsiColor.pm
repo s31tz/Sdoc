@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use v5.10.0;
 
-our $VERSION = 1.135;
+our $VERSION = '1.154';
 
 use Term::ANSIColor ();
 
@@ -57,8 +57,8 @@ Beispiele: 'bold reverse' oder 'dark red on_green'
 
 =head2 Texte mit Colorcodes weiter verarbeiten
 
-Die im folgenden genannten Programme C<aha>, C<wkhtmltopdf> und C<less>
-sind im Debian-Repository enthalten.
+Die im folgenden genannten Programme C<aha>, C<wkhtmltopdf> sind im
+Debian-Repository enthalten.
 
 =head3 Nach PDF wandeln
 
@@ -102,8 +102,8 @@ AnsiColor-Objekt
 =head4 Description
 
 Instantiiere ein Objekt der Klasse und liefere dieses zurück. Durch
-den Parameter $bool kann zwischen einer Ausgabe mit oder ohne
-ANSI Colorcodes umgeschaltet werden.
+den Parameter $bool wird entschieden, ob die Ausgabe mit oder ohne
+ANSI Colorcodes erfolgt.
 
 =cut
 
@@ -120,7 +120,7 @@ sub new {
 
 =head2 Objektmethoden
 
-=head3 active() - Farbdarstellung eingeschaltet
+=head3 active() - Farbdarstellung eingeschaltet?
 
 =head4 Synopsis
 
@@ -157,7 +157,7 @@ sub active {
 =item $attr
 
 Attribut-Spezifikation gemäß Term::ANSIColor (siehe auch
-L</Terminal-Eigenschaften>).
+L<Terminal-Eigenschaften|"Terminal-Eigenschaften">).
 
 =item $str
 
@@ -196,7 +196,7 @@ sub str {
 
 =head1 VERSION
 
-1.135
+1.154
 
 =head1 AUTHOR
 

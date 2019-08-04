@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use v5.10.0;
 
-our $VERSION = 1.135;
+our $VERSION = '1.154';
 
 use Sdoc::Core::Option;
 use Sdoc::Core::Path;
@@ -105,8 +105,8 @@ sub findImages {
     my $sort = '';
 
     Sdoc::Core::Option->extract(-mode=>'sloppy',\@_,
-        -object=>\$object,
-        -sort=>\$sort,
+        -object => \$object,
+        -sort => \$sort,
     );
 
     my @arr;
@@ -317,8 +317,8 @@ sub type {
     my $sloppy = 0;
 
     Sdoc::Core::Option->extract(\@_,
-        -enum=>\$enum,
-        -sloppy=>\$sloppy,
+        -enum => \$enum,
+        -sloppy => \$sloppy,
     );
 
     # Operation ausführen
@@ -338,9 +338,9 @@ sub type {
     }
     elsif (!$sloppy) {
         $class->throw(
-            q~IMG-00001: Unknown image type~,
-            File=>$file,
-            Data=>$data,
+            'IMG-00001: Unknown image type',
+            File => $file,
+            Data => $data,
         );
     }
 
@@ -351,7 +351,7 @@ sub type {
 
 =head1 VERSION
 
-1.135
+1.154
 
 =head1 AUTHOR
 

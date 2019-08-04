@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use v5.10.0;
 
-our $VERSION = 1.135;
+our $VERSION = '1.154';
 
 use Sdoc::Core::Hash;
 use Sdoc::Core::Path;
@@ -49,7 +49,7 @@ sub new {
 
     if (!-e $path) {
         $class->throw(
-             q~IMAGE-00001: File not found~,
+             'IMAGE-00001: File not found',
              Path => $path,
         );
     }
@@ -58,15 +58,15 @@ sub new {
 
     return $class->SUPER::new(
         # Eigenschaften
-        path=>$path,
-        filename=>undef,
-        basename=>undef,
-        extension=>undef,
-        width=>undef,
-        height=>undef,
-        type=>undef,
+        path => $path,
+        filename => undef,
+        basename => undef,
+        extension => undef,
+        width => undef,
+        height => undef,
+        type => undef,
         # Properties
-        propertyH=>Sdoc::Core::Hash->new->unlockKeys,
+        propertyH => Sdoc::Core::Hash->new->unlockKeys,
     );
 }
 
@@ -441,7 +441,7 @@ sub analyzeFile {
 
 =head1 VERSION
 
-1.135
+1.154
 
 =head1 AUTHOR
 

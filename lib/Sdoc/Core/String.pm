@@ -6,7 +6,7 @@ use warnings;
 use v5.10.0;
 use utf8;
 
-our $VERSION = 1.135;
+our $VERSION = '1.154';
 
 use Encode::Guess ();
 use Encode ();
@@ -26,6 +26,54 @@ Sdoc::Core::String - Operationen auf Zeichenketten
 L<Sdoc::Core::Object>
 
 =head1 METHODS
+
+=head2 Eigenschaften
+
+=head3 maxLineLength() - Länge der längsten Zeile
+
+=head4 Synopsis
+
+    $len = $class->maxLineLength($text);
+
+=head4 Arguments
+
+=over 4
+
+=item $text
+
+Ein String, typischerweise mehrzeilig.
+
+=back
+
+=head4 Returns
+
+Länge der längsten Zeile (Integer)
+
+=head4 Description
+
+Ermittele die Länge der längsten Zeile und liefere diese zurück. Newline
+wird nicht mitgezählt.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub maxLineLength {
+    my ($class,$text) = @_;
+
+    my $maxLen = 0;
+    for (split /\n/,$text) {
+        chomp;
+        my $l = length;
+        if ($l > $maxLen) {
+            $maxLen = $l;
+        }
+    }
+
+    return $maxLen;
+}
+
+# -----------------------------------------------------------------------------
 
 =head2 Encoding
 
@@ -84,8 +132,8 @@ sub autoDecode {
     else {
         # Unerwarteter Fehler
         $class->throw(
-            q~PATH-00099: Zeichen-Dekodierung fehlgeschlagen~,
-            Message=>$dec,
+            'PATH-00099: Zeichen-Dekodierung fehlgeschlagen',
+            Message => $dec,
         );
     }
 
@@ -162,8 +210,8 @@ sub indent {
     my $strip = 0;
     if (@_) {
         Sdoc::Core::Option->extract(\@_,
-            -indentBlankLines=>\$indentBlankLines,
-            -strip=>\$strip,
+            -indentBlankLines => \$indentBlankLines,
+            -strip => \$strip,
         );
     }
 
@@ -276,9 +324,9 @@ sub reduceIndentation {
     if ($m) {
         if ($m < $n || $m%$n) {
             $class->throw(
-                q~STRING-00001: Einrücktiefe kann nicht reduziert werden~,
-                TextIndentation=>$m,
-                WantedIndentation=>$n,
+                'STRING-00001: Einrücktiefe kann nicht reduziert werden',
+                TextIndentation => $m,
+                WantedIndentation => $n,
             );
         }
         elsif ($m > $n) {
@@ -402,7 +450,7 @@ sub removeIndentation {
 
     if (@_) {
         Sdoc::Core::Option->extract(\@_,
-            -addNL=>\$addNL,
+            -addNL => \$addNL,
         );
     } 
 
@@ -595,6 +643,35 @@ sub removeComments {
 
 # -----------------------------------------------------------------------------
 
+=head2 Quoting
+
+=head3 quote() - Fasse Zeichenkette in Single Quotes ein
+
+=head4 Synopsis
+
+    $quotedStr = $class->quote($str);
+
+=head4 Description
+
+Fasse Zeichenkette $str in einfache Anführungsstriche (') ein und liefere
+das Resultat zurück. Enthält die Zeichenkette bereits einfache
+Anführungsstriche, werden diese per Backslash geschützt.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub quote {
+    my ($class,$str) = @_;
+
+    $str =~ s/'/\\'/g;
+    $str = "'$str'";
+
+    return $str;
+}
+
+# -----------------------------------------------------------------------------
+
 =head2 Umbruch
 
 =head3 wrap() - Umbreche Fließtext
@@ -666,7 +743,7 @@ sub wrap {
     my $width = 70;
     if (@_) {
         Sdoc::Core::Option->extract(\@_,
-            -width=>\$width,
+            -width => \$width,
         );
     }
 
@@ -706,7 +783,7 @@ sub wrap {
 
 =head1 VERSION
 
-1.135
+1.154
 
 =head1 AUTHOR
 

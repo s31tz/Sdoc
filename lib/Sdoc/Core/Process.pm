@@ -1,11 +1,11 @@
 package Sdoc::Core::Process;
-use base qw/Sdoc::Core::Object/;
+use base qw/Sdoc::Core::System/;
 
 use strict;
 use warnings;
 use v5.10.0;
 
-our $VERSION = 1.135;
+our $VERSION = '1.154';
 
 use Cwd ();
 use Sdoc::Core::System;
@@ -20,7 +20,7 @@ Sdoc::Core::Process - Information über den laufenden Prozess
 
 =head1 BASE CLASS
 
-L<Sdoc::Core::Object>
+L<Sdoc::Core::System>
 
 =head1 METHODS
 
@@ -71,9 +71,9 @@ sub cwd {
     }
     CORE::chdir $dir or do {
         $this->throw(
-            q~PROC-00001: Cannot change directory~,
-            Argument=>$dir,
-            CurrentWorkingDirectory=>Cwd::cwd,
+            'PROC-00001: Cannot change directory',
+            Argument => $dir,
+            CurrentWorkingDirectory => Cwd::cwd,
         );
     };
 
@@ -128,11 +128,11 @@ sub euid {
     $> = $uid;
     if ($> != $uid) {
         $this->throw(
-            q~PROC-00002: Cannot set EUID~,
-            UID=>$<,
-            EUID=>$>,
-            NewEUID=>$uid,
-            Error=>"$!",
+            'PROC-00002: Cannot set EUID',
+            UID => $<,
+            EUID => $>,
+            NewEUID => $uid,
+            Error => "$!",
         );
     };
 
@@ -185,7 +185,7 @@ sub homeDir {
 
     if (!exists $ENV{'HOME'}) {
         $class->throw(
-            q~PROCESS-00001: Environment-Variable HOME existiert nicht~,
+            'PROCESS-00001: Environment-Variable HOME existiert nicht',
         );
     }
 
@@ -201,7 +201,7 @@ sub homeDir {
 
 =head1 VERSION
 
-1.135
+1.154
 
 =head1 AUTHOR
 

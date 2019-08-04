@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use v5.10.0;
 
-our $VERSION = 1.135;
+our $VERSION = '1.154';
 
 use 5.010;
 use Sdoc::Core::Formatter;
@@ -348,8 +348,8 @@ sub geoToDegree {
         }
         else {
             $class->throw(
-                q~MATH-00001: Unbekannte Himmelsrichtung~,
-                Direction=>$dir,
+                'MATH-00001: Unbekannte Himmelsrichtung',
+                Direction => $dir,
             );
         }
     }
@@ -648,7 +648,7 @@ sub spikeValue {
 
 =head1 VERSION
 
-1.135
+1.154
 
 =head1 AUTHOR
 

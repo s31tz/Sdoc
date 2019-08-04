@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use v5.10.0;
 
-our $VERSION = 1.135;
+our $VERSION = '1.154';
 
 use Sdoc::Core::Option;
 use Sdoc::Core::Shell;
@@ -72,7 +72,7 @@ sub filter {
     my $ignoreError = 0;
 
     Sdoc::Core::Option->extract(\@_,
-        -ignoreError=>\$ignoreError,
+        -ignoreError => \$ignoreError,
     );
     my $in = shift;
 
@@ -80,8 +80,8 @@ sub filter {
     my $pid = IPC::Open3::open3(\*W,\*R,\*E,$cmd);
     unless ($pid) {
         $class->throw(
-            q~IPC-00001: Kann Filterkommando nicht forken~,
-            Cmd=>$cmd,
+            'IPC-00001: Kann Filterkommando nicht forken',
+            Cmd => $cmd,
         );
     }
 
@@ -110,7 +110,7 @@ sub filter {
 
 =head1 VERSION
 
-1.135
+1.154
 
 =head1 AUTHOR
 

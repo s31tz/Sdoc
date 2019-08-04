@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use v5.10.0;
 
-our $VERSION = 3.00;
+our $VERSION = '3.00';
 
 use Sdoc::Core::LineProcessor::Line;
 use Sdoc::Core::Option;
@@ -210,7 +210,7 @@ sub nextType {
         # $text =~ /^%([A-Za-z]+):/ nicht gematcht hat
 
         $self->throw(
-            q~SDOC-00004: Unexpected text (only pure markup allowed)~,
+            'SDOC-00004: Unexpected text (only pure markup allowed)',
             Text => $text,
             Input => $input,
             Line => $lineNum,
@@ -218,7 +218,7 @@ sub nextType {
     }
     else {
         $self->throw(
-            q~SDOC-00002: Unknown markup~,
+            'SDOC-00002: Unknown markup',
             Markup => $markup,
         );
     }
@@ -228,7 +228,7 @@ sub nextType {
     my $nodeClass = "Sdoc::Node::$type";
     if (!$nodeClass->isa('Sdoc::Node')) {
         $self->throw(
-            q~SDOC-00002: Unknown node type~,
+            'SDOC-00002: Unknown node type',
             Type => $type,
             Input => $input,
             Line => $lineNum,

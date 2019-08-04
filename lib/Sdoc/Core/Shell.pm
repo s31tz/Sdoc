@@ -9,12 +9,12 @@ use warnings;
 use v5.10.0;
 use utf8;
 
-our $VERSION = 1.135;
+our $VERSION = '1.154';
 
 use Time::HiRes ();
 use Sdoc::Core::Option;
-use Sdoc::Core::Converter;
 use Sdoc::Core::Path;
+use Sdoc::Core::Converter;
 use Sdoc::Core::Process;
 use Cwd ();
 use Sdoc::Core::AnsiColor;
@@ -66,6 +66,19 @@ Log Commands to STDOUT.
 
 Datei-Deskriptor, auf den die Logmeldungen geschrieben werden.
 
+=item logRewrite => $sub (Default: undef)
+
+Callback-Methode, die die Kommandozeile vor dem Logging umschreibt.
+Dies ist nützlich, falls die Kommandozeile ein Passwort enthält,
+das im Log ausgeixt werden soll. Die Methode wird auf dem
+Shell-Objekt gerufen:
+
+    logRewrite => sub {
+        my ($sh,$cmd) = @_;
+        # $cmd umschreiben
+        return $cmd;
+    },
+
 =item msgPrefix => $str (Default: '')
 
 Zeichenkette, die jeder Meldung im Log vorangestellt wird.
@@ -103,18 +116,19 @@ sub new {
     # @_: @keyVal
 
     my $self = $class->SUPER::new(
-        cmdPrefix=>'',
-        cmdAnsiColor=>undef, 
-        dryRun=>0,
-        dirStack=>[],
-        log=>0,
-        logDest=>*STDOUT,
-        msgPrefix=>'',
-        quiet=>0,
-        time=>0,
-        timePrefix=>'',
-        timeSummary=>0,
-        t0=>Time::HiRes::gettimeofday,
+        cmdPrefix => '',
+        cmdAnsiColor => undef, 
+        dryRun => 0,
+        dirStack => [],
+        log => 0,
+        logDest => *STDOUT,
+        logRewrite => undef,
+        msgPrefix => '',
+        quiet => 0,
+        time => 0,
+        timePrefix => '',
+        timeSummary => 0,
+        t0 => Time::HiRes::gettimeofday,
     );
     $self->set(@_);
 
@@ -193,7 +207,15 @@ Liefere Ausgabe auf stdout und stderr getrennt.
 
 =back
 
-Für Beispiele siehe Abschnitt L</exec/Examples>.
+Für Beispiele siehe Abschnitt ""exec/Examples"".
+
+=item -outputTo => $name
+
+Schreibe jegliche Ausgabe von $cmd auf stdout und stderr nach
+$name-NNNN.log. NNNN ist eine laufende Nummer, die mit jedem
+Programmaufruf um 1 erhöht wird. Beispiel:
+
+    perl -MSdoc::Core::Shell -E 'Sdoc::Core::Shell->exec("echo hallo",-outputTo=>"echo")'
 
 =item -quiet => $bool (Default: 0)
 
@@ -259,16 +281,20 @@ sub exec {
     # Optionen
 
     my $capture = undef;
+    my $outputTo = undef;
     my $quiet = $self->get('quiet');
     my $sloppy = 0;
 
     if (@_) {
         Sdoc::Core::Option->extract(\@_,
-            -capture=>\$capture,
-            -quiet=>\$quiet,
-            -sloppy=>\$sloppy,
+            -capture => \$capture,
+            -outputTo => \$outputTo,
+            -quiet => \$quiet,
+            -sloppy => \$sloppy,
         );
     }
+
+    my $p = Sdoc::Core::Path->new;
 
     # Exception?
 
@@ -277,7 +303,15 @@ sub exec {
         $except = 0;
     }
 
-    # Umleitungen aufsetzen
+    # Umleitungen
+
+    if (my $name = $outputTo) {
+        # Alle Ausgaben in Logdatei schreiben. Mit jedem Lauf wird
+        # die Nummmer der Logdatei inkrementiert.
+
+        my $logFile = $p->nextFile($name,4,'log');
+        $cmd = "($cmd) 2>&1 | tee $logFile";
+    }
 
     if ($quiet) {
         $cmd = "($cmd) >/dev/null 2>&1";
@@ -285,11 +319,12 @@ sub exec {
     }
 
     my $qx = 0;
+    # FIXME: auf Sdoc::Core::TempFile umstellen
     my $stdoutFile = "/tmp/$$.stdout";
     my $stderrFile = "/tmp/$$.stderr";
 
     if (!$capture) {
-        # nichts tun
+        # keine Abwandlung des Kommandos
     }
     elsif ($capture eq 'stdout') {
         $cmd = "($cmd) 2>/dev/null";
@@ -308,14 +343,10 @@ sub exec {
     }
     else {
         $self->throw(
-            q~CMD-00004: Ungültiger Wert für -capture~,
-            Capture=>$capture,
+            'CMD-00004: Ungültiger Wert für -capture',
+            Capture => $capture,
         );
     }
-
-    #if ($quiet) {
-    #    $cmd = "($cmd) 1>/dev/null 2>/dev/null";
-    #}
 
     # Kommando protokollieren
 
@@ -342,7 +373,6 @@ sub exec {
         my $t1 = Time::HiRes::gettimeofday;
         if ($log && $self->{'time'}) {
             my $fd = $self->{'logDest'};
-            # printf $fd "/* %.2f */\n",$t1-$t0;
             printf "%s%s\n",$self->{'timePrefix'},
                 Sdoc::Core::Converter->epochToDuration($t1-$t0,1,3);
         }
@@ -357,8 +387,8 @@ sub exec {
 
     if ($capture) {
         if ($capture eq 'stderr+stdout') {
-            my $stdout = Sdoc::Core::Path->read($stdoutFile,-delete=>1);
-            my $stderr = Sdoc::Core::Path->read($stderrFile,-delete=>1);
+            my $stdout = $p->read($stdoutFile,-delete=>1);
+            my $stderr = $p->read($stderrFile,-delete=>1);
             return ($stdout,$stderr);
         }
         return $output;
@@ -390,14 +420,15 @@ Die Methode liefert keinen Wert zurück.
 =head4 Description
 
 Wechsle in Arbeitsverzeichnis $dir. Anmerkung: Diese Änderung gilt
-für den gesamten Prozess, nicht nur für das Shell-Objekt.
+auch für den aufrufenden Prozess, nicht nur für das Shell-Objekt.
 
 =cut
 
 # -----------------------------------------------------------------------------
 
 sub cd {
-    my ($self,$dir) = @_;
+    my $self = shift;
+    my $dir = Sdoc::Core::Path->expandTilde(shift);
 
     my $dryRun = $self->{'dryRun'};
     my $log = $self->{'log'};
@@ -509,28 +540,28 @@ sub checkError {
     }
     elsif ($errCode == -1) {
         $this->throw(
-            q~CMD-00001: Kommando konnte nicht aufgerufen werden~,
-            Command=>$cmd,
-            ErrorMessage=>$errMsg,
+            'CMD-00001: Kommando konnte nicht aufgerufen werden',
+            Command => $cmd,
+            ErrorMessage => $errMsg,
         );
     }
     elsif ($errCode & 127) {       # Abbruch mit Signal
         my $sig = $errCode & 127;  # unterste 8 Bit sind Signalnummer
         my $core = $errCode & 128; # 8. Bit zeigt Coredump an
         $this->throw(
-            q~CMD-00003: Kommando wurde abgebrochen~,
-            Signal=>$sig.($core? ' (Coredump)': ''),
-            Command=>$cmd,
-            ErrorMessage=>$errMsg,
+            'CMD-00003: Kommando wurde abgebrochen',
+            Signal => $sig.($core? ' (Coredump)': ''),
+            Command => $cmd,
+            ErrorMessage => $errMsg,
         );
     }
     $errCode >>= 8;
     $this->throw(
-        q~CMD-00002: Kommando endete mit Fehler~,
-        ExitCode=>$errCode,
-        Command=>$cmd,
-        Cwd=>Cwd::getcwd,
-        ErrorMessage=>$errMsg,
+        'CMD-00002: Kommando endete mit Fehler',
+        ExitCode => $errCode,
+        Command => $cmd,
+        Cwd => Cwd::getcwd,
+        ErrorMessage => $errMsg,
     );
 }
 
@@ -555,17 +586,16 @@ Schreibe die Kommandozeile $cmd auf die Loghandle.
 sub _logCmd {
     my ($self,$cmd) = @_;
 
-    my $pre = $self->{'cmdPrefix'};
-    my $fd = $self->{'logDest'};
+    if (my $sub = $self->{'logRewrite'}) {
+        $cmd = $sub->($self,$cmd);
+    }
 
     my $esc = $self->{'cmdAnsiColor'};
-    if ($esc) {
-        my $a = Sdoc::Core::AnsiColor->new(1);
-        printf $fd "%s%s\n",$pre,$a->str($esc,$cmd);
-    }
-    else {
-        printf $fd "%s%s\n",$pre,$cmd;
-    }
+    my $a = Sdoc::Core::AnsiColor->new($esc);
+    $cmd = sprintf '%s%s',$self->{'cmdPrefix'},$a->str($esc,$cmd);
+
+    my $fd = $self->{'logDest'};
+    print $fd $cmd,"\n";
 
     return;
 }
@@ -574,7 +604,7 @@ sub _logCmd {
 
 =head1 VERSION
 
-1.135
+1.154
 
 =head1 AUTHOR
 

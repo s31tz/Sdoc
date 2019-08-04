@@ -6,7 +6,7 @@ use warnings;
 use v5.10.0;
 use utf8;
 
-our $VERSION = 1.135;
+our $VERSION = '1.154';
 
 # -----------------------------------------------------------------------------
 
@@ -304,7 +304,7 @@ sub latex {
 
     if ($titleColor && $titleColor !~ s/^#//) {
         $self->throw(
-            q~LATEX-00001: Only RGB color allowed~,
+            'LATEX-00001: Only RGB color allowed',
             Color => $titleColor,
         );
     }
@@ -433,7 +433,7 @@ sub latex {
 
 =head1 VERSION
 
-1.135
+1.154
 
 =head1 AUTHOR
 

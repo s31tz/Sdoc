@@ -9,19 +9,23 @@ use warnings;
 use v5.10.0;
 use utf8;
 
-our $VERSION = 1.135;
+our $VERSION = '1.154';
 
 use Sdoc::Core::Option;
 use Sdoc::Core::FileHandle;
+use Sdoc::Core::TempFile;
+use Sdoc::Core::Shell;
+use Sdoc::Core::Terminal;
 use Encode::Guess ();
 use Sdoc::Core::String;
 use Encode ();
+use Sdoc::Core::Unindent;
 use Fcntl qw/:DEFAULT/;
 use Sdoc::Core::Perl;
-use Sdoc::Core::Unindent;
-use File::Find ();
-use Sdoc::Core::Shell;
 use Sdoc::Core::DirHandle;
+use Sdoc::Core::Parameters;
+use File::Find ();
+use Sdoc::Core::TempDir;
 use Cwd ();
 use Sdoc::Core::Process;
 
@@ -122,30 +126,65 @@ sub append {
 
 # -----------------------------------------------------------------------------
 
-=head3 checkFileSecurity() - Prüfe, ob Datei nur für Owner lesbar ist
+=head3 checkFileSecurity() - Prüfe, ob Datei geschützt ist
 
 =head4 Synopsis
 
-    $this->checkFileSecurity($file);
+    $this->checkFileSecurity($file); # nur Owner darf schreiben und lesen
+    $this->checkFileSecurity($file,$readableByOthers); # nur Owner darf schreiben
+
+=head4 Arguments
+
+=over 4
+
+=item $file
+
+Datei, deren Rechte geprüft werden.
+
+=item $readableByOthers
+
+Wenn wahr, dürfen auch andere die Datei lesen.
+
+=back
 
 =head4 Description
 
-Prüfe, ob die Datei $file nur für ihren Owner lesbar ist.
+Prüfe, ob die Datei $file vor unerlaubtem Zugriff geschützt ist.
 Wenn nicht, wirf eine Exception.
+
+Per Default darf die Datei nur für ihren Owner lesbar und schreibbar
+sein, muss also die Zugriffsrechte rw------- besitzen.
+
+Ist $readable wahr, darf die Datei von der Gruppe und anderen
+gelesen werden, darf also die Zugriffsrechte rw-r--r-- besitzen.
 
 =cut
 
 # -----------------------------------------------------------------------------
 
 sub checkFileSecurity {
-    my ($this,$file) = @_;
+    my ($this,$file,$readable) = @_;
 
     my $mode = $this->mode($file);
-    if ($mode & 00044) {
+
+    # Die Datei darf nur für ihren Owner schreibbar sein
+
+    if ($mode & 00022) {
         $this->throw(
-            q~PATH-00099: File is readable for others~,
+            'PATH-00099: File is writeable by others',
             File => $file,
         );
+    }
+
+    if (!$readable) {
+        # Die Datei darf nur für ihren Owner lesbar sein
+
+        if ($mode & 00044) {
+            $this->throw(
+                'PATH-00099: File is readable by others',
+                File => $file,
+            );
+        }
     }
 
     return;
@@ -284,7 +323,7 @@ sub copy {
 
     if (!$overwrite && -e $destPath) {
         $class->throw(
-            q~PATH-00099: Zieldatei existiert bereits~,
+            'PATH-00099: Zieldatei existiert bereits',
             Path => $destPath,
         );
     }
@@ -300,9 +339,9 @@ sub copy {
     my $fh2 = Sdoc::Core::FileHandle->new('>',$destPath);
     while (<$fh1>) {
         print $fh2 $_ or $class->throw(
-            q~PATH-00007: Schreiben auf Datei fehlgeschlagen~,
-            SourcePath=>$srcPath,
-            DestinationPath=>$destPath,
+            'PATH-00007: Schreiben auf Datei fehlgeschlagen',
+            SourcePath => $srcPath,
+            DestinationPath => $destPath,
         );
     }
     $fh1->close;
@@ -416,7 +455,7 @@ sub duplicate {
 
     if (@_) {
         Sdoc::Core::Option->extract(\@_,
-            -preserve=>\$preserve,
+            -preserve => \$preserve,
         );
     }
 
@@ -439,6 +478,72 @@ sub duplicate {
     }
 
     return;
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 edit() - Bearbeite Datei im Editor
+
+=head4 Synopsis
+
+    $changed = $this->edit($file,@opt);
+
+=head4 Arguments
+
+=over 4
+
+=item $file
+
+Datei, die bearbeitet werden soll.
+
+=back
+
+=head4 Returns
+
+Boolschen Wert, der anzeigt, ob die Datei verändert wurde.
+
+=head4 Description
+
+Öffne Datei $file im Editor, so dass diese vom Benutzer bearbeitet werden
+kann. Die Methode prüft nach Verlassen des Editors, ob die Datei geändert
+wurde. Falls ja, wird der Benutzer gefragt, ob er die Änderungen
+beibehalten möchte. Falls ja, liefert die Methode wahr, andernfalls
+falsch.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub edit {
+    my ($this,$file) = @_;
+
+    # Erzeuge eine temporäre Kopie
+
+    my $tmpFile = Sdoc::Core::TempFile->new;
+    $this->copy($file,$tmpFile);
+
+    # Öffne Datei im Editor
+
+    my $changed = 0;
+    my $editor = $ENV{'EDITOR'} || 'vi';
+    Sdoc::Core::Shell->exec("$editor $tmpFile");
+    if ($this->compare($tmpFile,$file)) {
+        # Rückfrage an Benutzer
+
+        my $answ = Sdoc::Core::Terminal->askUser(
+            "Confirm changes?",
+            -values => 'y/n',
+            -default => 'y',
+        );
+        if ($answ eq 'y') {
+            # Schreibe die Änderungen auf die Datei
+
+            $this->copy($tmpFile,$file);
+            $changed = 1;
+        }
+    }
+
+    return $changed;
 }
 
 # -----------------------------------------------------------------------------
@@ -497,7 +602,7 @@ sub encoding {
     # Unerwarteter Fehler
 
     $class->throw(
-        q~PATH-00099: Can't decode file content~,
+        'PATH-00099: Can\'t decode file content',
         Path => $path,
         Message => $dec,
     );
@@ -525,10 +630,10 @@ sub link {
 
     CORE::link $path,$link or do {
         $class->throw(
-            q~FS-00002: Kann Link nicht erzeugen~,
-            Path=>$path,
-            Link=>$link,
-            Error=>$!,
+            'FS-00002: Kann Link nicht erzeugen',
+            Path => $path,
+            Link => $link,
+            Error => $!,
         );
     };
 
@@ -587,6 +692,72 @@ sub newlineStr {
     $fh->close;
 
     return $nl;
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 nextFile() - Generiere nächsten Dateinamen
+
+=head4 Synopsis
+
+    $file = $this->nextFile($name,$n,$ext);
+
+=head4 Arguments
+
+=over 4
+
+=item $name
+
+Grundname der Datei einschließlich Pfad.
+
+=item $n
+
+Anzahl der Stellen der laufenden Nummer.
+
+=item $ext
+
+Extension der Datei.
+
+=back
+
+=head4 Description
+
+Ermittele und liefere den nächsten Namen einer Datei. Der Dateiname
+hat den Aufbau
+
+    NAME-NNNN.EXT
+
+Die laufende Nummer NNNN (deren Breite durch den zweiten Parameter
+festgelegt) wird anhand der vorhandenen Dateien im Dateisystem
+ermittelt und um 1 erhöht.
+
+=head4 Example
+
+Es liegt noch keine Datei vor:
+
+    $file = Sdoc::Core::Path->nextFile('myfile',3,'log');
+    =>
+    myfile-001.log
+
+Die Datei mit der höchsten Nummer ist myfile-031.log:
+
+    $file = Sdoc::Core::Path->nextFile('myfile',3,'log');
+    =>
+    myfile-032.log
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub nextFile {
+    my ($this,$name,$n,$ext) = @_;
+
+    my @files = sort $this->glob("$name-*.$ext");
+    my $file = $files[-1] // sprintf '%s-%0*d.%s',$name,$n,0,$ext;
+    my ($i) = $file =~ /^\Q$name\E-(\d+).\Q$ext\E/;
+    $file = sprintf "%s-%0*d.%s",$name,$n,++$i,$ext;
+
+    return $file;
 }
 
 # -----------------------------------------------------------------------------
@@ -655,12 +826,12 @@ sub read {
 
     if (@_) {
         Sdoc::Core::Option->extract(\@_,
-            -autoDecode=>\$autoDecode,
-            -decode=>\$decode,
-            -delete=>\$delete,
-            -maxLines=>\$maxLines,
-            -skip=>\$skip,
-            -skipLines=>\$skipLines,
+            -autoDecode => \$autoDecode,
+            -decode => \$decode,
+            -delete => \$delete,
+            -maxLines => \$maxLines,
+            -skip => \$skip,
+            -skipLines => \$skipLines,
         );
     }
 
@@ -729,10 +900,97 @@ Datei nicht, geschieht nichts.
 # -----------------------------------------------------------------------------
 
 sub truncate {
-    my ($this,$file) = @_;
+    my $this = shift;
+    my $file = $this->expandTilde(shift);
 
     if ($this->exists($file)) {
         Sdoc::Core::FileHandle->new('>',$file)->truncate;
+    }
+
+    return;
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 tempFile() - Erzeuge temporäre Datei
+
+=head4 Synopsis
+
+    $file = $this->tempFile(@opt);
+    $file = $this->tempFile($data,@opt);
+
+=head4 Arguments
+
+Daten, die in die temporäre Datei geschrieben werden.
+
+=head4 Options
+
+Siehe Sdoc::Core::TempFile->new().
+
+=head4 Returns
+
+=over 4
+
+=item $file
+
+Tempdatei-Objekt
+
+=back
+
+=head4 Description
+
+Erzeuge eine temporäre Datei, beschreibe sie mit den Daten $data und
+liefere eine Referenz auf das Objekt zurück.
+
+=head4 See Also
+
+Sdoc::Core::TempFile
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub tempFile {
+    my $this = shift;
+    return Sdoc::Core::TempFile->new(@_);
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 unindent() - Entferne Einrückung
+
+=head4 Synopsis
+
+    $this->unindent($file);
+
+=head4 Arguments
+
+=over 4
+
+=item $file
+
+Pfad der Datei.
+
+=back
+
+=head4 Description
+
+Lies den Inhalt der Datei $file, entferne dessen Einrückung (per
+Sdoc::Core::Unindent->hereDoc) und schreibe den uneingerückten Inhalt auf
+die Datei zurück. Besitzt der Dateiinhalt keine Einrückung, findet keine
+Änderung des Dateiinhalts statt.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub unindent {
+    my ($this,$file) = @_;
+
+    my $data1 = $this->read($file);
+    my $data2 = Sdoc::Core::Unindent->hereDoc($data1);
+    if ($data1 ne $data2) {
+        $this->write($file,$data2);
     }
 
     return;
@@ -801,12 +1059,12 @@ sub write {
 
     if (@_) {
         Sdoc::Core::Option->extract(\@_,
-            -append=>\$append,
-            -encode=>\$encode,
-            -lock=>\$lock,
-            -mode=>\$mode,
-            -recursive=>\$recursive,
-            -unindent=>\$unindent,
+            -append => \$append,
+            -encode => \$encode,
+            -lock => \$lock,
+            -mode => \$mode,
+            -recursive => \$recursive,
+            -unindent => \$unindent,
         );
     }
 
@@ -830,18 +1088,18 @@ sub write {
     local *F;
     sysopen(F,$file,$flags) || do {
         $class->throw(
-            q~PATH-00006: Datei kann nicht zum Schreiben geöffnet werden~,
-            Path=>$file,
-            Error=>"$!",
+            'PATH-00006: Datei kann nicht zum Schreiben geöffnet werden',
+            Path => $file,
+            Error => "$!",
         );
     };
 
     if ($lock) {
         flock(F,Fcntl::LOCK_EX) || do {
             $class->throw(
-                q~PATH-00099: Can't get exclusive lock~,
-                Path=>$file,
-                Error=>"$!",
+                'PATH-00099: Can\'t get exclusive lock',
+                Path => $file,
+                Error => "$!",
             );
         };
     }
@@ -864,9 +1122,9 @@ sub write {
             my $errStr = "$!";
             close F;
             $class->throw(
-                q~PATH-00007: Schreiben auf Datei fehlgeschlagen~,
-                Path=>$file,
-                Error=>$errStr,
+                'PATH-00007: Schreiben auf Datei fehlgeschlagen',
+                Path => $file,
+                Error => $errStr,
             );
         }
     }
@@ -934,6 +1192,124 @@ sub writeInline {
 # -----------------------------------------------------------------------------
 
 =head2 Verzeichnis-Operationen
+
+=head3 count() - Anzahl der Verzeichniseinträge
+
+=head4 Synopsis
+
+    $n = $this->count($dir);
+
+=head4 Arguments
+
+=over 4
+
+=item $dir
+
+Pfad des Verzeichnisses.
+
+=back
+
+=head4 Returns
+
+Anzahl Verzeichniseinträge (Integer)
+
+=head4 Description
+
+Ermittele die Anzahl Einträge des Verzeichnisses $dir und liefere diese
+zurück. Die Einträge C<.> und C<..> werden I<nicht> mitgezählt.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub count {
+    my ($this,$dir) = @_;
+
+    my $n = 0;
+    my $dh = Sdoc::Core::DirHandle->new($dir);
+    while (my $entry = $dh->next) {
+        if ($entry eq '.' || $entry eq '..') {
+            next;
+        }
+        $n++;
+    }
+    $dh->close;
+
+    return $n;
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 entries() - Liste der Verzeichniseinträge
+
+=head4 Synopsis
+
+    @paths | $pathA = $this->entries($dir,@opt);
+
+=head4 Arguments
+
+=over 4
+
+=item $dir
+
+Pfad des Verzeichnisses.
+
+=back
+
+=head4 Options
+
+=over 4
+
+=item -encoding => $charset (Default: 'utf-8')
+
+Dekodiere die Verzeichniseinträge gemäß Zeichensatz $charset.
+
+=back
+
+=head4 Returns
+
+Liste der Verzeichniseinträge (Array of Strings). Im Skalarkontext
+eine Referenz auf die Liste.
+
+=head4 Description
+
+Ermittele die Einträge des Verzeichnisses $dir und liefere diese
+als Liste zurück. Die Liste umfasst alle Verzeichniseinträge
+außer C<.> und C<..>.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub entries {
+    my $this = shift;
+    # @_: $dir,@opt
+
+    # Options
+
+    my $encoding = 'utf-8';
+
+    my $argA = Sdoc::Core::Parameters->extractToVariables(\@_,1,1,
+        -encoding => \$encoding,
+    );
+    my $dir = shift @$argA;
+
+    # Operation ausführen
+
+    my @arr;
+    my $dh = Sdoc::Core::DirHandle->new($dir);
+    while (my $entry = $dh->next) {
+        if ($entry eq '.' || $entry eq '..') {
+            next;
+        }
+        push @arr,$encoding? Encode::decode($encoding,$entry): $entry;
+    }
+    $dh->close;
+
+    return wantarray? @arr: \@arr;
+}
+
+# -----------------------------------------------------------------------------
 
 =head3 find() - Liefere Pfade innerhalb eines Verzeichnisses
 
@@ -1030,7 +1406,7 @@ Die Reihenfolge der Dateien ist undefiniert.
 
 sub find {
     my $class = shift;
-    my $dir = shift;
+    my $dir = $class->expandTilde(shift);
     # @_: @opt
 
     # Optionen
@@ -1051,19 +1427,19 @@ sub find {
 
     if (@_) {
         Sdoc::Core::Option->extract(\@_,
-            -decode=>\$decode,
-            -exclude=>\$exclude,
-            -follow=>\$follow,
-            -leavesOnly=>\$leavesOnly,
-            -olderThan=>\$olderThan,
-            -outHandle=>\$outHandle,
-            -pattern=>\$pattern,
-            -slash=>\$slash,
-            -sloppy=>\$sloppy,
-            -subPath=>\$subPath,
-            -testSub=>\$testSub,
-            -type=>\$type,
-            -verbose=>\$verbose,
+            -decode => \$decode,
+            -exclude => \$exclude,
+            -follow => \$follow,
+            -leavesOnly => \$leavesOnly,
+            -olderThan => \$olderThan,
+            -outHandle => \$outHandle,
+            -pattern => \$pattern,
+            -slash => \$slash,
+            -sloppy => \$sloppy,
+            -subPath => \$subPath,
+            -testSub => \$testSub,
+            -type => \$type,
+            -verbose => \$verbose,
         );
     }
 
@@ -1076,13 +1452,13 @@ sub find {
         if ($sloppy) {
             return wantarray? (): undef;
         }
-        $class->throw(q~PATH-00011: Verzeichnis existiert nicht~,
-            Dir=>$dir,
+        $class->throw('PATH-00011: Verzeichnis existiert nicht',
+            Dir => $dir,
         );
     }
     elsif (!-d $dir) {
-        $class->throw(q~PATH-00013: Pfad ist kein Verzeichnis~,
-            Path=>$dir,
+        $class->throw('PATH-00013: Pfad ist kein Verzeichnis',
+            Path => $dir,
         );
     }
 
@@ -1296,7 +1672,7 @@ sub maxFileNumber {
     my $sloppy = 0;
     
     Sdoc::Core::Option->extract(\@_,
-        -sloppy=>\$sloppy,
+        -sloppy => \$sloppy,
     );
 
     # Verarbeitung
@@ -1313,8 +1689,8 @@ sub maxFileNumber {
                 next;
             }
             $class->throw(
-                q~PATH-00099: Dateiname beginnt nicht mit Ziffernfolge~,
-                File=>$file,
+                'PATH-00099: Dateiname beginnt nicht mit Ziffernfolge',
+                File => $file,
             );
         }
         if ($n+0 > $max) {
@@ -1390,11 +1766,11 @@ sub mkdir {
 
     if (@_) {
         Sdoc::Core::Option->extract(-dontExtract=>1,\@_,
-            -createParent=>\$createParent,
-            -forceMode=>\$forceMode,
-            -mode=>\$mode,
-            -mustNotExist=>\$mustNotExist,
-            -recursive=>\$recursive,
+            -createParent => \$createParent,
+            -forceMode => \$forceMode,
+            -mode => \$mode,
+            -mustNotExist => \$mustNotExist,
+            -recursive => \$recursive,
         );
     }
 
@@ -1410,8 +1786,8 @@ sub mkdir {
     if (-d $dir) {
         if ($mustNotExist) {
             $class->throw(
-                q~PATH-00005: Verzeichnis existiert bereits~,
-                Dir=>$dir,
+                'PATH-00005: Verzeichnis existiert bereits',
+                Dir => $dir,
             );
         }    
         return;
@@ -1421,9 +1797,9 @@ sub mkdir {
         my ($parentDir) = $class->split($dir);
         $class->mkdir($parentDir,
             @_,
-            -createParent=>0,
-            -mustNotExist=>0,
-            -recursive=>1,
+            -createParent => 0,
+            -mustNotExist => 0,
+            -recursive => 1,
         );
     }
 
@@ -1436,8 +1812,8 @@ sub mkdir {
 
     CORE::mkdir($dir,$mode) || do {
         $class->throw(
-            q~PATH-00004: Kann Verzeichnis nicht erzeugen~,
-            Path=>$dir,
+            'PATH-00004: Kann Verzeichnis nicht erzeugen',
+            Path => $dir,
         );
     };
 
@@ -1485,12 +1861,48 @@ sub rmdir {
 
     CORE::rmdir($dir) || do {
         $class->throw(
-            q~PATH-00005: Verzeichnis kann nicht gelöscht werden~,
-            Path=>$dir,
+            'PATH-00005: Verzeichnis kann nicht gelöscht werden',
+            Path => $dir,
         );
     };
 
     return;
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 tempDir() - Erzeuge temporäres Verzeichnis
+
+=head4 Synopsis
+
+    $dir = $this->tempDir(@opt);
+
+=head4 Returns
+
+=over 4
+
+=item $dir
+
+Tempdir-Objekt
+
+=back
+
+=head4 Description
+
+Erzeuge ein temporäres Verzeichnis und liefere eine Referenz auf
+das Objekt zurück.
+
+=head4 See Also
+
+Sdoc::Core::TempDir
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub tempDir {
+    my $this = shift;
+    return Sdoc::Core::TempDir->new;
 }
 
 # -----------------------------------------------------------------------------
@@ -1526,6 +1938,52 @@ sub absolute {
 {
     no warnings 'once';
     *realPath = \&absolute;
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 age() - Alter der letzten Modifikation
+
+=head4 Synopsis
+
+    $duration = $this->age($path);
+
+=head4 Arguments
+
+=over 4
+
+=item $path
+
+Pfad.
+
+=back
+
+=head4 Returns
+
+Anzahl Sekunden (Integer)
+
+=head4 Description
+
+Ermittele das Alter der letzten Modifiktion des Pfad-Objekts in
+Sekunden und liefere diesen Wert zurück. Existiert der Pfad nicht,
+wird eine Exception geworfen.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub age {
+    my $this = shift;
+    my $path = $this->expandTilde(shift);
+
+    if (!-e $path) {
+        $this->throw(
+            'PATH-00099: Path does not exist',
+            Path => $path,
+        );
+    }
+
+    return time-$this->mtime($path);
 }
 
 # -----------------------------------------------------------------------------
@@ -1606,9 +2064,9 @@ sub chmod {
 
     CORE::chmod $mode,$path or do {
         $class->throw(
-            q~PATH-00003: Setzen von Zugriffsrechten fehlgeschlagen~,
-            Path=>$path,
-            Mode=>$mode,
+            'PATH-00003: Setzen von Zugriffsrechten fehlgeschlagen',
+            Path => $path,
+            Mode => $mode,
         );
     };
 
@@ -1651,9 +2109,9 @@ sub delete {
         eval {Sdoc::Core::Shell->exec("/bin/rm -r '$dir' >/dev/null 2>&1")};
         if ($@) {
             $class->throw(
-                q~PATH-00001: Verzeichnis löschen fehlgeschlagen~,
-                Error=>$@,
-                Path=>$path,
+                'PATH-00001: Verzeichnis löschen fehlgeschlagen',
+                Error => $@,
+                Path => $path,
             );
         }
     }
@@ -1661,8 +2119,8 @@ sub delete {
         # Datei löschen
         if (!CORE::unlink $path) {
             Sdoc::Core::Path->throw(
-                q~PATH-00002: Datei löschen fehlgeschlagen~,
-                Path=>$path,
+                'PATH-00002: Datei löschen fehlgeschlagen',
+                Path => $path,
             );
         }
     }
@@ -1719,13 +2177,13 @@ sub expandTilde {
     # Unter einem Daemon ist $HOME typischerweise nicht gesetzt, daher
     # prüfen wir zunächst, ob wir $HOME überhaupt expandieren müssen
 
-    if ($path && substr($path,0,2) eq '~/') {
+    if ($path && substr($path,0,1) eq '~') {
         if (!exists $ENV{'HOME'}) {
             $class->throw(
-                q~PATH-00016: Environment-Variable HOME existiert nicht~,
+                'PATH-00016: Environment-Variable HOME existiert nicht',
             );
         }
-        $path =~ s|^~/|$ENV{'HOME'}/|;
+        substr($path,0,1) = $ENV{'HOME'};
     }
     
     return $path;
@@ -1751,6 +2209,35 @@ Besitzt der Pfad keine Extension, liefere einen Leerstring ('').
 sub extension {
     my ($class,$path) = @_;
     return $path =~ /\.([^.]+)$/? $1: '';
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 newExtension() - Setze eine neue Extension
+
+=head4 Synopsis
+
+    $newPath = $this->newExtension($path,$ext);
+
+=head4 Description
+
+Entferne die bestehende Extension von Pfad $path und füge $ext als
+neue Extension hinzu. Besitzt $path keine Extension, wird
+$ext hinzugefügt. Etension $ext kann mit oder ohne Punkt am Anfang
+angegeben werden.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub newExtension {
+    my ($this,$path,$ext) = @_;
+
+    $ext =~ s/^\.//;         # Wir entfernen einen optionalen .
+    $path =~ s/\.([^.]+)$//; # Wir entfernen die bestehende Extension
+    $path .= ".$ext";        # Wir fügen die neue Extension hinzu
+
+    return $path;
 }
 
 # -----------------------------------------------------------------------------
@@ -1781,8 +2268,8 @@ sub filename {
 
 =head4 Synopsis
 
-    $path = $class->glob($pat);
-    @paths = $class->glob($pat);
+    $path = $this->glob($pat);
+    @paths = $this->glob($pat);
 
 =head4 Description
 
@@ -1796,7 +2283,7 @@ geworfen.
 # -----------------------------------------------------------------------------
 
 sub glob {
-    my ($class,$pat) = @_;
+    my ($this,$pat) = @_; # MEMO: Hier ist keine Tilde-Expansion nötig
 
     my @arr = CORE::glob $pat;
     if (wantarray) {
@@ -1804,15 +2291,15 @@ sub glob {
     }
 
     if (!@arr) {
-        $class->throw(
-            q~PATH-00014: Pfad existert nicht~,
-            Pattern=>$pat,
+        $this->throw(
+            'PATH-00014: Pfad existert nicht',
+            Pattern => $pat,
         );
     }
     elsif (@arr > 1) {
-        $class->throw(
-            q~PATH-00015: Mehr als ein Pfad erfüllt Muster~,
-            Pattern=>$pat,
+        $this->throw(
+            'PATH-00015: Mehr als ein Pfad erfüllt Muster',
+            Pattern => $pat,
         );
     }
 
@@ -1840,9 +2327,9 @@ sub isEmpty {
         my $i = 0;
         unless (opendir D,$path) {
             $class->throw(
-                q~PATH-00005: Verzeichnis kann nicht geöffnet werden~,
-                Path=>$path,
-                Error=>"$!",
+                'PATH-00005: Verzeichnis kann nicht geöffnet werden',
+                Path => $path,
+                Error => "$!",
             );
         }
         while (readdir D) {
@@ -1902,8 +2389,8 @@ sub mode {
     my @stat = CORE::stat $path;
     unless (@stat) {
         $this->throw(
-            q~PATH-00001: stat ist fehlgeschlagen~,
-            Path=>$path,
+            'PATH-00001: stat ist fehlgeschlagen',
+            Path => $path,
         );
     }
 
@@ -1941,16 +2428,16 @@ sub mtime {
 
         if (!-e $path) {
             $class->throw(
-                q~PATH-00011: Pfad existiert nicht~,
-                Path=>$path,
+                'PATH-00011: Pfad existiert nicht',
+                Path => $path,
             );
         }
         my $atime = (stat($path))[8]; # atime lesen, die nicht ändern
         if (!utime $atime,$mtime,$path) {
             $class->throw(
-                q~PATH-00012: Kann mtime nicht setzen~,
-                Path=>$path,
-                Error=>"$!",
+                'PATH-00012: Kann mtime nicht setzen',
+                Path => $path,
+                Error => "$!",
             );
         }
     }
@@ -1987,8 +2474,8 @@ sub newer {
 
     if (!-e $path1) {
         $class->throw(
-            q~PATH-00011: Pfad existiert nicht~,
-            Path=>$path1,
+            'PATH-00011: Pfad existiert nicht',
+            Path => $path1,
         );
     }
 
@@ -2024,9 +2511,9 @@ sub readlink {
 
     return readlink($symlinkPath) // do {
             $class->throw(
-                q~PATH-00099: Kann Symlink-Zielpfad nicht ermitteln~,
-                Path=>$symlinkPath,
-                Error=>"$!",
+                'PATH-00099: Kann Symlink-Zielpfad nicht ermitteln',
+                Path => $symlinkPath,
+                Error => "$!",
             );
     }; 
 }
@@ -2119,14 +2606,14 @@ sub rename {
     my $recursive = 0;
 
     Sdoc::Core::Option->extract(\@_,
-        -overwrite=>\$overwrite,
-        -recursive=>\$recursive,
+        -overwrite => \$overwrite,
+        -recursive => \$recursive,
     );
 
     if (!$overwrite && -e $newPath) {
         $class->throw(
-            q~PATH-00099: Zieldatei existiert bereits~,
-            Path=>$newPath,
+            'PATH-00099: Zieldatei existiert bereits',
+            Path => $newPath,
         );
     }
 
@@ -2141,10 +2628,10 @@ sub rename {
 
     CORE::rename $oldPath,$newPath or do {
         $class->throw(
-            q~PATH-00010: Kann Pfad nicht umbenennen~,
-            Error=>"$!",
-            OldPath=>$oldPath,
-            NewPath=>$newPath,
+            'PATH-00010: Kann Pfad nicht umbenennen',
+            Error => "$!",
+            OldPath => $oldPath,
+            NewPath => $newPath,
         );
     };
 
@@ -2223,7 +2710,7 @@ sub symlink {
     my $force = 0;
 
     Sdoc::Core::Option->extract(\@_,
-        -force=>\$force,
+        -force => \$force,
     );
 
     if ($force && -l $symlink) {
@@ -2232,10 +2719,10 @@ sub symlink {
 
     CORE::symlink $path,$symlink or do {
         $class->throw(
-            q~FS-00001: Kann Symlink nicht erzeugen~,
-            Path=>$path,
-            Symlink=>$symlink,
-            Error=>$!,
+            'FS-00001: Kann Symlink nicht erzeugen',
+            Path => $path,
+            Symlink => $symlink,
+            Error => $!,
         );
     };
 
@@ -2308,8 +2795,8 @@ sub symlinkRelative {
     my $verbose = delete $opt{'-verbose'};
     if (%opt) {
         $class->throw(
-            q~FILESYS-00001: Unbekannte Option(en)~,
-            Options=>join(', ',keys %opt),
+            'FILESYS-00001: Unbekannte Option(en)',
+            Options => join(', ',keys %opt),
         );
     }
 
@@ -2361,7 +2848,7 @@ sub symlinkRelative {
 
 =head1 VERSION
 
-1.135
+1.154
 
 =head1 AUTHOR
 

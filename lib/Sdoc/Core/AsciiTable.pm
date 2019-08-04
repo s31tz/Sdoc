@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use v5.10.0;
 
-our $VERSION = 1.135;
+our $VERSION = '1.154';
 
 use Sdoc::Core::Unindent;
 use Sdoc::Core::FileHandle;
@@ -212,7 +212,7 @@ sub new {
 
     if (!$sepLine || substr($sepLine,0,1) ne '-') {
         $class->throw(
-            q~TABLE-00001: No table (no parting line)~,
+            'TABLE-00001: No table (no parting line)',
             Input => $str,
         );
     }
@@ -626,7 +626,7 @@ sub asText {
 
 =head1 VERSION
 
-1.135
+1.154
 
 =head1 AUTHOR
 

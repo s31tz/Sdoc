@@ -6,7 +6,7 @@ use warnings;
 use v5.10.0;
 use utf8;
 
-our $VERSION = 1.135;
+our $VERSION = '1.154';
 
 use Sdoc::Core::Option;
 use Sdoc::Core::Math;
@@ -101,7 +101,7 @@ sub new {
     #
     #if ($sec !~ /^[0-9.:dhms]+$/) {
     #    $class->throw(
-    #        q~DURATION-00002: Illegal duration~,
+    #        'DURATION-00002: Illegal duration',
     #        Duration => $sec,
     #    );
     #}
@@ -212,10 +212,10 @@ sub asShortString {
 
     if (@_) {
         Sdoc::Core::Option->extract(\@_,
-            -maxUnit=>\$maxUnit,
-            -minUnit=>\$minUnit,
-            -notBlank=>\$notBlank,
-            -precision=>\$precision,
+            -maxUnit => \$maxUnit,
+            -minUnit => \$minUnit,
+            -notBlank => \$notBlank,
+            -precision => \$precision,
         );
     }
 
@@ -384,9 +384,9 @@ sub stringToSeconds {
         }
         else {
             $class->throw(
-                q~DURATION-00001: Unbekannter Anteil einer Dauer~,
-                Unit=>$unit,
-                Value=>$x,
+                'DURATION-00001: Unbekannter Anteil einer Dauer',
+                Unit => $unit,
+                Value => $x,
             );
         }
     }
@@ -471,14 +471,18 @@ sub secondsToString {
     my @unit = qw/d h m s/;
     my @arr = $class->new($sec)->asArray;
 
-    my $str;
+    my $str = '';
+    my $started = 0;
     my $append = 0;
     for (my $i = 0; $i <= 2; $i++) {
-        if ($arr[$i] || $unit eq $unit[$i]) {
+        if ($arr[$i]) {
+            $started = 1;
+        }
+        if ($unit eq $unit[$i]) {
             $append = 1;
         }
-        if ($append) {
-            if ($unit) {
+        if ($started) {
+            if ($append) {
                 $str .= sprintf '%02d%s',$arr[$i],$unit[$i];
             }
             else {
@@ -486,12 +490,14 @@ sub secondsToString {
             }
         }
     }
+    $str =~ s/^0//;
+    
 
     # Sekundenanteil immer liefern
 
     if ($unit) {
         $str .= sprintf "%02.*f%s",$prec,$arr[3],$unit[3];
-        # $str =~ s/^0//; # etwaig führende 0 entfernen 
+        $str =~ s/^0(\d)/$1/; # etwaig führende 0 entfernen 
     }
     else {
         $str .= sprintf "%.*f%s",$prec,$arr[3],$unit[3];
@@ -508,7 +514,7 @@ sub secondsToString {
 
 =head1 VERSION
 
-1.135
+1.154
 
 =head1 AUTHOR
 
