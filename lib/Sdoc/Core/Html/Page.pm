@@ -55,6 +55,28 @@ Encoding der Seite, z.B. 'iso-8859-1'.
 
 Kopf der Seite.
 
+=item load => \@arr
+
+Liste von Ladeanweisungen für CSS- und JavaScript-Dateien. Die
+Ladeanweisungen werden vor anderem CSS- und JavaScript-Code
+(s. Attribute javaScript und styleSheet) in den Head der Seite
+geschrieben. Eine CSS-Datei wird durch die Angabe eines Paars
+css => $url, eine JavaScript-Datei durch die Angabe eines Paars
+js => $url geladen. Hat $url die Endung .css oder .js, kann die
+Typangabe auch weggelassen werden. Beispiel:
+
+    load => [
+        css => 'https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css',
+        js => 'https://code.jquery.com/ui/1.12.1/jquery-ui.min.js',
+    ],
+
+Oder kurz (da die Dateiendungen den Typ verraten):
+
+    load => [
+        'https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css',
+        'https://code.jquery.com/ui/1.12.1/jquery-ui.min.js',
+    ],
+
 =item noNewline => $bool (Default: 0)
 
 Füge kein Newline am Ende der Seite hinzu.
@@ -114,6 +136,7 @@ sub new {
         comment => undef,
         encoding => 'utf-8',
         head => '',
+        load => [],
         noNewline => 0,
         placeholders => [],
         javaScript => [],
@@ -127,7 +150,7 @@ sub new {
         my $key = shift;
         my $val = shift;
 
-        if ($key eq 'javaScript' || $key eq 'styleSheet') {
+        if ($key eq 'javaScript' || $key eq 'load' || $key eq 'styleSheet') {
             my $arr = $self->get($key);
             push @$arr,ref $val? @$val: $val;
         }
@@ -160,16 +183,37 @@ sub html {
 
     my $self = ref $this? $this: $this->new(@_);
 
-    my ($body,$comment,$encoding,$head,$noNewline,$placeholders,
+    my ($body,$comment,$encoding,$head,$loadA,$noNewline,$placeholders,
         $title,$javaScript,$javaScriptToHead,$styleSheet,$topIndentation) =
-        $self->get(qw/body comment encoding head noNewline placeholders
+        $self->get(qw/body comment encoding head load noNewline placeholders
         title javaScript javaScriptToHead styleSheet topIndentation/);
+
+    # CSS- und JavaScript-Dateien laden
+
+    my $loadTags = '';
+    for (my $i = 0; $i < @$loadA; $i++) {
+        my $arg = $loadA->[$i];
+        if ($arg eq 'css' || $arg =~ /\.css$/) {
+            if ($arg eq 'css') {
+                $i++;
+            }
+            $loadTags .= Sdoc::Core::Css->style($h,$loadA->[$i]);
+        }
+        elsif ($arg eq 'js' || $arg =~ /\.js$/) {
+            if ($arg eq 'js') {
+                $i++;
+            }
+            $loadTags .= Sdoc::Core::JavaScript->script($h,$loadA->[$i]);
+        }
+        else {
+            $this->throw;
+        }
+    }
 
     # Stylesheet-Defininition(en)
     my $styleTags = Sdoc::Core::Css->style($h,$styleSheet);
 
     # Script-Definition(en)
-
     my $scriptTags = Sdoc::Core::JavaScript->script($h,$javaScript);
 
     # Wenn $body keinen body-Tag enthält, fügen wir ihn hinzu.
@@ -202,6 +246,7 @@ sub html {
                     content => "text/html; charset=$encoding",
                 ),
                 $h->cat($head),
+                $loadTags,
                 $styleTags,
                 $javaScriptToHead? $scriptTags: (),
             ),
