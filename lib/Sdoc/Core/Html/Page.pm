@@ -27,7 +27,7 @@ L<Sdoc::Core::Html::Base>
 
     use Sdoc::Core::Html::Page;
     
-    $h = Sdoc::Core::Html::Tag->new;
+    $h = Sdoc::Core::Html::Producer->new;
     
     $obj = Sdoc::Core::Html::Page->new(
         body => 'hello world!',
@@ -188,27 +188,12 @@ sub html {
         $self->get(qw/body comment encoding head load noNewline placeholders
         title javaScript javaScriptToHead styleSheet topIndentation/);
 
-    # CSS- und JavaScript-Dateien laden
+    # CSS- und JavaScript-Dateien laden (Test auf @$loadA wg. der
+    # neuen Klasse Sdoc::Core::Html::Construct - bei Feher $h auf
+    # Sdoc::Core::Html::Producer instantiieren)
 
-    my $loadTags = '';
-    for (my $i = 0; $i < @$loadA; $i++) {
-        my $arg = $loadA->[$i];
-        if ($arg eq 'css' || $arg =~ /\.css$/) {
-            if ($arg eq 'css') {
-                $i++;
-            }
-            $loadTags .= Sdoc::Core::Css->style($h,$loadA->[$i]);
-        }
-        elsif ($arg eq 'js' || $arg =~ /\.js$/) {
-            if ($arg eq 'js') {
-                $i++;
-            }
-            $loadTags .= Sdoc::Core::JavaScript->script($h,$loadA->[$i]);
-        }
-        else {
-            $this->throw;
-        }
-    }
+    # my $loadTags = @$loadA? $h->loadFiles(@$loadA): '';
+    my $loadTags = $h->loadFiles(@$loadA);
 
     # Stylesheet-Defininition(en)
     my $styleTags = Sdoc::Core::Css->style($h,$styleSheet);
