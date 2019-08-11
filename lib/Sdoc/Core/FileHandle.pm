@@ -6,7 +6,7 @@ use warnings;
 use v5.10.0;
 use utf8;
 
-our $VERSION = '1.154';
+our $VERSION = '1.155';
 
 use Sdoc::Core::Path;
 use Sdoc::Core::Option;
@@ -935,7 +935,7 @@ sub slurpFromStdin {
 
 =head1 VERSION
 
-1.154
+1.155
 
 =head1 AUTHOR
 
