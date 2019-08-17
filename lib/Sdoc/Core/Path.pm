@@ -1021,7 +1021,7 @@ Encodiere $data gemäß dem Encoding $encoding.
 =item -lock => $bool (Default: 0)
 
 Setze während des Schreibens einen Exclusive-Lock auf die Datei.
-Dies kann im Fallen von -append sinnvoll sein.
+Dies kann im Falle von -append sinnvoll sein.
 
 =item -mode => $mode (Default: keiner)
 
