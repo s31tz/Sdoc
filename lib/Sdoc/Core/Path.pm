@@ -2846,6 +2846,42 @@ sub symlinkRelative {
 
 # -----------------------------------------------------------------------------
 
+=head3 touch() - Setze Modifikationszeit auf aktuellen Zeitpunkt
+
+=head4 Synopsis
+
+    $mtime = $this->mtime($path);
+
+=head4 Arguments
+
+=over 4
+
+=item $path
+
+Pfad der Datei oder des Verzeichnisses, dessen mtime gesetzt werden soll.
+
+=back
+
+=head4 Returns
+
+Modifikationszeit in Unix Epoch (Integer)
+
+=head4 Description
+
+Setze den Zeitpunkt der letzten Modifikation (mtime) des Pfades $path
+auf den aktuellen Zeitpunkt.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub touch {
+    my ($this,$path) = @_;
+    return $this->mtime($path,time);
+}
+
+# -----------------------------------------------------------------------------
+
 =head1 VERSION
 
 1.155
