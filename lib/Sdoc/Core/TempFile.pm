@@ -59,6 +59,10 @@ Daten, die in die temporäre Datei geschrieben werden.
 
 Verzeichnis, in dem die temporäre Datei erzeugt wird.
 
+=item -pathOnly => $bool
+
+Erzeuge nur den Pfad, lösche die Datei sofort.
+
 =item -suffix => $suffix
 
 Dateienendung, z.B. '.dat'.
@@ -92,10 +96,11 @@ sub new {
 
     # Optionen und Argumente
 
-    my ($dir,$suffix,$template,$unlink);
+    my ($dir,$pathOnly,$suffix,$template,$unlink);
 
     my $argA = $class->parameters(0,1,\@_,
         -dir => \$dir,
+        -pathOnly => \$pathOnly,
         -suffix => \$suffix,
         -template => \$template,
         -unlink => \$unlink,
@@ -105,9 +110,6 @@ sub new {
     # Wir setzen unsere Optionen in die Optionen von File::Temp um
 
     my @args;
-    if (defined $dir) {
-        push @args,'DIR',Sdoc::Core::Path->expandTilde($dir);
-    }
     if (defined $suffix) {
         push @args,'SUFFIX',$suffix;
     }
@@ -121,6 +123,9 @@ sub new {
     my $self = bless \File::Temp->new(@args),$class;
     if (defined $data) {
         Sdoc::Core::Path->write($self,$data);
+    }
+    if ($pathOnly) {
+        Sdoc::Core::Path->delete("$self");
     }
 
     return $self;
