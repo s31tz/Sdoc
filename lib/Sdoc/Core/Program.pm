@@ -544,7 +544,7 @@ sub parameters {
 
     my ($argA,$opt) = Sdoc::Core::Parameters->extract(0,0,
         $self->encoding,\@ARGV,$maxArgs,@_);
-    if ($opt->help) {
+    if ($opt->exists('help') && $opt->help) {
         $self->help;
     }
     elsif (@$argA < $minArgs) {
@@ -554,7 +554,8 @@ sub parameters {
         $self->help(12,"ERROR: Unexpected parameter(s): @ARGV");
     }
 
-    return wantarray? ($argA,$opt): $maxArgs == 0? $opt: $argA;
+    return wantarray? ($argA,$opt):
+        defined($maxArgs) && $maxArgs == 0? $opt: $argA;
 }
 
 # -----------------------------------------------------------------------------
