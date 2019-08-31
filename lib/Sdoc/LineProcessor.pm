@@ -529,7 +529,7 @@ setze die Attribute des Knotens $node entsprechend.
 
 Der Wert mit (oder ohne) Segmenten wird so vorbereitet, dass
 dieser formatspezifisch bearbeitet werden kann. Auf dem
-gelieferten Wert können anschliedend die Operationen vorgenommen
+gelieferten Wert können anschließend die Operationen vorgenommen
 werden:
 
 =over 4

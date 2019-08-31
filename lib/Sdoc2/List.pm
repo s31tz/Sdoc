@@ -187,7 +187,7 @@ sub dump {
         return "=over 2\n\n$childs=back\n\n";
     }
     elsif ($format eq 'man') {
-        return $childs;
+        return $childs."\n";
     }
 
     $self->throw(

@@ -246,6 +246,7 @@ sub dump {
         else {
             $childs =~ s/^/  /mg; # um zwei Zeichen einrücken
             $childs =~ s/^\s+//; # Einrückung auf erster Zeile zurücknehmen
+            $childs =~ s/\s+\n$/\n/; # ein Zeilenumbruch am Ende
             return "$itemType $childs";
         }
     }
