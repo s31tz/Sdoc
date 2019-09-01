@@ -218,11 +218,11 @@ sub css {
 
 # -----------------------------------------------------------------------------
 
-=head3 html() - Generiere HTML-Code
+=head3 htmlCode() - Generiere HTML-Code
 
 =head4 Synopsis
 
-    $code = $quo->html($gen);
+    $code = $quo->htmlCode($gen);
 
 =head4 Arguments
 
@@ -242,7 +242,7 @@ HTML-Code (String)
 
 # -----------------------------------------------------------------------------
 
-sub html {
+sub htmlCode {
     my ($self,$h) = @_;
 
     return $h->tag('blockquote',
@@ -253,11 +253,11 @@ sub html {
 
 # -----------------------------------------------------------------------------
 
-=head3 latex() - Generiere LaTeX-Code
+=head3 latexCode() - Generiere LaTeX-Code
 
 =head4 Synopsis
 
-    $code = $quo->latex($gen);
+    $code = $quo->latexCode($gen);
 
 =head4 Arguments
 
@@ -277,7 +277,7 @@ LaTeX-Code (String)
 
 # -----------------------------------------------------------------------------
 
-sub latex {
+sub latexCode {
     my ($self,$l) = @_;
 
     # Quote-Umgebung

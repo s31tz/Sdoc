@@ -211,11 +211,11 @@ sub css {
 
 # -----------------------------------------------------------------------------
 
-=head3 html() - Generiere HTML-Code
+=head3 htmlCode() - Generiere HTML-Code
 
 =head4 Synopsis
 
-    $code = $sty->html($gen);
+    $code = $sty->htmlCode($gen);
 
 =head4 Arguments
 
@@ -236,18 +236,18 @@ die Methode konstant einen Leersting.
 
 # -----------------------------------------------------------------------------
 
-sub html {
+sub htmlCode {
     my ($self,$h) = @_;
     return '';
 }
 
 # -----------------------------------------------------------------------------
 
-=head3 latex() - Generiere LaTeX-Code
+=head3 latexCode() - Generiere LaTeX-Code
 
 =head4 Synopsis
 
-    $code = $sty->latex($gen);
+    $code = $sty->latexCode($gen);
 
 =head4 Arguments
 
@@ -268,18 +268,18 @@ die Methode konstant einen Leersting.
 
 # -----------------------------------------------------------------------------
 
-sub latex {
+sub latexCode {
     my ($self,$l) = @_;
     return '';
 }
 
 # -----------------------------------------------------------------------------
 
-=head3 mediawiki() - Generiere MediaWiki-Code
+=head3 mediawikiCode() - Generiere MediaWiki-Code
 
 =head4 Synopsis
 
-    $code = $sty->mediawiki($gen);
+    $code = $sty->mediawikiCode($gen);
 
 =head4 Arguments
 
@@ -304,7 +304,7 @@ die Methode konstant einen Leersting.
 
 # -----------------------------------------------------------------------------
 
-sub mediawiki {
+sub mediawikiCode {
     my ($self,$m) = @_;
     return '';
 }

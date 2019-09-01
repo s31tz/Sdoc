@@ -376,11 +376,11 @@ sub css {
 
 # -----------------------------------------------------------------------------
 
-=head3 html() - Generiere HTML-Code
+=head3 htmlCode() - Generiere HTML-Code
 
 =head4 Synopsis
 
-    $code = $cod->html($gen);
+    $code = $cod->htmlCode($gen);
 
 =head4 Arguments
 
@@ -400,7 +400,7 @@ HTML-Code (String)
 
 # -----------------------------------------------------------------------------
 
-sub html {
+sub htmlCode {
     my ($self,$h) = @_;
 
     my $doc = $self->root;
@@ -435,11 +435,11 @@ sub html {
 
 # -----------------------------------------------------------------------------
 
-=head3 latex() - Generiere LaTeX-Code
+=head3 latexCode() - Generiere LaTeX-Code
 
 =head4 Synopsis
 
-    $code = $cod->latex($gen);
+    $code = $cod->latexCode($gen);
 
 =head4 Arguments
 
@@ -459,7 +459,7 @@ LaTeX-Code (String)
 
 # -----------------------------------------------------------------------------
 
-sub latex {
+sub latexCode {
     my ($self,$l) = @_;
 
     my $doc = $self->root;
@@ -501,11 +501,11 @@ sub latex {
 
 # -----------------------------------------------------------------------------
 
-=head3 mediawiki() - Generiere MediaWiki-Code
+=head3 mediawikiCode() - Generiere MediaWiki-Code
 
 =head4 Synopsis
 
-    $code = $cod->mediawiki($gen);
+    $code = $cod->mediawikiCode($gen);
 
 =head4 Arguments
 
@@ -525,7 +525,7 @@ MediaWiki-Code (String)
 
 # -----------------------------------------------------------------------------
 
-sub mediawiki {
+sub mediawikiCode {
     my ($self,$m) = @_;
     return $m->code($self->text);
 }

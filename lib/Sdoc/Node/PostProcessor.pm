@@ -176,11 +176,11 @@ sub execute {
 
 =head2 Formate
 
-=head3 html() - Generiere HTML-Code
+=head3 htmlCode() - Generiere HTML-Code
 
 =head4 Synopsis
 
-    $code = $ppr->html($gen);
+    $code = $ppr->htmlCode($gen);
 
 =head4 Arguments
 
@@ -205,18 +205,18 @@ konstant einen Leersting.
 
 # -----------------------------------------------------------------------------
 
-sub html {
+sub htmlCode {
     my ($self,$h) = @_;
     return '';
 }
 
 # -----------------------------------------------------------------------------
 
-=head3 latex() - Generiere LaTeX-Code
+=head3 latexCode() - Generiere LaTeX-Code
 
 =head4 Synopsis
 
-    $code = $ppr->latex($gen);
+    $code = $ppr->latexCode($gen);
 
 =head4 Arguments
 
@@ -241,18 +241,18 @@ konstant einen Leersting.
 
 # -----------------------------------------------------------------------------
 
-sub latex {
+sub latexCode {
     my ($self,$l) = @_;
     return '';
 }
 
 # -----------------------------------------------------------------------------
 
-=head3 mediawiki() - Generiere MediaWiki-Code
+=head3 mediawikiCode() - Generiere MediaWiki-Code
 
 =head4 Synopsis
 
-    $code = $ppr->mediawiki($gen);
+    $code = $ppr->mediawikiCode($gen);
 
 =head4 Returns
 
@@ -267,7 +267,7 @@ konstant einen Leersting.
 
 # -----------------------------------------------------------------------------
 
-sub mediawiki {
+sub mediawikiCode {
     my ($self,$m) = @_;
     return '';
 }

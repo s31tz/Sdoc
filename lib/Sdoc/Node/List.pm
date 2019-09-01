@@ -341,11 +341,11 @@ sub htmlTag {
 
 # -----------------------------------------------------------------------------
 
-=head3 html() - Generiere HTML-Code
+=head3 htmlCode() - Generiere HTML-Code
 
 =head4 Synopsis
 
-    $code = $lst->html($gen);
+    $code = $lst->htmlCode($gen);
 
 =head4 Arguments
 
@@ -365,7 +365,7 @@ HTML-Code (String)
 
 # -----------------------------------------------------------------------------
 
-sub html {
+sub htmlCode {
     my ($self,$h) = @_;
 
     # HTML der Liste erzeugen
@@ -398,11 +398,11 @@ sub html {
 
 # -----------------------------------------------------------------------------
 
-=head3 latex() - Generiere LaTeX-Code
+=head3 latexCode() - Generiere LaTeX-Code
 
 =head4 Synopsis
 
-    $code = $lst->latex($gen);
+    $code = $lst->latexCode($gen);
 
 =head4 Arguments
 
@@ -422,7 +422,7 @@ LaTeX-Code (String)
 
 # -----------------------------------------------------------------------------
 
-sub latex {
+sub latexCode {
     my ($self,$l) = @_;
 
     my $doc = $self->root;
@@ -475,11 +475,11 @@ sub latex {
 
 # -----------------------------------------------------------------------------
 
-=head3 mediawiki() - Generiere MediaWiki-Code
+=head3 mediawikiCode() - Generiere MediaWiki-Code
 
 =head4 Synopsis
 
-    $code = $lst->mediawiki($gen);
+    $code = $lst->mediawikiCode($gen);
 
 =head4 Arguments
 
@@ -499,7 +499,7 @@ MediaWiki-Code (String)
 
 # -----------------------------------------------------------------------------
 
-sub mediawiki {
+sub mediawikiCode {
     my ($self,$m) = @_;
 
     my $code = $self->generateChilds('mediawiki',$m);

@@ -1,4 +1,4 @@
-package Sdoc::Node::Link;
+package Sdoc::Node::Segment;
 use base qw/Sdoc::Node/;
 
 use strict;
@@ -13,7 +13,7 @@ our $VERSION = '3.00';
 
 =head1 NAME
 
-Sdoc::Node::Link - Link-Knoten
+Sdoc::Node::Segment - Segment-Knoten
 
 =head1 BASE CLASS
 
@@ -21,37 +21,30 @@ L<Sdoc::Node>
 
 =head1 DESCRIPTION
 
-Ein Objekt der Klasse repräsentiert eine Link-Definition.
+Ein Objekt der Klasse repräsentiert eine Segment-Definition.
 
 =head1 ATTRIBUTES
 
 Über die Attribute der Basisklasse hinaus besitzt ein
-Link-Knoten folgende zusätzliche Attribute:
+Segment-Knoten folgende zusätzliche Attribute:
 
 =over 4
 
 =item name => $name (Default: undef)
 
-Name der Link-Definition. Mehrere Namen können mit | getrennt
-definiert werden. Beispiel: C<name="Sdoc|Sdoc Homepage">
+Name der Segment-Definition.
 
-=item file => $path (Default: undef)
+=item html => $code (Default: undef)
 
-Pfad einer lokalen Datei.
+Umsetzung des Segment-Texts nach HTML.
 
-=item regex => $regex (Default: undef)
+=item latex => $code (Default: undef)
 
-Regex, der den internen Zielknoten identifiziert.
+Umsetzung des Segment-Texts nach LaTeX.
 
-=item url => $url (Default: undef)
+=item mediawiki => $code (Default: undef)
 
-URL eines externen Dokuments.
-
-=item useCount => $n
-
-Die Anzahl der Links im Text, die diesen Link-Knoten nutzen. Nach
-dem Parsen kann anhand dieses Zählers geprüft werden, ob jeder
-Link-Knoten genutzt wird.
+Umsetzung des Segment-Texts nach MediaWiki.
 
 =back
 
@@ -59,7 +52,7 @@ Link-Knoten genutzt wird.
 
 # -----------------------------------------------------------------------------
 
-our $Abbrev = 'lnk';
+our $Abbrev = 'seg';
 
 # -----------------------------------------------------------------------------
 
@@ -67,11 +60,11 @@ our $Abbrev = 'lnk';
 
 =head2 Konstruktor
 
-=head3 new() - Instantiiere Link-Knoten
+=head3 new() - Instantiiere Segment-Knoten
 
 =head4 Synopsis
 
-    $lnk = $class->new($par,$variant,$root,$parent);
+    $seg = $class->new($par,$variant,$root,$parent);
 
 =head4 Arguments
 
@@ -97,7 +90,7 @@ Eltern-Knoten.
 
 =head4 Returns
 
-Link-Knoten (Object)
+Segment-Knoten (Object)
 
 =cut
 
@@ -113,7 +106,7 @@ sub new {
 
     my $attribH;
     if ($variant == 0) {
-        # %Link:
+        # %Segment:
         #   KEY=VAL
         $attribH = $par->readBlock;
     }
@@ -123,12 +116,11 @@ sub new {
 
     # Objekt instantiieren
 
-    my $self = $class->SUPER::new('Link',$variant,$root,$parent,
+    my $self = $class->SUPER::new('Segment',$variant,$root,$parent,
         name => undef,
-        file => undef,
-        regex => undef,
-        url => undef,
-        useCount => 0,
+        html => undef,
+        latex => undef,
+        mediawiki => undef,
     );
     $self->setAttributes(%$attribH);
 
@@ -143,7 +135,7 @@ sub new {
 
 =head4 Synopsis
 
-    $code = $lnk->htmlCode($gen);
+    $code = $seg->htmlCode($gen);
 
 =head4 Arguments
 
@@ -161,7 +153,7 @@ Leerstring ('')
 
 =head4 Description
 
-Ein Link-Knoten hat keine Darstellung, daher liefert die Methode
+Ein Segment-Knoten hat keine Darstellung, daher liefert die Methode
 konstant einen Leersting.
 
 =cut
@@ -179,7 +171,7 @@ sub htmlCode {
 
 =head4 Synopsis
 
-    $code = $lnk->latexCode($gen);
+    $code = $seg->latexCode($gen);
 
 =head4 Arguments
 
@@ -197,7 +189,7 @@ Leerstring ('')
 
 =head4 Description
 
-Ein Link-Knoten hat keine Darstellung, daher liefert die Methode
+Ein Segment-Knoten hat keine Darstellung, daher liefert die Methode
 konstant einen Leersting.
 
 =cut
@@ -215,7 +207,7 @@ sub latexCode {
 
 =head4 Synopsis
 
-    $code = $lnk->mediawikiCode($gen);
+    $code = $seg->mediawikiCode($gen);
 
 =head4 Arguments
 
@@ -233,7 +225,7 @@ Leerstring ('')
 
 =head4 Description
 
-Ein Link-Knoten hat keine Darstellung, daher liefert die Methode
+Ein Segment-Knoten hat keine Darstellung, daher liefert die Methode
 konstant einen Leersting.
 
 =cut

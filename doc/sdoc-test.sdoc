@@ -25,6 +25,12 @@ Segmenten in verschiedenen Kontexten.
 
 = S-Segment
 
+%Segment:
+  name=red
+  html='<span style="color: red">$1</span>'
+  latex='{\color{red}$1}'
+  mediawiki='<span style="color: red">$1</span>'
+
 Dies S{red,ist nur ein} Test.
 
 = Segment in Tabellenzelle

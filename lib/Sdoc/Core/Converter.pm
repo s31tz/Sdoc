@@ -578,6 +578,14 @@ Die Schlüssel/Wert-Paare haben die Form:
 
     $key="$val"
 
+oder
+
+    $key='$val'
+
+oder
+
+    $key={$val}
+
 Wenn $val kein Whitespace enthält, können die Anführungsstriche
 weggelassen werden:
 
@@ -605,7 +613,7 @@ sub stringToKeyVal {
     while ($str =~ s/^\s*(\w+)=//) {
         push @arr,$1;
         $str =~ s/^"([^"]*)"// || $str =~ s/^\{([^}]*)\}// ||
-            $str =~ s/^(\S*)//;
+            $str =~ s/^'([^}]*)'// || $str =~ s/^(\S*)//;
         push @arr,$1;
     }
 

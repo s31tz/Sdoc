@@ -151,11 +151,11 @@ sub new {
 
 =head2 Formate
 
-=head3 html() - Generiere HTML-Code
+=head3 htmlCode() - Generiere HTML-Code
 
 =head4 Synopsis
 
-    $code = $inc->html($gen);
+    $code = $inc->htmlCode($gen);
 
 =head4 Arguments
 
@@ -175,18 +175,18 @@ HTML-Code (String)
 
 # -----------------------------------------------------------------------------
 
-sub html {
+sub htmlCode {
     my ($self,$gen) = @_;
     return $self->generateChilds('html',$gen);
 }
 
 # -----------------------------------------------------------------------------
 
-=head3 latex() - Generiere LaTeX-Code
+=head3 latexCode() - Generiere LaTeX-Code
 
 =head4 Synopsis
 
-    $code = $inc->latex($gen);
+    $code = $inc->latexCode($gen);
 
 =head4 Arguments
 
@@ -206,7 +206,7 @@ LaTeX-Code (String)
 
 # -----------------------------------------------------------------------------
 
-sub latex {
+sub latexCode {
     my ($self,$gen) = @_;
     return $self->generateChilds('latex',$gen);
 }

@@ -21,6 +21,7 @@ use Sdoc::Node::Paragraph;
 use Sdoc::Node::PostProcessor;
 use Sdoc::Node::Quote;
 use Sdoc::Node::Section;
+use Sdoc::Node::Segment;
 use Sdoc::Node::Style;
 use Sdoc::Node::Table;
 use Sdoc::Node::TableOfContents;

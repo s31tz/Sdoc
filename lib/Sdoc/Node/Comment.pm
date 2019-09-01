@@ -142,11 +142,11 @@ sub new {
 
 =head2 Formate
 
-=head3 html() - Generiere HTML-Code
+=head3 htmlCode() - Generiere HTML-Code
 
 =head4 Synopsis
 
-    $code = $com->html($gen);
+    $code = $com->htmlCode($gen);
 
 =head4 Arguments
 
@@ -166,7 +166,7 @@ HTML-Code (String)
 
 # -----------------------------------------------------------------------------
 
-sub html {
+sub htmlCode {
     my ($self,$h) = @_;
 
     my $html = '';
@@ -179,11 +179,11 @@ sub html {
 
 # -----------------------------------------------------------------------------
 
-=head3 latex() - Generiere LaTeX-Code
+=head3 latexCode() - Generiere LaTeX-Code
 
 =head4 Synopsis
 
-    $code = $com->latex($gen);
+    $code = $com->latexCode($gen);
 
 =head4 Arguments
 
@@ -203,7 +203,7 @@ LaTeX-Code (String)
 
 # -----------------------------------------------------------------------------
 
-sub latex {
+sub latexCode {
     my ($self,$l) = @_;
 
     if (!$self->root->copyComments) {

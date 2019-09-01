@@ -114,11 +114,11 @@ sub new {
 
 =head2 Formate
 
-=head3 html() - Generiere HTML-Code
+=head3 htmlCode() - Generiere HTML-Code
 
 =head4 Synopsis
 
-    $code = $pbr->html($gen);
+    $code = $pbr->htmlCode($gen);
 
 =head4 Arguments
 
@@ -143,7 +143,7 @@ HTML-Dokuments.
 
 # -----------------------------------------------------------------------------
 
-sub html {
+sub htmlCode {
     my ($self,$h) = @_;
 
     return $h->tag('div',
@@ -154,11 +154,11 @@ sub html {
 
 # -----------------------------------------------------------------------------
 
-=head3 latex() - Generiere LaTeX-Code
+=head3 latexCode() - Generiere LaTeX-Code
 
 =head4 Synopsis
 
-    $code = $pbr->latex($gen);
+    $code = $pbr->latexCode($gen);
 
 =head4 Arguments
 
@@ -178,7 +178,7 @@ LaTeX-Code (String)
 
 # -----------------------------------------------------------------------------
 
-sub latex {
+sub latexCode {
     my ($self,$l) = @_;
     return $l->c('\newpage',-nl=>2);
 }

@@ -1825,6 +1825,34 @@ durch den cssPrefix des Dokuments ersetzt. Z.B.
 
 ---PageBreak---
 
+== Textformat (Segment)
+
+Eine Segement-Block definiert benutzerdefinierten Segment-Typ.
+Der Segment-Typ besitzt einen Namen der in einem S-Segment
+angegeben wird.
+
+=== Eigenschaften
+
+  %Link:
+    name=STRING
+    html=CODE
+    latex=CODE
+    mediawiki=CODE
+
+[name=STRING]:
+  Name der Segment-Definiton.
+
+[html=CODE]:
+  HTML-Code des Segments.
+
+[latex=CODE]:
+  LaTeX-Code des Segments.
+
+[mediawiki=CODE]:
+  MediaWiki-Code des Segments.
+
+---PageBreak---
+
 == Nachverarbeitung (PostProcessor)
 
 Durch ein oder mehrere Post-Prozessoren kann das resultierende

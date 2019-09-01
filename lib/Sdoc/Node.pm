@@ -995,15 +995,15 @@ sub generate {
     }
     elsif ($format eq 'html') {
         my $h = Sdoc::Core::Html::Tag->new('html-5');
-        return $self->html($h);
+        return $self->htmlCode($h);
     }
     elsif ($format eq 'latex') {
         my $l = Sdoc::Core::LaTeX::Code->new;
-        return $self->latex($l);
+        return $self->latexCode($l);
     }
     elsif ($format eq 'mediawiki') {
         my $m = Sdoc::Core::MediaWiki::Markup->new;
-        return $self->mediawiki($m);
+        return $self->mediawikiCode($m);
     }
     $self->throw(
         'SDOC-00004: Unknown format',
@@ -1058,9 +1058,10 @@ sub generateChilds {
     my $gen = shift;
     # @_: @args
 
+    my $method = "${format}Code";
     my $code = '';
     for my $node ($self->childs) {
-        $code .= $node->$format($gen,@_);
+        $code .= $node->$method($gen,@_);
     }
 
     return $code;
