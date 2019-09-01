@@ -1828,17 +1828,20 @@ durch den cssPrefix des Dokuments ersetzt. Z.B.
 == Textformat (Segment)
 
 Soll ein Textteil in besonderer Weise dargestellt werden, kann dies
-durch die Definition eines entsprchenden Segmenttyps erreicht werden.
+durch die Definition eines entsprechenden Segment-Typs erreicht werden.
 
 === Beispiel
 
-Ein Teil des Textes soll rot dargestellt werden.
+Ein Teil des Textes soll rot dargestellt werden. Zunächst die
+Segmenttyp-Definiton:
 
   %Segment:
     name=red
     html='<span style="color: red">$1</span>'
     latex='{\color{red}$1}'
     mediawiki='<span style="color: red">$1</span>'
+
+Anwendung im Text:
 
   ... S{red,Dies ist wichtig} ...
 
@@ -1851,16 +1854,16 @@ Ein Teil des Textes soll rot dargestellt werden.
     mediawiki=CODE
 
 [name=STRING]:
-  Name der Segment-Definiton.
+  Name des Segment-Typs.
 
 [html=CODE]:
-  HTML-Code des Segments.
+  HTML-Code des Segment-Typs.
 
 [latex=CODE]:
-  LaTeX-Code des Segments.
+  LaTeX-Code des Segment-Typs.
 
 [mediawiki=CODE]:
-  MediaWiki-Code des Segments.
+  MediaWiki-Code des Segment-Typs.
 
 ---PageBreak---
 
