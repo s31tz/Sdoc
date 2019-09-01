@@ -1827,9 +1827,20 @@ durch den cssPrefix des Dokuments ersetzt. Z.B.
 
 == Textformat (Segment)
 
-Eine Segement-Block definiert benutzerdefinierten Segment-Typ.
-Der Segment-Typ besitzt einen Namen der in einem S-Segment
-angegeben wird.
+Soll ein Textteil in besonderer Weise dargestellt werden, kann dies
+durch die Definition eines entsprchenden Segmenttyps erreicht werden.
+
+=== Beispiel
+
+Ein Teil des Textes soll rot dargestellt werden.
+
+  %Segment:
+    name=red
+    html='<span style="color: red">$1</span>'
+    latex='{\color{red}$1}'
+    mediawiki='<span style="color: red">$1</span>'
+
+  ... S{red,Dies ist wichtig} ...
 
 === Eigenschaften
 
