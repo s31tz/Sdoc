@@ -10,7 +10,7 @@ our $VERSION = '3.00';
 use Sdoc::Core::Option;
 use Digest::SHA ();
 use Scalar::Util ();
-use Sdoc::Core::Html::Tag;
+use Sdoc::Core::Html::Producer;
 use Sdoc::Core::LaTeX::Code;
 use Sdoc::Core::MediaWiki::Markup;
 use Sdoc::Core::AnsiColor;
@@ -994,7 +994,7 @@ sub generate {
         return $self->tree(@_);
     }
     elsif ($format eq 'html') {
-        my $h = Sdoc::Core::Html::Tag->new('html-5');
+        my $h = Sdoc::Core::Html::Producer->new;
         return $self->htmlCode($h);
     }
     elsif ($format eq 'latex') {
