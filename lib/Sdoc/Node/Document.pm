@@ -442,6 +442,7 @@ sub new {
         nodeA => undef,
         pathNodeA => undef,
         sectionA => undef,
+        segmentH => undef,
         tocNode => undef,
     );
 
@@ -681,6 +682,56 @@ sub linkNode {
                 for my $name (split /\|/,$node->name) {
                     $h{$name} = $node;
                 }
+            }
+        }
+
+        return \%h;
+    });
+
+    return $h->{$name};
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 segmentNode() - Lookup Segment-Knoten (memoized)
+
+=head4 Synopsis
+
+    $seg = $doc->segmentNode($name);
+
+=head4 Arguments
+
+=over 4
+
+=item $name
+
+Name des Segment-Knotens.
+
+=back
+
+=head4 Returns
+
+Link-Knoten (Sdoc::Node::Segment) oder C<undef>
+
+=head4 Description
+
+Liefere den Segment-Knoten mit dem Name $name. Existiert kein
+Segment-Knoten mit diesem Namen, liefere C<undef>.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub segmentNode {
+    my ($self,$name) = @_;
+
+    my $h = $self->memoize('segmentH',sub {
+        my ($self,$key) = @_;
+
+        my %h;
+        for my $node ($self->nodes) {
+            if ($node->type eq 'Segment') {
+                $h{$name} = $node;
             }
         }
 

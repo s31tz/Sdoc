@@ -27,9 +27,9 @@ Segmenten in verschiedenen Kontexten.
 
 %Segment:
   name=red
-  html='<span style="color: red">$1</span>'
-  latex='{\color{red}$1}'
-  mediawiki='<span style="color: red">$1</span>'
+  html='<span style="color: red">%s</span>'
+  latex='{\color{red}%s}'
+  mediawiki='<span style="color: red">%s</span>'
 
 Dies S{red,ist nur ein} Test.
 

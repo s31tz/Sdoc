@@ -613,7 +613,7 @@ sub stringToKeyVal {
     while ($str =~ s/^\s*(\w+)=//) {
         push @arr,$1;
         $str =~ s/^"([^"]*)"// || $str =~ s/^\{([^}]*)\}// ||
-            $str =~ s/^'([^}]*)'// || $str =~ s/^(\S*)//;
+            $str =~ s/^'([^']*)'// || $str =~ s/^(\S*)//;
         push @arr,$1;
     }
 

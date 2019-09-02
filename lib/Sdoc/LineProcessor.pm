@@ -672,7 +672,7 @@ sub parseSegments {
         # der Klammern die geschützten Klammern \{ und \}
 
         1 while $val
-            =~ s/(?<!\\)([ABCGILQ])\{(([^{}]|\\[{}])*)(?<!\\)\}/
+            =~ s/(?<!\\)([ABCGILQS])\{(([^{}]|\\[{}])*)(?<!\\)\}/
             $sub->($1,$2)/ex;
 
         # Leeres A{}-Segment einschließlich Whitespace
@@ -697,7 +697,7 @@ sub parseSegments {
         # Wir entfernen den Backslash vor geschützten Segmenten (diese
         # sollten im Text nur außerhalb von Segementen vorkommen.
 
-        $val =~ s/\\([ABCGILQ]\{)/$1/g;
+        $val =~ s/\\([ABCGILQS]\{)/$1/g;
         $val =~ s/\\M~/M~/g;
         $val =~ s/~\\N~/~N~/g;
     }

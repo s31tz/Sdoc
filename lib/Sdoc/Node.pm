@@ -1192,7 +1192,7 @@ sub expandText {
         # Expandiere Segmente mittels Zielformat-spezifischer Methode
 
         1 while $val =~
-            s/([ABCGILMNQ])\x01([^\x01\x02]*)\x02/$self->$meth($gen,$1,$2)/e;
+            s/([ABCGILMNQS])\x01([^\x01\x02]*)\x02/$self->$meth($gen,$1,$2)/e;
     }
 
     return $val;
@@ -1342,6 +1342,9 @@ sub expandSegmentsToHtml {
     }
     elsif ($seg eq 'Q') {
         return $h->tag('q',$val);
+    }
+    elsif ($seg eq 'S') {
+        return $self->codeSegmentS('html',$val);
     }
 
     $self->throw(
@@ -1498,6 +1501,9 @@ sub expandSegmentsToLatex {
     elsif ($seg eq 'Q') {
         return "``$val''";
     }
+    elsif ($seg eq 'S') {
+        return $self->codeSegmentS('latex',$val);
+    }
 
     $self->throw(
         'SDOC-00001: Unknown segment',
@@ -1545,7 +1551,7 @@ MediaWiki-Code (String)
 sub expandSegmentsToMediaWiki {
     my ($self,$m,$seg,$val) = @_;
 
-    my $root = $self->root;
+    my $doc = $self->root;
 
     if ($seg eq 'A') {
         # Darf es eigentlich nicht geben. Entweder wurde A{} verwendet,
@@ -1560,7 +1566,7 @@ sub expandSegmentsToMediaWiki {
         return $m->fmt('bold',$val);
     }
     elsif ($seg eq 'C') {
-        if ($self->type eq 'Paragraph' && $root->smallerMonospacedFont) {
+        if ($self->type eq 'Paragraph' && $doc->smallerMonospacedFont) {
             # Ist dies in MediaWiki möglich?
         }
         return $m->fmt('code',$val);
@@ -1656,6 +1662,9 @@ sub expandSegmentsToMediaWiki {
     elsif ($seg eq 'Q') {
         return $m->fmt('quote',$val);
     }
+    elsif ($seg eq 'S') {
+        return $self->codeSegmentS('mediawiki',$val);
+    }
 
     $self->throw(
         'SDOC-00001: Unknown segment',
@@ -1664,6 +1673,68 @@ sub expandSegmentsToMediaWiki {
         Input => $self->input,
         Line => $self->lineNum,
     );
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 codeSegmentS() - Code S-Segment für ein Format
+
+=head4 Synopsis
+
+    $code = $node->codeSegmentS($format,$content);
+
+=head4 Arguments
+
+=over 4
+
+=item $format
+
+Format, für welches der Code des S-Segments erzeugt wird. Wert:
+'html', 'latex', 'mediawiki', ...
+
+=item $content
+
+Der Inhalt des S-Segments. Dieser besteht aus einem
+Segment-Typ-Bezeichner und dem Text, beides mit Komma getrennt.
+
+=back
+
+=head4 Returns
+
+Code im betreffenden Format (String)
+
+=head4 Description
+
+Wende die Ersetzung für Format $format auf den Inhalt $content eines
+S-Segments an und liefere das Resultat zurück.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub codeSegmentS {
+    my ($self,$format,$content) = @_;
+
+    my ($name,$text) = split /,/,$content,2;
+    if (!defined $text) {
+        $self->warn('S segment does not have 2 arguments: S{%s}',$content);
+        return $content;
+    }
+
+    my $doc = $self->root;
+    my $seg = $doc->segmentNode($name);
+    if (!$seg) {
+        $self->warn('Segment type not defined: S{%s}',"$name,...");
+        return $text;
+    }
+
+    my $fmt = $seg->$format;
+    if (!$seg) {
+        $self->warn('Segment code not defined for format: %s',$format);
+        return $text;
+    }
+
+    return sprintf $fmt,$text;
 }
 
 # -----------------------------------------------------------------------------

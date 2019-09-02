@@ -223,7 +223,7 @@ In Titel (C{title}), Autor (C{author}) und Datum (C{date}) des
 Dokuments können Segmente (siehe Abschnitt L{+Syntax/Segment})
 verwendet werden:
 
-  A, B, C, G, I, L, M, N, Q
+  A, B, C, G, I, L, M, N, Q, S
 
 === Eigenschaften
 
@@ -464,7 +464,7 @@ ausgeschlossen werden.
 Im Titel eines Abschnitts können Segmente (siehe Abschnitt
 L{+Syntax/Segment}) verwendet werden:
 
-  A{}, B{}, C{}, G{}, I{}, L{}, M{}, N, Q{}
+  A, B, C, G, I, L, M, N, Q, S
 
 === Eigenschaften
 
@@ -525,7 +525,7 @@ ist nicht Teil des Titels, sie wird automatisch entfernt.
 In einer Zwischenüberschrift können Segmente (siehe Abschnitt
 L{+Syntax/Segment}) verwendet werden:
 
-  A{}, B{}, C{}, G{}, I{}, L{}, M{}, N, Q{}
+  A, B, C, G, I, L, M, N, Q, S
 
 === Eigenschaften
 
@@ -594,7 +594,7 @@ etc.) endet.
 In einem Paragraph können Segmente (siehe Abschnitt
 L{+Syntax/Segment}) verwendet werden:
 
-  B{}, C{}, G{}, I{}, L{}, M{}, N, Q{}
+  B, C, G, I, L, M, N, Q, S
 
 === Eigenschaften
 
@@ -679,7 +679,7 @@ L{+G - Inline-Grafik}.
 In der Beschriftung (C{caption}) einer Abbildung können alle Segmente
 (siehe Abschnitt L{+Syntax/Segment}) verwendet werden:
 
-  A, B, C, G, I, L, M, N, Q
+  A, B, C, G, I, L, M, N, Q, S
 
 === Eigenschaften
 
@@ -902,7 +902,7 @@ produziert:
 Im Term einer Definitonsliste können Segmente (siehe Abschnitt
 L{+Syntax/Segment}) verwendet werden:
 
-  B{}, C{}, G{}, I{}, L{}, M{}, N, Q{}
+  B, C, G, I, L, M, N, Q, S
 
 === Eigenschaften
 
@@ -1245,7 +1245,7 @@ In den Zellen der Tabelle - sowohl im Titel als auch in den Daten -,
 sowie in der Bildunterschrift (C{caption}) können alle Segmente (siehe
 Abschnitt L{+Syntax/Segment}) verwendet werden:
 
-  A, B, C, G, I, L, M, N, Q
+  A, B, C, G, I, L, M, N, Q, S
 
 Das folgende Beispiel zeigt sämtliche Möglichkeiten.
 
@@ -1825,10 +1825,11 @@ durch den cssPrefix des Dokuments ersetzt. Z.B.
 
 ---PageBreak---
 
-== Textformat (Segment)
+== Selbstdefinierte Textauszeichnung (Segment)
 
-Soll ein Textteil in besonderer Weise dargestellt werden, kann dies
-durch die Definition eines entsprechenden Segment-Typs erreicht werden.
+Soll ein Textteil in einer Weise dargestellt werden, die durch die
+vordefinierten Segmente B, C, I nicht erreicht wird, kann eine
+eigene Textauszeichnung definiert werden.
 
 === Beispiel
 
@@ -1837,13 +1838,23 @@ Segmenttyp-Definiton:
 
   %Segment:
     name=red
-    html='<span style="color: red">$1</span>'
-    latex='{\color{red}$1}'
-    mediawiki='<span style="color: red">$1</span>'
+    html='<span style="color: red">%s</span>'
+    latex='{\color{red}%s}'
+    mediawiki='<span style="color: red">%s</span>'
 
-Anwendung im Text:
+Dann die Anwendung im Text:
 
   ... S{red,Dies ist wichtig} ...
+
+Ergebnis:
+
+%Segment:
+  name=red
+  html='<span style="color: red">%s</span>'
+  latex='{\color{red}%s}'
+  mediawiki='<span style="color: red">%s</span>'
+
+... S{red,Dies ist wichtig} ...
 
 === Eigenschaften
 
@@ -2058,6 +2069,19 @@ haben und daher u.U. missinterpretiert werden.
   Was heißt schon Q{richtig}?
 
 Was heißt schon Q{richtig}?
+
+===! S - Selbstdefinierte Textauszeichnung
+
+Der von C{S\{name,...\}} eingefasste Text wird mit der selbst
+definierten Textauszeichnung I{name} gesetzt.
+
+====* Beispiel
+
+  S{red,Dies ist wichtig}
+
+produziert:
+
+S{red,Dies ist wichtig}
 
 === Allgemeines
 
@@ -3157,15 +3181,21 @@ wir in folgenden Schritten vor:
 Um einen neuen Segment-Typ C{T} zur Sdoc-Sprache hinzuzufügen, gehen
 wir in folgenden Schritten vor:
 
-1. Wir erweitern die Methode C{<%Sdoc::LineProcessor>%::parseSegments()}
+1. Wir erweitern die Methode C{Sdoc::LineProcessor::parseSegments()}
    um die Vorbehandlung des neuen Segment-Typs, also dessen Erkennung
    und Wandlung in die interne Segment-Repräsentation. Hierzu suchen
    wir den Code eines ähnlichen, bereits existierenden
-   Segment-Typs, kopieren diesen und passen ihn an.
+   Segment-Typs, kopieren diesen und passen ihn an. Am Ende der
+   Methode kommen zweimal die Charakter-Klassen vor, in die der
+   Segment-Buchstabe eingetragen wird: [ABCGILQS].
 
-2. Wir erweitern die Methode(n) C{<%Sdoc::Node>%::FORMATText()}
-   (z.B. expandText()), so dass sie den FORMAT-spezifischen
-   Code neuen Segment-Typ erzeugen.
+2. Wir erweitern die Character-Klasse in der Methode
+   C{Sdoc::Node::expandText()} um den Segment-Buchstaben. Dort wird
+   die Expansion angestoßen.
+
+3. Wir fügen die Behandlung des Segments zu den formatspezifischen
+   Methoden C{expandSegementsToHtml()}, C{expandSegementsToLaTeX()},
+   C{expandSegementsToMediaWiki()} usw. hinzu.
 
 == Knoten-Eigenschaft hinzufügen
 
