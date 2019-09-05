@@ -5,7 +5,7 @@ use strict;
 use warnings;
 use v5.10.0;
 
-our $VERSION = '1.156';
+our $VERSION = '1.157';
 
 use Sdoc::Core::Css;
 use Sdoc::Core::JavaScript;
@@ -81,7 +81,7 @@ sub loadFiles {
 
 =head1 VERSION
 
-1.156
+1.157
 
 =head1 AUTHOR
 
