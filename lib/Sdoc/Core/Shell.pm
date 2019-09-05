@@ -496,6 +496,31 @@ sub back {
 
 # -----------------------------------------------------------------------------
 
+=head3 backDir() - Voriges Arbeitsverzeichnis
+
+=head4 Synopsis
+
+    $dir = $sh->backDir;
+
+=head4 Returns
+
+Verzeichnispfad (String)
+
+=head4 Description
+
+Liefere das oberste Element des Verzeichnis-Stack ohne den Stack
+zu verändern.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub backDir {
+    return shift->{'dirStack'}->[-1];
+}
+
+# -----------------------------------------------------------------------------
+
 =head2 Fehlerbehandlung
 
 =head3 checkError() - Löse Exception bei Kommandofehler aus
