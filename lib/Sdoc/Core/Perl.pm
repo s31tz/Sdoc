@@ -237,6 +237,8 @@ Laden einer Konfigurationsdatei:
 
 Inhalt Konfigurationsdatei:
 
+    use strict;
+    
     host => 'localhost',
     datenbank => 'entw1',
     benutzer => ['sys','system']
@@ -251,7 +253,7 @@ sub perlDoFile {
     my @arr = CORE::do($file);
     if ($@) {
         Sdoc::Core::Object->throw(
-            'PERL-00001: Datei kann nicht von do() geparst werden',
+            'PERL-00001: do() could not parse file',
             File => $file,
             Cwd => Cwd::getcwd,
             InternalError => $@,
@@ -259,7 +261,7 @@ sub perlDoFile {
     }
     elsif (@arr == 1 && !defined $arr[0]) {
         Sdoc::Core::Object->throw(
-            'PERL-00002: Dateiladen per do() fehlgeschlagen',
+            'PERL-00002: do() could not load file',
             File => $file,
             Cwd => Cwd::getcwd,
             Error => $!,
