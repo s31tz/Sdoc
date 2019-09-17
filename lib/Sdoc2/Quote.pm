@@ -1,9 +1,9 @@
 package Sdoc2::Quote;
 use base qw/Sdoc2::Node/;
 
+use v5.10.0;
 use strict;
 use warnings;
-use v5.10.0;
 
 our $VERSION = '1';
 

@@ -1,9 +1,9 @@
 package Sdoc::Node::Comment;
 use base qw/Sdoc::Node/;
 
+use v5.10.0;
 use strict;
 use warnings;
-use v5.10.0;
 
 our $VERSION = '3.00';
 

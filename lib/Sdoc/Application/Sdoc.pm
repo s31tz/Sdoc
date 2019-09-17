@@ -1,9 +1,9 @@
 package Sdoc::Application::Sdoc;
 use base qw/Sdoc::Core::Program/;
 
+use v5.10.0;
 use strict;
 use warnings;
-use v5.10.0;
 
 our $VERSION = '3.00';
 

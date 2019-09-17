@@ -1,9 +1,9 @@
 package Sdoc2::Line;
 use base qw/Sdoc::Core::LineProcessor::Line/;
 
+use v5.10.0;
 use strict;
 use warnings;
-use v5.10.0;
 
 our $VERSION = '1';
 

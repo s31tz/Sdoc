@@ -1,9 +1,9 @@
 package Sdoc2::Document;
 use base qw/Sdoc2::Node/;
 
+use v5.10.0;
 use strict;
 use warnings;
-use v5.10.0;
 use utf8;
 
 our $VERSION = '1';

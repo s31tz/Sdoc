@@ -1,8 +1,8 @@
 package Sdoc::Core::Reference;
 
+use v5.10.0;
 use strict;
 use warnings;
-use v5.10.0;
 
 our $VERSION = '1.158';
 

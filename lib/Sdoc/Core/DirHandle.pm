@@ -1,9 +1,9 @@
 package Sdoc::Core::DirHandle;
 use base qw/Sdoc::Core::Object/;
 
+use v5.10.0;
 use strict;
 use warnings;
-use v5.10.0;
 use utf8;
 
 our $VERSION = '1.158';
