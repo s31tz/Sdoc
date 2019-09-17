@@ -325,7 +325,7 @@ sub dump {
     }
     elsif ($format eq 'pod')
     {
-        $text =~ s/^/    /mg;
+        $text =~ s/^/  /mg;
         return "$text\n\n";
     }
     elsif ($format eq 'man')
