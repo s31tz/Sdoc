@@ -71,7 +71,7 @@ Verweis auf den Elternknoten.
 
 =head4 Synopsis
 
-    $node = $class->new($type,$variant,$root,$parent,@keyVal);
+  $node = $class->new($type,$variant,$root,$parent,@keyVal);
 
 =head4 Arguments
 
@@ -145,7 +145,7 @@ sub new {
 
 =head4 Synopsis
 
-    $val = $doc->getUserNodeConfigAttribute($key,$default);
+  $val = $doc->getUserNodeConfigAttribute($key,$default);
 
 =head4 Arguments
 
@@ -223,7 +223,7 @@ sub getUserNodeConfigAttribute {
 
 =head4 Synopsis
 
-    $val = $doc->getUserNodeAttribute($key);
+  $val = $doc->getUserNodeAttribute($key);
 
 =head4 Arguments
 
@@ -290,7 +290,7 @@ sub getUserNodeAttribute {
 
 =head4 Synopsis
 
-    $abbrev = $this->abbrev;
+  $abbrev = $this->abbrev;
 
 =head4 Returns
 
@@ -327,7 +327,7 @@ sub abbrev {
 
 =head4 Synopsis
 
-    $nextNode = $node->nextNode;
+  $nextNode = $node->nextNode;
 
 =head4 Returns
 
@@ -362,7 +362,7 @@ sub nextNode {
 
 =head4 Synopsis
 
-    $nextNode = $node->nextVisibleNode;
+  $nextNode = $node->nextVisibleNode;
 
 =head4 Returns
 
@@ -405,7 +405,7 @@ sub nextVisibleNode {
 
 =head4 Synopsis
 
-    @nodes = $node->allNodes;
+  @nodes = $node->allNodes;
 
 =head4 Returns
 
@@ -436,7 +436,7 @@ sub allNodes {
 
 =head4 Synopsis
 
-    @nodes | $nodeA = $node->childs;
+  @nodes | $nodeA = $node->childs;
 
 =head4 Returns
 
@@ -465,7 +465,7 @@ sub childs {
 
 =head4 Synopsis
 
-    @pairs | $pairA = $node->nodeHierarchy;
+  @pairs | $pairA = $node->nodeHierarchy;
 
 =head4 Returns
 
@@ -502,7 +502,7 @@ sub nodeHierarchy {
 
 =head4 Synopsis
 
-    $node->setAttributes(@keyVal);
+  $node->setAttributes(@keyVal);
 
 =head4 Arguments
 
@@ -559,7 +559,7 @@ sub setAttributes {
 
 =head4 Synopsis
 
-    $path = $node->getLocalPath($key,@opt);
+  $path = $node->getLocalPath($key,@opt);
 
 =head4 Arguments
 
@@ -639,7 +639,7 @@ sub getLocalPath {
 
 =head4 Synopsis
 
-    @anchors | $anchorA = $node->anchorPathAsArray;
+  @anchors | $anchorA = $node->anchorPathAsArray;
 
 =head4 Returns
 
@@ -697,7 +697,7 @@ sub anchorPathAsArray {
 
 =head4 Synopsis
 
-    $path = $node->anchorPathAsString;
+  $path = $node->anchorPathAsString;
 
 =head4 Returns
 
@@ -730,7 +730,7 @@ sub anchorPathAsString {
 
 =head4 Synopsis
 
-    $linkId = $node->linkId;
+  $linkId = $node->linkId;
 
 =head4 Returns
 
@@ -765,7 +765,7 @@ sub linkId {
 
 =head4 Synopsis
 
-    $node->weakenSelfReference(\@arr);
+  $node->weakenSelfReference(\@arr);
 
 =head4 Arguments
 
@@ -807,7 +807,7 @@ sub weakenSelfReference {
 
 =head4 Synopsis
 
-    $node->warn($fmt,@args);
+  $node->warn($fmt,@args);
 
 =head4 Arguments
 
@@ -862,7 +862,7 @@ sub warn {
 
 =head4 Synopsis
 
-    $node->validate;
+  $node->validate;
 
 =head4 Description
 
@@ -918,7 +918,7 @@ um die Konsistenzbedingung zu prüfen.
 
 =head4 Synopsis
 
-    $class->resetCounts;
+  $class->resetCounts;
 
 =cut
 
@@ -939,7 +939,7 @@ sub resetCounts {
 
 =head4 Synopsis
 
-    ($destroyed,$instantiated) = $class->getCounts;
+  ($destroyed,$instantiated) = $class->getCounts;
 
 =cut
 
@@ -958,7 +958,7 @@ sub getCounts {
 
 =head4 Synopsis
 
-    $code = $node->generate($format,@args);
+  $code = $node->generate($format,@args);
 
 =head4 Arguments
 
@@ -1017,7 +1017,7 @@ sub generate {
 
 =head4 Synopsis
 
-    $code = $node->generateChilds($format,$gen,@args);
+  $code = $node->generateChilds($format,$gen,@args);
 
 =head4 Arguments
 
@@ -1075,7 +1075,7 @@ sub generateChilds {
 
 =head4 Synopsis
 
-    $str = $node->tree($ansiColor);
+  $str = $node->tree($ansiColor);
 
 =head4 Arguments
 
@@ -1132,8 +1132,8 @@ sub tree {
 
 =head4 Synopsis
 
-    $code = $node->expandText($gen,$key);
-    $code = $node->expandText($gen,\$str);
+  $code = $node->expandText($gen,$key);
+  $code = $node->expandText($gen,\$str);
 
 =head4 Arguments
 
@@ -1204,7 +1204,7 @@ sub expandText {
 
 =head4 Synopsis
 
-    $code = $node->expandSegmentsToHtml($gen,$segment,$val);
+  $code = $node->expandSegmentsToHtml($gen,$segment,$val);
 
 =head4 Arguments
 
@@ -1362,7 +1362,7 @@ sub expandSegmentsToHtml {
 
 =head4 Synopsis
 
-    $code = $node->expandSegmentsToLatex($gen,$segment,$val);
+  $code = $node->expandSegmentsToLatex($gen,$segment,$val);
 
 =head4 Arguments
 
@@ -1520,7 +1520,7 @@ sub expandSegmentsToLatex {
 
 =head4 Synopsis
 
-    $code = $node->expandSegmentsToMediaWiki($gen,$segment,$val);
+  $code = $node->expandSegmentsToMediaWiki($gen,$segment,$val);
 
 =head4 Arguments
 
@@ -1681,7 +1681,7 @@ sub expandSegmentsToMediaWiki {
 
 =head4 Synopsis
 
-    $code = $node->codeSegmentS($format,$content);
+  $code = $node->codeSegmentS($format,$content);
 
 =head4 Arguments
 
@@ -1743,7 +1743,7 @@ sub codeSegmentS {
 
 =head4 Synopsis
 
-    $code = $node->latexSectionName($gen);
+  $code = $node->latexSectionName($gen);
 
 =head4 Arguments
 
@@ -1809,7 +1809,7 @@ sub latexSectionName {
 
 =head4 Synopsis
 
-    $code = $node->htmlSectionCode($gen);
+  $code = $node->htmlSectionCode($gen);
 
 =head4 Arguments
 
@@ -1866,7 +1866,7 @@ sub htmlSectionCode {
 
 =head4 Synopsis
 
-    $code = $node->htmlTableOfContents($gen,$toc);
+  $code = $node->htmlTableOfContents($gen,$toc);
 
 =head4 Arguments
 
@@ -1966,7 +1966,7 @@ sub htmlTableOfContents {
 
 =head4 Synopsis
 
-    $cssClass = $node->cssClass;
+  $cssClass = $node->cssClass;
 
 =head4 Returns
 
@@ -1996,7 +1996,7 @@ sub cssClass {
 
 =head4 Synopsis
 
-    $cssId = $node->cssId;
+  $cssId = $node->cssId;
 
 =head4 Returns
 
@@ -2017,7 +2017,7 @@ sub cssId {
 
 =head4 Synopsis
 
-    $code = $node->css($c,$global);
+  $code = $node->css($c,$global);
 
 =head4 Arguments
 

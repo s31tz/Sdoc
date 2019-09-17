@@ -30,18 +30,18 @@ Sdoc::Core::Html::Tag implementiert.
 
 Vererbungshierarchie:
 
-    Sdoc::Core::Html::Tag        (einzelne HTML-Tags)
-        |
-    Sdoc::Core::Html::Construct  (einfache Konstrukte aus HTML-Tags)
-        |
-    Sdoc::Core::Html::Producer   (vereinigte Funktionalität)
+  Sdoc::Core::Html::Tag        (einzelne HTML-Tags)
+      |
+  Sdoc::Core::Html::Construct  (einfache Konstrukte aus HTML-Tags)
+      |
+  Sdoc::Core::Html::Producer   (vereinigte Funktionalität)
 
 Einfacher Anwendungsfall:
 
-    my $h = Sdoc::Core::Html::Producer->new;
-    print Sdoc::Core::Html::Page->html($h,
-        ...
-    );
+  my $h = Sdoc::Core::Html::Producer->new;
+  print Sdoc::Core::Html::Page->html($h,
+      ...
+  );
 
 =head1 VERSION
 

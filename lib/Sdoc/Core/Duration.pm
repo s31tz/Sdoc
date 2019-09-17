@@ -30,15 +30,15 @@ numerischer Wert (Sekunden mit Nachkommastellen) gespeichert wird.
 
 Als externe Repäsentation wird die Darstellung
 
-    DdHhMmS.Xs
+  DdHhMmS.Xs
 
 verwendet, wobei
 
-    D = Anzahl Tage
-    H = Anzahl Stunden
-    M = Anzahl Minuten
-    S = Anzahl Sekunden
-    X = Bruchteil einer Sekunde
+  D = Anzahl Tage
+  H = Anzahl Stunden
+  M = Anzahl Minuten
+  S = Anzahl Sekunden
+  X = Bruchteil einer Sekunde
 
 Es gelten folgende Eingenschaften:
 
@@ -69,7 +69,7 @@ der Sekundenanteil kann Nachkommastellen haben
 Bei der Instantiierung kann die Zeitdauer auch in Doppelpunkt-Notation
 übergeben werden:
 
-    D:H:M:S.X
+  D:H:M:S.X
 
 =head1 METHODS
 
@@ -79,8 +79,8 @@ Bei der Instantiierung kann die Zeitdauer auch in Doppelpunkt-Notation
 
 =head4 Synopsis
 
-    $dur = Sdoc::Core::Duration->new($sec);
-    $dur = Sdoc::Core::Duration->new($str);
+  $dur = Sdoc::Core::Duration->new($sec);
+  $dur = Sdoc::Core::Duration->new($str);
 
 =head4 Description
 
@@ -121,7 +121,7 @@ sub new {
 
 =head4 Synopsis
 
-    $sec = $dur->asSeconds;
+  $sec = $dur->asSeconds;
 
 =head4 Description
 
@@ -143,8 +143,8 @@ sub asSeconds {
 
 =head4 Synopsis
 
-    $str = $dur->asString;
-    $str = $dur->asString($prec);
+  $str = $dur->asString;
+  $str = $dur->asString($prec);
 
 =head4 Description
 
@@ -165,7 +165,7 @@ sub asString {
 
 =head4 Synopsis
 
-    $str = $dur->asShortString(@opt);
+  $str = $dur->asShortString(@opt);
 
 =head4 Options
 
@@ -271,7 +271,7 @@ sub asShortString {
 
 =head4 Synopsis
 
-    @arr | $arr = $dur->asArray;
+  @arr | $arr = $dur->asArray;
 
 =head4 Description
 
@@ -303,14 +303,14 @@ sub asArray {
 
 =head4 Synopsis
 
-    $str = $dur->asFFmpegString;
+  $str = $dur->asFFmpegString;
 
 =head4 Description
 
 Liefere Dauer in der Form wie sie ffmpeg bei der Option -t erwartet,
 also im Format
 
-    H:M:S.XXX
+  H:M:S.XXX
 
 =cut
 
@@ -328,7 +328,7 @@ sub asFFmpegString {
 
 =head4 Synopsis
 
-    $sec = $this->stringToSeconds($str);
+  $sec = $this->stringToSeconds($str);
 
 =head4 Description
 
@@ -339,13 +339,13 @@ Sekunden.
 
 Zeitdauer-Zeichenkette bestehend aus Tagen, Stunden, Mintuten, Sekunden:
 
-    $sec = Sdoc::Core::Duration->stringToSeconds('152d5h25m3.457s');
-    # 13152303.457
+  $sec = Sdoc::Core::Duration->stringToSeconds('152d5h25m3.457s');
+  # 13152303.457
 
 Dasselbe mit Doppelpunkt-Notation:
 
-    $sec = Sdoc::Core::Duration->stringToSeconds('152:5:25:3.457');
-    # 13152303.457
+  $sec = Sdoc::Core::Duration->stringToSeconds('152:5:25:3.457');
+  # 13152303.457
 
 =cut
 
@@ -400,7 +400,7 @@ sub stringToSeconds {
 
 =head4 Synopsis
 
-    $str = $this->secondsToString($sec,@opt);
+  $str = $this->secondsToString($sec,@opt);
 
 =head4 Arguments
 

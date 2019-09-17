@@ -81,7 +81,7 @@ Der Code ist Quelltext der Sprache $lang. Mit dieser Option wird
 das Syntax-Highlighting aktiviert. Dies verfügbaren Sprachen
 ("Lexer") liefert das Kommando
 
-    $ pygmentize -L lexers
+  $ pygmentize -L lexers
 
 =item ln => $n (Default: 0)
 
@@ -114,7 +114,7 @@ our $Abbrev = 'cod';
 
 =head4 Synopsis
 
-    $cod = $class->new($par,$variant,$root,$parent);
+  $cod = $class->new($par,$variant,$root,$parent);
 
 =head4 Arguments
 
@@ -259,7 +259,7 @@ sub new {
 
 =head4 Synopsis
 
-    $bool = $cod->indentBlock;
+  $bool = $cod->indentBlock;
 
 =head4 Returns
 
@@ -289,7 +289,7 @@ sub indentBlock {
 
 =head4 Synopsis
 
-    $code = $cod->css($c,$global);
+  $code = $cod->css($c,$global);
 
 =head4 Arguments
 
@@ -380,7 +380,7 @@ sub css {
 
 =head4 Synopsis
 
-    $code = $cod->htmlCode($gen);
+  $code = $cod->htmlCode($gen);
 
 =head4 Arguments
 
@@ -439,7 +439,7 @@ sub htmlCode {
 
 =head4 Synopsis
 
-    $code = $cod->latexCode($gen);
+  $code = $cod->latexCode($gen);
 
 =head4 Arguments
 
@@ -505,7 +505,7 @@ sub latexCode {
 
 =head4 Synopsis
 
-    $code = $cod->mediawikiCode($gen);
+  $code = $cod->mediawikiCode($gen);
 
 =head4 Arguments
 

@@ -53,7 +53,7 @@ und sollte abgeschafft werden)
 
 =head4 Synopsis
 
-    $obj = $class->new(@keyVal);
+  $obj = $class->new(@keyVal);
 
 =head4 Description
 

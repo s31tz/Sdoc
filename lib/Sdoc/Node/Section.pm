@@ -121,7 +121,7 @@ our $Abbrev = 'sec';
 
 =head4 Synopsis
 
-    $sec = $class->new($par,$variant,$root,$parent);
+  $sec = $class->new($par,$variant,$root,$parent);
 
 =head4 Arguments
 
@@ -248,7 +248,7 @@ sub new {
 
 =head4 Synopsis
 
-    $str = $sec->sectionNumber;
+  $str = $sec->sectionNumber;
 
 =head4 Returns
 
@@ -278,7 +278,7 @@ sub sectionNumber {
 
 =head4 Synopsis
 
-    $anchor = $sec->anchor;
+  $anchor = $sec->anchor;
 
 =head4 Returns
 
@@ -304,7 +304,7 @@ sub anchor {
 
 =head4 Synopsis
 
-    $linkText = $sec->linkText($gen);
+  $linkText = $sec->linkText($gen);
 
 =head4 Returns
 
@@ -331,7 +331,7 @@ sub linkText {
 
 =head4 Synopsis
 
-    $code = $sec->htmlCode($gen);
+  $code = $sec->htmlCode($gen);
 
 =head4 Arguments
 
@@ -362,7 +362,7 @@ sub htmlCode {
 
 =head4 Synopsis
 
-    $code = $sec->latexCode($gen);
+  $code = $sec->latexCode($gen);
 
 =head4 Arguments
 
@@ -412,7 +412,7 @@ sub latexCode {
 
 =head4 Synopsis
 
-    $code = $sec->mediawikiCode($gen);
+  $code = $sec->mediawikiCode($gen);
 
 =head4 Arguments
 

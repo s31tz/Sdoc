@@ -30,7 +30,7 @@ L<Sdoc::Core::Program>
 
 =head4 Synopsis
 
-    $prg->main;
+  $prg->main;
 
 =head4 Description
 

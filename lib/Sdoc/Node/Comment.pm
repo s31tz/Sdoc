@@ -54,7 +54,7 @@ our $Abbrev = 'com';
 
 =head4 Synopsis
 
-    $com = $class->new($par,$variant,$root,$parent);
+  $com = $class->new($par,$variant,$root,$parent);
 
 =head4 Arguments
 
@@ -146,7 +146,7 @@ sub new {
 
 =head4 Synopsis
 
-    $code = $com->htmlCode($gen);
+  $code = $com->htmlCode($gen);
 
 =head4 Arguments
 
@@ -183,7 +183,7 @@ sub htmlCode {
 
 =head4 Synopsis
 
-    $code = $com->latexCode($gen);
+  $code = $com->latexCode($gen);
 
 =head4 Arguments
 

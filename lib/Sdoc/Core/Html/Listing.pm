@@ -23,18 +23,18 @@ L<Sdoc::Core::Html::Base>
 
 =head1 SYNOPSIS
 
-    use Sdoc::Core::Html::Listing;
-    
-    my $h = Sdoc::Core::Html::Tag->new;
-    
-    my $obj = Sdoc::Core::Html::Listing->new(
-        language => 'Perl',
-        lineNumbers => 1,
-        colNumbers => 79,
-        source => $file,
-    );
-    
-    my $html = $obj->html($h);
+  use Sdoc::Core::Html::Listing;
+  
+  my $h = Sdoc::Core::Html::Tag->new;
+  
+  my $obj = Sdoc::Core::Html::Listing->new(
+      language => 'Perl',
+      lineNumbers => 1,
+      colNumbers => 79,
+      source => $file,
+  );
+  
+  my $html = $obj->html($h);
 
 =head1 ATTRIBUTES
 
@@ -83,34 +83,34 @@ Inhalt. Dieser kann aus einer Datei oder einem String kommen.
 
 Programm:
 
-     1: require R1::HtmlTag;
-     2: require R1::Html::Listing;
-     3: 
-     4: my $h = R1::HtmlTag->new;
-     5: 
-     6: my $text = << '__PERL__';
-     7: #!/usr/bin/perl
-     8: 
-     9: =encoding utf8
-    10: 
-    11: Nur ein Demo-Programm.
-    12: 
-    13: =cut
-    14: 
-    15: print "Hello world!\n";
-    16: 
-    17: # eof
-    18: __PERL__
-    19: 
-    20: my $html = R1::Html::Listing->html($h,
-    21:     cssPrefix=>'sdoc-code',
-    22:     language=>'Perl',
-    23:     source=>\$text,
-    24: );
+   1: require R1::HtmlTag;
+   2: require R1::Html::Listing;
+   3: 
+   4: my $h = R1::HtmlTag->new;
+   5: 
+   6: my $text = << '__PERL__';
+   7: #!/usr/bin/perl
+   8: 
+   9: =encoding utf8
+  10: 
+  11: Nur ein Demo-Programm.
+  12: 
+  13: =cut
+  14: 
+  15: print "Hello world!\n";
+  16: 
+  17: # eof
+  18: __PERL__
+  19: 
+  20: my $html = R1::Html::Listing->html($h,
+  21:     cssPrefix=>'sdoc-code',
+  22:     language=>'Perl',
+  23:     source=>\$text,
+  24: );
 
 Ergebnis:
 
-    1: 
+  1: 
 
 Im Browser:
 
@@ -122,7 +122,7 @@ Im Browser:
 
 =head4 Synopsis
 
-    $obj = $class->new(@keyVal);
+  $obj = $class->new(@keyVal);
 
 =cut
 
@@ -155,8 +155,8 @@ sub new {
 
 =head4 Synopsis
 
-    $html = $obj->html($h);
-    $html = $class->html($h,@keyVal);
+  $html = $obj->html($h);
+  $html = $class->html($h,@keyVal);
 
 =cut
 

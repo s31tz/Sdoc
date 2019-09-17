@@ -30,8 +30,8 @@ L<Sdoc::Core::System>
 
 =head4 Synopsis
 
-    $dir = $this->cwd;
-    $this->cwd($dir);
+  $dir = $this->cwd;
+  $this->cwd($dir);
 
 =head4 Alias
 
@@ -47,11 +47,11 @@ Verzeichnis.
 
 Liefere aktuelles Verzeichnis:
 
-    $dir = Sdoc::Core::Process->cwd;
+  $dir = Sdoc::Core::Process->cwd;
 
 Wechsele Verzeichnis:
 
-    Sdoc::Core::Process->cwd('/tmp');
+  Sdoc::Core::Process->cwd('/tmp');
 
 =cut
 
@@ -91,8 +91,8 @@ sub cwd {
 
 =head4 Synopsis
 
-    $uid = $this->euid;
-    $this->euid($uid);
+  $uid = $this->euid;
+  $this->euid($uid);
 
 =head4 Description
 
@@ -106,11 +106,11 @@ Perl-Variable $> abgefragt werden.
 
 Liefere aktuelle EUID:
 
-    $uid = Sdoc::Core::Process->euid;
+  $uid = Sdoc::Core::Process->euid;
 
 Setze EUID:
 
-    Sdoc::Core::Process->euid(1000);
+  Sdoc::Core::Process->euid(1000);
 
 =cut
 
@@ -145,8 +145,8 @@ sub euid {
 
 =head4 Synopsis
 
-    $uid = $this->uid;
-    $uid = $this->uid($user);
+  $uid = $this->uid;
+  $uid = $this->uid($user);
 
 =head4 Description
 
@@ -168,7 +168,7 @@ sub uid {
 
 =head4 Synopsis
 
-    $user = $this->user;
+  $user = $this->user;
 
 =head4 Description
 
@@ -190,8 +190,8 @@ sub user {
 
 =head4 Synopsis
 
-    $path = $this->homeDir;
-    $path = $this->homeDir($subPath);
+  $path = $this->homeDir;
+  $path = $this->homeDir($subPath);
 
 =head4 Description
 

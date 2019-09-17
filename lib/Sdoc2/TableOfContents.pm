@@ -52,7 +52,7 @@ Tiefe des Inhaltsverzeichnisses
 
 =head4 Synopsis
 
-    $node = $class->new($doc,$parent,$att);
+  $node = $class->new($doc,$parent,$att);
 
 =head4 Description
 
@@ -90,7 +90,7 @@ sub new {
 
 =head4 Synopsis
 
-    $str = $node->dump($format,@args);
+  $str = $node->dump($format,@args);
 
 =head4 Description
 

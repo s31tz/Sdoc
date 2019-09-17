@@ -71,7 +71,7 @@ our $Abbrev = 'lnk';
 
 =head4 Synopsis
 
-    $lnk = $class->new($par,$variant,$root,$parent);
+  $lnk = $class->new($par,$variant,$root,$parent);
 
 =head4 Arguments
 
@@ -143,7 +143,7 @@ sub new {
 
 =head4 Synopsis
 
-    $code = $lnk->htmlCode($gen);
+  $code = $lnk->htmlCode($gen);
 
 =head4 Arguments
 
@@ -179,7 +179,7 @@ sub htmlCode {
 
 =head4 Synopsis
 
-    $code = $lnk->latexCode($gen);
+  $code = $lnk->latexCode($gen);
 
 =head4 Arguments
 
@@ -215,7 +215,7 @@ sub latexCode {
 
 =head4 Synopsis
 
-    $code = $lnk->mediawikiCode($gen);
+  $code = $lnk->mediawikiCode($gen);
 
 =head4 Arguments
 

@@ -49,7 +49,7 @@ Titel des Abschnitts.
 
 =head4 Synopsis
 
-    $node = $class->new($doc,$parent);
+  $node = $class->new($doc,$parent);
 
 =cut
 
@@ -90,7 +90,7 @@ sub new {
 
 =head4 Synopsis
 
-    $str = $node->dump($format,@args);
+  $str = $node->dump($format,@args);
 
 =cut
 

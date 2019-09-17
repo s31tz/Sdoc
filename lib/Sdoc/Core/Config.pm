@@ -28,10 +28,10 @@ L<Sdoc::Core::Hash>
 
 =head1 SYNOPSIS
 
-    use Sdoc::Core::Config;
-    
-    my $cfg = Sdoc::Core::Config->new('/etc/myapp/test.conf');
-    my $database = $cgf->get('database');
+  use Sdoc::Core::Config;
+  
+  my $cfg = Sdoc::Core::Config->new('/etc/myapp/test.conf');
+  my $database = $cgf->get('database');
 
 =head1 DESCRIPTION
 
@@ -40,9 +40,9 @@ Attribut/Wert-Paaren, die in einer Perl-Datei definiert sind.
 
 Beispiel für den Inhalt einer Konfigurationsdatei:
 
-    host => 'localhost',
-    datenbank => 'entw1',
-    benutzer => ['sys','system']
+  host => 'localhost',
+  datenbank => 'entw1',
+  benutzer => ['sys','system']
 
 =head2 Platzhalterersetzung
 
@@ -51,16 +51,16 @@ eingebettet sein. Ein solcher Platzhalter wird mit Prozentzeichen
 (%) begrenzt und beim Lese-Zugriff durch den Wert der betreffenden
 Konfigurationsvariable ersetzt. Beispiel:
 
-    Konfigurationsdatei:
-    
-        VarDir => '/var/opt/myapp',
-        SpoolDir => '%VarDir%/spool',
-    
-    Code:
-    
-        $val = $cfg->get('SpoolDir');
-        =>
-        '/var/opt/myapp/spool'
+  Konfigurationsdatei:
+  
+      VarDir => '/var/opt/myapp',
+      SpoolDir => '%VarDir%/spool',
+  
+  Code:
+  
+      $val = $cfg->get('SpoolDir');
+      =>
+      '/var/opt/myapp/spool'
 
 =head2 Besondere Platzhalter
 
@@ -72,9 +72,9 @@ Wird durch den Pfad des aktuellen Verzeichnisses ersetzt.
 Anwendungsfall: Testkonfiguration für Zugriff auf aktuelles
 Verzeichnis über einen Dienst wie FTP:
 
-    test.conf
-    ---------
-    FtpUrl => 'user:passw@localhost:%CWD%'
+  test.conf
+  ---------
+  FtpUrl => 'user:passw@localhost:%CWD%'
 
 =back
 
@@ -86,9 +86,9 @@ Verzeichnis über einen Dienst wie FTP:
 
 =head4 Synopsis
 
-    [1] $cfg = $class->new(@files,@opt);
-    [3] $cfg = $class->new($str);
-    [4] $cfg = $class->new(\%keyVal);
+  [1] $cfg = $class->new(@files,@opt);
+  [3] $cfg = $class->new($str);
+  [4] $cfg = $class->new(\%keyVal);
 
 =head4 Options
 
@@ -210,8 +210,8 @@ sub new {
 
 =head4 Synopsis
 
-    $val = $cfg->get($key);
-    @vals = $cfg->get(@keys);
+  $val = $cfg->get($key);
+  @vals = $cfg->get(@keys);
 
 =head4 Description
 
@@ -250,8 +250,8 @@ sub get {
 
 =head4 Synopsis
 
-    $val = $cfg->try($key);
-    @vals = $cfg->try(@keys);
+  $val = $cfg->try($key);
+  @vals = $cfg->try(@keys);
 
 =head4 Description
 

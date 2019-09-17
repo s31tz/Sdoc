@@ -72,7 +72,7 @@ our $Abbrev = 'quo';
 
 =head4 Synopsis
 
-    $quo = $class->new($par,$variant,$root,$parent);
+  $quo = $class->new($par,$variant,$root,$parent);
 
 =head4 Arguments
 
@@ -169,7 +169,7 @@ sub new {
 
 =head4 Synopsis
 
-    $code = $quo->css($c,$global);
+  $code = $quo->css($c,$global);
 
 =head4 Arguments
 
@@ -222,7 +222,7 @@ sub css {
 
 =head4 Synopsis
 
-    $code = $quo->htmlCode($gen);
+  $code = $quo->htmlCode($gen);
 
 =head4 Arguments
 
@@ -257,7 +257,7 @@ sub htmlCode {
 
 =head4 Synopsis
 
-    $code = $quo->latexCode($gen);
+  $code = $quo->latexCode($gen);
 
 =head4 Arguments
 

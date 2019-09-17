@@ -143,7 +143,7 @@ our $Abbrev = 'tab';
 
 =head4 Synopsis
 
-    $tab = $class->new($par,$variant,$root,$parent);
+  $tab = $class->new($par,$variant,$root,$parent);
 
 =head4 Arguments
 
@@ -251,7 +251,7 @@ sub new {
 
 =head4 Synopsis
 
-    $anchor = $tab->anchor;
+  $anchor = $tab->anchor;
 
 =head4 Returns
 
@@ -292,7 +292,7 @@ sub anchor {
 
 =head4 Synopsis
 
-    $linkText = $tab->linkText($gen);
+  $linkText = $tab->linkText($gen);
 
 =head4 Returns
 
@@ -319,7 +319,7 @@ sub linkText {
 
 =head4 Synopsis
 
-    $bool = $tab->indentBlock;
+  $bool = $tab->indentBlock;
 
 =head4 Returns
 
@@ -350,7 +350,7 @@ sub indentBlock {
 
 =head4 Synopsis
 
-    $code = $tab->css($c,$global);
+  $code = $tab->css($c,$global);
 
 =head4 Arguments
 
@@ -487,7 +487,7 @@ sub css {
 
 =head4 Synopsis
 
-    $code = $tab->htmlCode($gen);
+  $code = $tab->htmlCode($gen);
 
 =head4 Arguments
 
@@ -576,7 +576,7 @@ sub htmlCode {
 
 =head4 Synopsis
 
-    $code = $tab->latexCode($gen);
+  $code = $tab->latexCode($gen);
 
 =head4 Arguments
 
@@ -656,7 +656,7 @@ sub latexCode {
 
 =head4 Synopsis
 
-    $code = $tab->mediawikiCode($gen);
+  $code = $tab->mediawikiCode($gen);
 
 =head4 Arguments
 

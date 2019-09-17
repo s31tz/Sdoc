@@ -51,19 +51,19 @@ L<Sdoc2::Node>
 
 Aufrufe zur Generierung eines Sdoc-Parsing-Baums:
 
-    $tree = Sdoc2::Document->new($file);
-    $tree = Sdoc2::Document->new(\$str);
-    $tree = Sdoc2::Document->new(\@lines);
+  $tree = Sdoc2::Document->new($file);
+  $tree = Sdoc2::Document->new(\$str);
+  $tree = Sdoc2::Document->new(\@lines);
 
 Aufrufe zur Generierung einer Repräsentation:
 
-    $str = $tree->dump('ehtml');
-    $str = $tree->dump('pod');
-    $str = $tree->dump('debug');
+  $str = $tree->dump('ehtml');
+  $str = $tree->dump('pod');
+  $str = $tree->dump('debug');
 
 In einem Aufruf:
 
-    $str = Sdoc2::Document->dump($format,$source);
+  $str = Sdoc2::Document->dump($format,$source);
 
 =head1 DESCRIPTION
 
@@ -77,9 +77,9 @@ Die Klasse repräsentiert einen Sdoc-Parsingbaum.
 
 =head4 Synopsis
 
-    $tree = $class->new($file,@opt);
-    $tree = $class->new(\$str,@opt);
-    $tree = $class->new(\@lines,@opt);
+  $tree = $class->new($file,@opt);
+  $tree = $class->new(\$str,@opt);
+  $tree = $class->new(\@lines,@opt);
 
 =head4 Options
 
@@ -391,7 +391,7 @@ sub new {
 
 =head4 Synopsis
 
-    $title = $node->title;
+  $title = $node->title;
 
 =head4 Description
 
@@ -424,8 +424,8 @@ sub title {
 
 =head4 Synopsis
 
-    $str = Sdoc2::Document->dump($format,$source);
-    $str = $node->dump($format,@opt);
+  $str = Sdoc2::Document->dump($format,$source);
+  $str = $node->dump($format,@opt);
 
 =head4 Description
 

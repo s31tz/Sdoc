@@ -46,7 +46,7 @@ our $Abbrev = 'pbr';
 
 =head4 Synopsis
 
-    $pbr = $class->new($par,$variant,$root,$parent);
+  $pbr = $class->new($par,$variant,$root,$parent);
 
 =head4 Arguments
 
@@ -118,7 +118,7 @@ sub new {
 
 =head4 Synopsis
 
-    $code = $pbr->htmlCode($gen);
+  $code = $pbr->htmlCode($gen);
 
 =head4 Arguments
 
@@ -158,7 +158,7 @@ sub htmlCode {
 
 =head4 Synopsis
 
-    $code = $pbr->latexCode($gen);
+  $code = $pbr->latexCode($gen);
 
 =head4 Arguments
 

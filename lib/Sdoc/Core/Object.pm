@@ -21,9 +21,9 @@ Sdoc::Core::Object - Basisklasse für alle Klassen der Klassenbibliothek
 
 =head1 SYNOPSIS
 
-    package MyClass;
-    use base qw/Sdoc::Core::Object/;
-    ...
+  package MyClass;
+  use base qw/Sdoc::Core::Object/;
+  ...
 
 =head1 METHODS
 
@@ -33,7 +33,7 @@ Sdoc::Core::Object - Basisklasse für alle Klassen der Klassenbibliothek
 
 =head4 Synopsis
 
-    $obj = $class->bless($ref);
+  $obj = $class->bless($ref);
 
 =head4 Description
 
@@ -44,11 +44,11 @@ Subklasse von Sdoc::Core::Object ist.
 
 Der Aufruf ist äquivalent zu:
 
-    $obj = bless $ref,$class;
+  $obj = bless $ref,$class;
 
 =head4 Example
 
-    $hash = Hash->bless({});
+  $hash = Hash->bless({});
 
 =cut
 
@@ -79,7 +79,7 @@ sub bless {
 
 =head4 Synopsis
 
-    $obj->rebless($class);
+  $obj->rebless($class);
 
 =head4 Description
 
@@ -87,11 +87,11 @@ Blesse Objekt $obj auf Klasse $class um.
 
 Der Aufruf ist äquivalent zu:
 
-    bless $obj,$class;
+  bless $obj,$class;
 
 =head4 Example
 
-    $hash->rebless('MyClass');
+  $hash->rebless('MyClass');
 
 =cut
 
@@ -111,10 +111,10 @@ sub rebless {
 
 =head4 Synopsis
 
-    [1] $this->parameters(\@param,@optRef);
-    [2] $this->parameters($sloppy,\@param,@optRef);
-    [3] $argA = $this->parameters($minArgs,$maxArgs,\@param,@optRef);
-    [4] $argA = $this->parameters($sloppy,$minArgs,$maxArgs,\@param,@optRef);
+  [1] $this->parameters(\@param,@optRef);
+  [2] $this->parameters($sloppy,\@param,@optRef);
+  [3] $argA = $this->parameters($minArgs,$maxArgs,\@param,@optRef);
+  [4] $argA = $this->parameters($sloppy,$minArgs,$maxArgs,\@param,@optRef);
 
 =head4 Arguments
 
@@ -169,21 +169,21 @@ Denn die Argumente müssen von parameters() dann nicht kopiert werden und
 wenn der Methodenaufruf ohne Optionen erfolgt, kehrt parameters(),
 wie bereits gesagt, sofort zurück. Beispiel:
 
-    sub myMethod {
-        my ($this,$arg1,$arg2,$arg3) = splice @_,0,3;
-    
-        # Optionen
-    
-        my $opt1 = 1;
-        my $opt2 = 2;
-    
-        $this->parameters(\@_,
-            opt1 => \$opt1,
-            opt2 => \$opt2,
-        );
-    
-        # ...
-    }
+  sub myMethod {
+      my ($this,$arg1,$arg2,$arg3) = splice @_,0,3;
+  
+      # Optionen
+  
+      my $opt1 = 1;
+      my $opt2 = 2;
+  
+      $this->parameters(\@_,
+          opt1 => \$opt1,
+          opt2 => \$opt2,
+      );
+  
+      # ...
+  }
 
 [2] Wie [1], nur dass keine Exception geworfen wird, wenn unbekannte
 Parameter übergeben werden. Diese bleiben in @_ stehen. Dies ist nützlich,
@@ -191,10 +191,10 @@ wenn die Methode zusätzliche Parameter empfängt und diese unbesehen
 an eine andere Methode weiterleitet. Der Aufruf von parameters() ändert
 sich zu:
 
-    $this->parameters(1,\@_,
-        opt1 => \$opt1,
-        opt2 => \$opt2,
-    );
+  $this->parameters(1,\@_,
+      opt1 => \$opt1,
+      opt2 => \$opt2,
+  );
 
 [3], [4] Wie [1] bzw. [2], nur dass parameters() zusätzlich die
 Argumente der Methode behandelt. Dies ist nützlich, wenn die
@@ -202,22 +202,22 @@ Methode eine I<variable> Anzahl an Argumenten hat. Diese werden
 von parameters() aus der Parameterliste "herausgefischt" und eine
 Referenz auf diese Liste zurückgegeben. Beispiel:
 
-    sub myMethod {
-        my $this = shift;
-    
-        # Optionen und Argumente
-    
-        my $opt1 = 1;
-        my $opt2 = 2;
-    
-        $argA = $this->parameters(0,\@_,
-            opt1 => \$opt1,
-            opt2 => \$opt2,
-        );
-        my ($arg1,$arg2,$arg3,$arg4) = @$argA;
-    
-        # ...
-    }
+  sub myMethod {
+      my $this = shift;
+  
+      # Optionen und Argumente
+  
+      my $opt1 = 1;
+      my $opt2 = 2;
+  
+      $argA = $this->parameters(0,\@_,
+          opt1 => \$opt1,
+          opt2 => \$opt2,
+      );
+      my ($arg1,$arg2,$arg3,$arg4) = @$argA;
+  
+      # ...
+  }
 
 =cut
 
@@ -283,9 +283,9 @@ sub parameters {
 
 =head4 Synopsis
 
-    $this->throw;
-    $this->throw(@opt,@keyVal);
-    $this->throw($msg,@opt,@keyVal);
+  $this->throw;
+  $this->throw(@opt,@keyVal);
+  $this->throw($msg,@opt,@keyVal);
 
 =head4 Options
 
@@ -441,7 +441,7 @@ sub throw {
 
 =head4 Synopsis
 
-    $this->addMethod($name,$ref);
+  $this->addMethod($name,$ref);
 
 =head4 Description
 
@@ -450,10 +450,10 @@ Existiert die Methode bereits, wird sie überschrieben.
 
 =head4 Example
 
-    MyClass->addMethod(myMethod => sub {
-        my $self = shift;
-        return 4711;
-    });
+  MyClass->addMethod(myMethod => sub {
+      my $self = shift;
+      return 4711;
+  });
 
 =cut
 
@@ -477,7 +477,7 @@ sub addMethod {
 
 =head4 Synopsis
 
-    $dir = $this->classFile;
+  $dir = $this->classFile;
 
 =head4 Description
 
@@ -486,9 +486,9 @@ diesen zurück. Die Klasse muss bereits geladen worden sein.
 
 =head4 Example
 
-    $path = Sdoc::Core::Object->classFile;
-    ==>
-    <PFAD>Sdoc::Core/Object.pm
+  $path = Sdoc::Core::Object->classFile;
+  ==>
+  <PFAD>Sdoc::Core/Object.pm
 
 =cut
 
@@ -509,8 +509,8 @@ sub classFile {
 
 =head4 Synopsis
 
-    ($class,$self,$isClassMethod) = Sdoc::Core::Object->this($this);
-    $class = Sdoc::Core::Object->this($this);
+  ($class,$self,$isClassMethod) = Sdoc::Core::Object->this($this);
+  $class = Sdoc::Core::Object->this($this);
 
 =head4 Description
 
@@ -531,42 +531,42 @@ sowie die Objektreferenz selbst und als dritten Rückgabewert 0.
 
 Klassen- sowie Objektmethode:
 
-    sub myMethod {
-        my ($class,$self) = Sdoc::Core::Object->this(shift);
-    
-        if ($self) {
-            # Aufruf als Objektmethode
-        }
-        else {
-            # Aufruf als Klassenmethode
-        }
-    }
+  sub myMethod {
+      my ($class,$self) = Sdoc::Core::Object->this(shift);
+  
+      if ($self) {
+          # Aufruf als Objektmethode
+      }
+      else {
+          # Aufruf als Klassenmethode
+      }
+  }
 
 =item *
 
 Klassenmethode, die als Objektmethode gerufen werden kann:
 
-    sub mymethod {
-        my $class = Sdoc::Core::Object->this(shift);
-        ...
-    }
+  sub mymethod {
+      my $class = Sdoc::Core::Object->this(shift);
+      ...
+  }
 
 =item *
 
 Objektmethode, die als Klassenmethode gerufen werden kann:
 
-    sub myMethod {
-        my ($class,$self,$isClassMethod) = Sdoc::Core::Object->this(shift);
-    
-        $self = $class->new(@_);
-    
-        # Ab hier ist mittels $self nicht mehr feststellbar,
-        # ob die Methode als Klassen- oder Objektmethode gerufen wurde.
-        # Die Variable $isclassmethod zeigt es an.
-    
-        $self->specialMethod if $isClassMethod;
-        ...
-    }
+  sub myMethod {
+      my ($class,$self,$isClassMethod) = Sdoc::Core::Object->this(shift);
+  
+      $self = $class->new(@_);
+  
+      # Ab hier ist mittels $self nicht mehr feststellbar,
+      # ob die Methode als Klassen- oder Objektmethode gerufen wurde.
+      # Die Variable $isclassmethod zeigt es an.
+  
+      $self->specialMethod if $isClassMethod;
+      ...
+  }
 
 =back
 

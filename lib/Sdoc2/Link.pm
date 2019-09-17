@@ -49,7 +49,7 @@ Url des Link
 
 =head4 Synopsis
 
-    $node = $class->new($doc,$parent,$att);
+  $node = $class->new($doc,$parent,$att);
 
 =cut
 

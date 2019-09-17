@@ -70,7 +70,7 @@ our $Abbrev = 'par';
 
 =head4 Synopsis
 
-    $par = $class->new($par,$variant,$root,$parent);
+  $par = $class->new($par,$variant,$root,$parent);
 
 =head4 Arguments
 
@@ -166,7 +166,7 @@ sub new {
 
 =head4 Synopsis
 
-    $code = $par->htmlCode($gen);
+  $code = $par->htmlCode($gen);
 
 =head4 Arguments
 
@@ -201,7 +201,7 @@ sub htmlCode {
 
 =head4 Synopsis
 
-    $code = $par->latexCode($gen);
+  $code = $par->latexCode($gen);
 
 =head4 Arguments
 
@@ -232,7 +232,7 @@ sub latexCode {
 
 =head4 Synopsis
 
-    $code = $par->mediawikiCode($gen);
+  $code = $par->mediawikiCode($gen);
 
 =head4 Arguments
 

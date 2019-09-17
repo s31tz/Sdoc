@@ -25,7 +25,7 @@ Sdoc::Core::JavaScript - Generierung von JavaScript-Code
 
 =head4 Synopsis
 
-    $line = $class->line($code);
+  $line = $class->line($code);
 
 =head4 Arguments
 
@@ -52,13 +52,13 @@ wie onclick="..." oder onchange="...") eingesetzt werden soll.
 
 Aus
 
-    var s = '';
-    for (var i = 0; i < 10; i++)
-        s += 'x';
+  var s = '';
+  for (var i = 0; i < 10; i++)
+      s += 'x';
 
 wird
 
-    var s = ''; for (var i = 0; i < 10; i++) s += 'x';
+  var s = ''; for (var i = 0; i < 10; i++) s += 'x';
 
 =head4 Details
 
@@ -114,7 +114,7 @@ sub line {
 
 =head4 Synopsis
 
-    $scriptTags = Sdoc::Core::JavaScript->script($h,@specs);
+  $scriptTags = Sdoc::Core::JavaScript->script($h,@specs);
 
 =head4 Arguments
 
@@ -159,40 +159,40 @@ Wird zu @specs expandiert.
 
 Code zum Laden einer JavaScript-Datei über URL:
 
-    $script = Sdoc::Core::JavaScript->script($h,'https://host.dom/scr.js');
-    =>
-    <script src="https://host.dom/scr.js" type="text/javascript"></script>
+  $script = Sdoc::Core::JavaScript->script($h,'https://host.dom/scr.js');
+  =>
+  <script src="https://host.dom/scr.js" type="text/javascript"></script>
 
 Code aus Datei einfügen:
 
-    $style = Sdoc::Core::JavaScript->script($h,'inline:js/script.css');
-    =>
-    <script type="text/javascript">
-      ...
-    </script>
+  $style = Sdoc::Core::JavaScript->script($h,'inline:js/script.css');
+  =>
+  <script type="text/javascript">
+    ...
+  </script>
 
 Code direkt einfügen:
 
-    $style = Sdoc::Core::JavaScript->script($h,q|
-        ...
-    |);
-    =>
-    <script type="text/javascript">
+  $style = Sdoc::Core::JavaScript->script($h,q|
       ...
-    </script>
+  |);
+  =>
+  <script type="text/javascript">
+    ...
+  </script>
 
 Mehrere Code-Spezifikationen:
 
-    $style = Sdoc::Core::JavaScript->script(
-        '...'
-        '...'
-    );
+  $style = Sdoc::Core::JavaScript->script(
+      '...'
+      '...'
+  );
 
 Mehrere Code-Spezifikationen via Arrayreferenz:
 
-    $style = Sdoc::Core::JavaScript->script(
-        ['...','...']
-    );
+  $style = Sdoc::Core::JavaScript->script(
+      ['...','...']
+  );
 
 Dies ist nützlich, wenn die Spezifikation von einem Parameter
 einer umgebenden Methode kommt.

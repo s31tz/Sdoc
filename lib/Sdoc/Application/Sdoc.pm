@@ -38,7 +38,7 @@ L<Sdoc::Core::Program>
 
 =head4 Synopsis
 
-    $prg->main;
+  $prg->main;
 
 =head4 Description
 
@@ -380,7 +380,7 @@ sub main {
 
 =head4 Synopsis
 
-    $cacheDir = $prg->cacheDir($opt);
+  $cacheDir = $prg->cacheDir($opt);
 
 =head4 Description
 
@@ -413,7 +413,7 @@ sub cacheDir {
 
 =head4 Synopsis
 
-    $docDir = $prg->docDir($format,$basename,$opt);
+  $docDir = $prg->docDir($format,$basename,$opt);
 
 =head4 Description
 
@@ -439,7 +439,7 @@ sub docDir {
 
 =head4 Synopsis
 
-    $sdoc3File = $prg->sdoc2ToSdoc3($sdoc2File,$opt);
+  $sdoc3File = $prg->sdoc2ToSdoc3($sdoc2File,$opt);
 
 =head4 Description
 
@@ -470,7 +470,7 @@ sub sdoc2ToSdoc3 {
 
 =head4 Synopsis
 
-    $prg->showResult($srcFile,$destFile,$pager);
+  $prg->showResult($srcFile,$destFile,$pager);
 
 =cut
 

@@ -55,7 +55,7 @@ in einen Paragraphen.
 
 =head4 Synopsis
 
-    $node = $class->new($doc,$parent);
+  $node = $class->new($doc,$parent);
 
 =head4 Description
 
@@ -126,7 +126,7 @@ sub new {
 
 =head4 Synopsis
 
-    $itemType = $node->itemType;
+  $itemType = $node->itemType;
 
 =cut
 
@@ -144,7 +144,7 @@ sub itemType {
 
 =head4 Synopsis
 
-    $str = $node->dump($format);
+  $str = $node->dump($format);
 
 =head4 Description
 

@@ -106,7 +106,7 @@ Wurzelverzeichnis des Verzeichnisbaums, in dem die Sdoc-Quelle übersetzt
 werden, da LaTeX viele temporäre Dateien erzeugt. Der Pfad Dir kann
 den Platzhalter enthalten
 
-    %U - der Name des aufrufenden Benutzers
+  %U - der Name des aufrufenden Benutzers
 
 Der anfängliche Default ist C</tmp/sdoc/%U>.
 
@@ -134,19 +134,19 @@ Konfigurationsdatei mit den Defaults für die meisten
 Programmoptionen. Diese können mit den auf der Kommandozeile
 angegebenen Optionen überschrieben werden. Aufbau der Datei:
 
-    # Sdoc configuration
-    
-    ansiColor => 1,
-    cacheDir => '/tmp/sdoc/%U',
-    codeStyle => 'default',
-    cssPrefix => 'sdoc',
-    browser => 'google-chrome --new-window',
-    pdfViewer => 'evince',
-    shellEscape => 0,
-    textViewer => 'less -R',
-    verbose => 0,
-    
-    # eof
+  # Sdoc configuration
+  
+  ansiColor => 1,
+  cacheDir => '/tmp/sdoc/%U',
+  codeStyle => 'default',
+  cssPrefix => 'sdoc',
+  browser => 'google-chrome --new-window',
+  pdfViewer => 'evince',
+  shellEscape => 0,
+  textViewer => 'less -R',
+  verbose => 0,
+  
+  # eof
 
 =back
 
@@ -154,85 +154,85 @@ angegebenen Optionen überschrieben werden. Aufbau der Datei:
 
 Wandele nach PDF und zeige das Ergebnis im PDF-Viewer an:
 
-    $ sdoc INPUT.sdoc
+  $ sdoc INPUT.sdoc
 
 Wandele nach PDF und schreibe das Ergebnis in eine Datei:
 
-    $ sdoc INPUT.sdoc OUTPUT.pdf
+  $ sdoc INPUT.sdoc OUTPUT.pdf
 
 Wandele nach HTML und zeige das Ergebnis im Browser an:
 
-    $ sdoc html INPUT.sdoc
+  $ sdoc html INPUT.sdoc
 
 Wandele nach HTML und schreibe das Ergebnis in eine Datei:
 
-    $ sdoc html INPUT.sdoc OUTPUT.html
+  $ sdoc html INPUT.sdoc OUTPUT.html
 
 Wandele Eingabedatei zuerst von Sdoc2 nach Sdoc3 und dann
 nach PDF und zeige das Ergebnis im PDF-Viewer an:
 
-    $ sdoc --convert INPUT.sdoc
+  $ sdoc --convert INPUT.sdoc
 
 Wandele nach LaTeX und zeige das Ergebnis im Text-Viewer an:
 
-    $ sdoc INPUT.sdoc
+  $ sdoc INPUT.sdoc
 
 Wandele nach LaTeX und schreibe das Ergebnis in eine Datei:
 
-    $ sdoc INPUT.sdoc OUTPUT.tex
+  $ sdoc INPUT.sdoc OUTPUT.tex
 
 Wandele nach LaTeX und schreibe das Ergebnis nach STDOUT:
 
-    $ sdoc INPUT.sdoc -
+  $ sdoc INPUT.sdoc -
 
 Validiere das Dokument, d.h. prüfe die Sdoc-Datei auf Korrektheit:
 
-    $ sdoc validate INPUT.sdoc
+  $ sdoc validate INPUT.sdoc
 
 Zeige die Liste der Anker, also die möglichen Ziele eines Verweises:
 
-    $ sdoc anchors INPUT.sdoc
+  $ sdoc anchors INPUT.sdoc
 
 Zeige die Liste der internen und externen Verweise:
 
-    $ sdoc links INPUT.sdoc
+  $ sdoc links INPUT.sdoc
 
 Zeige den Parsingbaum des Dokuments im Pager an:
 
-    $ sdoc tree INPUT.sdoc
+  $ sdoc tree INPUT.sdoc
 
 Schreibe den Parsingbaum des Dokuments in eine Datei:
 
-    $ sdoc tree INPUT.sdoc >OUTPUT.txt
+  $ sdoc tree INPUT.sdoc >OUTPUT.txt
 
 Konvertiere eine Sdoc2-Datei in eine Sdoc3-Datei:
 
-    $ sdoc convert INPUT.sdoc2 OUTPUT.sdoc3
+  $ sdoc convert INPUT.sdoc2 OUTPUT.sdoc3
 
 Die Liste der Namen aller verfügbaren Code-Styles:
 
-    $ sdoc code-style-names
+  $ sdoc code-style-names
 
 Erzeuge eine HTML-Seite mit einer Darstellung aller Code-Styles
 für den Programmcode in Datei FILE der Programmiersprache LANG
 und zeige die Seite im Browser an:
 
-    $ sdoc code-style-page LANG FILE
+  $ sdoc code-style-page LANG FILE
 
 Erzeuge eine Style-Datei für das Syntax Highlighting:
 
-    $ sdoc code-style-file emacs emacs.css
+  $ sdoc code-style-file emacs emacs.css
 
 Erzeuge im aktuellen Verzeichnis alle Style-Dateien für das
 Syntax-Highlighting:
 
-    $ for s in `sdoc code-style-names`; \
-        do sdoc code-style-file $s $s.css; done
+  $ for s in `sdoc code-style-names`; \
+      do sdoc code-style-file $s $s.css; done
 
 Lösche (nach Rückfrage) das Cache-Verzeichnis des aufrufenden
 Benutzers:
 
-    $ sdoc cleanup
+  $ sdoc cleanup
 
 =head1 PROGRAM CLASS
 

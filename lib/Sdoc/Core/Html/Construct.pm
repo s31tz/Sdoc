@@ -37,7 +37,7 @@ einer eigenen Klasse rechtfertigen.
 
 =head4 Synopsis
 
-    $html = $class->loadFiles(@spec);
+  $html = $class->loadFiles(@spec);
 
 =head4 Description
 

@@ -47,7 +47,7 @@ Liste der Subknoten
 
 =head4 Synopsis
 
-    $node = $class->new($doc,$parent,\@att);
+  $node = $class->new($doc,$parent,\@att);
 
 =cut
 
@@ -101,7 +101,7 @@ sub new {
 
 =head4 Synopsis
 
-    $str = $node->dump($format,@args);
+  $str = $node->dump($format,@args);
 
 =head4 Description
 

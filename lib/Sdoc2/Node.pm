@@ -30,14 +30,14 @@ Die Klasse dient als Basisklasse für die Knotenklassen eines
 Sdoc-Dokuments. Jede Knotenklasse repräsentiert einen speziellen
 Elementtyp. Folgende Elementtypen existieren:
 
-    Document
-    Section
-    List
-    Item
-    Paragraph
-    Quote
-    Code
-    PageBreak
+  Document
+  Section
+  List
+  Item
+  Paragraph
+  Quote
+  Code
+  PageBreak
 
 =head1 METHODS
 
@@ -47,8 +47,8 @@ Elementtyp. Folgende Elementtypen existieren:
 
 =head4 Synopsis
 
-    $node = $doc->parent;
-    $node = $doc->parent($node);
+  $node = $doc->parent;
+  $node = $doc->parent($node);
 
 =head4 Description
 
@@ -77,7 +77,7 @@ sub parent {
 
 =head4 Synopsis
 
-    @arr|$arr = $doc->childs;
+  @arr|$arr = $doc->childs;
 
 =head4 Description
 
@@ -99,7 +99,7 @@ sub childs {
 
 =head4 Synopsis
 
-    $title = $node->title;
+  $title = $node->title;
 
 =head4 Description
 
@@ -126,7 +126,7 @@ sub title {
 
 =head4 Synopsis
 
-    ($type,$attibuteA) = $parent->nextType($doc);
+  ($type,$attibuteA) = $parent->nextType($doc);
 
 =head4 Description
 
@@ -236,7 +236,7 @@ sub nextType {
 
 =head4 Synopsis
 
-    ($type,$arr) = $node->parseObjectSpec($doc);
+  ($type,$arr) = $node->parseObjectSpec($doc);
 
 =head4 Description
 
@@ -277,7 +277,7 @@ sub parseObjectSpec {
 
 =head4 Synopsis
 
-    $str = $node->anchors($format,@args);
+  $str = $node->anchors($format,@args);
 
 =head4 Description
 
@@ -312,7 +312,7 @@ sub anchors {
 
 =head4 Synopsis
 
-    $str = $node->dumpChilds($format,@args);
+  $str = $node->dumpChilds($format,@args);
 
 =head4 Description
 
@@ -323,19 +323,19 @@ wird um die externe Repräsentation eines Knotens zu erzeugen.
 
 Elementtypen mit Subelementen (in Klammern die erlaubten Subelemente):
 
-    Document (alle Typen)
-    Section (alle Typen)
-    List (nur Items)
-    Item (alle Typen)
-    Table (nur Rows)
+  Document (alle Typen)
+  Section (alle Typen)
+  List (nur Items)
+  Item (alle Typen)
+  Table (nur Rows)
 
 Elementtypen ohne Subelemente:
 
-    Paragraph
-    Code
-    Quote
-    PageBreak
-    Row
+  Paragraph
+  Code
+  Quote
+  PageBreak
+  Row
 
 =cut
 
@@ -364,7 +364,7 @@ sub dumpChilds {
 
 =head4 Synopsis
 
-    $root = $node->rootNode;
+  $root = $node->rootNode;
 
 =cut
 
@@ -386,7 +386,7 @@ sub rootNode {
 
 =head4 Synopsis
 
-    @nodes|$nodeA = $node->select(@keyVal);
+  @nodes|$nodeA = $node->select(@keyVal);
 
 =head4 Description
 
@@ -434,7 +434,7 @@ sub select {
 
 =head4 Synopsis
 
-    $newVal = $sdoc->expand($format,$val,$inlineSegments,@args);
+  $newVal = $sdoc->expand($format,$val,$inlineSegments,@args);
 
 =head4 Description
 
@@ -447,12 +447,12 @@ B<Inline-Segmente>
 
 Folgende Inline-Segmente sind definiert:
 
-    B{...} bold
-    C{...} constant width
-    I{...} italic
-    Q{...} quote
-    U{...} URL (Link auf eine Webseite)
-    G{...} Grafik/Bild
+  B{...} bold
+  C{...} constant width
+  I{...} italic
+  Q{...} quote
+  U{...} URL (Link auf eine Webseite)
+  G{...} Grafik/Bild
 
 In Code-Abschnitten sollte keine Inline-Ersetzung stattfinden.
 
@@ -803,7 +803,7 @@ sub expand {
 
 =head4 Synopsis
 
-    $str = $node->tableOfContents($format,@args);
+  $str = $node->tableOfContents($format,@args);
 
 =cut
 

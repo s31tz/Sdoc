@@ -38,8 +38,8 @@ im String-Kontext automatisch zum Datei-Pfad.
 
 =head4 Synopsis
 
-    $file = $class->new(@opt);
-    $file = $class->new($data,@opt);
+  $file = $class->new(@opt);
+  $file = $class->new($data,@opt);
 
 =head4 Arguments
 

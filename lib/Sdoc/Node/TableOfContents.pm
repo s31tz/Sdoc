@@ -63,7 +63,7 @@ our $Abbrev = 'toc';
 
 =head4 Synopsis
 
-    $toc = $class->new($par,$variant,$root,$parent);
+  $toc = $class->new($par,$variant,$root,$parent);
 
 =head4 Arguments
 
@@ -133,7 +133,7 @@ sub new {
 
 =head4 Synopsis
 
-    $str = $toc->htmlTitle;
+  $str = $toc->htmlTitle;
 
 =head4 Returns
 
@@ -169,7 +169,7 @@ sub htmlTitle {
 
 =head4 Synopsis
 
-    $bool = $toc->indentBlock;
+  $bool = $toc->indentBlock;
 
 =head4 Returns
 
@@ -196,7 +196,7 @@ sub indentBlock {
 
 =head4 Synopsis
 
-    $code = $toc->css($c,$global);
+  $code = $toc->css($c,$global);
 
 =head4 Arguments
 
@@ -285,7 +285,7 @@ sub css {
 
 =head4 Synopsis
 
-    $code = $toc->htmlCode($gen);
+  $code = $toc->htmlCode($gen);
 
 =head4 Arguments
 
@@ -322,7 +322,7 @@ sub htmlCode {
 
 =head4 Synopsis
 
-    $code = $toc->latexCode($gen);
+  $code = $toc->latexCode($gen);
 
 =head4 Arguments
 
@@ -374,7 +374,7 @@ sub latexCode {
 
 =head4 Synopsis
 
-    $code = $toc->mediawikiCode($gen);
+  $code = $toc->mediawikiCode($gen);
 
 =head4 Arguments
 

@@ -54,7 +54,7 @@ our $Abbrev = 'ppr';
 
 =head4 Synopsis
 
-    $ppr = $class->new($par,$variant,$root,$parent);
+  $ppr = $class->new($par,$variant,$root,$parent);
 
 =head4 Arguments
 
@@ -124,7 +124,7 @@ sub new {
 
 =head4 Synopsis
 
-    $code = $ppr->execute($format,$code);
+  $code = $ppr->execute($format,$code);
 
 =head4 Arguments
 
@@ -180,7 +180,7 @@ sub execute {
 
 =head4 Synopsis
 
-    $code = $ppr->htmlCode($gen);
+  $code = $ppr->htmlCode($gen);
 
 =head4 Arguments
 
@@ -216,7 +216,7 @@ sub htmlCode {
 
 =head4 Synopsis
 
-    $code = $ppr->latexCode($gen);
+  $code = $ppr->latexCode($gen);
 
 =head4 Arguments
 
@@ -252,7 +252,7 @@ sub latexCode {
 
 =head4 Synopsis
 
-    $code = $ppr->mediawikiCode($gen);
+  $code = $ppr->mediawikiCode($gen);
 
 =head4 Returns
 

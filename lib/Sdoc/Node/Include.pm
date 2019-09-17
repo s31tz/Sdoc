@@ -60,7 +60,7 @@ our $Abbrev = 'inc';
 
 =head4 Synopsis
 
-    $inc = $class->new($par,$variant,$root,$parent);
+  $inc = $class->new($par,$variant,$root,$parent);
 
 =head4 Arguments
 
@@ -155,7 +155,7 @@ sub new {
 
 =head4 Synopsis
 
-    $code = $inc->htmlCode($gen);
+  $code = $inc->htmlCode($gen);
 
 =head4 Arguments
 
@@ -186,7 +186,7 @@ sub htmlCode {
 
 =head4 Synopsis
 
-    $code = $inc->latexCode($gen);
+  $code = $inc->latexCode($gen);
 
 =head4 Arguments
 

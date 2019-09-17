@@ -92,7 +92,7 @@ our $Abbrev = 'brk';
 
 =head4 Synopsis
 
-    $sec = $class->new($par,$variant,$root,$parent);
+  $sec = $class->new($par,$variant,$root,$parent);
 
 =head4 Arguments
 
@@ -188,7 +188,7 @@ sub new {
 
 =head4 Synopsis
 
-    $anchor = $brh->anchor;
+  $anchor = $brh->anchor;
 
 =head4 Returns
 
@@ -214,7 +214,7 @@ sub anchor {
 
 =head4 Synopsis
 
-    $linkText = $brh->linkText($gen);
+  $linkText = $brh->linkText($gen);
 
 =head4 Returns
 
@@ -241,7 +241,7 @@ sub linkText {
 
 =head4 Synopsis
 
-    $code = $brh->htmlCode($gen);
+  $code = $brh->htmlCode($gen);
 
 =head4 Arguments
 
@@ -272,7 +272,7 @@ sub htmlCode {
 
 =head4 Synopsis
 
-    $code = $brh->latexCode($gen);
+  $code = $brh->latexCode($gen);
 
 =head4 Arguments
 

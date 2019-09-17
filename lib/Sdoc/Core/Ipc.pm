@@ -31,10 +31,10 @@ L<Sdoc::Core::Object>
 
 =head4 Synopsis
 
-    $out = Sdoc::Core::Ipc->filter($cmd,$in,@opt);
-    ($out,$err) = Sdoc::Core::Ipc->filter($cmd,$in,@opt);
-    $out = Sdoc::Core::Ipc->filter($cmd,@opt);
-    ($out,$err) = Sdoc::Core::Ipc->filter($cmd,@opt);
+  $out = Sdoc::Core::Ipc->filter($cmd,$in,@opt);
+  ($out,$err) = Sdoc::Core::Ipc->filter($cmd,$in,@opt);
+  $out = Sdoc::Core::Ipc->filter($cmd,@opt);
+  ($out,$err) = Sdoc::Core::Ipc->filter($cmd,@opt);
 
 =head4 Options
 

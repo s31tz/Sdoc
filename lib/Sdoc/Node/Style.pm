@@ -57,7 +57,7 @@ our $Abbrev = 'sty';
 
 =head4 Synopsis
 
-    $sty = $class->new($par,$variant,$root,$parent);
+  $sty = $class->new($par,$variant,$root,$parent);
 
 =head4 Arguments
 
@@ -128,7 +128,7 @@ sub new {
 
 =head4 Synopsis
 
-    $sty->validate;
+  $sty->validate;
 
 =cut
 
@@ -158,7 +158,7 @@ sub validate {
 
 =head4 Synopsis
 
-    $code = $sty->css($c,$global);
+  $code = $sty->css($c,$global);
 
 =head4 Arguments
 
@@ -215,7 +215,7 @@ sub css {
 
 =head4 Synopsis
 
-    $code = $sty->htmlCode($gen);
+  $code = $sty->htmlCode($gen);
 
 =head4 Arguments
 
@@ -247,7 +247,7 @@ sub htmlCode {
 
 =head4 Synopsis
 
-    $code = $sty->latexCode($gen);
+  $code = $sty->latexCode($gen);
 
 =head4 Arguments
 
@@ -279,7 +279,7 @@ sub latexCode {
 
 =head4 Synopsis
 
-    $code = $sty->mediawikiCode($gen);
+  $code = $sty->mediawikiCode($gen);
 
 =head4 Arguments
 

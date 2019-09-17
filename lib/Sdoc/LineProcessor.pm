@@ -32,9 +32,9 @@ L<Sdoc::Core::LineProcessor>
 
 =head4 Synopsis
 
-    $par = $class->new($file,@opt);
-    $par = $class->new(\$str,@opt);
-    $par = $class->new(\@lines,@opt);
+  $par = $class->new($file,@opt);
+  $par = $class->new(\$str,@opt);
+  $par = $class->new(\@lines,@opt);
 
 =head4 Arguments
 
@@ -110,7 +110,7 @@ sub new {
 
 =head4 Synopsis
 
-    ($nodeClass,$variant,$type) | $type = $par->nextType($removeEmptyLines);
+  ($nodeClass,$variant,$type) | $type = $par->nextType($removeEmptyLines);
 
 =head4 Arguments
 
@@ -244,9 +244,9 @@ sub nextType {
 
 =head4 Synopsis
 
-    $attribH = $par->readBlock; # ohne Content
-    $attribH = $par->readBlock($key); # mit Content
-    $attribH = $par->readBlock($key,\@noContent); # mit Content mit Ausnahme
+  $attribH = $par->readBlock; # ohne Content
+  $attribH = $par->readBlock($key); # mit Content
+  $attribH = $par->readBlock($key,\@noContent); # mit Content mit Ausnahme
 
 =head4 Arguments
 
@@ -325,8 +325,8 @@ sub readBlock {
 
 =head4 Synopsis
 
-    ($type,$attribH) = $par->readBlockHead($remove); # lies und entferne Zeilen
-    $attribH = $par->readBlockHead; # analysiere Zeilen
+  ($type,$attribH) = $par->readBlockHead($remove); # lies und entferne Zeilen
+  $attribH = $par->readBlockHead; # analysiere Zeilen
 
 =head4 Arguments
 
@@ -399,7 +399,7 @@ sub readBlockHead {
 
 =head4 Synopsis
 
-    $listType = $par->listType;
+  $listType = $par->listType;
 
 =head4 Returns
 
@@ -462,7 +462,7 @@ sub listType {
 
 =head4 Synopsis
 
-    $level = $par->sectionLevel;
+  $level = $par->sectionLevel;
 
 =head4 Returns
 
@@ -501,8 +501,8 @@ sub sectionLevel {
 
 =head4 Synopsis
 
-    $par->parseSegments($node,$key);
-    $par->parseSegments($node,\$str);
+  $par->parseSegments($node,$key);
+  $par->parseSegments($node,\$str);
 
 =head4 Arguments
 

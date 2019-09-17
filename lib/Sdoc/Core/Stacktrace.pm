@@ -16,14 +16,14 @@ Sdoc::Core::Stacktrace - Generiere und visualisiere einen Stacktrace
 
 =head1 SYNOPSIS
 
-    use Sdoc::Core::Stacktrace;
-    
-    my $st = Sdoc::Core::Stacktrace->new; # generiere Stacktrace
-    print $st->asString,"\n";       # visualisiere Stacktrace
-    
-    -or-
-    
-    print Sdoc::Core::Stacktrace->asString,"\n"; # in einem Aufruf
+  use Sdoc::Core::Stacktrace;
+  
+  my $st = Sdoc::Core::Stacktrace->new; # generiere Stacktrace
+  print $st->asString,"\n";       # visualisiere Stacktrace
+  
+  -or-
+  
+  print Sdoc::Core::Stacktrace->asString,"\n"; # in einem Aufruf
 
 =head1 DESCRIPTION
 
@@ -36,51 +36,51 @@ Erzeugung von Exceptions.
 
 Folgendes Beispielprogramm (test.pl)
 
-    #!/usr/bin/env perl
-    
-    use Sdoc::Core::Stacktrace;
-    
-    sub a {
-        b();
-    }
-    
-    sub b {
-        c();
-    }
-    
-    sub c {
-        print Sdoc::Core::Stacktrace->asString,"\n";
-    }
-    
-    a();
+  #!/usr/bin/env perl
+  
+  use Sdoc::Core::Stacktrace;
+  
+  sub a {
+      b();
+  }
+  
+  sub b {
+      c();
+  }
+  
+  sub c {
+      print Sdoc::Core::Stacktrace->asString,"\n";
+  }
+  
+  a();
 
 erzeugt die Ausgabe
 
-    main::a() [+17 ./test.pl]
-      main::b() [+6 ./test.pl]
-        main::c() [+10 ./test.pl]
-          Sdoc::Core::Stacktrace::asString() [+14 ./test.pl]
+  main::a() [+17 ./test.pl]
+    main::b() [+6 ./test.pl]
+      main::c() [+10 ./test.pl]
+        Sdoc::Core::Stacktrace::asString() [+14 ./test.pl]
 
 Von oben nach unten gelesen gibt der Stacktrace die Hierarchie der
 Subroutine-Aufrufe (= Methoden oder Funktionsaufrufe) in der
 Aufrufreihenfolge wieder. Jede Zeile beschreibt einen Subroutine-Aufruf:
 
-    main::a() [+17 ./test.pl]
-    ^     ^     ^  ^
-    |     |     |  +-- Datei, in der der Aufruf steht
-    |     |     +-- Zeilennummer, an der der Aufruf in der Datei steht
-    |     +-- Name der aufgerufenen Subroutine
-    +-- Package, zu dem die Subroutine gehört
+  main::a() [+17 ./test.pl]
+  ^     ^     ^  ^
+  |     |     |  +-- Datei, in der der Aufruf steht
+  |     |     +-- Zeilennummer, an der der Aufruf in der Datei steht
+  |     +-- Name der aufgerufenen Subroutine
+  +-- Package, zu dem die Subroutine gehört
 
 Die in eckigen Klammern genannte Quelltextposition kann bei
 Aufruf von vi(1) oder less(1) benutzt werden, um unmittelbar auf die
 entsprechende Zeile zu positionieren:
 
-    $ vi +17 ./test.pl
+  $ vi +17 ./test.pl
 
 bzw.
 
-    $ less +17 ./test.pl
+  $ less +17 ./test.pl
 
 Der unterste Eintrag im Stacktrace ist der Aufruf des
 Konstruktors L<new|"new() - Konstruktor">() oder der Methode L<asString|"asString() - Visualisiere Stacktrace-Objekt">(), wenn sie
@@ -96,8 +96,8 @@ $i erreicht werden.
 
 =head4 Synopsis
 
-    $st = $class->new;
-    $st = $class->new($i);
+  $st = $class->new;
+  $st = $class->new($i);
 
 =head4 Arguments
 
@@ -143,8 +143,8 @@ sub new {
 
 =head4 Synopsis
 
-    $str = $st->asString;
-    $str = $class->asString($i);
+  $str = $st->asString;
+  $str = $class->asString($i);
 
 =head4 Arguments
 

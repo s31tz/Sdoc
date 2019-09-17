@@ -18,34 +18,34 @@ Sdoc::Core::Unindent - Entferne Einrückung von "Here Document" oder String-Lite
 
 Klasse laden:
 
-    use Sdoc::Core::Unindent;
+  use Sdoc::Core::Unindent;
 
 Eingerücktes "Here Document":
 
-    {
-        $text = Sdoc::Core::Unindent->hereDoc(<<'    EOT');
-        Dies ist
-        ein Text
-        EOT
-    
-        print $text;
-    }
+  {
+      $text = Sdoc::Core::Unindent->hereDoc(<<'    EOT');
+      Dies ist
+      ein Text
+      EOT
+  
+      print $text;
+  }
 
 Eingerücktes mehrzeiliges String-Literal:
 
-    {
-        $text = Sdoc::Core::Unindent->string('
-            Dies ist
-            ein Text
-        ');
-    
-        print $text;
-    }
+  {
+      $text = Sdoc::Core::Unindent->string('
+          Dies ist
+          ein Text
+      ');
+  
+      print $text;
+  }
 
 Resultat in beiden Fällen:
 
-    Dies ist
-    ein Text
+  Dies ist
+  ein Text
 
 =head1 DESCRIPTION
 
@@ -61,9 +61,9 @@ String-Literalen und "Here Documents" entfernt werden kann.
 
 =head4 Synopsis
 
-    $str = $class->hereDoc(<<'EOT');
-        <Text>
-    EOT
+  $str = $class->hereDoc(<<'EOT');
+      <Text>
+  EOT
 
 =head4 Description
 
@@ -95,47 +95,47 @@ den Beispielen.
 
 Gegenüberstellung der Syntax
 
-    {
-        $text = Sdoc::Core::Unindent->hereDoc(<<'    EOT');
-        Dies ist
-        ein Text
-        EOT
-    }
+  {
+      $text = Sdoc::Core::Unindent->hereDoc(<<'    EOT');
+      Dies ist
+      ein Text
+      EOT
+  }
 
 ist äquivalent zu
 
-    {
-        $text = <<'EOT';
-    Dies ist
-    ein Text
-    EOT
-    }
+  {
+      $text = <<'EOT';
+  Dies ist
+  ein Text
+  EOT
+  }
 
 =item 2.
 
 Sub-Einrückungen und Leerzeilen
 
-    {
-        $text = Sdoc::Core::Unindent->hereDoc(<<'    EOT');
-    
-          Dies ist der
-        erste Absatz.
-    
-          Dies ist ein
-        zweiter Absatz.
-    
-        EOT
-    }
+  {
+      $text = Sdoc::Core::Unindent->hereDoc(<<'    EOT');
+  
+        Dies ist der
+      erste Absatz.
+  
+        Dies ist ein
+      zweiter Absatz.
+  
+      EOT
+  }
 
 ergibt
 
-    |
-    |  Dies ist der
-    |erste Absatz.
-    |
-    |  Dies ist ein
-    |zweiter Absatz.
-    |
+  |
+  |  Dies ist der
+  |erste Absatz.
+  |
+  |  Dies ist ein
+  |zweiter Absatz.
+  |
 
 d.h. Sub-Einrückungen und Leerzeilen bleiben erhalten.
 
@@ -182,9 +182,9 @@ sub hereDoc {
 
 =head4 Synopsis
 
-    $str = $class->string('
-        <Text>
-    ');
+  $str = $class->string('
+      <Text>
+  ');
 
 =head4 Description
 
@@ -214,39 +214,39 @@ Anführungsstriche auf einer eigenen Zeile stehen.
 
 Gegenüberstellung der Syntax:
 
-    {
-        $text = Sdoc::Core::Unindent->string('
-            Dies ist
-            ein Text
-        ');
-    }
+  {
+      $text = Sdoc::Core::Unindent->string('
+          Dies ist
+          ein Text
+      ');
+  }
 
 ist äquivalent zu
 
-    {
-        $text = 'Dies ist
-    ein Text
-    ';
-    }
+  {
+      $text = 'Dies ist
+  ein Text
+  ';
+  }
 
 =item 2.
 
 Varianten
 
-    $text = Sdoc::Core::Unindent->string(q~
-        Dies ist
-        ein Text
-    ~);
-    
-    $text = Sdoc::Core::Unindent->string("
-        Dies ist
-        ein Text mit $variable
-    ");
-    
-    $text = Sdoc::Core::Unindent->string(qq~
-        Dies ist
-        ein Text mit $variable
-    ~);
+  $text = Sdoc::Core::Unindent->string(q~
+      Dies ist
+      ein Text
+  ~);
+  
+  $text = Sdoc::Core::Unindent->string("
+      Dies ist
+      ein Text mit $variable
+  ");
+  
+  $text = Sdoc::Core::Unindent->string(qq~
+      Dies ist
+      ein Text mit $variable
+  ~);
 
 =back
 
@@ -270,7 +270,7 @@ sub string {
 
 =head4 Synopsis
 
-    $strOut = $class->trim($strIn);
+  $strOut = $class->trim($strIn);
 
 =head4 Description
 
@@ -305,54 +305,54 @@ geeignet.
 
 Leerraum am Anfang und am Ende wird entfernt
 
-    {
-        $text = Sdoc::Core::Unindent->trim("
-    
-            SELECT
-                *
-            FROM
-                person
-            WHERE
-                nachname = 'Schulz'
-    
-        ");
-    }
+  {
+      $text = Sdoc::Core::Unindent->trim("
+  
+          SELECT
+              *
+          FROM
+              person
+          WHERE
+              nachname = 'Schulz'
+  
+      ");
+  }
 
 ergibt
 
-    |SELECT
-    |    *
-    |FROM
-    |    person
-    |WHERE
-    |    nachname = 'Schulz'
-                            ^
-                            kein Newline
+  |SELECT
+  |    *
+  |FROM
+  |    person
+  |WHERE
+  |    nachname = 'Schulz'
+                          ^
+                          kein Newline
 
 =item 2.
 
 Interne Anwendung
 
-    sub select {
-        my ($self,$stmt) = @_;
-    
-        $stmt = Sdoc::Core::Unindent->trim($stmt);
-        if ($self->debug) {
-            warn $stmt,"\n";
-        }
-        ...
-    }
+  sub select {
+      my ($self,$stmt) = @_;
+  
+      $stmt = Sdoc::Core::Unindent->trim($stmt);
+      if ($self->debug) {
+          warn $stmt,"\n";
+      }
+      ...
+  }
 
 Aufruf mit eingerücktem String-Literal, das I<intern> behandelt wird:
 
-    $db->select("
-        SELECT
-            *
-        FROM
-            person
-        WHERE
-            nachname = 'Schulz'
-    ");
+  $db->select("
+      SELECT
+          *
+      FROM
+          person
+      WHERE
+          nachname = 'Schulz'
+  ");
 
 =back
 
@@ -376,7 +376,7 @@ sub trim {
 
 =head4 Synopsis
 
-    $strOut = $class->trimNl($strIn);
+  $strOut = $class->trimNl($strIn);
 
 =head4 Description
 

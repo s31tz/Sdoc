@@ -25,19 +25,19 @@ L<Sdoc::Core::Hash>
 
 Der Code
 
-    use Sdoc::Core::LaTeX::Figure;
-    use Sdoc::Core::LaTeX::Code;
-    
-    my $doc = Sdoc::Core::LaTeX::Figure->new(
-        FIXME
-    );
-    
-    my $l = Sdoc::Core::LaTeX::Code->new;
-    my $code = $tab->latex($l);
+  use Sdoc::Core::LaTeX::Figure;
+  use Sdoc::Core::LaTeX::Code;
+  
+  my $doc = Sdoc::Core::LaTeX::Figure->new(
+      FIXME
+  );
+  
+  my $l = Sdoc::Core::LaTeX::Code->new;
+  my $code = $tab->latex($l);
 
 produziert
 
-    FIXME
+  FIXME
 
 =head1 METHODS
 
@@ -47,7 +47,7 @@ produziert
 
 =head4 Synopsis
 
-    $doc = $class->new(@keyVal);
+  $doc = $class->new(@keyVal);
 
 =head4 Arguments
 
@@ -181,8 +181,8 @@ sub new {
 
 =head4 Synopsis
 
-    $code = $fig->latex($l);
-    $code = $class->latex($l,@keyVal);
+  $code = $fig->latex($l);
+  $code = $class->latex($l,@keyVal);
 
 =head4 Description
 

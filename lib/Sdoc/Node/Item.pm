@@ -72,7 +72,7 @@ our $Abbrev = 'itm';
 
 =head4 Synopsis
 
-    $itm = $class->new($par,$variant,$root,$parent);
+  $itm = $class->new($par,$variant,$root,$parent);
 
 =head4 Arguments
 
@@ -253,7 +253,7 @@ sub new {
 
 =head4 Synopsis
 
-    $code = $itm->htmlCode($gen);
+  $code = $itm->htmlCode($gen);
 
 =head4 Arguments
 
@@ -317,7 +317,7 @@ sub htmlCode {
 
 =head4 Synopsis
 
-    $code = $itm->latexCode($gen);
+  $code = $itm->latexCode($gen);
 
 =head4 Arguments
 
@@ -362,7 +362,7 @@ sub latexCode {
 
 =head4 Synopsis
 
-    $code = $itm->mediawikiCode($gen);
+  $code = $itm->mediawikiCode($gen);
 
 =head4 Arguments
 

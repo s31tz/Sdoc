@@ -161,7 +161,7 @@ our $Abbrev = 'gph';
 
 =head4 Synopsis
 
-    $toc = $class->new($par,$variant,$root,$parent);
+  $toc = $class->new($par,$variant,$root,$parent);
 
 =head4 Arguments
 
@@ -265,7 +265,7 @@ sub new {
 
 =head4 Synopsis
 
-    $anchor = $gph->anchor;
+  $anchor = $gph->anchor;
 
 =head4 Returns
 
@@ -291,7 +291,7 @@ sub anchor {
 
 =head4 Synopsis
 
-    $linkText = $gph->linkText($gen);
+  $linkText = $gph->linkText($gen);
 
 =head4 Returns
 
@@ -317,7 +317,7 @@ sub linkText {
 
 =head4 Synopsis
 
-    $href = $gph->htmlHref;
+  $href = $gph->htmlHref;
 
 =head4 Returns
 
@@ -358,7 +358,7 @@ sub htmlHref {
 
 =head4 Synopsis
 
-    $latex = $gph->latexLinkCode($l);
+  $latex = $gph->latexLinkCode($l);
 
 =head4 Returns
 
@@ -375,11 +375,11 @@ enthält der Code das Formatelement %s.
 
 LaTeX-Code für einen internen Verweis:
 
-    \hyperref[LINKID]{%s}
+  \hyperref[LINKID]{%s}
 
 LaTeX-Code für einen externen Verweis:
 
-    \href[URL]{%s}
+  \href[URL]{%s}
 
 =cut
 
@@ -412,7 +412,7 @@ sub latexLinkCode {
 
 =head4 Synopsis
 
-    $bool = $toc->indentBlock;
+  $bool = $toc->indentBlock;
 
 =head4 Returns
 
@@ -439,7 +439,7 @@ sub indentBlock {
 
 =head4 Synopsis
 
-    $code = $gph->css($c,$global);
+  $code = $gph->css($c,$global);
 
 =head4 Arguments
 
@@ -535,7 +535,7 @@ sub css {
 
 =head4 Synopsis
 
-    $code = $gph->htmlCode($gen);
+  $code = $gph->htmlCode($gen);
 
 =head4 Arguments
 
@@ -628,7 +628,7 @@ sub htmlCode {
 
 =head4 Synopsis
 
-    $code = $gph->latexCode($gen);
+  $code = $gph->latexCode($gen);
 
 =head4 Arguments
 
@@ -704,7 +704,7 @@ sub latexCode {
 
 =head4 Synopsis
 
-    $code = $gph->mediawikiCode($gen);
+  $code = $gph->mediawikiCode($gen);
 
 =head4 Arguments
 

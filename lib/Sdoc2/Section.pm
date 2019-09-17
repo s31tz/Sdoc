@@ -66,7 +66,7 @@ Verlinkungsschlüssel.
 
 =head4 Synopsis
 
-    $node = $class->new($doc,$parent);
+  $node = $class->new($doc,$parent);
 
 =head4 Description
 
@@ -158,8 +158,8 @@ sub new {
 
 =head4 Synopsis
 
-    $text = $node->numberAnchorText;
-    $text = $node->numberAnchorText($bool);
+  $text = $node->numberAnchorText;
+  $text = $node->numberAnchorText($bool);
 
 =head4 Description
 
@@ -188,7 +188,7 @@ sub numberAnchorText {
 
 =head4 Synopsis
 
-    $text = $node->visibleTitle($format);
+  $text = $node->visibleTitle($format);
 
 =cut
 
@@ -218,7 +218,7 @@ sub visibleTitle {
 
 =head4 Synopsis
 
-    $str = $node->dump($format,@args);
+  $str = $node->dump($format,@args);
 
 =head4 Description
 

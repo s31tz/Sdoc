@@ -33,25 +33,25 @@ und dadurch komplexer.
 
 Aufbau eines Verbatim-Blocks I<ohne> Zeilennummern:
 
-    <div class="CLASS" [id="ID"] [style="STYLE"]>
-      <pre>TEXT</pre>
-    </div>
+  <div class="CLASS" [id="ID"] [style="STYLE"]>
+    <pre>TEXT</pre>
+  </div>
 
 Aufbau eines Verbatim-Blocks I<mit> Zeilennummern:
 
-    <div class="CLASS" [id="ID"] [style="STYLE"]>
-      <table>
-      <tr>
-        <td class="ln">
-          <pre>ZEILENNUMMERN</pre>
-        </td>
-        <td class="margin"></td>
-        <td class="text">
-          <pre>TEXT</pre>
-        </td>
-      </tr>
-      </table>
-    </div>
+  <div class="CLASS" [id="ID"] [style="STYLE"]>
+    <table>
+    <tr>
+      <td class="ln">
+        <pre>ZEILENNUMMERN</pre>
+      </td>
+      <td class="margin"></td>
+      <td class="text">
+        <pre>TEXT</pre>
+      </td>
+    </tr>
+    </table>
+  </div>
 
 Die in eckige Klammern eingefassten Bestandteile ([...]) sind
 optional.
@@ -132,7 +132,7 @@ liefert einen Leerstring.
 
 =head4 Synopsis
 
-    $e = $class->new(@keyVal);
+  $e = $class->new(@keyVal);
 
 =head4 Arguments
 
@@ -188,8 +188,8 @@ sub new {
 
 =head4 Synopsis
 
-    $html = $e->html($h);
-    $html = $class->html($h,@keyVal);
+  $html = $e->html($h);
+  $html = $class->html($h,@keyVal);
 
 =head4 Arguments
 

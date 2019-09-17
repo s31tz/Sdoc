@@ -71,7 +71,7 @@ Mache Bild zu einem Link auf $url.
 
 =head4 Synopsis
 
-    $node = $class->new($doc,$parent,$att);
+  $node = $class->new($doc,$parent,$att);
 
 =cut
 
@@ -109,7 +109,7 @@ sub new {
 
 =head4 Synopsis
 
-    $text = $node->visibleTitle($format);
+  $text = $node->visibleTitle($format);
 
 =cut
 
@@ -153,7 +153,7 @@ sub visibleTitle {
 
 =head4 Synopsis
 
-    $str = $node->dump($format,@args);
+  $str = $node->dump($format,@args);
 
 =cut
 

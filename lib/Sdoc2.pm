@@ -45,7 +45,7 @@ Einrücktiefe bei der Codegenerierung
 
 =head4 Synopsis
 
-    $gen = $class->new(@keyVal);
+  $gen = $class->new(@keyVal);
 
 =head4 Description
 
@@ -57,9 +57,9 @@ Objekt zurück.
 
 Generiere Sdoc mit Einrückung 2:
 
-    $gen = Sdoc2->new(
-        indentation=>2,
-    );
+  $gen = Sdoc2->new(
+      indentation=>2,
+  );
 
 =cut
 
@@ -85,7 +85,7 @@ sub new {
 
 =head4 Synopsis
 
-    $str = $gen->code($text);
+  $str = $gen->code($text);
 
 =head4 Description
 
@@ -94,13 +94,13 @@ resultierenden Sdoc-Code zurück.
 
 =head4 Example
 
-    $gen->code("Dies ist\nein Test\n");
+  $gen->code("Dies ist\nein Test\n");
 
 erzeugt
 
-    |  Dies ist\n
-    |  ein Test.\n
-    |\n
+  |  Dies ist\n
+  |  ein Test.\n
+  |\n
 
 =cut
 
@@ -126,7 +126,7 @@ sub code {
 
 =head4 Synopsis
 
-    $str = $gen->comment($text);
+  $str = $gen->comment($text);
 
 =head4 Description
 
@@ -135,13 +135,13 @@ resultierenden Sdoc-Code zurück.
 
 =head4 Example
 
-    $gen->comment("Dies ist\nein Test\n");
+  $gen->comment("Dies ist\nein Test\n");
 
 erzeugt
 
-    # Dies ist\n
-    # ein Test.\n
-    \n
+  # Dies ist\n
+  # ein Test.\n
+  \n
 
 =cut
 
@@ -160,7 +160,7 @@ sub comment {
 
 =head4 Synopsis
 
-    $str = $gen->document(@keyVal);
+  $str = $gen->document(@keyVal);
 
 =head4 Description
 
@@ -192,7 +192,7 @@ sub document {
 
 =head4 Synopsis
 
-    $str = $gen->paragraph($text);
+  $str = $gen->paragraph($text);
 
 =head4 Description
 
@@ -201,13 +201,13 @@ resultierenden Sdoc-Code zurück.
 
 =head4 Example
 
-    $gen->paragraph("Dies ist\nein Test\n");
+  $gen->paragraph("Dies ist\nein Test\n");
 
 erzeugt
 
-    |Dies ist\n
-    |ein Test.\n
-    |\n
+  |Dies ist\n
+  |ein Test.\n
+  |\n
 
 =cut
 
@@ -230,7 +230,7 @@ sub paragraph {
 
 =head4 Synopsis
 
-    $str = $gen->table($text,@keyVal);
+  $str = $gen->table($text,@keyVal);
 
 =head4 Description
 
@@ -268,7 +268,7 @@ sub table {
 
 =head4 Synopsis
 
-    $str = $gen->tableOfContents(@keyVal);
+  $str = $gen->tableOfContents(@keyVal);
 
 =head4 Description
 
@@ -300,8 +300,8 @@ sub tableOfContents {
 
 =head4 Synopsis
 
-    $str = $gen->section($level,$title);
-    $str = $gen->section($level,$title,$body);
+  $str = $gen->section($level,$title);
+  $str = $gen->section($level,$title,$body);
 
 =head4 Description
 
@@ -311,15 +311,15 @@ Sdoc-Code zurück.
 
 =head4 Example
 
-    $gen->section(2,'Test',"Dies ist\nein Test.");
+  $gen->section(2,'Test',"Dies ist\nein Test.");
 
 erzeugt
 
-    == Test\n
-    \n
-    Dies ist\n
-    ein Test.\n
-    \n
+  == Test\n
+  \n
+  Dies ist\n
+  ein Test.\n
+  \n
 
 =cut
 
@@ -346,7 +346,7 @@ sub section {
 
 =head4 Synopsis
 
-    $str = $gen->definitionList(\@items);
+  $str = $gen->definitionList(\@items);
 
 =head4 Description
 
@@ -358,37 +358,37 @@ liefere den resultierenden Sdoc-Code zurück.
 
 Die Aufrufe
 
-    $gen->definitionList([A=>'Eins',B=>'Zwei']);
+  $gen->definitionList([A=>'Eins',B=>'Zwei']);
 
 oder
 
-    $gen->definitionList([['A','Eins'],['B','Zwei']]);
+  $gen->definitionList([['A','Eins'],['B','Zwei']]);
 
 erzeugen
 
-    [A]:\n
-        Eins\n
-    \n
-    [B]:\n
-        Zwei\n
-    \n
+  [A]:\n
+      Eins\n
+  \n
+  [B]:\n
+      Zwei\n
+  \n
 
 Endet der Schlüssel mit einem Doppelpunkt, wie bei den Aufrufen
 
-    $gen->definitionList(['A:'=>'Eins','B:'=>'Zwei']);
+  $gen->definitionList(['A:'=>'Eins','B:'=>'Zwei']);
 
 oder
 
-    $gen->definitionList([['A:','Eins'],['B:','Zwei']]);
+  $gen->definitionList([['A:','Eins'],['B:','Zwei']]);
 
 steht der Doppelpunkt I<in> der Klammer
 
-    [A:]\n
-        Eins\n
-    \n
-    [B:]\n
-        Zwei\n
-    \n
+  [A:]\n
+      Eins\n
+  \n
+  [B:]\n
+      Zwei\n
+  \n
 
 was bedeutet, dass dieser mit gesetzt wird.
 
@@ -424,7 +424,7 @@ sub definitionList {
 
 =head4 Synopsis
 
-    $str = $gen->eof;
+  $str = $gen->eof;
 
 =head4 Description
 
@@ -433,11 +433,11 @@ Sdoc-Code zurück.
 
 =head4 Example
 
-    $gen->eof;
+  $gen->eof;
 
 erzeugt
 
-    # eof\n
+  # eof\n
 
 =cut
 

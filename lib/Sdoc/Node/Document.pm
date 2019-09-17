@@ -69,7 +69,7 @@ Der Style, in dem das Syntax-Highlighting erfolgt, wenn in einem
 Code-Block das Attribut C<lang> gesetzt ist. Die Liste der
 verfügbaren Styles liefert das Kommando
 
-    $ pygmentize -L styles
+  $ pygmentize -L styles
 
 =item cssPrefix => $prefix
 
@@ -210,11 +210,11 @@ und Fußzeile leer), 'plain' (nur Fuß mit Seitennummer), 'headings'
 (Kopf mit Abschnittstiteln, Fuß mit Seitennummer). Ist lediglich ein
 Seitenstil angegeben, gilt dieser für alle Seiten. Beispiel:
 
-    latexPageStyle="empty"
+  latexPageStyle="empty"
 
 ist identisch zu
 
-    latexPageStyle="empty,empty"
+  latexPageStyle="empty,empty"
 
 =item latexPaperSize => $paperSize (Default: 'a4paper')
 
@@ -317,7 +317,7 @@ our $Abbrev = 'doc';
 
 =head4 Synopsis
 
-    $doc = $class->new($variant,$par,$root,$parent);
+  $doc = $class->new($variant,$par,$root,$parent);
 
 =head4 Arguments
 
@@ -457,7 +457,7 @@ sub new {
 
 =head4 Synopsis
 
-    $h = $doc->analyze;
+  $h = $doc->analyze;
 
 =head4 Returns
 
@@ -553,7 +553,7 @@ sub analyze {
 
 =head4 Synopsis
 
-    @nodes | $nodeA = $doc->nodes;
+  @nodes | $nodeA = $doc->nodes;
 
 =head4 Returns
 
@@ -592,7 +592,7 @@ sub nodes {
 
 =head4 Synopsis
 
-    $gph = $doc->graphicNode($name);
+  $gph = $doc->graphicNode($name);
 
 =head4 Arguments
 
@@ -643,7 +643,7 @@ sub graphicNode {
 
 =head4 Synopsis
 
-    $lnk = $doc->linkNode($name);
+  $lnk = $doc->linkNode($name);
 
 =head4 Arguments
 
@@ -697,7 +697,7 @@ sub linkNode {
 
 =head4 Synopsis
 
-    $seg = $doc->segmentNode($name);
+  $seg = $doc->segmentNode($name);
 
 =head4 Arguments
 
@@ -747,7 +747,7 @@ sub segmentNode {
 
 =head4 Synopsis
 
-    @nodes | $nodeA = $doc->anchorNodes;
+  @nodes | $nodeA = $doc->anchorNodes;
 
 =head4 Returns
 
@@ -793,7 +793,7 @@ sub anchorNodes {
 
 =head4 Synopsis
 
-    @nodes | $nodeA = $doc->graphicContainingNodes;
+  @nodes | $nodeA = $doc->graphicContainingNodes;
 
 =head4 Returns
 
@@ -830,7 +830,7 @@ sub graphicContainingNodes {
 
 =head4 Synopsis
 
-    @nodes | $nodeA = $doc->linkContainingNodes;
+  @nodes | $nodeA = $doc->linkContainingNodes;
 
 =head4 Returns
 
@@ -867,7 +867,7 @@ sub linkContainingNodes {
 
 =head4 Synopsis
 
-    @sections | $sectionA = $doc->sections;
+  @sections | $sectionA = $doc->sections;
 
 =head4 Returns
 
@@ -910,7 +910,7 @@ sub sections {
 
 =head4 Synopsis
 
-    $toc = $doc->tableOfContentsNode;
+  $toc = $doc->tableOfContentsNode;
 
 =head4 Returns
 
@@ -946,7 +946,7 @@ sub tableOfContentsNode {
 
 =head4 Synopsis
 
-    $anchor = $sec->anchor;
+  $anchor = $sec->anchor;
 
 =head4 Returns
 
@@ -974,7 +974,7 @@ sub anchor {
 
 =head4 Synopsis
 
-    $doc->resolveLinks;
+  $doc->resolveLinks;
 
 =head4 Description
 
@@ -1196,7 +1196,7 @@ sub resolveLinks {
 
 =head4 Synopsis
 
-    $doc->resolveGraphics;
+  $doc->resolveGraphics;
 
 =head4 Description
 
@@ -1249,7 +1249,7 @@ sub resolveGraphics {
 
 =head4 Synopsis
 
-    @nodes | $nodeA = $doc->findDestNodes($srcNode,$regex);
+  @nodes | $nodeA = $doc->findDestNodes($srcNode,$regex);
 
 =head4 Arguments
 
@@ -1403,7 +1403,7 @@ sub findDestNodes {
 
 =head4 Synopsis
 
-    $doc->createTableOfContentsNode;
+  $doc->createTableOfContentsNode;
 
 =head4 Description
 
@@ -1457,7 +1457,7 @@ sub createTableOfContentsNode {
 
 =head4 Synopsis
 
-    $doc->flagSectionsAsAppendix;
+  $doc->flagSectionsAsAppendix;
 
 =head4 Description
 
@@ -1496,7 +1496,7 @@ sub flagSectionsAsAppendix {
 
 =head4 Synopsis
 
-    $doc->flagSectionsNotToc;
+  $doc->flagSectionsNotToc;
 
 =head4 Description
 
@@ -1535,7 +1535,7 @@ sub flagSectionsNotToc {
 
 =head4 Synopsis
 
-    $n = $doc->highestSectionLevel;
+  $n = $doc->highestSectionLevel;
 
 =head4 Returns
 
@@ -1576,7 +1576,7 @@ sub highestSectionLevel {
 
 =head4 Synopsis
 
-    $doc->numberSections;
+  $doc->numberSections;
 
 =head4 Description
 
@@ -1647,7 +1647,7 @@ sub numberSections {
 
 =head4 Synopsis
 
-    $code = $doc->generate($format,@args);
+  $code = $doc->generate($format,@args);
 
 =head4 Arguments
 
@@ -1700,7 +1700,7 @@ sub generate {
 
 =head4 Synopsis
 
-    $absPath = $doc->expandPath($path);
+  $absPath = $doc->expandPath($path);
 
 =head4 Arguments
 
@@ -1769,7 +1769,7 @@ sub expandPath {
 
 =head4 Synopsis
 
-    $code = $doc->css($c,$global);
+  $code = $doc->css($c,$global);
 
 =head4 Arguments
 
@@ -1834,7 +1834,7 @@ sub css {
 
 =head4 Synopsis
 
-    $code = $doc->htmlCode($gen);
+  $code = $doc->htmlCode($gen);
 
 =head4 Arguments
 
@@ -1943,7 +1943,7 @@ sub htmlCode {
 
 =head4 Synopsis
 
-    $code = $doc->latexCode($gen);
+  $code = $doc->latexCode($gen);
 
 =head4 Arguments
 
@@ -2204,7 +2204,7 @@ sub latexCode {
 
 =head4 Synopsis
 
-    $code = $doc->mediawikiCode($gen);
+  $code = $doc->mediawikiCode($gen);
 
 =head4 Arguments
 

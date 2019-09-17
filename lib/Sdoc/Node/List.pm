@@ -66,7 +66,7 @@ our $Abbrev = 'lst';
 
 =head4 Synopsis
 
-    $lst = $class->new($par,$variant,$root,$parent);
+  $lst = $class->new($par,$variant,$root,$parent);
 
 =head4 Arguments
 
@@ -158,7 +158,7 @@ sub new {
 
 =head4 Synopsis
 
-    $bool = $lst->isEmbedded;
+  $bool = $lst->isEmbedded;
 
 =head4 Returns
 
@@ -194,7 +194,7 @@ sub isEmbedded {
 
 =head4 Synopsis
 
-    $code = $lst->css($c,$global);
+  $code = $lst->css($c,$global);
 
 =head4 Arguments
 
@@ -307,7 +307,7 @@ sub css {
 
 =head4 Synopsis
 
-    $tag = $lst->htmlTag;
+  $tag = $lst->htmlTag;
 
 =head4 Returns
 
@@ -318,11 +318,11 @@ HTML Tag (String)
 Liefere den HTML-Tag der Liste. Der Tag ergibt sich aus dem Typ
 der Liste:
 
-    List-Type   HTML-Tag
-    ----------- --------
-    ordered        ol
-    unordered      ul
-    description    dl
+  List-Type   HTML-Tag
+  ----------- --------
+  ordered        ol
+  unordered      ul
+  description    dl
 
 =cut
 
@@ -345,7 +345,7 @@ sub htmlTag {
 
 =head4 Synopsis
 
-    $code = $lst->htmlCode($gen);
+  $code = $lst->htmlCode($gen);
 
 =head4 Arguments
 
@@ -402,7 +402,7 @@ sub htmlCode {
 
 =head4 Synopsis
 
-    $code = $lst->latexCode($gen);
+  $code = $lst->latexCode($gen);
 
 =head4 Arguments
 
@@ -479,7 +479,7 @@ sub latexCode {
 
 =head4 Synopsis
 
-    $code = $lst->mediawikiCode($gen);
+  $code = $lst->mediawikiCode($gen);
 
 =head4 Arguments
 

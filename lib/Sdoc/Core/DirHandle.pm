@@ -22,13 +22,13 @@ L<Sdoc::Core::Object>
 
 =head1 SYNOPSIS
 
-    use Sdoc::Core::DirHandle;
-    
-    my $dh = Sdoc::Core::DirHandle->new($dir);
-    while (my $entry = $dh->next) {
-        say $entry;
-    }
-    $dh->close;
+  use Sdoc::Core::DirHandle;
+  
+  my $dh = Sdoc::Core::DirHandle->new($dir);
+  while (my $entry = $dh->next) {
+      say $entry;
+  }
+  $dh->close;
 
 =head1 DESCRIPTION
 
@@ -44,7 +44,7 @@ ein Verzeichnis geöffnet und über seine Einträge iteriert werden.
 
 =head4 Synopsis
 
-    $dh = $class->new($dir);
+  $dh = $class->new($dir);
 
 =head4 Description
 
@@ -75,7 +75,7 @@ sub new {
 
 =head4 Synopsis
 
-    $dh->close;
+  $dh->close;
 
 =head4 Description
 
@@ -108,7 +108,7 @@ sub close {
 
 =head4 Synopsis
 
-    $entry = $dh->next;
+  $entry = $dh->next;
 
 =head4 Description
 

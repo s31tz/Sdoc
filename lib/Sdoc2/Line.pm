@@ -27,7 +27,7 @@ L<Sdoc::Core::LineProcessor::Line>
 
 =head4 Synopsis
 
-    ($type,$depth) = $line->type;
+  ($type,$depth) = $line->type;
 
 =head4 Description
 
@@ -90,7 +90,7 @@ sub type {
 
 =head4 Synopsis
 
-    $bool = $line->isRow;
+  $bool = $line->isRow;
 
 =head4 Description
 
@@ -111,7 +111,7 @@ sub isRow {
 
 =head4 Synopsis
 
-    $bool = $line->isKeyValRow;
+  $bool = $line->isKeyValRow;
 
 =head4 Description
 
@@ -132,29 +132,29 @@ sub isKeyValRow {
 
 =head4 Synopsis
 
-    ($itemType,$label,$indentation,$text) = $ln->item;
-    ($itemType,$label,$indentation,$text) = $ln->item($nextLine);
+  ($itemType,$label,$indentation,$text) = $ln->item;
+  ($itemType,$label,$indentation,$text) = $ln->item($nextLine);
 
 =head4 Description
 
 Anlysiere die Zeile darauf hin, ob diese ein List-Item
 beschreibt, ihr Text also einem der folgenden Muster entspricht:
 
-    o Text        (Punktliste)
-    * Text        (Punktliste)
-    + Text        (Punktliste)
-    
-    1. Text       (nummerierte Liste)
-    1) Text       (nummerierte Liste)
-    
-    [Text]: Text  (Beschreibungsliste)
-    [Text:] Text  (Beschreibungsliste)
-    <Text>: Text  (Beschreibungsliste)
-    <Text:> Text  (Beschreibungsliste)
-    {Text}: Text  (Beschreibungsliste)
-    {Text:} Text  (Beschreibungsliste)
-    :Text: Text   (Beschreibungsliste)
-    :Text:: Text  (Beschreibungsliste)
+  o Text        (Punktliste)
+  * Text        (Punktliste)
+  + Text        (Punktliste)
+  
+  1. Text       (nummerierte Liste)
+  1) Text       (nummerierte Liste)
+  
+  [Text]: Text  (Beschreibungsliste)
+  [Text:] Text  (Beschreibungsliste)
+  <Text>: Text  (Beschreibungsliste)
+  <Text:> Text  (Beschreibungsliste)
+  {Text}: Text  (Beschreibungsliste)
+  {Text:} Text  (Beschreibungsliste)
+  :Text: Text   (Beschreibungsliste)
+  :Text:: Text  (Beschreibungsliste)
 
 Ist dies nicht der Fall, liefert die Methode eine leere Liste
 zurück. Ist dies der Fall liefert die Methode vier Werte zurück:
@@ -165,9 +165,9 @@ zurück. Ist dies der Fall liefert die Methode vier Werte zurück:
 
 Typ des Labels. Fünf Itemtypen werden unterschieden:
 
-    o, *, + (Punktliste)
-    #       (numerierte Liste)
-    []      (Beschreibungsliste)
+  o, *, + (Punktliste)
+  #       (numerierte Liste)
+  []      (Beschreibungsliste)
 
 =item $label
 
@@ -189,58 +189,58 @@ handelt.  Wird diese Angabe benötigt, muss der Parameter
 $nextLine angegeben sein.  Andernfalls wird der initale
 Whitespace plus vier Zeichen angenommen.
 
-    |  o Text Text Text Text Text
-    |    Text Text Text Text Text
-    |    Text Text Text Text Text
-     ----
-         ^ Textbeginn der ersten Zeile
-    
-    |  1) Text Text Text Text Text
-    |     Text Text Text Text Text
-    |     Text Text Text Text Text
-    | ...
-    | 10) Text Text Text Text Text
-    |     Text Text Text Text Text
-     -----
-          ^ Textbeginn der ersten Zeile
-    
-    |  [Text]: Text Text Text Text Text
-    |      Text Text Text Text Text
-    |      Text Text Text Text Text
-    
-    |  [Text:] Text Text Text Text Text
-    |      Text Text Text Text Text
-    |      Text Text Text Text Text
-    
-    |  :Text: Text Text Text Text Text
-    |      Text Text Text Text Text
-    |      Text Text Text Text Text
-    
-    |  :Text:: Text Text Text Text Text
-    |      Text Text Text Text Text
-    |      Text Text Text Text Text
-    
-     ------
-           ^ initialer Whitespce der Folgezeile -oder-
-             initialer Whitespace plus vier Zeichen
+  |  o Text Text Text Text Text
+  |    Text Text Text Text Text
+  |    Text Text Text Text Text
+   ----
+       ^ Textbeginn der ersten Zeile
+  
+  |  1) Text Text Text Text Text
+  |     Text Text Text Text Text
+  |     Text Text Text Text Text
+  | ...
+  | 10) Text Text Text Text Text
+  |     Text Text Text Text Text
+   -----
+        ^ Textbeginn der ersten Zeile
+  
+  |  [Text]: Text Text Text Text Text
+  |      Text Text Text Text Text
+  |      Text Text Text Text Text
+  
+  |  [Text:] Text Text Text Text Text
+  |      Text Text Text Text Text
+  |      Text Text Text Text Text
+  
+  |  :Text: Text Text Text Text Text
+  |      Text Text Text Text Text
+  |      Text Text Text Text Text
+  
+  |  :Text:: Text Text Text Text Text
+  |      Text Text Text Text Text
+  |      Text Text Text Text Text
+  
+   ------
+         ^ initialer Whitespce der Folgezeile -oder-
+           initialer Whitespace plus vier Zeichen
 
 =item $text
 
 Die erste Zeile des Listenelements, bei dem das Label durch Whitespace
 ersetzt ist.
 
-    |    Text Text Text Text Text
-     ----
-       ^ Textbeginn der ersten Zeile
-    
-    |     Text Text Text Text Text
-     -----
-       ^ Textbeginn der ersten Zeile
-    
-    |      Text Text Text Text Text
-     ------
-        ^ initialer Whitespace der Folgezeile -oder-
-          der ersten Zeile plus vier Zeichen
+  |    Text Text Text Text Text
+   ----
+     ^ Textbeginn der ersten Zeile
+  
+  |     Text Text Text Text Text
+   -----
+     ^ Textbeginn der ersten Zeile
+  
+  |      Text Text Text Text Text
+   ------
+      ^ initialer Whitespace der Folgezeile -oder-
+        der ersten Zeile plus vier Zeichen
 
 =back
 

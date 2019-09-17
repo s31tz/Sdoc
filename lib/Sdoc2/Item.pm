@@ -53,7 +53,7 @@ Bullet-Zeichen (*, o, +), Zahl oder Text.
 
 =head4 Synopsis
 
-    $node = $class->new($doc,$parent);
+  $node = $class->new($doc,$parent);
 
 =head4 Description
 
@@ -129,7 +129,7 @@ sub new {
 
 =head4 Synopsis
 
-    $title = $node->title;
+  $title = $node->title;
 
 =head4 Description
 
@@ -157,7 +157,7 @@ sub title {
 
 =head4 Synopsis
 
-    $str = $node->dump($format);
+  $str = $node->dump($format);
 
 =head4 Description
 

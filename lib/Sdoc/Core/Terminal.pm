@@ -32,7 +32,7 @@ L<Sdoc::Core::Object>
 
 =head4 Synopsis
 
-    $val = $class->askUser($text,@opt);
+  $val = $class->askUser($text,@opt);
 
 =head4 Options
 
@@ -64,14 +64,14 @@ Addiere Antwortzeit des Benutzer zu Zeitvariable $t hinzu. Dieses
 Feature kann genutzt werden, um aus einer Zeitmessung des rufenden
 Code die (langsame) Antwortzeit des Benutzers herauszunehmen.
 
-    my $t0 = Time::HiRes::gettimeofday;
-    ...
-    Sdoc::Core::Terminal->askUser($prompt,
-        -timer=>\$t0,
-        ...
-    );
-    ...
-    printf "Elapsed: %.2f\n",Time::HiRes::gettimeofday-$t0;
+  my $t0 = Time::HiRes::gettimeofday;
+  ...
+  Sdoc::Core::Terminal->askUser($prompt,
+      -timer=>\$t0,
+      ...
+  );
+  ...
+  printf "Elapsed: %.2f\n",Time::HiRes::gettimeofday-$t0;
 
 Achtung: Der Wert der Zeitvariable wird in die Zukunft verschoben
 und sollte daher nur zur Zeitdauermessung verwendet werden.
@@ -103,13 +103,13 @@ Whitespace am Anfang und am Ende des Werts werden entfernt.
 
 Eingabe vom Terminal statt von STDIN per Filehandle:
 
-    my $tty = Sdoc::Core::FileHandle->new('<','/dev/tty');
-    my $val = Sdoc::Core::Terminal->askUser($prompt,-inHandle=>$tty);
-    $tty->close;
+  my $tty = Sdoc::Core::FileHandle->new('<','/dev/tty');
+  my $val = Sdoc::Core::Terminal->askUser($prompt,-inHandle=>$tty);
+  $tty->close;
 
 Dasselbe per Option:
 
-    my $val = Sdoc::Core::Terminal->askUser($prompt,-ttyIn=>1);
+  my $val = Sdoc::Core::Terminal->askUser($prompt,-ttyIn=>1);
 
 =cut
 
@@ -239,7 +239,7 @@ sub askUser {
 
 =head4 Synopsis
 
-    $esc = $class->ansiEsc($str);
+  $esc = $class->ansiEsc($str);
 
 =head4 Description
 
@@ -252,30 +252,30 @@ wird $str unverändert zurückgeliefert.
 
 B<Terminal-Eigenschaften>
 
-    Allgemein    Vordergrund  Hintergrund
-    -----------  -----------  -----------
-    dark         black        on_black
-    bold         red          on_red
-    underline    green        on_green
-    blink        yellow       on_yellow
-    reverse      blue         on_blue
-    concealed    magenta      on_magenta
-    reset        cyan         on_cyan
-                 white        on_white
+  Allgemein    Vordergrund  Hintergrund
+  -----------  -----------  -----------
+  dark         black        on_black
+  bold         red          on_red
+  underline    green        on_green
+  blink        yellow       on_yellow
+  reverse      blue         on_blue
+  concealed    magenta      on_magenta
+  reset        cyan         on_cyan
+               white        on_white
 
 =head4 Example
 
 Rote Schrift:
 
-    $esc = Sdoc::Core::Terminal->ansiEsc('red');
+  $esc = Sdoc::Core::Terminal->ansiEsc('red');
 
 Fette weiße Schrift auf rotem Grund:
 
-    $esc = Sdoc::Core::Terminal->ansiEsc('bold white on_red');
+  $esc = Sdoc::Core::Terminal->ansiEsc('bold white on_red');
 
 Terminal in den Anfangszustand zurückversetzen:
 
-    $esc = Sdoc::Core::Terminal->ansiEsc('reset');
+  $esc = Sdoc::Core::Terminal->ansiEsc('reset');
 
 =cut
 

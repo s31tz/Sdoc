@@ -37,7 +37,7 @@ im String-Kontext automatisch zum Verzeichnis-Pfad.
 
 =head4 Synopsis
 
-    $dir = $class->new;
+  $dir = $class->new;
 
 =head4 Returns
 

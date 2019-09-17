@@ -43,13 +43,13 @@ L<Sdoc::Core::Object>
 
 =head1 SYNOPSIS
 
-    use Sdoc::Document;
-    
-    my $doc = Sdoc::Document->parse($file);
-    print $doc->generate('html');
-    print $doc->generate('latex');
-    print $doc->generate('mediawiki');
-    print $doc->generate('tree');
+  use Sdoc::Document;
+  
+  my $doc = Sdoc::Document->parse($file);
+  print $doc->generate('html');
+  print $doc->generate('latex');
+  print $doc->generate('mediawiki');
+  print $doc->generate('tree');
 
 =head1 DESCRIPTION
 
@@ -68,9 +68,9 @@ Klasse Sdoc::Node::Document oder deren Basisklasse Sdoc::Node.
 
 =head4 Synopsis
 
-    $doc = $class->parse($file,@opt);
-    $doc = $class->parse(\$str,@opt);
-    $doc = $class->parse(\@lines,@opt);
+  $doc = $class->parse($file,@opt);
+  $doc = $class->parse(\$str,@opt);
+  $doc = $class->parse(\@lines,@opt);
 
 =head4 Arguments
 
@@ -219,7 +219,7 @@ sub parse {
 
 =head4 Synopsis
 
-    $code = $class->sdoc2ToSdoc3($code);
+  $code = $class->sdoc2ToSdoc3($code);
 
 =head4 Arguments
 

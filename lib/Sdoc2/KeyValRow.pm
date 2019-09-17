@@ -49,7 +49,7 @@ Wert
 
 =head4 Synopsis
 
-    $node = $class->new($doc,$parent,$att,$rowNum);
+  $node = $class->new($doc,$parent,$att,$rowNum);
 
 =head4 Description
 
@@ -103,7 +103,7 @@ sub new {
 
 =head4 Synopsis
 
-    $str = $node->dump($format);
+  $str = $node->dump($format);
 
 =cut
 

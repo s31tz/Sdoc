@@ -64,7 +64,7 @@ our $Abbrev = 'seg';
 
 =head4 Synopsis
 
-    $seg = $class->new($par,$variant,$root,$parent);
+  $seg = $class->new($par,$variant,$root,$parent);
 
 =head4 Arguments
 
@@ -135,7 +135,7 @@ sub new {
 
 =head4 Synopsis
 
-    $code = $seg->htmlCode($gen);
+  $code = $seg->htmlCode($gen);
 
 =head4 Arguments
 
@@ -171,7 +171,7 @@ sub htmlCode {
 
 =head4 Synopsis
 
-    $code = $seg->latexCode($gen);
+  $code = $seg->latexCode($gen);
 
 =head4 Arguments
 
@@ -207,7 +207,7 @@ sub latexCode {
 
 =head4 Synopsis
 
-    $code = $seg->mediawikiCode($gen);
+  $code = $seg->mediawikiCode($gen);
 
 =head4 Arguments
 
