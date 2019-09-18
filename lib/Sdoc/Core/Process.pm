@@ -1,7 +1,7 @@
 package Sdoc::Core::Process;
 use base qw/Sdoc::Core::System/;
 
-use v5.10.0;
+use v5.10;
 use strict;
 use warnings;
 

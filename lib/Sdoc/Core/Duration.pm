@@ -1,7 +1,7 @@
 package Sdoc::Core::Duration;
 use base qw/Sdoc::Core::Object/;
 
-use v5.10.0;
+use v5.10;
 use strict;
 use warnings;
 use utf8;

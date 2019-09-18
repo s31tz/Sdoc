@@ -1,7 +1,7 @@
 package Sdoc2::Table;
 use base qw/Sdoc2::Node/;
 
-use v5.10.0;
+use v5.10;
 use strict;
 use warnings;
 

@@ -1,7 +1,7 @@
 package Sdoc::Node::PostProcessor;
 use base qw/Sdoc::Node/;
 
-use v5.10.0;
+use v5.10;
 use strict;
 use warnings;
 

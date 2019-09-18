@@ -1,7 +1,7 @@
 package Sdoc::Application::Update;
 use base qw/Sdoc::Core::Program/;
 
-use v5.10.0;
+use v5.10;
 use strict;
 use warnings;
 

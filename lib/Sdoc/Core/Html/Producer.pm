@@ -1,7 +1,7 @@
 package Sdoc::Core::Html::Producer;
 use base qw/Sdoc::Core::Html::Construct/;
 
-use v5.10.0;
+use v5.10;
 use strict;
 use warnings;
 
