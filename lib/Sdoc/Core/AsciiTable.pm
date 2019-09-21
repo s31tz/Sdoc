@@ -5,7 +5,7 @@ use v5.10;
 use strict;
 use warnings;
 
-our $VERSION = '1.158';
+our $VERSION = '1.159';
 
 use Sdoc::Core::Unindent;
 use Sdoc::Core::FileHandle;
@@ -626,7 +626,7 @@ sub asText {
 
 =head1 VERSION
 
-1.158
+1.159
 
 =head1 AUTHOR
 
