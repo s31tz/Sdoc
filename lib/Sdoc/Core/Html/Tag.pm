@@ -525,6 +525,7 @@ my %Element = (
     br => 'e',         # Zeilenumbruch
     button => 'v',     # Schaltfläche
     caption => 'v',    # Beschriftung zu einer Tabelle
+    canvas => 'm',     # HTML 5, Fläche zum Zeichnen
     cite => 'i',       # Text ist Hinweis auf Literaturstelle
     code => 'i',       # Codebeispiel
     col => 'e',        # Eigenschaften einer Tabellenspalte
