@@ -110,6 +110,10 @@ sub new {
     # Wir setzen unsere Optionen in die Optionen von File::Temp um
 
     my @args;
+    if (defined $dir) {
+        $dir = Sdoc::Core::Path->expandTilde($dir);
+        push @args,'DIR',$dir;
+    }
     if (defined $suffix) {
         push @args,'SUFFIX',$suffix;
     }

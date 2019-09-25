@@ -1875,7 +1875,7 @@ sub rmdir {
 
 =head4 Synopsis
 
-  $dir = $this->tempDir(@opt);
+  $dir = $this->tempDir;
 
 =head4 Returns
 
