@@ -824,6 +824,25 @@ produziert:
 [255 218 185]:
   PeachPuff
 
+Alternativ kann der Doppelpunkt auch innerhalb der eckigen Klammern
+liegen C{[TERM:]}, der dann zum Bestandteil des Terms wird.
+
+  [255 239 213:]
+    PapayaWhip
+  [188 143 143:]
+    RosyBrown
+  [255 218 185:]
+    PeachPuff
+
+produziert:
+
+[255 239 213:]
+  PapayaWhip
+[188 143 143:]
+  RosyBrown
+[255 218 185:]
+  PeachPuff
+
 Im Term der Liste sind Segmente zulässig. Die folgende Definitonsliste
 ist nicht schön, zeigt aber alle Möglichkeiten.
 

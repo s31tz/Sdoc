@@ -180,7 +180,7 @@ sub nextType {
             $type = 'Quote';
             $variant = 1;
         }
-        elsif ($text =~ /^\[.+?\]:/) {
+        elsif ($text =~ /^\[.+?\]:/ || $text =~ /^\[.+?:\]/) {
             $type = 'Item';
             $variant = 1;
         }

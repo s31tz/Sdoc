@@ -134,7 +134,7 @@ sub new {
         $attribH = $par->readBlock;
     }
     elsif ($markup eq 'sdoc') {
-        # [...]:
+        # [...]: -or- [...:]
         # *, o, +
         # N.
 
@@ -143,7 +143,8 @@ sub new {
         my ($listType,$key,$text);
         if ($variant == 1) {
             $listType = 'description';
-            $line->text =~ /^\[(.*?)\]:(.*)/;
+            $line->text =~ /^\[(.*?)\]:(.*)/ ||
+                $line->text =~ /^\[(.*?:)\](.*)/;
             $key = $1;
             $text = $2;
         }
