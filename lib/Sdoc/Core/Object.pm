@@ -170,7 +170,7 @@ wenn der Methodenaufruf ohne Optionen erfolgt, kehrt parameters(),
 wie bereits gesagt, sofort zurück. Beispiel:
 
   sub myMethod {
-      my ($this,$arg1,$arg2,$arg3) = splice @_,0,3;
+      my ($this,$arg1,$arg2,$arg3) = splice @_,0,4;
   
       # Optionen
   

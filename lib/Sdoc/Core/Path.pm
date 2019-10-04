@@ -1275,7 +1275,7 @@ eine Referenz auf die Liste.
 
 Ermittele die Einträge des Verzeichnisses $dir und liefere diese
 als Liste zurück. Die Liste umfasst alle Verzeichniseinträge
-außer C<.> und C<..>.
+außer "." und "..".
 
 =cut
 
@@ -2645,6 +2645,89 @@ sub rename {
                 last;
             }
         }
+    }
+
+    return;
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 numberPaths() - Nummeriere Pfade
+
+=head4 Synopsis
+
+  $this->numberPaths(\@paths,$width,$step,@opt);
+
+=head4 Arguments
+
+=over 4
+
+=item @path
+
+Die Pfade, die zu nummerieren sind.
+
+=item $width
+
+Die Breite (Anzahl der Stellen) der Nummer.
+
+=item $step
+
+Die Schrittweite der Nummerierung.
+
+=back
+
+=head4 Description
+
+Nummeriere die Pfade @paths, gemäß ihrer gegebenen Reihenfolge.
+
+=head4 Example
+
+Der Aufruf
+
+  $ perl -MQuiq::Path -E '$p = Quiq::Path->new; $p->numberPaths([$p->glob("*")],5,10)'
+
+benennt alle Dateien, gleichgültig wie sie heißen, im aktuellen
+Verzeichnis um in
+
+  00010.EXT
+  00020.EXT
+  00030.EXT
+  ...
+
+wobei EXT die Extension ist, die die Datei vorher hatte, d.h. diese
+bleibt als einziges vom ursprünglichen Dateinamen erhalten.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub numberPaths {
+    my ($this,$pathA,$width,$step) = splice @_,0,4;
+
+    # Nummeriere Dateien mit Endung .tmp
+
+    my $n = $step;
+    my @tmpPath;
+    for my $path (@$pathA) {
+        my ($dir,undef,$base,$ext) = $this->split($path);
+        my $num = sprintf '%0*d',$width,$n;
+
+        my $tmpPath = "$num.$ext.tmp";
+        if ($dir ne '') {
+            $tmpPath = "$dir/$tmpPath";
+        }
+        push @tmpPath,$tmpPath;
+
+        $this->rename($path,$tmpPath,-overwrite=>0);
+
+        $n += $step;
+    }
+
+    # Entferne Endung .tmp
+
+    for my $tmpPath (@tmpPath) {
+        (my $newPath = $tmpPath) =~ s/\.tmp$//;
+        $this->rename($tmpPath,$newPath,-overwrite=>0);
     }
 
     return;
