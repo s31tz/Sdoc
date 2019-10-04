@@ -2656,7 +2656,7 @@ sub rename {
 
 =head4 Synopsis
 
-  $this->numberPaths(\@paths,$width,$step,@opt);
+  $this->numberPaths(\@paths,$width,$step);
 
 =head4 Arguments
 
@@ -2679,6 +2679,10 @@ Die Schrittweite der Nummerierung.
 =head4 Description
 
 Nummeriere die Pfade @paths, gemäß ihrer gegebenen Reihenfolge.
+Der Basisname der jeweiligen Datei/des Directory aus @paths wird
+hierbei durch eine Nummer der Breite $width ersetzt. Die Extension
+(sofern vorhanden) bleibt erhalten. Die Nummerierung erfolgt mit
+Schrittweite $width.
 
 =head4 Example
 
@@ -2710,12 +2714,16 @@ sub numberPaths {
     my @tmpPath;
     for my $path (@$pathA) {
         my ($dir,undef,$base,$ext) = $this->split($path);
-        my $num = sprintf '%0*d',$width,$n;
 
-        my $tmpPath = "$num.$ext.tmp";
+        my $tmpPath;
         if ($dir ne '') {
-            $tmpPath = "$dir/$tmpPath";
+            $tmpPath = "$dir/";
         }
+        $tmpPath .= sprintf '%0*d',$width,$n;
+        if ($ext ne '') {
+            $tmpPath .= ".$ext";
+        }
+        $tmpPath .= '.tmp';
         push @tmpPath,$tmpPath;
 
         $this->rename($path,$tmpPath,-overwrite=>0);
