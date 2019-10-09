@@ -2472,6 +2472,10 @@ Schrittweite in Sekunden.
 
 =back
 
+=head4 Example
+
+  $ perl -MQuiq::Path -E '$p = Quiq::Path->new; $p->mtimePaths([$p->glob("*.jpg")],"2019-10-08 20:00:00",60)'
+
 =cut
 
 # -----------------------------------------------------------------------------
