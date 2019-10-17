@@ -64,7 +64,7 @@ Bei einer rechts ausgerichteten Kolumne belegen I<alle> (nichtleeren)
 Werte die letzte Zeichenpositon. Bei einer zentrierten Kolumne
 sind die Werte weder eindeutig links noch rechts ausgerichtet.
 
-Der  Tabellen-Kopf, also die Titel, können mehrzeilig sein:
+Der Tabellen-Kopf, also die Titel, können mehrzeilig sein:
 
     Right Left
   Aligned Aligned Centered
