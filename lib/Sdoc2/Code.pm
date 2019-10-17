@@ -8,6 +8,7 @@ use utf8;
 
 our $VERSION = '1';
 
+use Sdoc::Core::Unindent;
 use Sdoc::Core::Path;
 use Sdoc::Core::Ipc;
 use Sdoc::Core::String;
@@ -143,25 +144,44 @@ sub new {
                 $text .= "$str\n";
             }
         }
+#         else {
+#             $line =~ /^(\|?\s+)/;
+#             my $re = substr($1,0,1) eq '|'? qr/^\|$|^\Q$1/: qr/^$|^\Q$1/;
+# 
+#             while (@{$doc->lines}) {
+#                 my $line = $doc->lines->[0];
+#                 my $str = $line->text;
+# 
+#                 # Ein Code-Abschnitt endet mit der ersten Zeile,
+#                 # die nicht mit dem Anfang der Anfangszeile beginnt
+#                 # Ausnahme: Leerzeile bei Einrückung.
+# 
+#                 $str =~ s/$re// || last; # Zeilenanfang entfernen
+#                 $text .= "$str\n";
+#                 $doc->shiftLine;
+#             }
+#         }
+#     }
+#     $text =~ s/\s+$//;
         else {
-            $line =~ /^(\|?\s+)/;
-            my $re = substr($1,0,1) eq '|'? qr/^\|$|^\Q$1/: qr/^$|^\Q$1/;
-
             while (@{$doc->lines}) {
                 my $line = $doc->lines->[0];
                 my $str = $line->text;
 
                 # Ein Code-Abschnitt endet mit der ersten Zeile,
-                # die nicht mit dem Anfang der Anfangszeile beginnt
-                # Ausnahme: Leerzeile bei Einrückung.
+                # die nicht eingerückt ist oder nicht mehr mit | beginnt
 
-                $str =~ s/$re// || last; # Zeilenanfang entfernen
+                if ($str !~ /^($|\||\s+)/) {
+                    last;
+                }
+
                 $text .= "$str\n";
                 $doc->shiftLine;
             }
         }
     }
-    $text =~ s/\s+$//;
+    $text =~ s/^\|//m;
+    $text = Sdoc::Core::Unindent->trim($text);
 
     # Objekt instantiieren (Child-Objekte gibt es nicht)
 
