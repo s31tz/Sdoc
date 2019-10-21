@@ -144,25 +144,25 @@ sub new {
                 $text .= "$str\n";
             }
         }
-#         else {
-#             $line =~ /^(\|?\s+)/;
-#             my $re = substr($1,0,1) eq '|'? qr/^\|$|^\Q$1/: qr/^$|^\Q$1/;
-# 
-#             while (@{$doc->lines}) {
-#                 my $line = $doc->lines->[0];
-#                 my $str = $line->text;
-# 
-#                 # Ein Code-Abschnitt endet mit der ersten Zeile,
-#                 # die nicht mit dem Anfang der Anfangszeile beginnt
-#                 # Ausnahme: Leerzeile bei Einrückung.
-# 
-#                 $str =~ s/$re// || last; # Zeilenanfang entfernen
-#                 $text .= "$str\n";
-#                 $doc->shiftLine;
-#             }
-#         }
-#     }
-#     $text =~ s/\s+$//;
+        #else {
+        #    $line =~ /^(\|?\s+)/;
+        #    my $re = substr($1,0,1) eq '|'? qr/^\|$|^\Q$1/: qr/^$|^\Q$1/;
+        #
+        #    while (@{$doc->lines}) {
+        #        my $line = $doc->lines->[0];
+        #        my $str = $line->text;
+        #
+        #        # Ein Code-Abschnitt endet mit der ersten Zeile,
+        #        # die nicht mit dem Anfang der Anfangszeile beginnt
+        #        # Ausnahme: Leerzeile bei Einrückung.
+        #
+        #        $str =~ s/$re// || last; # Zeilenanfang entfernen
+        #        $text .= "$str\n";
+        #        $doc->shiftLine;
+        #    }
+        #}
+    #}
+    #$text =~ s/\s+$//;
         else {
             while (@{$doc->lines}) {
                 my $line = $doc->lines->[0];

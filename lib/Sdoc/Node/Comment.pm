@@ -169,12 +169,12 @@ HTML-Code (String)
 sub htmlCode {
     my ($self,$h) = @_;
 
-    my $html = '';
+    my $code = '';
     if ($self->root->copyComments) {
-        $html = $h->comment($self->text);
+        $code = $h->comment($self->text);
     }
 
-    return $html;
+    return $code;
 }
 
 # -----------------------------------------------------------------------------
@@ -206,12 +206,49 @@ LaTeX-Code (String)
 sub latexCode {
     my ($self,$l) = @_;
 
-    if (!$self->root->copyComments) {
-        # Keine Kommentare ins Zielformat übernehmen
-        return '';
+    my $code = '';
+    if ($self->root->copyComments) {
+        $code = $l->comment($self->text,-nl=>2);
     }
 
-    return $l->comment($self->text,-nl=>2);
+    return $code;
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 mediawikiCode() - Generiere MediaWiki-Code
+
+=head4 Synopsis
+
+  $code = $com->mediawikiCode($gen);
+
+=head4 Arguments
+
+=over 4
+
+=item $gen
+
+Generator für MediaWiki.
+
+=back
+
+=head4 Returns
+
+MediaWiki-Code (String)
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub mediawikiCode {
+    my ($self,$m) = @_;
+
+    my $code = '';
+    if ($self->root->copyComments) {
+        $code = $m->comment($self->text);
+    }
+
+    return $code;
 }
 
 # -----------------------------------------------------------------------------
