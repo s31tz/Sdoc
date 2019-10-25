@@ -10,6 +10,7 @@ our $VERSION = '1.161';
 use Sdoc::Core::Perl;
 use Encode ();
 use Sdoc::Core::Parameters;
+use Sdoc::Core::Assert;
 use Sdoc::Core::Option;
 use Time::HiRes ();
 use Sdoc::Core::FileHandle;
@@ -560,6 +561,59 @@ sub parameters {
 
 # -----------------------------------------------------------------------------
 
+=head2 Zusicherungen
+
+=head3 assert() - Prüfe Werte
+
+=head4 Synopsis
+
+  $prg->assert(sub {...});
+
+=head4 Description
+
+Prüfe Werte durch Methoden der Klasse Sdoc::Core::Assert. Ist eine
+Zusicherung verletzt, wird die betreffende Exception in die
+Ausgabe der Programm-Hilfeseite umgesetzt. Die Subroutine
+erhält als Argument ein instantiiertes Sdoc::Core::Assert-Objekt.
+
+=head4 Example
+
+  Prüfe die Werte der Variablen $system und $user gegen eine Menge
+  möglicher Werte:
+  
+      $self->assert(sub {
+          my $a = shift;
+          $a->isEnumValue($system,['test','prod'],
+              -name=>'SYSTEM',
+          );
+          $a->isEnumValue($user,[qw/etlt etls etlr etlp/],
+              -name=>'USER',
+          );
+      });
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub assert {
+    my ($self,$sub) = @_;
+
+    my $a = Sdoc::Core::Assert->new(
+        stacktrace => 0,
+        nameSection => 'Parameter',
+    );
+
+    eval {$sub->($a)};
+    if ($@) {
+        $@ =~ s/ASSERT-\d+: //;
+        $self->help(10,$@);
+    }
+
+    return;
+}
+
+# -----------------------------------------------------------------------------
+
 =head2 Optionen
 
 =head3 options() - Verarbeite Programmoptionen (DEPRECATED)
@@ -849,7 +903,8 @@ sub help {
 
     if ($msg) {
         $msg =~ s/\n+$//;
-        $text = "$msg\n\n$text$msg\n";
+        $text =~ s/\n+$//;
+        $text = "$msg\n-----\n$text\n-----\n$msg\n";
     }
 
     # Doku anzeigen
