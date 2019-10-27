@@ -84,16 +84,16 @@ Die Titel sind optional, können also auch fehlen:
 
 Die Kolumnenwerte können mehrzeilig sein:
 
-    Right   Left
-  Aligned   Aligned          Centered
-  -------   --------------   --------
-        1   This is             A
-            the first row
+    Right Left
+  Aligned Aligned        Centered
+  ------- -------------- --------
+        1 This is           A
+          the first row
   
-        2   Second row          B
+        2 Second row        B
   
-        3   The third           C
-            row
+        3 The third         C
+          row
 
 Bei einer Tabelle mit mehrzeiligen Kolumnenwerten werden die
 Zeilen durch Trennzeilen getrennt, gleichgültig, ob die einzelne
@@ -102,17 +102,17 @@ Zeile 2). Die Trennzeile kann eine einfache Leerzeile sein oder
 Bindestriche enthalten wie die Trennzeile zwischen Tabellen-Kopf
 und -Körper:
 
-    Right   Left
-  Aligned   Aligned          Centered
-  -------   --------------   --------
-        1   This is             A
-            the first line
-  -------   --------------   --------
-        2   Second line         B
-  -------   --------------   --------
-        3   The third           C
-            line
-  -------   --------------   --------
+    Right Left
+  Aligned Aligned        Centered
+  ------- -------------- --------
+        1 This is           A
+          the first line
+  ------- -------------- --------
+        2 Second line       B
+  ------- -------------- --------
+        3 The third         C
+          line
+  ------- -------------- --------
 
 Generell gilt ferner:
 
