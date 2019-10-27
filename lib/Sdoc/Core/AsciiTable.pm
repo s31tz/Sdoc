@@ -8,7 +8,6 @@ use warnings;
 our $VERSION = '1.162';
 
 use Sdoc::Core::Unindent;
-use Sdoc::Core::FileHandle;
 
 # -----------------------------------------------------------------------------
 
@@ -179,10 +178,6 @@ sub new {
     my $multiLine = -1; # Multizeilen-Tabelle, wenn > 0
     my $tabLineLength;  # Logische Breite einer ASCII-Tabellenzeile
 
-    # my $fh = Sdoc::Core::FileHandle->new('<',\$str);
-    # while (<$fh>) {
-    #   chomp;
-
     for (split /\n/,$str) {
        if (/^[- ]*$/) { # Bindestrich-Zeile, Whitespace-Zeile, Leerzeile
             if (!@lines) {
@@ -203,7 +198,6 @@ sub new {
             push @lines,[1,$_];
         }
     }
-    # $fh->close;
 
     # Prüfe, ob die Eingabedaten eine Tabelle darstellen
 
