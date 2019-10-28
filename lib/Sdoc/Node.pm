@@ -1862,6 +1862,59 @@ sub htmlSectionCode {
 
 # -----------------------------------------------------------------------------
 
+=head3 mediawikiSectionCode() - MediaWiki-Code für Section und Bridgehead
+
+=head4 Synopsis
+
+  $code = $node->mediawikiSectionCode($gen);
+
+=head4 Arguments
+
+=over 4
+
+=item $gen
+
+Generator für MediaWiki.
+
+=back
+
+=head4 Returns
+
+MediaWiki-Code (String)
+
+=head4 Description
+
+Liefere den MediaWiki-Code für einen Section- oder BridgeHead-Knoten.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub mediawikiSectionCode {
+    my ($self,$m) = @_;
+
+    my $doc = $self->root;
+
+    # Erzeuge Abschnittstitel. Ein Bridgehead hat keine Abschnittsnummer.
+
+    my $title = $self->expandText($m,'titleS');
+    if ($self->type eq 'Section' &&
+            $self->level <= $doc->getUserNodeAttribute('sectionNumberLevel')) {
+        # Die Abschnittsnummern lassen wir erst einmal weg, denn im
+        # Inhaltsverzeichnis stehen die sonst doppelt
+        # $title = $self->sectionNumber.' '.$title;
+    }
+
+    # Generiere MediaWiki-Code
+
+    my $level = $self->level+(1-$doc->highestSectionLevel);
+    my $code = $m->section($level,$title);
+
+    return $code;
+}
+
+# -----------------------------------------------------------------------------
+
 =head3 htmlTableOfContents() - Erzeuge Inhaltsverzeichnis in HTML (rekursiv)
 
 =head4 Synopsis

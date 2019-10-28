@@ -435,14 +435,15 @@ MediaWiki-Code (String)
 sub mediawikiCode {
     my ($self,$m) = @_;
 
-    my $doc = $self->root;
+    #my $doc = $self->root;
+    #my $level = $self->level+(1-$doc->highestSectionLevel);
+    #my $title = $self->expandText($m,'titleS');
+    #my $code = $m->section($level,$title);
+    #$code .= $self->generateChilds('mediawiki',$m);
+    #return $code;
 
-    my $level = $self->level+(1-$doc->highestSectionLevel);
-    my $title = $self->expandText($m,'titleS');
-    my $code = $m->section(($level,$title));
-    $code .= $self->generateChilds('mediawiki',$m);
-
-    return $code;
+    return $self->mediawikiSectionCode($m).
+        $self->generateChilds('mediawiki',$m);
 }
 
 # -----------------------------------------------------------------------------
