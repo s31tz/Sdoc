@@ -798,6 +798,16 @@ sub unlock {
 
   $fh = $fh->setEncoding($encoding);
 
+=head4 Arguments
+
+=over 4
+
+=item $encoding
+
+Bezeichnung des Encoding.
+
+=back
+
 =head4 Returns
 
 FileHandle-Objekt (für Method-Chaining)
@@ -807,8 +817,6 @@ FileHandle-Objekt (für Method-Chaining)
 Definiere für Filehandle $fh das Encoding $encoding. D.h. alle Daten
 werden automatisch gemäß diesem Encoding beim Schreiben encodiert
 bzw. beim Lesen dekodiert.
-
-Die Methode liefert keinen Wert zurück.
 
 =cut
 
