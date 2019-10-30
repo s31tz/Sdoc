@@ -74,9 +74,15 @@ sub new {
     if ($epoch !~ /^[\d.]+$/) {
         # ISO Zeitangabe
 
+        $epoch =~ s/(\.\d+)//;
+        my $x = $1;
+
         my @arr = reverse split /\D+/,$epoch;
         $arr[4]--;
         $epoch = Time::Local::timelocal(@arr);
+        if ($x) {
+            $epoch .= $x;
+        }
     }
 
     return bless \$epoch,$class;
