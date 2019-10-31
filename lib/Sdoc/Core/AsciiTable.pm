@@ -15,7 +15,7 @@ use Sdoc::Core::Unindent;
 
 =head1 NAME
 
-Sdoc::Core::AsciiTable - ASCII-Tabelle parsen
+Sdoc::Core::AsciiTable - Parse ASCII-Tabelle
 
 =head1 BASE CLASS
 
