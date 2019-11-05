@@ -27,13 +27,43 @@ L<Sdoc::Core::Object>
 
 =head1 METHODS
 
+=head2 Konstruktor
+
+=head3 new() - Instantiiere Objekt
+
+=head4 Synopsis
+
+  $m = $class->new;
+
+=head4 Returns
+
+Math-Objekt
+
+=head4 Description
+
+Instantiiere ein Objekt der Klasse und liefere eine Referenz auf
+dieses Objekt zurück. Da die Klasse ausschließlich Klassenmethoden
+enthält, hat das Objekt nur die Funktion, eine abkürzende
+Aufrufschreibweise zu ermöglichen.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub new {
+    my $class = shift;
+    return bless \(my $dummy),$class;
+}
+
+# -----------------------------------------------------------------------------
+
 =head2 Konstanten
 
 =head3 pi() - Liefere PI
 
 =head4 Synopsis
 
-  $pi = $class->pi;
+  $pi = $this->pi;
 
 =cut
 
@@ -51,8 +81,8 @@ sub pi {
 
 =head4 Synopsis
 
-  $y = $class->roundTo($x,$n);
-  $y = $class->roundTo($x,$n,$normalize);
+  $y = $this->roundTo($x,$n);
+  $y = $this->roundTo($x,$n,$normalize);
 
 =head4 Description
 
@@ -72,10 +102,10 @@ bei $n == 0 mittels roundToInt().
 # -----------------------------------------------------------------------------
 
 sub roundTo {
-    my ($class,$x,$n,$normalize) = @_;
+    my ($this,$x,$n,$normalize) = @_;
 
     if ($n == 0) {
-        return $class->roundToInt($x);
+        return $this->roundToInt($x);
     }
 
     $x = sprintf '%.*f',$n,$x;
@@ -92,7 +122,7 @@ sub roundTo {
 
 =head4 Synopsis
 
-  $n = $class->roundToInt($x);
+  $n = $this->roundToInt($x);
 
 =head4 Description
 
@@ -126,7 +156,7 @@ sub roundToInt {
 
 =head4 Synopsis
 
-  ($minRounded,$maxRounded) = $class->roundMinMax($min,$max);
+  ($minRounded,$maxRounded) = $this->roundMinMax($min,$max);
 
 =head4 Description
 
@@ -150,7 +180,7 @@ $max-$min her.
 # -----------------------------------------------------------------------------
 
 sub roundMinMax {
-    my ($class,$min,$max) = @_;
+    my ($this,$min,$max) = @_;
 
     if ($min == $max) {
         # Sind Minimum und Maximum gleich, schaffen wir einen
@@ -181,7 +211,7 @@ sub roundMinMax {
 
 =head4 Synopsis
 
-  $gcd = $class->gcd($a,b);
+  $gcd = $this->gcd($a,b);
 
 =head4 Description
 
@@ -194,8 +224,8 @@ zurück. Die Methode ist nach dem L<Euklidschen Algorithmus|https://de.wikipedia
 # -----------------------------------------------------------------------------
 
 sub gcd {
-    my ($class,$a,$b) = @_;
-    return $b == 0? $a: $class->gcd($b,$a%$b);
+    my ($this,$a,$b) = @_;
+    return $b == 0? $a: $this->gcd($b,$a%$b);
 }
 
 # -----------------------------------------------------------------------------
@@ -206,15 +236,15 @@ sub gcd {
 
 =head4 Synopsis
 
-  $rad = $class->degreeToRad($degree);
+  $rad = $this->degreeToRad($degree);
 
 =cut
 
 # -----------------------------------------------------------------------------
 
 sub degreeToRad {
-    my ($class,$degree) = @_;
-    return $degree*$class->pi/180;
+    my ($this,$degree) = @_;
+    return $degree*$this->pi/180;
 }
 
 # -----------------------------------------------------------------------------
@@ -223,15 +253,15 @@ sub degreeToRad {
 
 =head4 Synopsis
 
-  $degree = $class->radToDegree($rad);
+  $degree = $this->radToDegree($rad);
 
 =cut
 
 # -----------------------------------------------------------------------------
 
 sub radToDegree {
-    my ($class,$rad) = @_;
-    return 180/$class->pi*$rad;
+    my ($this,$rad) = @_;
+    return 180/$this->pi*$rad;
 }
 
 # -----------------------------------------------------------------------------
@@ -242,7 +272,7 @@ sub radToDegree {
 
 =head4 Synopsis
 
-  ($latitude,$longitude) = $class->geoMidpoint(\@coordinates);
+  ($latitude,$longitude) = $this->geoMidpoint(\@coordinates);
 
 =head4 Arguments
 
@@ -273,7 +303,7 @@ L<http://www.geomidpoint.com/example.html>
 # -----------------------------------------------------------------------------
 
 sub geoMidpoint {
-    my ($class,$coordinateA) = @_;
+    my ($this,$coordinateA) = @_;
 
     my $x = 0;
     my $y = 0;
@@ -288,8 +318,8 @@ sub geoMidpoint {
             next;
         }
     
-        $latitude = $class->degreeToRad($latitude);
-        $longitude = $class->degreeToRad($longitude);
+        $latitude = $this->degreeToRad($latitude);
+        $longitude = $this->degreeToRad($longitude);
         $weight //= 1;
 
         $x += cos($latitude) * cos($longitude) * $weight;
@@ -304,9 +334,9 @@ sub geoMidpoint {
         $y /= $w;
         $z /= $w;
 
-        $midLongitude = $class->radToDegree(atan2($y,$x));
+        $midLongitude = $this->radToDegree(atan2($y,$x));
         my $hyp = sqrt($x*$x+$y*$y);
-        $midLatitude = $class->radToDegree(atan2($z,$hyp));
+        $midLatitude = $this->radToDegree(atan2($z,$hyp));
     }
                     
     return ($midLatitude,$midLongitude);
@@ -318,7 +348,7 @@ sub geoMidpoint {
 
 =head4 Synopsis
 
-  $dezDeg = $class->geoToDegree($deg,$min,$sec,$dir);
+  $dezDeg = $this->geoToDegree($deg,$min,$sec,$dir);
 
 =head4 Description
 
@@ -335,7 +365,7 @@ Himmelsrichtung in eine dezimale Gradzahl und liefere diese zurück.
 # -----------------------------------------------------------------------------
 
 sub geoToDegree {
-    my ($class,$deg,$min,$sec,$dir) = @_;
+    my ($this,$deg,$min,$sec,$dir) = @_;
 
     $deg = $deg + $min/60 + $sec/3600;
 
@@ -347,7 +377,7 @@ sub geoToDegree {
             $deg = -$deg;
         }
         else {
-            $class->throw(
+            $this->throw(
                 'MATH-00001: Unbekannte Himmelsrichtung',
                 Direction => $dir,
             );
@@ -363,7 +393,7 @@ sub geoToDegree {
 
 =head4 Synopsis
 
-  $km = $class->geoDistance($lat1,$lon1,$lat2,$lon2);
+  $km = $this->geoDistance($lat1,$lon1,$lat2,$lon2);
 
 =head4 Description
 
@@ -409,16 +439,16 @@ Abstand zw. zwei Längengraden am Pol:
 # -----------------------------------------------------------------------------
 
 sub geoDistance {
-    my ($class,$lat1,$lon1,$lat2,$lon2) = @_;
+    my ($this,$lat1,$lon1,$lat2,$lon2) = @_;
 
     # Wir rechnen im Bogenmaß
 
-    $lat1 = $class->degreeToRad($lat1);
-    $lon1 = $class->degreeToRad($lon1);
-    $lat2 = $class->degreeToRad($lat2);
-    $lon2 = $class->degreeToRad($lon2);
+    $lat1 = $this->degreeToRad($lat1);
+    $lon1 = $this->degreeToRad($lon1);
+    $lat2 = $this->degreeToRad($lat2);
+    $lon2 = $this->degreeToRad($lon2);
 
-    return 1.852*60*$class->radToDegree(Math::Trig::acos(
+    return 1.852*60*$this->radToDegree(Math::Trig::acos(
         sin($lat1)*sin($lat2)+cos($lat1)*cos($lat2)*cos($lon2-$lon1)));
 
     # 6371
@@ -433,7 +463,7 @@ sub geoDistance {
 
 =head4 Synopsis
 
-  $km = $class->latitudeDistance($lat);
+  $km = $this->latitudeDistance($lat);
 
 =head4 Description
 
@@ -447,12 +477,12 @@ Wilhelm Petersen.
 # -----------------------------------------------------------------------------
 
 sub latitudeDistance {
-    my ($class,$lat) = @_;
+    my ($this,$lat) = @_;
 
-    $lat = $class->degreeToRad($lat); # Breite im Bogenmaß
-    my $d = $class->degreeToRad(1);   # 1 Grad im Bogenmaß
+    $lat = $this->degreeToRad($lat); # Breite im Bogenmaß
+    my $d = $this->degreeToRad(1);   # 1 Grad im Bogenmaß
 
-    return 1.852*60*$class->radToDegree(
+    return 1.852*60*$this->radToDegree(
         Math::Trig::acos((sin($lat)**2+cos($lat)**2*cos($d))));
 }
 
@@ -464,7 +494,7 @@ sub latitudeDistance {
 
 =head4 Synopsis
 
-  $factor = $class->valueToPixelFactor($length,$min,$max)
+  $factor = $this->valueToPixelFactor($length,$min,$max)
 
 =head4 Returns
 
@@ -482,7 +512,7 @@ entsprechen.
 # -----------------------------------------------------------------------------
 
 sub valueToPixelFactor {
-    my ($class,$size,$min,$max) = @_;
+    my ($this,$size,$min,$max) = @_;
     return ($size-1)/($max-$min);
 }
 
@@ -492,7 +522,7 @@ sub valueToPixelFactor {
 
 =head4 Synopsis
 
-  $factor = $class->pixelToValueFactor($length,$min,$max);
+  $factor = $this->pixelToValueFactor($length,$min,$max);
 
 =head4 Returns
 
@@ -509,7 +539,7 @@ dem Werteberich $min und $max entsprechen.
 # -----------------------------------------------------------------------------
 
 sub pixelToValueFactor {
-    my ($class,$length,$min,$max) = @_;
+    my ($this,$length,$min,$max) = @_;
     return 1/Quiq::Math->valueToPixelFactor($length,$min,$max);
 }
 
@@ -519,7 +549,7 @@ sub pixelToValueFactor {
 
 =head4 Synopsis
 
-  $x = $class->valueToPixelX($width,$xMin,$xMax,$xVal);
+  $x = $this->valueToPixelX($width,$xMin,$xMax,$xVal);
 
 =head4 Alias
 
@@ -536,7 +566,7 @@ ist $xMax. Die gelieferten Werte liegen im Bereich 0 .. $width-1.
 # -----------------------------------------------------------------------------
 
 sub valueToPixelX {
-    my ($class,$width,$xMin,$xMax,$xVal) = @_;
+    my ($this,$width,$xMin,$xMax,$xVal) = @_;
     return sprintf '%.0f',($xVal-$xMin)*($width-1)/($xMax-$xMin);
 }
 
@@ -551,7 +581,7 @@ sub valueToPixelX {
 
 =head4 Synopsis
 
-  $y = $class->valueToPixelY($height,$yMin,$yMax,$yVal);
+  $y = $this->valueToPixelY($height,$yMin,$yMax,$yVal);
 
 =head4 Description
 
@@ -566,7 +596,7 @@ also von einem Ursprung I<unten links> aus.
 # -----------------------------------------------------------------------------
 
 sub valueToPixelY {
-    my ($class,$height,$yMin,$yMax,$yVal) = @_;
+    my ($this,$height,$yMin,$yMax,$yVal) = @_;
     return sprintf '%.0f',$height-1-($yVal-$yMin)*($height-1)/($yMax-$yMin);
 }
 
@@ -576,7 +606,7 @@ sub valueToPixelY {
 
 =head4 Synopsis
 
-  $y = $class->valueToPixelYTop($height,$yMin,$yMax,$yVal);
+  $y = $this->valueToPixelYTop($height,$yMin,$yMax,$yVal);
 
 =head4 Description
 
@@ -589,7 +619,7 @@ ist $yMax. Die gelieferten Werte liegen im Bereich $height-1 .. 0.
 # -----------------------------------------------------------------------------
 
 sub valueToPixelYTop {
-    my ($class,$height,$yMin,$yMax,$yVal) = @_;
+    my ($this,$height,$yMin,$yMax,$yVal) = @_;
     return sprintf '%.0f',($yVal-$yMin)*($height-1)/($yMax-$yMin);
 }
 
@@ -601,7 +631,7 @@ sub valueToPixelYTop {
 
 =head4 Synopsis
 
-  $y = $class->interpolate($x0,$y0,$x1,$y1,$x);
+  $y = $this->interpolate($x0,$y0,$x1,$y1,$x);
 
 =head4 Returns
 
@@ -619,7 +649,7 @@ Siehe: L<http://de.wikipedia.org/wiki/Interpolation_%28Mathematik%29#Lineare_Int
 # -----------------------------------------------------------------------------
 
 sub interpolate {
-    my ($class,$x0,$y0,$x1,$y1,$x) = @_;
+    my ($this,$x0,$y0,$x1,$y1,$x) = @_;
     return $y0+($y1-$y0)/($x1-$x0)*($x-$x0);
 }
 
@@ -631,7 +661,7 @@ sub interpolate {
 
 =head4 Synopsis
 
-  $bool = $class->isNumber($str);
+  $bool = $this->isNumber($str);
 
 =cut
 
@@ -649,7 +679,7 @@ sub isNumber {
 
 =head4 Synopsis
 
-  $val = $class->spikeValue($v1,$v2,$v3,$t1,$t3);
+  $val = $this->spikeValue($v1,$v2,$v3,$t1,$t3);
 
 =head4 Description
 
@@ -665,7 +695,7 @@ Funktion rechnet jedoch in Minuten, daher die Division durch 60.
 # -----------------------------------------------------------------------------
 
 sub spikeValue {
-    my ($class,$v1,$v2,$v3,$t1,$t3) = @_;
+    my ($this,$v1,$v2,$v3,$t1,$t3) = @_;
     return (abs($v2-($v3+$v1)/2)-abs(($v3-$v1)/2))/($t3/60-$t1/60);
 }
 
