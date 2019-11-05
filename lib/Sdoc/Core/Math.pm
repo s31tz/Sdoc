@@ -496,7 +496,7 @@ sub valueToPixelFactor {
 
 =head4 Returns
 
-Faktor
+Faktor (Float)
 
 =head4 Description
 
@@ -528,7 +528,7 @@ valueToPixel()
 =head4 Description
 
 Transformiere Wert $xVal in eine Pixelkoordinate auf einer X-Pixelachse
-der Breite $width. Das Minimum des Wertebereichs ist $xMin und das Maximum
+der Breite $width. Das Minimum des Wertebereichs ist $xMin, Maximum
 ist $xMax. Die gelieferten Werte liegen im Bereich 0 .. $width-1.
 
 =cut
@@ -556,8 +556,10 @@ sub valueToPixelX {
 =head4 Description
 
 Transformiere Wert $yVal in eine Pixelkoordinate auf einer Y-Pixelachse
-der Höhe $height. Das Minimum des Wertebereichs ist $yMin und das Maximum
-ist $yMax. Die gelieferten Werte liegen im Bereich $height-1 .. 0.
+der Höhe $height. Das Minimum des Wertebereichs ist $yMin, das Maximum
+$yMax. Die gelieferten Werte liegen im Bereich $height-1 .. 0.
+Diese Methode geht von einem Kartesischen Koordinatensystem,
+also von einem Ursprung I<unten links> aus.
 
 =cut
 
@@ -566,6 +568,29 @@ ist $yMax. Die gelieferten Werte liegen im Bereich $height-1 .. 0.
 sub valueToPixelY {
     my ($class,$height,$yMin,$yMax,$yVal) = @_;
     return sprintf '%.0f',$height-1-($yVal-$yMin)*($height-1)/($yMax-$yMin);
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 valueToPixelYTop() - Transformiere Wert in Y-Pixelkoordinate
+
+=head4 Synopsis
+
+  $y = $class->valueToPixelYTop($height,$yMin,$yMax,$yVal);
+
+=head4 Description
+
+Transformiere Wert $yVal in eine Pixelkoordinate auf einer Y-Pixelachse
+der Höhe $height. Das Minimum des Wertebereichs ist $yMin und das Maximum
+ist $yMax. Die gelieferten Werte liegen im Bereich $height-1 .. 0.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub valueToPixelYTop {
+    my ($class,$height,$yMin,$yMax,$yVal) = @_;
+    return sprintf '%.0f',($yVal-$yMin)*($height-1)/($yMax-$yMin);
 }
 
 # -----------------------------------------------------------------------------
