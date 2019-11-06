@@ -6,7 +6,7 @@ use strict;
 use warnings;
 use utf8;
 
-our $VERSION = '1.163';
+our $VERSION = '1.164';
 
 use Encode ();
 use Sdoc::Core::Reference;
@@ -1060,7 +1060,7 @@ sub restore {
 
 =head1 VERSION
 
-1.163
+1.164
 
 =head1 AUTHOR
 

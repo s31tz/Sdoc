@@ -6,7 +6,7 @@ use strict;
 use warnings;
 use utf8;
 
-our $VERSION = '1.163';
+our $VERSION = '1.164';
 
 use Sdoc::Core::Css;
 use Sdoc::Core::Template;
@@ -2175,7 +2175,7 @@ sub import {
 
 =head1 VERSION
 
-1.163
+1.164
 
 =head1 AUTHOR
 
