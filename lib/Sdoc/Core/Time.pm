@@ -8,7 +8,6 @@ use utf8;
 
 our $VERSION = '1.164';
 
-use POSIX ();
 use Time::Local ();
 use Sdoc::Core::Duration;
 
