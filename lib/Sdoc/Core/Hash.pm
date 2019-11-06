@@ -389,11 +389,11 @@ sub set {
     $SetCount++;
     while (@_) {
         my $key = shift;
-        #$self->{$key} = shift;
-        eval {$self->{$key} = shift};
-        if ($@) {
-            $self->throw($@);
-        }
+        $self->{$key} = shift;
+        #eval {$self->{$key} = shift};
+        #if ($@) {
+        #    $self->throw($@);
+        #}
     }
 
     return;
