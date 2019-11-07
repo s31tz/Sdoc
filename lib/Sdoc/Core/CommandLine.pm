@@ -13,7 +13,7 @@ our $VERSION = '1.165';
 
 =head1 NAME
 
-Sdoc::Core::CommandLine - Konstruiere eine Unix-Kommandozeile
+Sdoc::Core::CommandLine - Erstelle eine Unix-Kommandozeile
 
 =head1 BASE CLASS
 
@@ -45,10 +45,10 @@ L<Sdoc::Core::Hash>
 
 =head1 DESCRIPTION
 
-Die Klasse stellt Methoden zur Verfügung, um eine
-Unix-Kommandozeile zu konstruieren. Die Klasse ist hilfreich, wenn
-einzelne Bestandteile der Kommandozeile nicht statisch sind,
-sondern variieren können.
+Die Klasse stellt Methoden zur Verfügung, um eine Unix-Kommandozeile
+zu konstruieren. Die Klasse ist hilfreich, wenn einzelne Bestandteile
+der Kommandozeile nicht statisch sind, sondern von Variablenwerten
+und Bedingungen abhängen.
 
 =head1 METHODS
 
