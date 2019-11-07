@@ -26,7 +26,7 @@ L<Sdoc::Core::Object>
   use Sdoc::Core::AnsiColor;
   
   my $a = Sdoc::Core::AnsiColor->new(-t STDOUT);
-  printf "%s\n",$a->str('bold white on_cyan','Hello, world!');
+  say $a->str('bold white on_cyan','Hello, world!');
 
 =head1 DESCRIPTION
 
