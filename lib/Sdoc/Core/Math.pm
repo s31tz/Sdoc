@@ -514,6 +514,7 @@ entsprechen.
 sub valueToPixelFactor {
     my ($this,$size,$min,$max) = @_;
     return ($size-1)/($max-$min);
+    # return $size/($max-$min);
 }
 
 # -----------------------------------------------------------------------------
@@ -568,6 +569,7 @@ ist $xMax. Die gelieferten Werte liegen im Bereich 0 .. $width-1.
 sub valueToPixelX {
     my ($this,$width,$xMin,$xMax,$xVal) = @_;
     return sprintf '%.0f',($xVal-$xMin)*($width-1)/($xMax-$xMin);
+    # return sprintf '%.0f',($xVal-$xMin)*$width/($xMax-$xMin);
 }
 
 {
@@ -598,6 +600,7 @@ also von einem Ursprung I<unten links> aus.
 sub valueToPixelY {
     my ($this,$height,$yMin,$yMax,$yVal) = @_;
     return sprintf '%.0f',$height-1-($yVal-$yMin)*($height-1)/($yMax-$yMin);
+    # return sprintf '%.0f',$height-($yVal-$yMin)*$height/($yMax-$yMin);
 }
 
 # -----------------------------------------------------------------------------
@@ -621,6 +624,7 @@ ist $yMax. Die gelieferten Werte liegen im Bereich $height-1 .. 0.
 sub valueToPixelYTop {
     my ($this,$height,$yMin,$yMax,$yVal) = @_;
     return sprintf '%.0f',($yVal-$yMin)*($height-1)/($yMax-$yMin);
+    # return sprintf '%.0f',($yVal-$yMin)*$height/($yMax-$yMin);
 }
 
 # -----------------------------------------------------------------------------
