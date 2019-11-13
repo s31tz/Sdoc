@@ -82,7 +82,11 @@ sub new {
     }
     else {
         if ($execCmd) {
-            my ($text) = Sdoc::Core::Ipc->filter($execCmd);
+            my ($text) = eval{Sdoc::Core::Ipc->filter($execCmd)};
+            if ($@) {
+                $text = "Command failed: $execCmd";
+                warn "$text\n";
+            }
             $inp = \$text;
         }
         my $incDoc = Sdoc::Core::LineProcessor->new($inp,
@@ -145,7 +149,11 @@ sub dump {
     }
     elsif ($exec) {
         $exec =~ s/%FORMAT%/$format/;
-        ($str) = Sdoc::Core::Ipc->filter($exec);
+        ($str) = eval {Sdoc::Core::Ipc->filter($exec)};
+        if ($@) {
+            $str = "Command failed: $exec";
+            warn "$str\n";
+        }
     }
 
     if ($format eq 'pod') {

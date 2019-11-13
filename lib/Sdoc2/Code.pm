@@ -250,7 +250,11 @@ sub dump {
         if ($execCmd =~ s/%FORMAT%/$format/g) {
             $esc = 0;
         }
-        ($text) = Sdoc::Core::Ipc->filter($execCmd,undef);
+        ($text) = eval {Sdoc::Core::Ipc->filter($execCmd,undef)};
+        if ($@) {
+            $text = "Command failed: $execCmd";
+            warn "$text\n";
+        }
     }
 
     # Extraktion vor dem Filtern!
@@ -266,7 +270,11 @@ sub dump {
         if ($filterCmd =~ s/%FORMAT%/$format/g) {
             $esc = 0;
         }
-        ($text) = Sdoc::Core::Ipc->filter($filterCmd,$text);
+        ($text) = eval{Sdoc::Core::Ipc->filter($filterCmd,$text)};
+        if ($@) {
+            $text = "Command failed: $filterCmd";
+            warn "$text\n";
+        }
     }
 
     if ($self->{'bg'} == 2) { # Krücke
