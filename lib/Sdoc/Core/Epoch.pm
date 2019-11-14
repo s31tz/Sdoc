@@ -9,6 +9,7 @@ our $VERSION = '1.165';
 
 use Time::HiRes ();
 use Time::Local ();
+use Sdoc::Core::Duration;
 use POSIX ();
 
 # -----------------------------------------------------------------------------
@@ -77,6 +78,10 @@ sub new {
         $epoch =~ s/(\.\d+)//;
         my $x = $1;
 
+        if (length($epoch) == 10) {
+            $epoch .= ' 00:00:00';
+        }
+
         my @arr = reverse split /\D+/,$epoch;
         $arr[4]--;
         $epoch = Time::Local::timelocal(@arr);
@@ -87,6 +92,82 @@ sub new {
 
     return bless \$epoch,$class;
 } 
+
+# -----------------------------------------------------------------------------
+
+=head2 Arithmetik
+
+=head3 minus() - Verschiebe Zeitpunkt in Vergangenheit
+
+=head4 Synopsis
+
+  $t = $t->minus($duration);
+
+=head4 Arguments
+
+=over 4
+
+=item $duration
+
+Dauer, um die der Zeitpunkt in die Vergangenheit verschoben wird.
+Die Dauer wird wie beim Konstruktor von Sdoc::Core::Duration angegeben.
+
+=back
+
+=head4 Returns
+
+Geändertes Epoch-Objekt (für Method-Chaining)
+
+=head4 Description
+
+Verschiebe den Zeitpunkt um Dauer $duration in die Vergangenheit.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub minus {
+    my ($self,$duration) = @_;
+    $$self -= Sdoc::Core::Duration->new($duration)->asSeconds;
+    return $self;
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 plus() - Verschiebe Zeitpunkt in Zukunft
+
+=head4 Synopsis
+
+  $t = $t->plus($duration);
+
+=head4 Arguments
+
+=over 4
+
+=item $duration
+
+Dauer, um die der Zeitpunkt in die Zukunft verschoben wird. Die Dauer
+wird wie beim Konstruktor von Sdoc::Core::Duration angegeben.
+
+=back
+
+=head4 Returns
+
+Geändertes Epoch-Objekt (für Method-Chaining)
+
+=head4 Description
+
+Verschiebe den Zeitpunkt um Dauer $duration in die Zukunft.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub plus {
+    my ($self,$duration) = @_;
+    $$self += Sdoc::Core::Duration->new($duration)->asSeconds;
+    return $self;
+}
 
 # -----------------------------------------------------------------------------
 
@@ -218,6 +299,26 @@ sub as {
     
     return POSIX::strftime($strFmt,CORE::localtime $$self);
 } 
+
+# -----------------------------------------------------------------------------
+
+=head3 asIso() - Erzeuge ISO-Darstellung
+
+=head4 Synopsis
+
+  $str = $t->asIso;
+
+=head4 Returns
+
+Zeit-Darstellung (String)
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub asIso {
+    return shift->as('YYYY-MM-DD HH:MI:SS');
+}
 
 # -----------------------------------------------------------------------------
 
