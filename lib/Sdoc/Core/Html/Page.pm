@@ -184,7 +184,7 @@ sub html {
     my $self = ref $this? $this: $this->new(@_);
 
     my ($body,$comment,$encoding,$head,$loadA,$noNewline,$placeholders,
-        $title,$javaScript,$javaScriptToHead,$styleSheet,$topIndentation) =
+        $title,$javaScript,$javaScriptToHead,$styleSheet, $topIndentation) =
         $self->get(qw/body comment encoding head load noNewline placeholders
         title javaScript javaScriptToHead styleSheet topIndentation/);
 

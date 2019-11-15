@@ -95,7 +95,89 @@ sub new {
 
 # -----------------------------------------------------------------------------
 
-=head2 Arithmetik
+=head2 Zeitkomponenten
+
+=head3 dayOfWeek() - Wochentagsnummer
+
+=head4 Synopsis
+
+  $i = $t->dayOfWeek;
+
+=head4 Returns
+
+Integer
+
+=head4 Description
+
+Liefere Wochentagsnummer im Bereich 0-6, 0 = Sonntag.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub dayOfWeek {
+    my $self = shift;
+    return (localtime $$self)[6];
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 dayAbbr() - Abgekürzter Wochentagsname
+
+=head4 Synopsis
+
+  $abbr = $ti->dayAbbr;
+
+=head4 Returns
+
+String
+
+=head4 Description
+
+Liefere abgekürzten Wochentagsnamen (So, Mo, Di, Mi, Do, Fr, Sa).
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+our @DayAbbr = qw(So Mo Di Mi Do Fr Sa);
+
+sub dayAbbr {
+    my $self = shift;
+    return $DayAbbr[$self->dayOfWeek];
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 dayName() - Wochentagsname
+
+=head4 Synopsis
+
+  $name = $ti->dayName;
+
+=head4 Returns
+
+String
+
+=head4 Description
+
+Liefere Wochentagsname (Sonntag, Montag, Dienstag, Mittwoch, Donnerstag,
+Freitag, Samstag).
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+our @DayName = qw(Sonntag Montag Dienstag Mittwoch Donnerstag Freitag Samstag);
+
+sub dayName {
+    my $self = shift;
+    return $DayName[$self->dayOfWeek];
+}
+
+# -----------------------------------------------------------------------------
+
+=head2 Zeit-Arithmetik
 
 =head3 minus() - Verschiebe Zeitpunkt in Vergangenheit
 
