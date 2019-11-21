@@ -63,6 +63,41 @@ sub newlineToName {
 
 # -----------------------------------------------------------------------------
 
+=head3 camelCaseToSnakeCase() - Wandele Camel Case nach Snake Case
+
+=head4 Synopsis
+
+  $snake = $this->camelCaseToSnakeCase($camel);
+
+=head4 Description
+
+Wandele einen in Camel Case geschriebenen Bezeichner in einen
+Snake Case Bezeichner und liefere diesen zurück.
+
+Camel Case:
+
+  imsApplyDeltaRowByRow
+
+Snake Case:
+
+  ims-apply-delta-row-by-row
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub camelCaseToSnakeCase {
+    my ($this,$str) = @_;
+
+    # Eingebettete Bindestriche und Unterstriche in Camel Case wandeln
+
+    $str =~ s/(.)([A-Z])/$1-\L$2/g;
+
+    return $str;
+}
+
+# -----------------------------------------------------------------------------
+
 =head3 snakeCaseToCamelCase() - Wandele Snake Case nach Camel Case
 
 =head4 Synopsis

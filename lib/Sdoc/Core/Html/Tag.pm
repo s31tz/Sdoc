@@ -1468,7 +1468,7 @@ sub tag {
     # Content bestimmen
     my $content = $self->cat(@_);
 
-    # Klauseln auswerten, die auf den Content bezug nehmen
+    # Klauseln auswerten, die auf den Content Bezug nehmen
 
     if ($ignoreIfNull && (!defined $content || $content eq '')) {
         return '';
