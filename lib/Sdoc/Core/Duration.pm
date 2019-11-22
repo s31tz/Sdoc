@@ -6,7 +6,7 @@ use strict;
 use warnings;
 use utf8;
 
-our $VERSION = '1.165';
+our $VERSION = '1.166';
 
 use Sdoc::Core::Option;
 use Sdoc::Core::Math;
@@ -514,7 +514,7 @@ sub secondsToString {
 
 =head1 VERSION
 
-1.165
+1.166
 
 =head1 AUTHOR
 
