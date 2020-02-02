@@ -1791,6 +1791,9 @@ sub latexSectionName {
     elsif ($level == 4) {
         $name = 'paragraph';
     }
+    elsif ($level == 5) {
+        $name = 'subparagraph';
+    }
     else {
         $self->throw(
             'SDOC-00005: Unexpected section level',
@@ -1852,7 +1855,11 @@ sub htmlSectionCode {
         -nl => 1,
         name => $self->linkId,
     );
-    $code .= $h->tag('h'.($self->level+(1-$doc->highestSectionLevel)),
+    # $code .= $h->tag('h'.($self->level+(1-$doc->highestSectionLevel)),
+    #     class => $self->cssClass,
+    #     $title
+    # );
+    $code .= $h->tag('h'.$self->levelCount,
         class => $self->cssClass,
         $title
     );
@@ -1907,8 +1914,9 @@ sub mediawikiSectionCode {
 
     # Generiere MediaWiki-Code
 
-    my $level = $self->level+(1-$doc->highestSectionLevel);
-    my $code = $m->section($level,$title);
+    # my $level = $self->level+(1-$doc->highestSectionLevel);
+    # my $code = $m->section($level,$title);
+    my $code = $m->section($self->levelCount,$title);
 
     return $code;
 }
@@ -1929,10 +1937,9 @@ sub mediawikiSectionCode {
 
 Generator für HTML.
 
-=item $maxLevel
+=item $toc
 
-Tiefe des tiefsten Abschnitts, der noch in das Inhaltsverzeichnis
-aufgenommen wird. Mögliche Werte: -1, 0, 1, 2, 3, 4.
+TableOfContents-Knoten.
 
 =back
 
@@ -2209,7 +2216,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2019 Frank Seitz
+Copyright (C) 2020 Frank Seitz
 
 =head1 LICENSE
 

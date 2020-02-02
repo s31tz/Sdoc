@@ -6,7 +6,7 @@ use strict;
 use warnings;
 use utf8;
 
-our $VERSION = '1.166';
+our $VERSION = '1.173';
 
 use Encode::Guess ();
 use Encode ();
@@ -783,7 +783,7 @@ sub wrap {
 
 =head1 VERSION
 
-1.166
+1.173
 
 =head1 AUTHOR
 
@@ -791,7 +791,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2019 Frank Seitz
+Copyright (C) 2020 Frank Seitz
 
 =head1 LICENSE
 

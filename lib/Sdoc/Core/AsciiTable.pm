@@ -5,7 +5,7 @@ use v5.10;
 use strict;
 use warnings;
 
-our $VERSION = '1.166';
+our $VERSION = '1.173';
 
 use Sdoc::Core::Unindent;
 
@@ -15,7 +15,7 @@ use Sdoc::Core::Unindent;
 
 =head1 NAME
 
-Sdoc::Core::AsciiTable - Parse ASCII-Tabelle
+Sdoc::Core::AsciiTable - Analysiere ASCII-Tabelle
 
 =head1 BASE CLASS
 
@@ -25,9 +25,8 @@ L<Sdoc::Core::Hash>
 
 Ein Objekt der Klasse repräsentiert eine Tabelle, die in Form
 eines ASCII-Texts gegeben ist. Diese Darstellung wird an den
-Konstruktor übergeben, von diesem geparst und inhaltlich
-analysiert. Die Klasse stellt Methoden zur Verfügung, um die
-Eigenschaften der Tabelle abzufragen.
+Konstruktor übergeben und von diesem analysiert. Die Klasse stellt
+Methoden zur Verfügung, um die Eigenschaften der Tabelle abzufragen.
 
 =head2 Aufbau einer ASCII-Tabelle
 
@@ -612,7 +611,7 @@ sub asText {
 
 =head1 VERSION
 
-1.166
+1.173
 
 =head1 AUTHOR
 
@@ -620,7 +619,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2019 Frank Seitz
+Copyright (C) 2020 Frank Seitz
 
 =head1 LICENSE
 

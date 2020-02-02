@@ -42,7 +42,8 @@ Rücke das Inhaltsverzeichnis ein.
 =item maxLevel => $n (Default: 3)
 
 Tiefe, bis zu welcher Abschnitte ins Inhaltsverzeichnis
-aufgenommen werden. Mögliche Werte: -2, -1, 0, 1, 2, 3, 4. -2 =
+aufgenommen werden. Mögliche Werte: -2, -1, 0, 1, 2, 3, 4, 5, 6, wobei
+das Maximum vom Zielformat abhängt (LaTeX: 4, HTML: 6). -2 =
 kein Inhaltsverzeichnis.
 
 =back
@@ -301,6 +302,11 @@ Generator für HTML.
 
 HTML-Code (String)
 
+=head4 Description
+
+Erzeuge Inhaltsverzeichnis. Wir erzeugen kein Inhaltsverzeichnis,
+wenn maxLevel -2 ist.
+
 =cut
 
 # -----------------------------------------------------------------------------
@@ -414,7 +420,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2019 Frank Seitz
+Copyright (C) 2020 Frank Seitz
 
 =head1 LICENSE
 

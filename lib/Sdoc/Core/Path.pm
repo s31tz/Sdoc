@@ -9,7 +9,7 @@ use strict;
 use warnings;
 use utf8;
 
-our $VERSION = '1.166';
+our $VERSION = '1.173';
 
 use Sdoc::Core::Option;
 use Sdoc::Core::FileHandle;
@@ -23,7 +23,6 @@ use Sdoc::Core::Unindent;
 use Fcntl qw/:DEFAULT/;
 use Sdoc::Core::Perl;
 use Sdoc::Core::DirHandle;
-use Sdoc::Core::Parameters;
 use File::Find ();
 use Sdoc::Core::TempDir;
 use Cwd ();
@@ -1290,7 +1289,7 @@ sub entries {
 
     my $encoding = 'utf-8';
 
-    my $argA = Sdoc::Core::Parameters->extractToVariables(\@_,1,1,
+    my $argA = $this->parameters(1,1,\@_,
         -encoding => \$encoding,
     );
     my $dir = shift @$argA;
@@ -2792,6 +2791,20 @@ sub numberPaths {
     if ($moveA) {
         my ($after,$from,$to) = @$moveA;
 
+        # Prüfe Angaben
+
+        scalar $this->glob("$after.*");
+        my $fromPath = $this->glob("$from.*");
+        my $toPath =  $this->glob("$to.*");
+
+        if ($fromPath gt $toPath) {
+            $this->throw(
+                'PATH-00099: fromPath must be less than toPath',
+                FromPath => $fromPath,
+                ToPath => $toPath,
+            );
+        }
+
         # Pfadliste neu aufbauen
         my @paths = @$pathA;
 
@@ -3184,7 +3197,7 @@ sub uid {
 
 =head1 VERSION
 
-1.166
+1.173
 
 =head1 AUTHOR
 
@@ -3192,7 +3205,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2019 Frank Seitz
+Copyright (C) 2020 Frank Seitz
 
 =head1 LICENSE
 

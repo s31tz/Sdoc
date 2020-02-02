@@ -171,6 +171,7 @@ XXXX Ein trennender Satz
 == SubSection
 === SubSubSection
 ==== Paragraph
+===== SubParagraph
 
 ==-+ Appendix
 
@@ -178,5 +179,6 @@ XXXX Ein trennender Satz
 == SubSection
 === SubSubSection
 ==== Paragraph
+===== SubParagraph
 
 # eof

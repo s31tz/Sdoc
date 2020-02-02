@@ -335,8 +335,10 @@ verwendet werden:
 
 [sectionNumberLevel=N]:
   (Default: 3) Die Abschnittsebene, bis zu welcher Abschnitte
-  nummeriert werden.  Mögliche Werte: -2, -1, 0, 1, 2, 3, 4. -2
-  bedeutet: Die Abschnitte des Dokuments werden nicht nummeriert.
+  nummeriert werden.  Mögliche Werte: -2, -1, 0, 1, 2, 3, 4, 5, 6,
+  wobei das Maximum vom Zielformat abhängt (LaTeX: 4, HTML: 6).
+  -2 bedeutet: Die Abschnitte des Dokuments werden nicht nummeriert.
+  
 
 [smallerMonospacedFont=BOOL]:
   Wähle einen kleineren Monospaced Font als standardmäßig.
@@ -384,7 +386,8 @@ dies nicht statt und das Dokument erhält kein Inhaltsverzeichnis.
 
 [maxLevel=N]:
   (Default: 3) Tiefe, bis zu welcher Abschnitte ins Inhaltsverzeichnis
-  aufgenommen werden. Mögliche Werte: -2, -1, 0, 1, 2, 3, 4. -2 = kein
+  aufgenommen werden. Mögliche Werte: -2, -1, 0, 1, 2, 3, 4, 5, 6, wobei
+  das Maximum vom Zielformat abhängt (LaTeX: 4, HTML: 6). -2 = kein
   Inhaltsverzeichnis.
 
 ---PageBreak---

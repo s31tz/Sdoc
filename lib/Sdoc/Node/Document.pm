@@ -264,7 +264,8 @@ ob für das Dokument ein Anker erzeugt werden muss.
 =item sectionNumberLevel => $n (Default: 3)
 
 Abschnittsebene, bis zu welcher Abschnitte nummeriert werden.
-Mögliche Werte: -2, -1, 0, 1, 2, 3, 4. -2 = keine
+Mögliche Werte: -2, -1, 0, 1, 2, 3, 4, 5, 6,  wobei das Maximum
+vom Zielformat abhängt (LaTeX: 4, HTML: 6). -2 = keine
 Abschnittsnummerierung.
 
 =item sectionA => \@sections (memoize)
@@ -1546,7 +1547,8 @@ Ebenennummer (Integer) oder C<undef>
 Ermittele die höchste Abschnittsebene des Dokuments und liefere
 deren Ebenennummer zurück. Die höchste Abschnittsebene ist die
 Abschnittsebene mit der I<niedrigsten> Ebenennummer (level). Es
-gibt die Ebenennummern: -1, 0, 1, 2, 3, 4. Enthält das Dokument
+gibt die Ebenennummern: -1, 0, 1, 2, 3, 4, 5, 6, wobei das Maximum
+vom Zielformat abhängt (LaTeX: 4, HTML: 6). Enthält das Dokument
 keinen Abschnitt, wird C<undef> geliefert.
 
 =cut
@@ -1611,6 +1613,7 @@ sub numberSections {
             }
             elsif ($level < $lastLevel) {
                 # Wir steigen n Ebenen hoch -> untergeordnete Ebenen entfernen
+
                 splice @num,-($lastLevel-$level);
                 $num[-1]++;
             }
@@ -2262,7 +2265,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2019 Frank Seitz
+Copyright (C) 2020 Frank Seitz
 
 =head1 LICENSE
 

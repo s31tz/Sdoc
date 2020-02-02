@@ -8,7 +8,7 @@ use warnings;
 our $VERSION = '1';
 
 use Sdoc::Core::LineProcessor;
-use Sdoc::Core::OrderedHash;
+use Sdoc::Core::Hash::Ordered;
 
 # -----------------------------------------------------------------------------
 
@@ -99,7 +99,7 @@ sub new {
         parent=>undef,
         type=>'Item',
         childs=>[],
-        anchors=>Sdoc::Core::OrderedHash->new,
+        anchors=>Sdoc::Core::Hash::Ordered->new,
         label=>$label, # Punktsymbol, Nummer oder Text
         key=>$key,
         anchor=>$anchor,
@@ -269,7 +269,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2019 Frank Seitz
+Copyright (C) 2020 Frank Seitz
 
 =cut
 

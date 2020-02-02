@@ -30,7 +30,7 @@ use Sdoc2::PageBreak;
 use Sdoc::Core::Option;
 use Sdoc::Core::LineProcessor;
 use Sdoc::Core::Hash;
-use Sdoc::Core::OrderedHash;
+use Sdoc::Core::Hash::Ordered;
 use Sdoc::Core::Object;
 use Sdoc::Core::Html::Tag;
 use Sdoc::Core::Path;
@@ -198,7 +198,7 @@ sub new {
         parent=>undef,
         childs=>[],
         links=>Sdoc::Core::Hash->new->unlockKeys, # für Link-Definitionen
-        anchorsGlob=>Sdoc::Core::OrderedHash->new,
+        anchorsGlob=>Sdoc::Core::Hash::Ordered->new,
         generateAnchors=>1,
         html4=>$html4,
         tableAndFigureNumbers=>$tableAndFigureNumbers,
@@ -629,7 +629,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2019 Frank Seitz
+Copyright (C) 2020 Frank Seitz
 
 =cut
 

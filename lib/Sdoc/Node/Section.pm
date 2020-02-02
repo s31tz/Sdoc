@@ -325,6 +325,41 @@ sub linkText {
 
 # -----------------------------------------------------------------------------
 
+=head2 Ebenen
+
+=head3 levelCount() - Anzahl der Ebenen
+
+=head4 Synopsis
+
+  $n = $sec->levelCount;
+
+=head4 Returns
+
+Integer
+
+=head4 Description
+
+Liefere die Anzahl der Ebenen von der aktuellen Ebene bis zur
+Wurzel des Dokuments. Dieser Wert wird gebraucht, um die
+Ebenennummer von HTML- und MediaWiki-Abschnitten zu ermitteln.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub levelCount {
+    my $self = shift;
+
+    my $n = 1;
+    while ($self = $self->parent) {
+        $n++;
+    }
+
+    return $n-1;
+}
+
+# -----------------------------------------------------------------------------
+
 =head2 Formate
 
 =head3 htmlCode() - Generiere HTML-Code
@@ -458,7 +493,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2019 Frank Seitz
+Copyright (C) 2020 Frank Seitz
 
 =head1 LICENSE
 

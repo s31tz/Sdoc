@@ -7,7 +7,7 @@ use warnings;
 
 our $VERSION = '1';
 
-use Sdoc::Core::OrderedHash;
+use Sdoc::Core::Hash::Ordered;
 
 # -----------------------------------------------------------------------------
 
@@ -71,7 +71,7 @@ sub new {
     my $self = $class->SUPER::new(
         parent=>undef,
         type=>'TableOfContents',
-        anchors=>Sdoc::Core::OrderedHash->new,
+        anchors=>Sdoc::Core::Hash::Ordered->new,
         maxDepth=>undef,
         title=>'', # kein Title
     );
@@ -180,7 +180,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2019 Frank Seitz
+Copyright (C) 2020 Frank Seitz
 
 =cut
 

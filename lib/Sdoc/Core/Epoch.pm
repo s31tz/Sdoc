@@ -5,7 +5,7 @@ use v5.10;
 use strict;
 use warnings;
 
-our $VERSION = '1.166';
+our $VERSION = '1.173';
 
 use Time::HiRes ();
 use Time::Local ();
@@ -75,8 +75,10 @@ sub new {
     if ($epoch !~ /^[\d.]+$/) {
         # ISO Zeitangabe
 
-        $epoch =~ s/(\.\d+)//;
-        my $x = $1;
+        my $x;
+        if ($epoch =~ s/(\.\d+)//) {
+            $x = $1;
+        }
 
         if (length($epoch) == 10) {
             $epoch .= ' 00:00:00';
@@ -406,7 +408,7 @@ sub asIso {
 
 =head1 VERSION
 
-1.166
+1.173
 
 =head1 AUTHOR
 
@@ -414,7 +416,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2019 Frank Seitz
+Copyright (C) 2020 Frank Seitz
 
 =head1 LICENSE
 

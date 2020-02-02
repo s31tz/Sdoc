@@ -5,7 +5,7 @@ use v5.10;
 use strict;
 use warnings;
 
-our $VERSION = '1.166';
+our $VERSION = '1.173';
 
 use Sdoc::Core::Math;
 
@@ -34,7 +34,7 @@ L<Sdoc::Core::Hash>
   $a->isNotNull('xyz');
   
   # Prüfe, ob Wert eine Zahl ist
-  $a->isNumber(3.14152);
+  $a->isNumber(3.14159);
 
 =head1 DESCRIPTION
 
@@ -106,7 +106,7 @@ sub new {
 
 # -----------------------------------------------------------------------------
 
-=head2 Tests
+=head2 Zusicherungen
 
 Die folgenden Testmethoden können sowohl als Klassen- als auch als
 Objektmethoden aufgerufen werden. Im Void-Kontext gerufen, werfen sie
@@ -346,7 +346,7 @@ sub isNumber {
 
 =head1 VERSION
 
-1.166
+1.173
 
 =head1 AUTHOR
 
@@ -354,7 +354,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2019 Frank Seitz
+Copyright (C) 2020 Frank Seitz
 
 =head1 LICENSE
 

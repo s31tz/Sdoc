@@ -12,12 +12,12 @@ in eine Online-Fassung (HTML) und in eine Druck-Fassung (PDF)
 übersetzt werden.
 
 Die Online-Fassung ist für die Wiedergabe in einem Webbrowser gedacht.
-Ihr Aussehen kann via CSS gestaltet werden.
+Dass Aussehen des Dokuments kann via CSS gestaltet werden.
 
 Die Druck-Fassung wird von LaTeX gesetzt und besitzt eine entsprechend
 hohe Qualität für die Wiedergabe auf Papier. In einem PDF-Viewer kann
-die Druck-Fassung ebenso wie die Online-Fassung interaktiv genutzt werden,
-da sie mit Hyperlinks versehen ist.
+in der Druck-Fassung, ebenso wie in der Online-Fassung, interaktiv
+navigiert werden, da sie mit Hyperlinks versehen ist.
 
 =head1 AUTHOR
 

@@ -75,7 +75,8 @@ Viewer zum Anzeigen des erzeugten PDF.
 =item --section-number-level=N
 
 Forciere die Abschnittsebene, bis zu welcher Abschnitte nummeriert
-werden. Mögliche Werte: -2, -1, 0, 1, 2, 3, 4. -2 bedeutet: Die
+werden. Mögliche Werte: -2, -1, 0, 1, 2, 3, 4, 5, 6, wobei das Maximum
+vom Zielformat abhängt (LaTeX: 4, HTML: 6). -2 bedeutet: Die
 Abschnitte des Dokuments werden nicht nummeriert.
 
 =item --selector=SELECTOR (Default: '.sdoc-code text')
@@ -244,7 +245,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2019 Frank Seitz
+Copyright (C) 2020 Frank Seitz
 
 =head1 LICENSE
 

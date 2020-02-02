@@ -4,7 +4,7 @@ use v5.10;
 use strict;
 use warnings;
 
-our $VERSION = '1.166';
+our $VERSION = '1.173';
 
 use Sdoc::Core::Path;
 use Scalar::Util ();
@@ -68,6 +68,10 @@ Die Regeln der Umwandlung:
 
 =item *
 
+Kommentare (\s*//.*) werden entfernt
+
+=item *
+
 Leerzeilen und Zeilen nur aus Whitespace werden entfernt
 
 =item *
@@ -95,6 +99,7 @@ sub line {
     my $line = '';
     open my $fh,'<',\$code or $self->throw;
     while (<$fh>) {
+        s|\s*//.*||; # Kommentar entfernen
         s/^\s+//;
         s/\s+$//;
         next if $_ eq '';
@@ -114,7 +119,7 @@ sub line {
 
 =head4 Synopsis
 
-  $scriptTags = Sdoc::Core::JavaScript->script($h,@specs);
+  $html = Sdoc::Core::JavaScript->script($h,@specs);
 
 =head4 Arguments
 
@@ -159,13 +164,13 @@ Wird zu @specs expandiert.
 
 Code zum Laden einer JavaScript-Datei über URL:
 
-  $script = Sdoc::Core::JavaScript->script($h,'https://host.dom/scr.js');
+  $html = Sdoc::Core::JavaScript->script($h,'https://host.dom/scr.js');
   =>
   <script src="https://host.dom/scr.js" type="text/javascript"></script>
 
 Code aus Datei einfügen:
 
-  $style = Sdoc::Core::JavaScript->script($h,'inline:js/script.css');
+  $html = Sdoc::Core::JavaScript->script($h,'inline:js/script.css');
   =>
   <script type="text/javascript">
     ...
@@ -173,7 +178,7 @@ Code aus Datei einfügen:
 
 Code direkt einfügen:
 
-  $style = Sdoc::Core::JavaScript->script($h,q|
+  $html = Sdoc::Core::JavaScript->script($h,q|
       ...
   |);
   =>
@@ -183,14 +188,14 @@ Code direkt einfügen:
 
 Mehrere Code-Spezifikationen:
 
-  $style = Sdoc::Core::JavaScript->script(
+  $html = Sdoc::Core::JavaScript->script(
       '...'
       '...'
   );
 
 Mehrere Code-Spezifikationen via Arrayreferenz:
 
-  $style = Sdoc::Core::JavaScript->script(
+  $html = Sdoc::Core::JavaScript->script(
       ['...','...']
   );
 
@@ -255,7 +260,7 @@ sub script {
 
 =head1 VERSION
 
-1.166
+1.173
 
 =head1 AUTHOR
 
@@ -263,7 +268,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2019 Frank Seitz
+Copyright (C) 2020 Frank Seitz
 
 =head1 LICENSE
 

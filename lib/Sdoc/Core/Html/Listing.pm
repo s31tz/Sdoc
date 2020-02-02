@@ -5,7 +5,7 @@ use v5.10;
 use strict;
 use warnings;
 
-our $VERSION = '1.166';
+our $VERSION = '1.173';
 
 use Sdoc::Core::FileHandle;
 
@@ -83,36 +83,15 @@ Inhalt. Dieser kann aus einer Datei oder einem String kommen.
 
 Programm:
 
-   1: require R1::HtmlTag;
-   2: require R1::Html::Listing;
-   3: 
-   4: my $h = R1::HtmlTag->new;
-   5: 
-   6: my $text = << '__PERL__';
-   7: #!/usr/bin/perl
-   8: 
-   9: =encoding utf8
-  10: 
-  11: Nur ein Demo-Programm.
-  12: 
-  13: =cut
-  14: 
-  15: print "Hello world!\n";
-  16: 
-  17: # eof
-  18: __PERL__
-  19: 
-  20: my $html = R1::Html::Listing->html($h,
-  21:     cssPrefix=>'sdoc-code',
-  22:     language=>'Perl',
-  23:     source=>\$text,
-  24: );
+  1: Command failed: Blob/sdoc_reference/sdoc-highlight perl pod
 
 Ergebnis:
 
-  1: 
+  1: Command failed: Blob/R1/Html/Listing/html-listing.pl html
 
 Im Browser:
+
+Command failed: Blob/R1/Html/Listing/html-listing.pl pod%%CLASS-CODE%%
 
 =head1 METHODS
 
@@ -400,7 +379,7 @@ sub html {
 
 =head1 VERSION
 
-1.166
+1.173
 
 =head1 AUTHOR
 
@@ -408,7 +387,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2019 Frank Seitz
+Copyright (C) 2020 Frank Seitz
 
 =head1 LICENSE
 

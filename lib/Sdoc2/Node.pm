@@ -548,19 +548,29 @@ sub urlSegment {
         $attH->set($str =~ /(\w+)="(.*?)"/g);
     }
 
-    # Wenn U{TEXT} (d.h. kein Schema am Anfang, keine Extension am
-    # Ende), schlagen wir die Link-Definition (%Link:) mit TEXT nach
-    # und kopieren dessen Eigenschaften
+    #!! ALT: Wenn U{TEXT} (d.h. kein Schema am Anfang, keine Extension am
+    #!! Ende), schlagen wir die Link-Definition (%Link:) mit TEXT nach
+    #!! und kopieren dessen Eigenschaften
+    #
+    #if ($url !~ /^[a-z]+:/ && $url !~ /\.[a-z]+$/) {
+    #    $url =~ s/\n\s*/ /g; # innere Zeilenumbrüche durch ein Space ersetzen
+    #    my $lnk = $self->rootNode->links->get($url);
+    #    if (!$lnk) {
+    #        $self->throw(
+    #            'SDOC-00005: Link ist nicht definiert',
+    #            Link=>$url,
+    #        );
+    #    }
+    #    $attH->set(text=>$url);
+    #    $url = $lnk->url;
+    #}
 
-    if ($url !~ /^[a-z]+:/ && $url !~ /\.[a-z]+$/) {
-        $url =~ s/\n\s*/ /g; # innere Zeilenumbrüche durch ein Space ersetzen
-        my $lnk = $self->rootNode->links->get($url);
-        if (!$lnk) {
-            $self->throw(
-                'SDOC-00005: Link ist nicht definiert',
-                Link=>$url,
-            );
-        }
+    # NEU: Wenn U{TEXT} eine Link-Definition (%Link:) existiert, setzen wir
+    # die entsprechenden Eigenschaften
+
+    $url =~ s/\n\s*/ /g; # innere Zeilenumbrüche durch ein Space ersetzen
+    my $lnk = $self->rootNode->links->get($url);
+    if ($lnk) {
         $attH->set(text=>$url);
         $url = $lnk->url;
     }
@@ -874,7 +884,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2019 Frank Seitz
+Copyright (C) 2020 Frank Seitz
 
 =cut
 

@@ -6,7 +6,7 @@ use strict;
 use warnings;
 use utf8;
 
-our $VERSION = '1.166';
+our $VERSION = '1.173';
 
 use Sdoc::Core::Css;
 use Sdoc::Core::Template;
@@ -532,6 +532,7 @@ my %Element = (
     colgroup => 'm',   # Definition einer Spaltengruppe
     dd => 'v',         # Text Definitionsliste
     del => 'i',        # gelöschter Text
+    details => 'm',    # Details, die aufklappbar sind
     dfn => 'i',        # Text ist Definition
     div => 'm',        # allgemeines Block-Element
     dl => 'm',         # Definitionsliste
@@ -580,6 +581,7 @@ my %Element = (
     strong => 'i',     # stark hervorgehobener Text
     style => 'v',      # Stylesheet-Regeln
     sub => 'i',        # tiefgestellter Text
+    summary => 'm',    # Kurzbeschreibung zu Details (<details>)
     sup => 'i',        # hochgestellter Text
     table => 'M',      # Tabelle
     tbody => 'm',      # Rumpf Tabelle
@@ -2176,7 +2178,7 @@ sub import {
 
 =head1 VERSION
 
-1.166
+1.173
 
 =head1 AUTHOR
 
@@ -2184,7 +2186,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2019 Frank Seitz
+Copyright (C) 2020 Frank Seitz
 
 =head1 LICENSE
 

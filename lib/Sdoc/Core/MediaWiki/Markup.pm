@@ -6,7 +6,7 @@ use strict;
 use warnings;
 use utf8;
 
-our $VERSION = '1.166';
+our $VERSION = '1.173';
 
 use Sdoc::Core::Unindent;
 use Sdoc::Core::Parameters;
@@ -1134,7 +1134,7 @@ sub table {
     my $titleA = [];
     my $valueCb = undef;
 
-    Sdoc::Core::Parameters->extractPropertiesToVariables(\@_,
+    $self->parameters(\@_,
         alignments => \$alignA,
         bodyBackground => \$bodyBackground,
         caption => \$caption,
@@ -1823,7 +1823,7 @@ sub testPage {
 
 =head1 VERSION
 
-1.166
+1.173
 
 =head1 AUTHOR
 
@@ -1831,7 +1831,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2019 Frank Seitz
+Copyright (C) 2020 Frank Seitz
 
 =head1 LICENSE
 

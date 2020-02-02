@@ -6,10 +6,11 @@ use strict;
 use warnings;
 use utf8;
 
-our $VERSION = '1.166';
+our $VERSION = '1.173';
 
 use Sdoc::Core::Path;
 use Sdoc::Core::Option;
+use Sdoc::Core::Unindent;
 use Scalar::Util ();
 use Sdoc::Core::Reference;
 
@@ -183,6 +184,74 @@ sub new {
 
 # -----------------------------------------------------------------------------
 
+=head2 Klassenmethoden
+
+=head3 combine() - Ersetze Platzhalter in Text
+
+=head4 Synopsis
+
+  $str = $class->combine(@argVal);
+
+=head4 Arguments
+
+=over 4
+
+=item placeholders => \@keyVal (Default: [])
+
+Liste von Platzhalter/Wert-Paaren.
+
+=item template => $text (Default: '')
+
+Text mit Platzhaltern.
+
+=back
+
+=head4 Description
+
+Ersetze in Template $text die Platzhalter durch die Werte aus
+@keyVal und liefere den resultierenden Text zurück. Die Methode
+ist eine Vereinfachung, sie instantiiert intern ein Template-Objekt,
+wendet darauf die Methode replace() an und liefert den
+resultierenden Text zurück.
+
+=head4 Example
+
+  $js = Sdoc::Core::Template->substitute(
+      placeholders => [
+          __NAME__ => $name,
+          __CONFIG__ => $config,
+      ],
+      template => q~
+          Chart.defaults.global.defaultFontSize = 12;
+          Chart.defaults.global.animation.duration = 1000;
+          var __NAME__ = new Chart('__NAME__',__CONFIG__);
+  ~);
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub combine {
+    my $class = shift;
+    # @_: @keyVal
+
+    my $placeholderA = [];
+    my $template = '';
+
+    $class->parameters(\@_,
+        placeholders => \$placeholderA,
+        template => \$template,
+    );
+
+    $template = Sdoc::Core::Unindent->string($template);
+    my $tpl = $class->new('text',\$template);
+    $tpl->replace(@$placeholderA);
+
+    return $tpl->asStringNL;
+}
+
+# -----------------------------------------------------------------------------
+
 =head2 Objektmethoden
 
 =head3 placeholders() - Liefere Liste der Platzhalter
@@ -292,11 +361,13 @@ sub replace {
 
         if ($val =~ tr/\n//) {
             # Ist der Wert mehrzeilig, gehen wir jede einzelne Fundstelle
-            # durch und rücken jede Zeile des Werts so weit ein wie der
-            # Platzhalter eingerückt ist.
+            # durch und rücken jede Zeile des Werts so weit ein wie die
+            # Zeile, in der der Platzhalter vorkommt, eingerückt ist.
 
             while (1) {
-                if ($self->{'string'} !~ /(^[ \t]*)?\Q$key/m) {
+                # vor 2019-12-08
+                # if ($self->{'string'} !~ /(^[ \t]*)?\Q$key/m) {
+                if ($self->{'string'} !~ /^([ \t]*).*\Q$key/m) {
                     # Ende: Key kommt nicht mehr vor
                     last;
                 }
@@ -803,7 +874,7 @@ sub asStringNL {
 
 =head1 VERSION
 
-1.166
+1.173
 
 =head1 AUTHOR
 
@@ -811,7 +882,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2019 Frank Seitz
+Copyright (C) 2020 Frank Seitz
 
 =head1 LICENSE
 

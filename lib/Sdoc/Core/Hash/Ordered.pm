@@ -1,11 +1,11 @@
-package Sdoc::Core::OrderedHash;
+package Sdoc::Core::Hash::Ordered;
 use base qw/Sdoc::Core::Object/;
 
 use v5.10;
 use strict;
 use warnings;
 
-our $VERSION = '1.166';
+our $VERSION = '1.173';
 
 use Sdoc::Core::Hash;
 
@@ -15,7 +15,7 @@ use Sdoc::Core::Hash;
 
 =head1 NAME
 
-Sdoc::Core::OrderedHash - Hash mit geordneten Elementen
+Sdoc::Core::Hash::Ordered - Hash mit geordneten Elementen
 
 =head1 BASE CLASS
 
@@ -409,7 +409,7 @@ sub exists {
 
 =head1 VERSION
 
-1.166
+1.173
 
 =head1 AUTHOR
 
@@ -417,7 +417,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2019 Frank Seitz
+Copyright (C) 2020 Frank Seitz
 
 =head1 LICENSE
 
