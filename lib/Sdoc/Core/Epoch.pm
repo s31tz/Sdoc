@@ -337,9 +337,18 @@ Formatangabe. Folgende Formate sind definiert:
 
 =over 4
 
+=item YYYY-MM-DD
+
+Datum in ISO-Darstellung.
+
 =item YYYY-MM-DD HH:MI:SS
 
 Zeit in ISO-Darstellung.
+
+=item YYYY-MM-DD HH:MI:SS.XXX
+
+Zeit in ISO-Darstellung mit Nachkommastellen. Die Anzahl der X
+gibt die Anzahl der Nachkommastellen an (in obiger Angabe drei).
 
 =back
 
@@ -367,12 +376,16 @@ Der Zeitpunkt wird in der lokalen Zeitzone interpretiert.
 sub as {
     my ($self,$fmt) = @_;
 
-    my $strFmt;
+    my ($strFmt,$n);
     if ($fmt eq 'YYYY-MM-DD HH:MI:SS') {
         $strFmt = '%Y-%m-%d %H:%M:%S';
     }
     elsif ($fmt eq 'YYYY-MM-DD') {
         $strFmt = '%Y-%m-%d';
+    }
+    elsif ($fmt =~ /^YYYY-MM-DD HH:MI:SS\.(X+)$/) {
+        $strFmt = '%Y-%m-%d %H:%M:%S';
+        $n = length($1);
     }
     else {
         $self->throw(
@@ -381,8 +394,17 @@ sub as {
         );
     }
     
-    return POSIX::strftime($strFmt,CORE::localtime $$self);
-} 
+    my $str = POSIX::strftime($strFmt,CORE::localtime $$self);
+    if ($n) {
+        # Mit Nachkommastellen
+
+        my ($x) = $$self =~ /\.(\d+)/;
+        $x //= '000000';
+        $str .= '.'.substr $x,0,$n;
+    }
+
+    return $str;
+}
 
 # -----------------------------------------------------------------------------
 
@@ -401,7 +423,14 @@ Zeit-Darstellung (String)
 # -----------------------------------------------------------------------------
 
 sub asIso {
-    return shift->as('YYYY-MM-DD HH:MI:SS');
+    my ($self,$x) = @_;
+
+    my $fmt = 'YYYY-MM-DD HH:MI:SS';
+    if ($x) {
+         $fmt .= '.'.('X' x $x);
+    }
+
+    return $self->as($fmt);
 }
 
 # -----------------------------------------------------------------------------
