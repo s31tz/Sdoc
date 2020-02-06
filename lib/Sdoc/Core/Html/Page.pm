@@ -224,16 +224,26 @@ sub html {
 
     # ready-Handler
 
-    my $readyHandlers = '';
+    #my $readyHandlers = '';
+    #for (@$readyA) {
+    #    $readyHandlers .= Sdoc::Core::JQuery::Function->ready($_)."\n";
+    #}
+    #if ($readyHandlers) {
+    #    push @$javaScript,$readyHandlers;
+    #}
+
     for (@$readyA) {
-        $readyHandlers .= Sdoc::Core::JQuery::Function->ready($_)."\n";
-    }
-    if ($readyHandlers) {
-        push @$javaScript,$readyHandlers;
+        push @$javaScript,Sdoc::Core::JQuery::Function->ready($_);
     }
 
     # Script-Definition(en)
-    my $scriptTags = Sdoc::Core::JavaScript->script($h,$javaScript);
+
+    # my $scriptTags = Sdoc::Core::JavaScript->script($h,$javaScript);
+
+    my $scriptTags;
+    for my $js (@$javaScript) {
+        $scriptTags .= Sdoc::Core::JavaScript->script($h,$js);
+    }
 
     # Wenn $body keinen body-Tag enthält, fügen wir ihn hinzu.
 
