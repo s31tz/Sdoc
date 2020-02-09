@@ -413,6 +413,17 @@ sub as {
 =head4 Synopsis
 
   $str = $t->asIso;
+  $str = $t->asIso($x);
+
+=head4 Arguments
+
+=over 4
+
+=item $x (Default: 0)
+
+Anzahl der Nachkommastellen.
+
+=back
 
 =head4 Returns
 
