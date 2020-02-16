@@ -27,8 +27,9 @@ L<Sdoc::Core::Object>
 =head1 DESCRIPTION
 
 Ein Objekt der Klasse repräsentiert ein Array. Jede der Methoden kann
-sowohl auf ein Objekt der Klasse als auch per Aufruf als Klassenmethode
-auf ein ungeblesstes Perl-Array angewendet werden.
+sowohl auf ein Objekt der Klasse als auch als Klassenmethode
+auf ein ungeblesstes oder eine andere Klasse geblesstes
+Perl-Array angewendet werden.
 
 Aufruf als Objektmethode:
 
