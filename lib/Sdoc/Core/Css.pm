@@ -40,6 +40,7 @@ Format des generierten CSS-Code.
 
 =head4 Synopsis
 
+  $css = $class->new;
   $css = $class->new($format);
 
 =head4 Arguments
