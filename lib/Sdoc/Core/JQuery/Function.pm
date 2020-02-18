@@ -299,9 +299,15 @@ L<https://api.jquery.com/ready/>
 
 sub ready {
     my $this = shift;
-    my $body = Sdoc::Core::Unindent->trim(shift);
-    $body =~ s/^/    /mg;
-    return "\$(function() {\n$body\n});"
+    my $js = shift // '';
+
+    if ($js) {
+        $js = Sdoc::Core::Unindent->trim($js);
+        $js =~ s/^/    /mg;
+        $js = "\$(function() {\n$js\n});";
+    }
+
+    return $js;
 }
 
 # -----------------------------------------------------------------------------
