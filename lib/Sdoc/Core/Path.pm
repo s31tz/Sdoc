@@ -708,7 +708,8 @@ sub newlineStr {
 
 =item $name
 
-Grundname der Datei einschließlich Pfad.
+Grundname der Datei. Kann leer (Leerstring oder C<undef>) sein,
+dann besteht der Dateiname nur aus aus der laufenden Nummer.
 
 =item $n
 
@@ -716,7 +717,7 @@ Anzahl der Stellen der laufenden Nummer.
 
 =item $ext
 
-Extension der Datei.
+Extension der Datei. Kann leer (Leerstring oder C<undef>) sein.
 
 =back
 
@@ -756,8 +757,77 @@ sub nextFile {
     my $file = $files[-1] // sprintf '%s-%0*d.%s',$name,$n,0,$ext;
     my ($i) = $file =~ /^\Q$name\E-(\d+).\Q$ext\E/;
     $file = sprintf "%s-%0*d.%s",$name,$n,++$i,$ext;
-
+    
     return $file;
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 nextNumber() - Generiere nächste Dateinamen-Nummer
+
+=head4 Synopsis
+
+  $num = $this->nextNumber($dir,$width);
+
+=head4 Arguments
+
+=over 4
+
+=item $dir
+
+Verzeichnis mit nummierten Dateien.
+
+=item $width
+
+Anzahl der Stellen der Nummer.
+
+=back
+
+=head4 Returns
+
+Nummer mit der angegebenen Anzahl Stellen, ggf. mit führenden 0en
+aufgefüllt.
+
+=head4 Description
+
+Ermittele und liefere die nächste Nummer eines Verzeichnisses mit
+nummerierten Dateien. Die Dateinamen haben einen beliebigen
+Aufbau, müssen aber eine Nummer mit genau $width Stellen
+besitzen. Die laufende Nummer NNNN (deren Breite durch den zweiten
+Parameter festgelegt ist) wird anhand der vorhandenen Dateien
+im Verzeichnis $dir ermittelt und um 1 erhöht.
+
+=head4 Example
+
+Es liegt noch keine Datei mit einer dreistelligen Nummer NNN vor:
+
+  $num = Sdoc::Core::Path->nextNumber($dir,3);
+  =>
+  001
+
+Die Datei mit der höchsten dreistelligen Nummer NNN enthält 031:
+
+  $num = Sdoc::Core::Path->nextNumber($dir,3);
+  =>
+  032
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub nextNumber {
+    my ($this,$dir,$width) = @_;
+
+    my $n = 0;
+    for my $file ($this->glob("$dir/*")) {
+        if ($file =~ /(?:^|\D)(\d{$width})(?:$|\D)/) {
+            if ($1 > $n) {
+                $n = $1+0;
+            }
+        }
+    }
+
+    return sprintf '%0*d',$width,++$n;
 }
 
 # -----------------------------------------------------------------------------
