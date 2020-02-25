@@ -179,7 +179,7 @@ sub dayName {
 
 # -----------------------------------------------------------------------------
 
-=head2 Zeit-Arithmetik
+=head2 Arithmetik
 
 =head3 minus() - Verschiebe Zeitpunkt in Vergangenheit
 
@@ -251,6 +251,43 @@ sub plus {
     my ($self,$duration) = @_;
     $$self += Sdoc::Core::Duration->new($duration)->asSeconds;
     return $self;
+}
+
+# -----------------------------------------------------------------------------
+
+=head2 Vergleiche
+
+=head3 less() - Prüfe auf kleiner als
+
+=head4 Synopsis
+
+  $bool = $t1->less($t2);
+
+=head4 Arguments
+
+=over 4
+
+=item $t2
+
+Epoch-Objekt.
+
+=back
+
+=head4 Returns
+
+Boolean
+
+=head4 Description
+
+Liefere wahr, wenn der Zeitpunkt $ti1 vor dem Zeitpunkt $ti2
+liegt, andernfalls falsch.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub less {
+    return ${$_[0]} < ${$_[1]};
 }
 
 # -----------------------------------------------------------------------------

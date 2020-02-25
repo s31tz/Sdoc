@@ -1302,7 +1302,7 @@ sub equal {
 
 # -----------------------------------------------------------------------------
 
-=head3 less() - Prüfe auf kleiner
+=head3 less() - Prüfe auf kleiner als
 
 =head4 Synopsis
 
