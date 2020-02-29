@@ -2814,6 +2814,10 @@ Datei $after ein. Ist $after leer (Leerstring oder undef), werden
 die Pfade an den Anfang gestellt. Alle Angaben I<vor> der
 (Re-)Nummerierung.
 
+=item -start => $n (Default: $step)
+
+Verwende $n als Startwert.
+
 =back
 
 =head4 Description
@@ -2852,9 +2856,11 @@ sub numberPaths {
     # Optionen
 
     my $moveA = undef;
+    my $start = undef;
 
     my $argA = $this->parameters(3,3,\@_,
         -move => \$moveA,
+        -start => \$start,
     );
     my ($pathA,$width,$step) = @$argA;
 
@@ -2908,7 +2914,7 @@ sub numberPaths {
 
     # Nummeriere Dateien mit Endung .tmp
 
-    my $n = $step;
+    my $n = defined $start? $start: $step;
     my @tmpPath;
     for my $path (@$pathA) {
         my ($dir,undef,$base,$ext) = $this->split($path);
