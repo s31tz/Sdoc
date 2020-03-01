@@ -5,7 +5,7 @@ use v5.10;
 use strict;
 use warnings;
 
-our $VERSION = '1.176';
+our $VERSION = '1.177';
 
 use Sdoc::Core::Converter;
 use Sdoc::Core::Hash;
@@ -428,7 +428,7 @@ sub extractToObject {
 
 =head1 VERSION
 
-1.176
+1.177
 
 =head1 AUTHOR
 
