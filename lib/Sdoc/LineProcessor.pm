@@ -246,7 +246,8 @@ sub nextType {
 
   $attribH = $par->readBlock; # ohne Content
   $attribH = $par->readBlock($key); # mit Content
-  $attribH = $par->readBlock($key,\@noContent); # mit Content mit Ausnahme
+  $attribH = $par->readBlock($key,\@noContent); # Content mit Ausnahme
+  $attribH = $par->readBlock($key,\@noContent,$orig);
 
 =head4 Arguments
 
@@ -255,12 +256,17 @@ sub nextType {
 =item $key
 
 Wenn angegeben, besitzt der Block einen Inhalt. Dieser Inhalt wird
-geparst und an das Attibut $key des gelieferten Hash zugewiesen.
+geparst und an das Attibut $key des gelieferten Hashs zugewiesen.
 
 =item \@noContent
 
 Liste der Attribute, bei deren Auftreten der Knoten keinen Content
 hat. Beispiel: %Code-Block mit Attribut C<load=PATH>.
+
+=item $orig
+
+Der Content wird unverändert geliefert, also mit etwaiger
+Einrückung und Leerraum am Anfang und am Ende. Beispiel: %Format-Block.
 
 =back
 
@@ -287,6 +293,7 @@ sub readBlock {
     my $self = shift;
     my $key = shift;
     my $noContentA = shift // [];
+    my $orig = shift // 0;
 
     my $lineA = $self->lines;
     my $input = $lineA->[0]->input;
@@ -311,9 +318,11 @@ sub readBlock {
             }
             $content .= $line->textNl;
         }
-        chomp $content;
 
-        $attribH->{$key} = Sdoc::Core::Unindent->string($content);
+        if (!$orig) {
+            chomp $content;
+            $attribH->{$key} = Sdoc::Core::Unindent->string($content);
+        }
     }
 
     return $attribH;

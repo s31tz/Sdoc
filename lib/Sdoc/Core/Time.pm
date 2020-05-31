@@ -6,7 +6,7 @@ use strict;
 use warnings;
 use utf8;
 
-our $VERSION = '1.177';
+our $VERSION = '1.184';
 
 use Time::Local ();
 use Sdoc::Core::Duration;
@@ -1446,7 +1446,7 @@ sub monthAbbrToNum {
 
 =head1 VERSION
 
-1.177
+1.184
 
 =head1 AUTHOR
 

@@ -579,6 +579,9 @@ sub dump {
                     $h->tag('script',
                         src=>"$highlightUrl/scripts/shBrushXml.js",
                     ).
+                    $h->tag('script',
+                        src=>"$highlightUrl/scripts/shBrushSql.js",
+                    ).
                     $h->tag('script',q~
                         SyntaxHighlighter.all();
                     ~)

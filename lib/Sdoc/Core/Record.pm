@@ -5,7 +5,7 @@ use v5.10;
 use strict;
 use warnings;
 
-our $VERSION = '1.177';
+our $VERSION = '1.184';
 
 use Sdoc::Core::String;
 use Sdoc::Core::Option;
@@ -332,7 +332,7 @@ sub toFile {
 
 =head1 VERSION
 
-1.177
+1.184
 
 =head1 AUTHOR
 

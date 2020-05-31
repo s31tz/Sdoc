@@ -1802,6 +1802,33 @@ Ein %-Kommentar hat keine Eigenschaften.
 
 ---PageBreak---
 
+== Zielformatblock (Format)
+
+Mit diesem Konstrukt kann der Quelltext eines oder mehrerer
+Zielformate in das Dokument eingebunden werden. Der Quelltext wird
+ohne jede Änderung, auch was Einrückung und Leerraum angeht, bei
+Erzeugung des Dokuments in dem jeweiligen Zielformat in den
+Gesamtquelltext eins-zu-eins eingesetzt. Es ist ein Fehler, wenn ein
+Zielformatblock keinen Quelltext für das konkret erzeugte Zielformat
+definiert. Der Quelltext eines Zielformats kann aber leer sein.
+
+=== Eigenschaften
+
+  %Format:
+  @@FORMAT@@
+  CODE
+  ...
+  .
+
+[FORMAT]:
+  Name des Formats (Groß/Klein-Schreibung beliebig). Z.B. C{HTML},
+  C{Latex}, C{MediaWiki}.
+
+[CODE]:
+  Code des jeweiligen Formats.
+
+Es können mehrere FORMAT/CODE-Abschnitte aufeinanderfolgen.
+
 == Stilvorlage (Style)
 
 In HTML kann das Aussehen des Dokuments durch CSS-Regeln verändert

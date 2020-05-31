@@ -9,16 +9,16 @@ use strict;
 use warnings;
 use utf8;
 
-our $VERSION = '1.177';
+our $VERSION = '1.184';
 
 use Time::HiRes ();
 use Sdoc::Core::Duration;
+use Sdoc::Core::AnsiColor;
 use Sdoc::Core::Option;
 use Sdoc::Core::Path;
 use Sdoc::Core::Converter;
 use Sdoc::Core::Process;
 use Cwd ();
-use Sdoc::Core::AnsiColor;
 
 # -----------------------------------------------------------------------------
 
@@ -163,7 +163,11 @@ sub DESTROY {
         my $pre = $self->{'msgPrefix'};
         my $t = Time::HiRes::gettimeofday-$self->{'t0'};
         my $duration = Sdoc::Core::Duration->new($t)->asString(2);
-        printf $fd "%s%s: %s\n",$pre,$prog,$duration;
+
+        # printf $fd "%s%s: %s\n",$pre,$prog,$duration;
+        my $esc = $self->{'cmdAnsiColor'};
+        my $a = Sdoc::Core::AnsiColor->new($esc);
+        printf $fd $a->strLn($esc,sprintf "%s%s: %s",$pre,$prog,$duration);
     }
 
     return;
@@ -630,7 +634,7 @@ sub _logCmd {
 
 =head1 VERSION
 
-1.177
+1.184
 
 =head1 AUTHOR
 
