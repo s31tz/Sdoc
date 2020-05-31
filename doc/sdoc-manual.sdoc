@@ -1829,6 +1829,8 @@ definiert. Der Quelltext eines Zielformats kann aber leer sein.
 
 Es können mehrere FORMAT/CODE-Abschnitte aufeinanderfolgen.
 
+---PageBreak---
+
 == Stilvorlage (Style)
 
 In HTML kann das Aussehen des Dokuments durch CSS-Regeln verändert
