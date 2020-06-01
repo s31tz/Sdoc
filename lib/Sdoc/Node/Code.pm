@@ -361,7 +361,8 @@ sub css {
             my $codeStyle = $doc->getUserNodeConfigAttribute('codeStyle',
                 'default');
             $code .= eval{Sdoc::Core::Html::Pygments->css($codeStyle,
-                ".$cssClass table")} // '';
+                # ".$cssClass table")} // '';
+                ".$cssClass")} // '';
             if ($@) {
                 $doc->warn('Unknown code style: %s',$codeStyle);
             }

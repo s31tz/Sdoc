@@ -262,7 +262,11 @@ sub sdoc2ToSdoc3 {
         }
         elsif ($name eq 'Figure') {
             $block =~ s/%Figure:/%Graphic:/;
+            $block =~ s/file=/source=/;
             $block =~ s/url=/link=/;
+        }
+        elsif ($name eq 'Code') {
+            $block =~ s/highlight=/lang=/;
         }
 
         # warn "---\n$block";
