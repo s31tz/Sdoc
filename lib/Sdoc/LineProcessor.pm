@@ -321,8 +321,9 @@ sub readBlock {
 
         if (!$orig) {
             chomp $content;
-            $attribH->{$key} = Sdoc::Core::Unindent->string($content);
+            $content = Sdoc::Core::Unindent->string($content);
         }
+        $attribH->{$key} = $content;
     }
 
     return $attribH;

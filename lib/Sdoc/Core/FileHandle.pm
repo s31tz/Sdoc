@@ -138,7 +138,10 @@ sub new {
     }
     else {                          # Datei öffnen
         $mode = shift;
-        $path = Sdoc::Core::Path->expandTilde(shift);
+        $path = shift;
+        if (!ref $path) {
+            $path = Sdoc::Core::Path->expandTilde($path);
+        }
     }
 
     # Optionen

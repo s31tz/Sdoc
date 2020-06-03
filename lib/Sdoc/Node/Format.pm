@@ -174,7 +174,12 @@ sub htmlCode {
     my ($self,$h) = @_;
 
     if (!exists $self->{'formatH'}->{'html'}) {
-        die;
+        $self->throw(
+            'SDOC-00099: No content defined for format HTML',
+            File => $self->input,
+            Line => $self->lineNum,
+            -stacktrace => 0,
+        );
     }
 
     return $self->{'formatH'}->{'html'};
@@ -210,7 +215,12 @@ sub latexCode {
     my ($self,$l) = @_;
 
     if (!exists $self->{'formatH'}->{'latex'}) {
-        die;
+        $self->throw(
+            'SDOC-00099: No content defined for format LaTeX',
+            File => $self->input,
+            Line => $self->lineNum,
+            -stacktrace => 0,
+        );
     }
 
     return $self->{'formatH'}->{'latex'};
@@ -246,7 +256,12 @@ sub mediawikiCode {
     my ($self,$m) = @_;
 
     if (!exists $self->{'formatH'}->{'mediawiki'}) {
-        die;
+        $self->throw(
+            'SDOC-00099: No content defined for format MediaWiki',
+            File => $self->input,
+            Line => $self->lineNum,
+            -stacktrace => 0,
+        );
     }
 
     return $self->{'formatH'}->{'mediawiki'};
