@@ -131,6 +131,10 @@ Pfad der Bilddatei I<ohne> Extension. Beginnt der Pfad mit C<+/>,
 wird das Pluszeichen zum Pfad des Dokumentverzeichnisses
 expandiert.
 
+=item url => $url
+
+URL der Bilddatei. Wird in HTML genutzt, wenn angegeben.
+
 =item useCount => $n
 
 Die Anzahl der G-Segmente im Text, die diesen Grafik-Knoten
@@ -235,6 +239,7 @@ sub new {
         scale => undef,
         show => undef,
         source => undef,
+        url => undef,
         useCount => 0,
         width => undef,
         # memoize
@@ -577,25 +582,33 @@ sub htmlCode {
         return '';
     }
 
-    # Pfad der Bilddatei
+    # URL, Breite, Höhe des Bilds
 
-    my $imgFile = $self->getLocalPath('source',
-        -extensions => [qw/png jpg gif/],
-    );
-
-    # Breite/Höhe ermitteln
-
+    my $src = $self->url;
     my $width = $self->width;
     my $height = $self->height;
-    if (!$width || !$height) {
-        ($width,$height) = Sdoc::Core::File::Image->new($imgFile)->size;
-    }
 
-    # Skalieren
+    # Wenn kein UR angegeben ist, ziehen wir die Bilddatei heran
 
-    if (my $scale = $self->scale) {
-        $width = Sdoc::Core::Math->roundToInt($width*$scale);
-        $height = Sdoc::Core::Math->roundToInt($height*$scale);
+    if (!$src) {
+        # Pfad der Bilddatei
+
+        $src = $self->getLocalPath('source',
+            -extensions => [qw/png jpg gif/],
+        );
+
+        # Breite/Höhe ermitteln
+
+        if (!$width || !$height) {
+            ($width,$height) = Sdoc::Core::File::Image->new($src)->size;
+        }
+
+        # Skalieren
+
+        if (my $scale = $self->scale) {
+            $width = Sdoc::Core::Math->roundToInt($width*$scale);
+            $height = Sdoc::Core::Math->roundToInt($height*$scale);
+        }
     }
 
     # Bildunterschrift
@@ -617,7 +630,7 @@ sub htmlCode {
         height => $height,
         href => $self->htmlHref,
         id => $self->cssId, # FIXME: ggf. von indiv. CSS-Regeln abh. machen
-        src => $imgFile,
+        src => $src,
         width => $width,
     );
 }

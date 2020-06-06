@@ -701,6 +701,7 @@ In der Beschriftung (C{caption}) einer Abbildung können alle Segmente
     padding=LENGTH
     scale=FLOAT
     show=BOOL
+    url=URL
     width=INTEGER
 
 [align=left|center|right]:
@@ -763,6 +764,10 @@ In der Beschriftung (C{caption}) einer Abbildung können alle Segmente
 [source=PATH]:
   Pfad der Bilddatei I{ohne} Extension. Beginnt der Pfad mit C{+/},
   wird das Pluszeichen zum Pfad des Dokumentverzeichnisses expandiert.
+
+[url=URL]:
+  Wenn angegeben und URL nicht leer, wird in HTML <img src="URL" ... />
+  gesetzt.
 
 [width=INTEGER]:
   Breite in Pixeln (ohne Angabe einer Einheit), auf die das Bild
