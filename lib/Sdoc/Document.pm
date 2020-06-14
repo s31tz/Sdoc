@@ -262,7 +262,7 @@ sub sdoc2ToSdoc3 {
         }
         elsif ($name eq 'Figure') {
             $block =~ s/%Figure:/%Graphic:/;
-            $block =~ s/file=/source=/;
+            # $block =~ s/file=/source=/;
             $block =~ s/url=/link=/;
         }
         elsif ($name eq 'Code') {
@@ -323,7 +323,7 @@ sub sdoc2ToSdoc3 {
             if ($graphics) {
                 $graphics .= "\n";
             }
-            $graphics .= sprintf qq|%%Graphic:\n  name="%s"\n  source="%s"\n|,
+            $graphics .= sprintf qq|%%Graphic:\n  name="%s"\n  file="%s"\n|,
                 $name,$arg;
             for my $key (sort keys %opt) {
                 $graphics .= sprintf qq|  %s="%s"\n|,$key,$opt{$key};

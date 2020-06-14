@@ -49,7 +49,7 @@ angezeigt und verarbeitet wird, ist in Abschnitt L{+Dieses Dokument
   $ sdoc pdf sdoc-example.sdoc
 
 %Graphic:
-  source="+/sdoc-example"
+  file="+/sdoc-example"
   latexOptions="width=0.965\textwidth"
   scale=0.55
   padding=2mm
@@ -63,7 +63,7 @@ angezeigt und verarbeitet wird, ist in Abschnitt L{+Dieses Dokument
   $ sdoc html sdoc-example.sdoc
 
 %Graphic:
-  source="+/sdoc-example-html"
+  file="+/sdoc-example-html"
   latexOptions="width=0.965\textwidth"
   scale=0.55
   padding=2mm
@@ -614,6 +614,11 @@ Ein Paragraph hat keine Eigenschaften.
 Eine Abbildung ist ein freistehendes Bild zwischen zwei Paragraphen
 oder anderen Block-Elementen.
 
+Die Abbildung kann aus einer Datei (Attribut C{file}) stammen oder eine
+Ressource im Netz sein (Attribut: C{url}). Für LaTeX wird aktuell
+eine lokale Datei benötigt. Ist ein URL definiert, wird dieser in HTML
+eingesetzt.
+
 Die Größe der Darstellung wird durch die Angabe der Breite (C{width})
 und der Höhe (C{height}) festgelegt. Die Werte werden ganzzahlig ohne
 Einheit angegeben und von Sdoc in der Einheit I{Pixel} (1/96in)
@@ -623,14 +628,14 @@ werden die Werte in die Einheit I{Point} (1/72in) umgerechnet (1px =
 dargestellt wird.
 
   %Graphic:
-    source="+/sdoc-graphic-illusion"
+    file="+/sdoc-graphic-illusion"
     width=100
     height=100
 
 produziert:
 
 %Graphic:
-  source="+/sdoc-graphic-illusion"
+  file="+/sdoc-graphic-illusion"
   width=100
   height=100
 
@@ -641,7 +646,7 @@ Attribut C{indent=0} gesetzt ist. Mit C{align=center} kann die
 Abbildung auch mittig gesetzt werden.
 
   %Graphic:
-    source="+/sdoc-graphic-illusion"
+    file="+/sdoc-graphic-illusion"
     width=100
     height=100
     align=center
@@ -649,7 +654,7 @@ Abbildung auch mittig gesetzt werden.
 produziert:
 
 %Graphic:
-  source="+/sdoc-graphic-illusion"
+  file="+/sdoc-graphic-illusion"
   width=100
   height=100
   align=center
@@ -659,7 +664,7 @@ Beschriftung versehen werden. Das Setzen des Attributs C{border}
 auf 1, fügt einen Rahmen hinzu.
 
   %Graphic:
-    source="+/sdoc-graphic-illusion"
+    file="+/sdoc-graphic-illusion"
     caption=Illusion
     width=100
     height=100
@@ -668,7 +673,7 @@ auf 1, fügt einen Rahmen hinzu.
 produziert:
 
 %Graphic:
-  source="+/sdoc-graphic-illusion"
+  file="+/sdoc-graphic-illusion"
   caption=Illusion
   width=100
   height=100
@@ -691,7 +696,7 @@ In der Beschriftung (C{caption}) einer Abbildung können alle Segmente
     anchor=STRING
     border=BOOL
     caption=STRING
-    source=PATH
+    file=PATH
     height=INTEGER
     latexAlign=left|center
     latexOptions=STRING
@@ -704,9 +709,9 @@ In der Beschriftung (C{caption}) einer Abbildung können alle Segmente
     url=URL
     width=INTEGER
 
-[align=left|center|right]:
+[align=left|center]:
   (Default: 'left') Horizontale Ausrichtung des Bildes. Mögliche
-  Werte: 'left', 'center', 'right'.
+  Werte: 'left', 'center'.
 
 [anchor=STRING]:
   Anker der Grafik.
@@ -717,27 +722,31 @@ In der Beschriftung (C{caption}) einer Abbildung können alle Segmente
 [caption=STRING]:
   Beschriftung der Grafik. Diese erscheint unter der Grafik.
 
+[file=PATH]:
+  Pfad der Bilddatei, idealerweise ohne I{ohne} Extension.
+  Beginnt der Pfad mit C{+/}, wird das Pluszeichen zum Pfad des
+  Dokumentverzeichnisses expandiert. 
+
 [height=INTEGER]:
-  Höhe in Pixeln (ohne Angabe einer Einheit), auf die das Bild
+  Höhe in Pixeln (ohne Angabe der Einheit), auf die das Bild
   skaliert wird.
 
 [latexAlign=left|center]:
-  Horizontale Ausrichtung des Bildes in LaTeX.
+  Horizontale Ausrichtung des Bildes in LaTeX. Hat Priorität
+  gegenüber dem Attribut align.
 
 [latexOptions=STRING]:
   LaTeX-spezifische Optionen, die direkt an das LaTeX-Makro
   C{\includegraphics} übergeben werden.
 
-[link=URL]:
+[link=LINK]:
   Versieh das Bild mit einem Verweis. Dies kann ein Verweis auf ein
-  internes oder externes Ziel sein wie bei einem L-Segment (nur dass
-  das Attribut den Link-Text als Wert hat ohne den Segment-Bezeichner
-  und die geschweiften Klammern).
+  internes oder externes Ziel sein wie bei einem L-Segment (siehe
+  L{+L - Verweis}).
 
 [name=STRING]:
   Name der Grafik. Ein Name muss angegeben sein, wenn die Grafik von
-  einem G-Segment referenziert wird. Ist ein Name gesetzt, ist der
-  Default für das Attribut C{definition} 1, sonst 0.
+  einem G-Segment referenziert wird.
 
 [indent=BOOL]:
   Rücke die Grafik ein. Das Attribut ist nur bei C{align=left}
@@ -756,22 +765,17 @@ In der Beschriftung (C{caption}) einer Abbildung können alle Segmente
 
 [show=BOOL]:
   Wenn auf 1 gesetzt, wird die Grafik an Ort und Stelle angezeigt,
-  wenn 0, nicht. Sie nicht anzuzeigen macht Sinn, wenn sie lediglich
+  wenn 0, nicht. Sie nicht anzuzeigen ist erforderlich, wenn sie lediglich
   von G-Segmenten (Inline Grafik) genutzt werden soll. Der Default für
-  das Attribut ist 0, wenn C{useCount > 0} (d.h. die Grafik wird als
-  Inline-Grafik genutzt), andernfalls 1.
-
-[source=PATH]:
-  Pfad der Bilddatei I{ohne} Extension. Beginnt der Pfad mit C{+/},
-  wird das Pluszeichen zum Pfad des Dokumentverzeichnisses expandiert.
+  das Attribut ist 0, wenn der interne Zähler C{useCount > 0} (d.h.
+  die Grafik wird im Dokument als Inline-Grafik genutzt), andernfalls 1.
 
 [url=URL]:
   Wenn angegeben und URL nicht leer, wird in HTML <img src="URL" ... />
   gesetzt.
 
 [width=INTEGER]:
-  Breite in Pixeln (ohne Angabe einer Einheit), auf die das Bild
-  skaliert wird.
+  Breite in Pixeln (ohne Angabe der Einheit), auf die das Bild skaliert wird.
 
 ---PageBreak---
 
@@ -892,7 +896,7 @@ produziert:
 
 %Graphic:
   name="InvaderItem"
-  source="+/sdoc-graphic-invader"
+  file="+/sdoc-graphic-invader"
   scale=0.025
   show=0
 
@@ -1293,7 +1297,7 @@ Das folgende Beispiel zeigt sämtliche Möglichkeiten.
 
   %Graphic:
     name="InvaderList"
-    source="+/sdoc-graphic-invader"
+    file="+/sdoc-graphic-invader"
     scale=0.03
     show=0
 
@@ -1320,7 +1324,7 @@ Q{Dies ist ein Zitat}
 
 %Graphic:
   name="InvaderList"
-  source="+/sdoc-graphic-invader"
+  file="+/sdoc-graphic-invader"
   scale=0.03
   show=0
 
@@ -1406,6 +1410,10 @@ einer eigenen Zeile. Dazwischen ist eine Einrückung mit Leerzeichen
 erlaubt, aber nicht vorgeschrieben. Diese wird ebenfalls automatisch
 entfernt.
 
+B{Achtung:} Der Quelltext innerhalb des %Code-Blocks sollte generell
+eingerückt werden, damit Zeilen, die mit Q{#} beginnen, nicht als
+Sdoc-Kommentarzeilen interpretiert und ausgefiltert werden!
+
   %Code:
     Dies ist ein
     Code-Block
@@ -1445,9 +1453,7 @@ produziert:
 === Zeilennummern
 
 Wird das Attribut C{ln=N} mit C{N > 0} gesetzt, werden die Zeilen
-durchnummeriert, beginnend mit Zeilennummer C{N}. Der Abschnitt wird
-in dem Fall nicht eingerückt. Die Nummerierung findet auch statt, wenn
-kein Syntax-Highlighting aktiviert ist.
+durchnummeriert, beginnend mit Zeilennummer C{N}.
 
   %Code: lang=Perl ln=117
     use DirHandle;
@@ -1462,6 +1468,31 @@ kein Syntax-Highlighting aktiviert ist.
 produziert:
 
 %Code: lang=Perl ln=117
+  use DirHandle;
+
+  my $dh = DirHandle->new($dir);
+  while (my $entry = $dh->next) {
+      say $entry;
+  }
+  $dh->close;
+.
+
+Die Nummerierung findet auch statt, wenn kein Syntax-Highlighting
+aktiviert ist.
+
+  %Code: ln=117
+    use DirHandle;
+
+    my $dh = DirHandle->new($dir);
+    while (my $entry = $dh->next) {
+        say $entry;
+    }
+    $dh->close;
+  .
+
+produziert:
+
+%Code: ln=117
   use DirHandle;
 
   my $dh = DirHandle->new($dir);
@@ -1531,9 +1562,30 @@ zu reduzieren. Der Wert der Direktive ist ein Regulärer Ausdruck, der
 den gewünschten Teil Q{captured}.
 
 In einem längeren Codeabschnitt kann der interessante Teil zum
-Beispiel mit Markern wie "# begin" und "# end" gekennzeichnet sein:
+Beispiel mit Markern wie Q{# begin} und Q{# end} gekennzeichnet
+sein (Q{# begin}:
 
   %Code: extract="# begin\s+(.*)# end"
+    #!/usr/bin/env perl
+
+    use strict;
+    use warnings;
+    use 5.010;
+
+    # begin
+    my $max = '-inf';
+    for my $n (-100,-50,-10) {
+        $max = $n if $n > $max;
+    }
+    # end
+    say $max;
+    __END__
+    -10
+  .
+
+produziert:
+
+%Code: extract="# begin\s+(.*)# end"
   #!/usr/bin/env perl
 
   use strict;
@@ -1549,26 +1601,6 @@ Beispiel mit Markern wie "# begin" und "# end" gekennzeichnet sein:
   say $max;
   __END__
   -10
-  .
-
-produziert:
-
-%Code: extract="# begin\s+(.*)# end"
-#!/usr/bin/env perl
-
-use strict;
-use warnings;
-use 5.010;
-
-# begin
-my $max = '-inf';
-for my $n (-100,-50,-10) {
-    $max = $n if $n > $max;
-}
-# end
-say $max;
-__END__
--10
 .
 
 === Eigenschaften
@@ -1760,7 +1792,7 @@ Sdoc unterscheidet zwei Arten von Kommentaren:
 
 === #-Kommentare
 
-Kommentarzeilen, die mit einem Hash beginnen, werden
+Zeilen, die mit einem Hash beginnen, werden
 ignoriert. Sie können in jeder Zeile im Sdoc-Quelltext vorkommen. Sie
 sind für Quelltextnotizen nützlich oder zum Auskommentieren von
 Sdoc-Code. Beispiel:
@@ -1769,7 +1801,7 @@ Sdoc-Code. Beispiel:
 
 === %-Kommentare
 
-Kommentarzeilen, die mit Prozentzeichen (plus Leerzeichen) beginnen,
+Zeilen, die mit Prozentzeichen (plus Leerzeichen) beginnen,
 werden als Kommentar-Blöcke in den Syntaxbaum übernommen. Sie sind,
 da sie eine eigene syntaktische Einheit bilden, nur I{zwischen}
 anderen Blöcken zulässig. Der Kommentar
@@ -2025,7 +2057,7 @@ Abschnitts oder am Anfang oder am Ende des Dokuments.
 
   %Graphic:
     name="Invader"
-    source="+/sdoc-graphic-invader"
+    file="+/sdoc-graphic-invader"
     scale=0.08
 
 produziert:
@@ -2034,7 +2066,7 @@ Dies ist eine G{Invader} Inline-Grafik.
 
 %Graphic:
   name="Invader"
-  source="+/sdoc-graphic-invader"
+  file="+/sdoc-graphic-invader"
   scale=0.08
 
 ===! I - Kursivschrift (italic)
@@ -2219,7 +2251,7 @@ I{Block}.C{indent=undef} oder I{Block}.C{indent=0} eingestellt ist
 * Pflaume
 
 %Graphic:
-  source="+/sdoc-graphic-illusion"
+  file="+/sdoc-graphic-illusion"
   width=100
   height=100
   indent=0
@@ -2284,7 +2316,7 @@ angegeben, die Einheit ist I{nicht} Bestandteil des Attributwerts.
 * Pflaume
 
 %Graphic:
-  source="+/sdoc-graphic-illusion"
+  file="+/sdoc-graphic-illusion"
   width=100
   height=100
   indent=1

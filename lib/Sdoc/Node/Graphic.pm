@@ -125,7 +125,7 @@ von G-Segmenten (Inline Grafik) genutzt werden soll. Der Default
 für das Attribut ist 0, wenn C<< useCount > 0 >> (d.h. die Grafik wird
 als Inline-Grafik genutzt), andernfalls 1.
 
-=item source => $path
+=item file => $path
 
 Pfad der Bilddatei I<ohne> Extension. Beginnt der Pfad mit C<+/>,
 wird das Pluszeichen zum Pfad des Dokumentverzeichnisses
@@ -223,6 +223,7 @@ sub new {
         border => 0,
         caption => undef,
         captionS => undef,
+        file => undef,
         formulaA => [],
         graphicA => [],
         height => undef,
@@ -238,7 +239,6 @@ sub new {
         referenced => 0,
         scale => undef,
         show => undef,
-        source => undef,
         url => undef,
         useCount => 0,
         width => undef,
@@ -593,7 +593,7 @@ sub htmlCode {
     if (!$src) {
         # Pfad der Bilddatei
 
-        $src = $self->getLocalPath('source',
+        $src = $self->getLocalPath('file',
             -extensions => [qw/png jpg gif/],
         );
 
@@ -698,7 +698,7 @@ sub latexCode {
         align => $self->latexAlign // $self->align,
         border => $self->border,
         caption => $self->expandText($l,'captionS'),
-        file => $doc->expandPath($self->source),
+        file => $doc->expandPath($self->file),
         height => $height,
         indent => $indent,
         label => $self->referenced? $self->linkId: undef,
@@ -748,7 +748,7 @@ sub mediawikiCode {
     # Sdoc::Core::MediaWiki::Markup->image() kann mehr)
 
     return $m->image(
-        file => Sdoc::Core::Path->filename($self->source),
+        file => Sdoc::Core::Path->filename($self->file),
         height => $self->height,
         width => $self->width,
         border => $self->border,

@@ -24,7 +24,7 @@ Hypotenuse: M~c=\sqrt{a^2+b^2}~.
 .
 
 %Graphic:
-  source="+/sdoc-graphic-illusion"
+  file="+/sdoc-graphic-illusion"
   align="center"
   scale=0.3
   width=100

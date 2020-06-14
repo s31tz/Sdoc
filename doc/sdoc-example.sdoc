@@ -16,7 +16,7 @@ Mit dem Satz des Pythagoras M~c^2 = a^2 + b^2~ berechnen wir die Länge
 der Hypotenuse: M~c = \sqrt{a^2 + b^2}~.
 
 %Graphic:
-  source="+/sdoc-graphic-illusion"
+  file="+/sdoc-graphic-illusion"
   caption="Illusion"
   latexAlign="center"
   width=100

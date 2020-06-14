@@ -7,118 +7,122 @@
   <title>Ein Beispieldokument</title>
   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
   <style type="text/css">
-    .sdoc-document h1 { font-size: 230%; margin-bottom: 10px; }
-    .sdoc-document p { font-size: 115%; margin-top: 10px; }
-    .sdoc-tableofcontents { margin-top: 8px; margin-bottom: 26px; }
-    .sdoc-tableofcontents h3 { margin-top: 0; margin-bottom: 8px; }
-    .sdoc-tableofcontents ul { list-style-type: none; }
-    .sdoc-tableofcontents > ul { margin: 0; padding-left: 0; }
-    .sdoc-tableofcontents > ul.indent { margin-left: 20px; }
-    .sdoc-tableofcontents ul ul { padding-left: 22px; }
-    .sdoc-tableofcontents li { margin-top: 2px; margin-bottom: 2px; }
-    .sdoc-tableofcontents span.number { padding-right: 2px; }
-    .sdoc-graphic { margin-top: 16px; margin-bottom: 16px; }
-    .sdoc-graphic.indent { margin-left: 20px; }
-    .sdoc-graphic p { margin-top: 4px; }
-    .sdoc-graphic span.prefix { font-weight: bold; }
-    .sdoc-code { margin-top: 16px; margin-bottom: 16px; }
-    .sdoc-code table { border-collapse: collapse; }
-    .sdoc-code td.ln { padding-left: 0; }
-    .sdoc-code td.margin { width: 4px; }
-    .sdoc-code td pre { margin: 0; line-height: 125%; }
-    .sdoc-code.indent { margin-left: 20px; }
-    .sdoc-code table .hll { background-color: #ffffcc }
-    .sdoc-code table .c { color: #228B22 }
-    .sdoc-code table .err { color: #a61717; background-color: #e3d2d2 }
-    .sdoc-code table .k { color: #8B008B; font-weight: bold }
-    .sdoc-code table .ch { color: #228B22 }
-    .sdoc-code table .cm { color: #228B22 }
-    .sdoc-code table .cp { color: #1e889b }
-    .sdoc-code table .cpf { color: #228B22 }
-    .sdoc-code table .c1 { color: #228B22 }
-    .sdoc-code table .cs { color: #8B008B; font-weight: bold }
-    .sdoc-code table .gd { color: #aa0000 }
-    .sdoc-code table .ge { font-style: italic }
-    .sdoc-code table .gr { color: #aa0000 }
-    .sdoc-code table .gh { color: #000080; font-weight: bold }
-    .sdoc-code table .gi { color: #00aa00 }
-    .sdoc-code table .go { color: #888888 }
-    .sdoc-code table .gp { color: #555555 }
-    .sdoc-code table .gs { font-weight: bold }
-    .sdoc-code table .gu { color: #800080; font-weight: bold }
-    .sdoc-code table .gt { color: #aa0000 }
-    .sdoc-code table .kc { color: #8B008B; font-weight: bold }
-    .sdoc-code table .kd { color: #8B008B; font-weight: bold }
-    .sdoc-code table .kn { color: #8B008B; font-weight: bold }
-    .sdoc-code table .kp { color: #8B008B; font-weight: bold }
-    .sdoc-code table .kr { color: #8B008B; font-weight: bold }
-    .sdoc-code table .kt { color: #00688B; font-weight: bold }
-    .sdoc-code table .m { color: #B452CD }
-    .sdoc-code table .s { color: #CD5555 }
-    .sdoc-code table .na { color: #658b00 }
-    .sdoc-code table .nb { color: #658b00 }
-    .sdoc-code table .nc { color: #008b45; font-weight: bold }
-    .sdoc-code table .no { color: #00688B }
-    .sdoc-code table .nd { color: #707a7c }
-    .sdoc-code table .ne { color: #008b45; font-weight: bold }
-    .sdoc-code table .nf { color: #008b45 }
-    .sdoc-code table .nn { color: #008b45; text-decoration: underline }
-    .sdoc-code table .nt { color: #8B008B; font-weight: bold }
-    .sdoc-code table .nv { color: #00688B }
-    .sdoc-code table .ow { color: #8B008B }
-    .sdoc-code table .w { color: #bbbbbb }
-    .sdoc-code table .mb { color: #B452CD }
-    .sdoc-code table .mf { color: #B452CD }
-    .sdoc-code table .mh { color: #B452CD }
-    .sdoc-code table .mi { color: #B452CD }
-    .sdoc-code table .mo { color: #B452CD }
-    .sdoc-code table .sa { color: #CD5555 }
-    .sdoc-code table .sb { color: #CD5555 }
-    .sdoc-code table .sc { color: #CD5555 }
-    .sdoc-code table .dl { color: #CD5555 }
-    .sdoc-code table .sd { color: #CD5555 }
-    .sdoc-code table .s2 { color: #CD5555 }
-    .sdoc-code table .se { color: #CD5555 }
-    .sdoc-code table .sh { color: #1c7e71; font-style: italic }
-    .sdoc-code table .si { color: #CD5555 }
-    .sdoc-code table .sx { color: #cb6c20 }
-    .sdoc-code table .sr { color: #1c7e71 }
-    .sdoc-code table .s1 { color: #CD5555 }
-    .sdoc-code table .ss { color: #CD5555 }
-    .sdoc-code table .bp { color: #658b00 }
-    .sdoc-code table .fm { color: #008b45 }
-    .sdoc-code table .vc { color: #00688B }
-    .sdoc-code table .vg { color: #00688B }
-    .sdoc-code table .vi { color: #00688B }
-    .sdoc-code table .vm { color: #00688B }
-    .sdoc-code table .il { color: #B452CD }
-    .sdoc-list { margin-top: 16px; margin-bottom: 16px; }
-    .sdoc-list > ul:first-child { padding-left: 34px; }
-    .sdoc-list > ol:first-child { padding-left: 36px; }
-    .sdoc-list.noindent > ul:first-child { padding-left: 15px; }
-    .sdoc-list.noindent > ol:first-child { padding-left: 15px; }
-    .sdoc-list.noindent > dl > dd { margin-left: 0; }
-    .sdoc-list ul { margin-top: 0; margin-bottom: 0; }
-    .sdoc-list li > *:first-child { margin-top: 4px; }
-    .sdoc-list li > *:last-child { margin-bottom: 4px; }
-    .sdoc-list ol { margin-top: 0; margin-bottom: 0; }
-    .sdoc-list dl { margin-top: 0; margin-bottom: 0; }
-    .sdoc-list dt { font-weight: bold; }
-    .sdoc-list dd { margin-left: 24px; }
-    .sdoc-list dd > *:first-child { margin-top: 2px; }
-    .sdoc-list dd > *:last-child { margin-bottom: 6px; }
-    .sdoc-list p { margin-top: 4px; margin-bottom: 4px; }
+    .sdoc3-document h1 { font-size: 250%; margin-bottom: 10px; }
+    .sdoc3-document div.date { margin-top: 0.2em; }
+    .sdoc3-document p { font-size: 115%; margin-bottom: 10px; }
+    .sdoc3-tableofcontents { margin-top: 16px; margin-bottom: 26px; }
+    .sdoc3-tableofcontents h3 { margin-top: 0; margin-bottom: 8px; }
+    .sdoc3-tableofcontents ul { list-style-type: none; }
+    .sdoc3-tableofcontents > ul { margin: 0; padding-left: 0; }
+    .sdoc3-tableofcontents > ul.indent { margin-left: 20px; }
+    .sdoc3-tableofcontents ul ul { padding-left: 22px; }
+    .sdoc3-tableofcontents li { margin-top: 2px; margin-bottom: 2px; }
+    .sdoc3-tableofcontents span.number { padding-right: 2px; }
+    .sdoc3-graphic { margin-top: 16px; margin-bottom: 16px; }
+    .sdoc3-graphic.indent { margin-left: 20px; }
+    .sdoc3-graphic p { margin-top: 4px; }
+    .sdoc3-graphic span.prefix { font-weight: bold; }
+    .sdoc3-code { margin-top: 16px; margin-bottom: 16px; }
+    .sdoc3-code table { border-collapse: collapse; }
+    .sdoc3-code td.ln { padding-left: 0; }
+    .sdoc3-code td.margin { width: 4px; }
+    .sdoc3-code td pre { margin: 0; line-height: 125%; }
+    .sdoc3-code.indent { margin-left: 20px; }
+    .sdoc3-code .hll { background-color: #ffffcc }
+    .sdoc3-code .c { color: #228B22 }
+    .sdoc3-code .err { color: #a61717; background-color: #e3d2d2 }
+    .sdoc3-code .k { color: #8B008B; font-weight: bold }
+    .sdoc3-code .ch { color: #228B22 }
+    .sdoc3-code .cm { color: #228B22 }
+    .sdoc3-code .cp { color: #1e889b }
+    .sdoc3-code .cpf { color: #228B22 }
+    .sdoc3-code .c1 { color: #228B22 }
+    .sdoc3-code .cs { color: #8B008B; font-weight: bold }
+    .sdoc3-code .gd { color: #aa0000 }
+    .sdoc3-code .ge { font-style: italic }
+    .sdoc3-code .gr { color: #aa0000 }
+    .sdoc3-code .gh { color: #000080; font-weight: bold }
+    .sdoc3-code .gi { color: #00aa00 }
+    .sdoc3-code .go { color: #888888 }
+    .sdoc3-code .gp { color: #555555 }
+    .sdoc3-code .gs { font-weight: bold }
+    .sdoc3-code .gu { color: #800080; font-weight: bold }
+    .sdoc3-code .gt { color: #aa0000 }
+    .sdoc3-code .kc { color: #8B008B; font-weight: bold }
+    .sdoc3-code .kd { color: #8B008B; font-weight: bold }
+    .sdoc3-code .kn { color: #8B008B; font-weight: bold }
+    .sdoc3-code .kp { color: #8B008B; font-weight: bold }
+    .sdoc3-code .kr { color: #8B008B; font-weight: bold }
+    .sdoc3-code .kt { color: #00688B; font-weight: bold }
+    .sdoc3-code .m { color: #B452CD }
+    .sdoc3-code .s { color: #CD5555 }
+    .sdoc3-code .na { color: #658b00 }
+    .sdoc3-code .nb { color: #658b00 }
+    .sdoc3-code .nc { color: #008b45; font-weight: bold }
+    .sdoc3-code .no { color: #00688B }
+    .sdoc3-code .nd { color: #707a7c }
+    .sdoc3-code .ne { color: #008b45; font-weight: bold }
+    .sdoc3-code .nf { color: #008b45 }
+    .sdoc3-code .nn { color: #008b45; text-decoration: underline }
+    .sdoc3-code .nt { color: #8B008B; font-weight: bold }
+    .sdoc3-code .nv { color: #00688B }
+    .sdoc3-code .ow { color: #8B008B }
+    .sdoc3-code .w { color: #bbbbbb }
+    .sdoc3-code .mb { color: #B452CD }
+    .sdoc3-code .mf { color: #B452CD }
+    .sdoc3-code .mh { color: #B452CD }
+    .sdoc3-code .mi { color: #B452CD }
+    .sdoc3-code .mo { color: #B452CD }
+    .sdoc3-code .sa { color: #CD5555 }
+    .sdoc3-code .sb { color: #CD5555 }
+    .sdoc3-code .sc { color: #CD5555 }
+    .sdoc3-code .dl { color: #CD5555 }
+    .sdoc3-code .sd { color: #CD5555 }
+    .sdoc3-code .s2 { color: #CD5555 }
+    .sdoc3-code .se { color: #CD5555 }
+    .sdoc3-code .sh { color: #1c7e71; font-style: italic }
+    .sdoc3-code .si { color: #CD5555 }
+    .sdoc3-code .sx { color: #cb6c20 }
+    .sdoc3-code .sr { color: #1c7e71 }
+    .sdoc3-code .s1 { color: #CD5555 }
+    .sdoc3-code .ss { color: #CD5555 }
+    .sdoc3-code .bp { color: #658b00 }
+    .sdoc3-code .fm { color: #008b45 }
+    .sdoc3-code .vc { color: #00688B }
+    .sdoc3-code .vg { color: #00688B }
+    .sdoc3-code .vi { color: #00688B }
+    .sdoc3-code .vm { color: #00688B }
+    .sdoc3-code .il { color: #B452CD }
+    .sdoc3-list { margin-top: 16px; margin-bottom: 16px; }
+    .sdoc3-list > ul:first-child { padding-left: 34px; }
+    .sdoc3-list > ol:first-child { padding-left: 36px; }
+    .sdoc3-list.noindent > ul:first-child { padding-left: 15px; }
+    .sdoc3-list.noindent > ol:first-child { padding-left: 15px; }
+    .sdoc3-list.noindent > dl > dd { margin-left: 0; }
+    .sdoc3-list ul { margin-top: 0; margin-bottom: 0; }
+    .sdoc3-list li > *:first-child { margin-top: 4px; }
+    .sdoc3-list li > *:last-child { margin-bottom: 4px; }
+    .sdoc3-list ol { margin-top: 0; margin-bottom: 0; }
+    .sdoc3-list dl { margin-top: 0; margin-bottom: 0; }
+    .sdoc3-list dt { font-weight: bold; }
+    .sdoc3-list dd { margin-left: 24px; }
+    .sdoc3-list dd > *:first-child { margin-top: 2px; }
+    .sdoc3-list dd > *:last-child { margin-bottom: 6px; }
+    .sdoc3-list p { margin-top: 4px; margin-bottom: 4px; }
     #gph001 img { border: 1px solid black; }
   </style>
 </head>
 <body>
-  <div class="sdoc-document">
+  <div class="sdoc3-document">
     <h1>Ein Beispieldokument</h1>
-    <p>
-      <span class="author">Nico Laus</span>, <span class="date">15. April 2018</span>
-    </p>
+    <div class="author">
+      Nico Laus
+    </div>
+    <div class="date">
+      13. Juni 2020
+    </div>
   </div>
-  <div class="sdoc-tableofcontents">
+  <div class="sdoc3-tableofcontents">
     <h3>Inhaltsverzeichnis</h3>
     <ul class="indent">
       <li>
@@ -132,28 +136,28 @@
     </ul>
   </div>
   <a name="fqLOIvxTkpshE8fyCET5oOaNzRU"></a>
-  <h1 class="sdoc-section">1 Einleitung</h1>
-  <p class="sdoc-paragraph">
+  <h1 class="sdoc3-section">1 Einleitung</h1>
+  <p class="sdoc3-paragraph">
     Dies ist eine <i>Einleitung</i>. Mit wenig <tt>Aufwand</tt> erstellen wir in
     Sdoc ein <b>Dokument</b>. Als Textauszeichnungen sind auch Kombinationen
     wie <b><i>fett und kursiv</i></b> möglich.
   </p>
   <a name="zQK+e7JDDTHWAZnWF5qeFKUAeE0"></a>
-  <h2 class="sdoc-section">1.1 Ein Beispiel</h2>
-  <p class="sdoc-paragraph">
+  <h2 class="sdoc3-section">1.1 Ein Beispiel</h2>
+  <p class="sdoc3-paragraph">
     Mit dem Satz des Pythagoras <b>c^2 = a^2 + b^2</b> berechnen wir die Länge
     der Hypotenuse: <b>c = \sqrt{a^2 + b^2}</b>.
   </p>
-  <div class="sdoc-graphic indent" id="gph001">
+  <div class="sdoc3-graphic indent" id="gph001">
     <img src="/home/fs2/exp/Sdoc/doc/sdoc-graphic-illusion.png" width="125" height="125" alt="" />
     <p>
       <span class="prefix">Abbildung 1: </span><span class="caption">Illusion</span>
     </p>
   </div>
-  <p class="sdoc-paragraph">
+  <p class="sdoc3-paragraph">
     Programm-Quelltexte können wir mit <q>Syntax-Highlighting</q> darstellen:
   </p>
-  <div class="sdoc-code indent" id="cod001">
+  <div class="sdoc3-code indent" id="cod001">
     <table>
     <tr>
       <td class="ln">
@@ -166,30 +170,30 @@
     </tr>
     </table>
   </div>
-  <p class="sdoc-paragraph">
+  <p class="sdoc3-paragraph">
     Auf eine andere Stelle im Dokument zu verweisen ist einfach. Hier ist
     ein Verweis auf die <a href="#fqLOIvxTkpshE8fyCET5oOaNzRU">Einleitung</a>.
   </p>
-  <div class="sdoc-list" id="lst001">
+  <div class="sdoc3-list" id="lst001">
     <ul>
       <li>
-        <p class="sdoc-paragraph">
+        <p class="sdoc3-paragraph">
           Apfel
         </p>
       </li>
       <li>
-        <p class="sdoc-paragraph">
+        <p class="sdoc3-paragraph">
           Birne
         </p>
       </li>
       <li>
-        <p class="sdoc-paragraph">
+        <p class="sdoc3-paragraph">
           Pflaume
         </p>
       </li>
     </ul>
   </div>
-  <p class="sdoc-paragraph">
+  <p class="sdoc3-paragraph">
     Das ist eine einfache Aufzählung. Aufzählungen können beliebig
     geschachtelt werden.
   </p>

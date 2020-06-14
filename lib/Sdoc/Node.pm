@@ -1429,7 +1429,7 @@ sub expandSegmentsToLatex {
             $code .= Sdoc::Core::LaTeX::Figure->latex($l,
                 inline => 1,
                 border => $gph->border,
-                file => $root->expandPath($gph->source),
+                file => $root->expandPath($gph->file),
                 height => $gph->height,
                 indent => $gph->indent // 0?
                     $root->latexIndentation.'em': undef,
@@ -1859,7 +1859,16 @@ sub htmlSectionCode {
     #     class => $self->cssClass,
     #     $title
     # );
-    $code .= $h->tag('h'.$self->levelCount,
+
+    my $level;
+    if ($self->isa('Sdoc::Node::BridgeHead')) {
+        $level = $self->level;
+    }
+    else {
+        $level = $self->levelCount;
+    }
+
+    $code .= $h->tag("h$level",
         class => $self->cssClass,
         $title
     );
