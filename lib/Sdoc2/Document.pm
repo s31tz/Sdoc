@@ -13,6 +13,7 @@ use Sdoc2::Link;
 use Sdoc2::Node;
 use Sdoc2::TableOfContents;
 use Sdoc2::Figure;
+use Sdoc2::Format;
 use Sdoc2::Section;
 use Sdoc2::BridgeHead;
 use Sdoc2::Paragraph;

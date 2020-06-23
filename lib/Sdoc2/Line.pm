@@ -46,7 +46,7 @@ sub type {
     # Der genaue Typ wird vom Aufrufer bestimmt
 
     return 'Object' if $text =~
-        /^%(Document|TableOfContents|Box|Figure|Table|Include|Link):/;
+        /^%(Document|TableOfContents|Box|Figure|Table|Include|Link|Format):/;
     return 'Object' if $text =~ /^\s*%Code:/;
 
     # Seitenumbruch

@@ -36,12 +36,12 @@ Format-Knoten folgende zusätzliche Attribute:
 
 =item content => $content
 
-Der gesamte Inhalt des Format-Blocks.
+Der vollständige Inhalt des Format-Blocks.
 
 =item formatH => \%format
 
 Code der Zielformate. Schlüssel des Hashs ist der Name des jeweiligen
-Formats (kleingeschrieben).
+Zielformats (kleingeschrieben).
 
 =back
 
@@ -87,7 +87,7 @@ Eltern-Knoten.
 
 =head4 Returns
 
-Paragraph-Knoten (Object)
+Format-Knoten (Object)
 
 =cut
 
