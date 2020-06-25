@@ -28,6 +28,7 @@ use Sdoc::Node::Table;
 use Sdoc::Node::TableOfContents;
 use Sdoc::Core::Option;
 use Sdoc::Core::Path;
+use Sdoc::Core::Shell;
 use Sdoc::LineProcessor;
 
 # -----------------------------------------------------------------------------
@@ -46,7 +47,7 @@ L<Sdoc::Core::Object>
 
   use Sdoc::Document;
   
-  my $doc = Sdoc::Document->parse($file);
+  my $doc = Sdoc::Document->parse($input);
   print $doc->generate('html');
   print $doc->generate('latex');
   print $doc->generate('mediawiki');
@@ -79,7 +80,11 @@ Klasse Sdoc::Node::Document oder deren Basisklasse Sdoc::Node.
 
 =item $file
 
-Sdoc-Quelltext in einer Datei.
+Sdoc-Quelltext in einer Datei. Existiert neben der Datei $file
+ein Programm mit dem gleichen Grundnamen, aber der Extension
+'.srun' (wenn $file die Endung '.sdoc' hat) oder '.srun3' (wenn
+$file die Endung '.sdoc3' hat), wird dieses vor Beginn des
+Einlesens der Sdoc-Datei $file ausgeführt.
 
 =item $str
 
@@ -153,10 +158,22 @@ sub parse {
         -userH => \$userH,
     );
 
-    # Relativen Pfad in absoluten Pfad wandeln
-    
+    # Dokument kommt aus einer Datei
+
     if (!ref $input) {
-        $input = Sdoc::Core::Path->absolute($input);
+        my $p = Sdoc::Core::Path->new;
+
+        # Relativen Pfad in absoluten Pfad wandeln
+        $input = $p->absolute($input);
+
+        # Vorverarbeitungs-Programm aufrufen (falls existent)
+
+        my $ext = $p->extension($input) eq 'sdoc3'? 'srun3': 'srun';
+        my $program = $p->basePath($input).".$ext";
+        if (-e $program) {
+            (my $dir,$program) = $p->split($program);
+            Sdoc::Core::Shell->exec("(cd $dir; ./$program)");
+        }
     }
 
     # Instantiiere LineProcessor

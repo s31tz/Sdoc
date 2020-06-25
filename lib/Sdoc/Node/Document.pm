@@ -732,7 +732,7 @@ sub segmentNode {
         my %h;
         for my $node ($self->nodes) {
             if ($node->type eq 'Segment') {
-                $h{$name} = $node;
+                $h{$node->name} = $node;
             }
         }
 

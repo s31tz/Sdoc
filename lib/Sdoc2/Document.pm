@@ -29,12 +29,13 @@ use Sdoc2::Item;
 use Sdoc2::Quote;
 use Sdoc2::PageBreak;
 use Sdoc::Core::Option;
+use Sdoc::Core::Path;
+use Sdoc::Core::Shell;
 use Sdoc::Core::LineProcessor;
 use Sdoc::Core::Hash;
 use Sdoc::Core::Hash::Ordered;
 use Sdoc::Core::Object;
 use Sdoc::Core::Html::Tag;
-use Sdoc::Core::Path;
 
 # -----------------------------------------------------------------------------
 
@@ -182,6 +183,24 @@ sub new {
             -tableAndFigureNumbers=>\$tableAndFigureNumbers,
             -utf8=>\$utf8,
         );
+    }
+
+    # Dokument kommt aus einer Datei
+
+    if (!ref $inp) {
+        my $p = Sdoc::Core::Path->new;
+
+        # Relativen Pfad in absoluten Pfad wandeln
+        $inp = $p->absolute($inp);
+
+        # Vorverarbeitungs-Programm aufrufen (falls existent)
+
+        my $ext = $p->extension($inp) eq 'sdoc2'? 'srun2': 'srun';
+        my $program = $p->basePath($inp).".$ext";
+        if (-e $program) {
+            (my $dir,$program) = $p->split($program);
+            Sdoc::Core::Shell->exec("(cd $dir; ./$program)");
+        }
     }
 
     # Zunächst LineProcessor-Dokument instantiieren

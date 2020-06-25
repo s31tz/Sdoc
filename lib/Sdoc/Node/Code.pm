@@ -78,7 +78,7 @@ Pluszeichen zum Pfad des Dokumentverzeichnisses expandiert.
 =item lang => $lang
 
 Der Code ist Quelltext der Sprache $lang. Mit dieser Option wird
-das Syntax-Highlighting aktiviert. Dies verfügbaren Sprachen
+das Syntax-Highlighting aktiviert. Die verfügbaren Sprachen
 ("Lexer") liefert das Kommando
 
   $ pygmentize -L lexers

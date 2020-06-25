@@ -72,6 +72,40 @@ angezeigt und verarbeitet wird, ist in Abschnitt L{+Dieses Dokument
 
 ---PageBreak---
 
+= Dynamische Dokumente
+
+Ein Designziel von Sdoc ist es, das dynamische Erzeugen von Dokumenten
+oder Dokumentteilen zu ermöglichen, z.B. das Einbinden von sich
+(laufend ändernden) Quelltexten. Das Konzept hierfür ist einfach:
+
+* variable Dokument-Anteile werden per C{%Include: file=FILE} geladen
+* die Dokument-Anteile werden vorab durch Aufruf eines Programms erzeugt
+
+Das Programm (Präprozessor) wird einfach neben der Dokumentdatei
+abgelegt. Das Programm hat den gleichen Grundnameen wie die
+Dokumentdatei, aber mit der Endung C{.srun} (wenn die Dokumentdatei
+die Endung C{.sdoc} hat) oder C{.srun3} (wenn die Dokumentdatei die
+Endung C{.sdoc3} hat). Beim Übersetzen wird das Programm automatisch
+vorab aufgerufen.
+
+== Beispiel
+
+  $ ls
+  mein-dokument.sdoc
+  mein-dokument.srun
+
+Der Aufruf C{sdoc mein-dokument.sdoc} führt als erstes das Programm
+C{mein-dokument.srun} aus, bevor die Dokumentdatei C{mein-dokument.sdoc}
+prozessiert wird. Das Programm erhält das Verzeichnis des Dokuemnts als
+aktuelles Arbeitsvereichnis.
+
+Dasselbe mit alternativer Dateiendung:
+
+  mein-dokument.sdoc3
+  mein-dokument.srun3
+
+---PageBreak---
+
 = Syntax
 
 == Allgemeines
@@ -1984,8 +2018,8 @@ Der Post-Prozessor erhält drei Parameter:
   Eine Referenz auf den Wurzelknoten des Dokumentbaums.
 
 [$format]:
-  Den Bezeicher für das Format konkreten Dokuments. Mögliche
-  Werte: 'latex', 'html'.
+  Den Bezeicher für das Format. Mögliche Werte: 'latex', 'html',
+  'mediawiki' usw.
 
 [$code]:
   Der Quelltext in dem angegebenen Format.

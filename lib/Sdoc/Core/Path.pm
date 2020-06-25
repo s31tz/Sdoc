@@ -2119,6 +2119,29 @@ sub basename {
 
 # -----------------------------------------------------------------------------
 
+=head3 basePath() - Pfad ohne Extension
+
+=head4 Synopsis
+
+  $basePath = $class->basePath($path);
+
+=head4 Description
+
+Entferne eine etwaig vorhandene Extension von $path und liefere das
+Resultat zurück.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub basePath {
+    my ($class,$path) = @_;
+    $path =~ s/\.([^.]+)$//;
+    return $path;
+}
+
+# -----------------------------------------------------------------------------
+
 =head3 chmod() - Setze Zugriffsrechte
 
 =head4 Synopsis
@@ -2200,6 +2223,33 @@ sub delete {
     }
 
     return;
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 dir() - Pfad ohne letzten Bestandteil
+
+=head4 Synopsis
+
+  $dir = $class->dir($path);
+
+=head4 Returns
+
+String
+
+=head4 Description
+
+Entferne den letzten Pfadbestandteil von $path und liefere
+den Rest zurück. Enthält $path keinen Slash (/), wird ein Leerstring
+geliefert.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub dir {
+    my ($class,$path) = @_;
+    return $path =~ m|(.*)/|? $1: '';
 }
 
 # -----------------------------------------------------------------------------
