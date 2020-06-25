@@ -1896,6 +1896,51 @@ sub mkdir {
 
 # -----------------------------------------------------------------------------
 
+=head3 mtimeDir() - Jüngste Modifikationszeit
+
+=head4 Synopsis
+
+  $mtime = $this->mtimeDir($dir);
+
+=head4 Arguments
+
+=over 4
+
+=item $dir
+
+Pfad des Verzeichnisses.
+
+=back
+
+=head4 Returns
+
+Zeit in Unix Epoch (Integer)
+
+=head4 Description
+
+Ermittele über allen Pfaden in und einschließlch $dir den jüngsten
+Modifikationszeitpunkt (mtime) und liefere diesen zurück.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub mtimeDir {
+    my ($this,$dir) = @_;
+
+    my $mtime = 0;
+    for my $path ($this->find($dir)) {
+        my $time = $this->mtime($path);
+        if ($time > $mtime) {
+            $mtime = $time;
+        }
+    }
+
+    return $mtime;
+}
+
+# -----------------------------------------------------------------------------
+
 =head3 rmdir() - Lösche Verzeichnis
 
 =head4 Synopsis
