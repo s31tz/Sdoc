@@ -216,7 +216,7 @@ resultierenden Text zurück.
 
 =head4 Example
 
-  $js = Sdoc::Core::Template->substitute(
+  $js = Sdoc::Core::Template->combine(
       placeholders => [
           __NAME__ => $name,
           __CONFIG__ => $config,
