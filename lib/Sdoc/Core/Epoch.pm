@@ -179,6 +179,31 @@ sub dayName {
 
 # -----------------------------------------------------------------------------
 
+=head3 year() - Jahr
+
+=head4 Synopsis
+
+  $year = $t->year;
+
+=head4 Returns
+
+Integer
+
+=head4 Description
+
+Liefere (vierstellige) Jahreszahl.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub year {
+    my $self = shift;
+    return (localtime $$self)[5]+1900;
+}
+
+# -----------------------------------------------------------------------------
+
 =head2 Zeit-Arithmetik
 
 =head3 minus() - Verschiebe Zeitpunkt in Vergangenheit
