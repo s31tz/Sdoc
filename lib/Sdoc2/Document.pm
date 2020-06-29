@@ -199,8 +199,7 @@ sub new {
         my $program = $p->basePath($inp).".$ext";
         if (-e $program) {
             (my $dir,$program) = $p->split($program);
-            my $sh = Sdoc::Core::Shell->new(log=>1);
-            $sh->exec("(cd $dir; ./$program)");
+            Sdoc::Core::Shell->exec("(cd $dir; ./$program)");
         }
     }
 

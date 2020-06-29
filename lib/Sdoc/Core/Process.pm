@@ -16,7 +16,7 @@ use Sdoc::Core::System;
 
 =head1 NAME
 
-Sdoc::Core::Process - Information über den laufenden Prozess
+Sdoc::Core::Process - Informationen über den laufenden Prozess
 
 =head1 BASE CLASS
 
@@ -24,7 +24,7 @@ L<Sdoc::Core::System>
 
 =head1 METHODS
 
-=head2 Klassen/Objektmethoden
+=head2 Klassenmethoden
 
 =head3 cwd() - Aktuelles Verzeichnis (Liefern/Setzen)
 
@@ -141,51 +141,6 @@ sub euid {
 
 # -----------------------------------------------------------------------------
 
-=head3 uid() - UID des Prozesses oder eines Benutzres
-
-=head4 Synopsis
-
-  $uid = $this->uid;
-  $uid = $this->uid($user);
-
-=head4 Description
-
-Liefere die reale User-Id des Prozesses. Ist Parameter $user
-angegeben, liefere die User-Id des betreffenden Benutzers.
-
-=cut
-
-# -----------------------------------------------------------------------------
-
-sub uid {
-    my ($this,$user) = @_;
-    return $user? $this->SUPER::uid($user): $<;
-}
-
-# -----------------------------------------------------------------------------
-
-=head3 user() - Benutzername
-
-=head4 Synopsis
-
-  $user = $this->user;
-
-=head4 Description
-
-Liefere den Namen des Benutzers, unter dessen Rechten der
-Prozess ausgeführt wird.
-
-=cut
-
-# -----------------------------------------------------------------------------
-
-sub user {
-    my $this = shift;
-    return Sdoc::Core::System->user($>);
-}
-
-# -----------------------------------------------------------------------------
-
 =head3 homeDir() - Home-Verzeichnis des Benutzers
 
 =head4 Synopsis
@@ -218,6 +173,89 @@ sub homeDir {
     }
 
     return $path;
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 mtime() - Zeitpunkt der letzten Programmänderung
+
+=head4 Synopsis
+
+  $mtime = $this->mtime;
+
+=head4 Returns
+
+Unix Epoch (Integer)
+
+=head4 Description
+
+Liefere den Zeitpunkt der letzten Änderung an den Dateien
+des (Perl-)Prozesses in Unix Epoch.
+
+Diese Information ist nützlich, wenn das Programm z.B. Dateien
+generiert und selbst entscheiden möchte, ob eine Neugenerierung
+aufgrund einer Änderung am Programm nötig ist.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub mtime {
+    my $this = shift;
+
+    my $mtime = (stat($0))[9];
+    for (values %INC) {
+        if ((my $t = (stat)[9]) > $mtime) {
+            $mtime = $t;
+        }
+    }
+
+    return $mtime;
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 uid() - UID des Prozesses oder eines (beliebigen) Benutzers
+
+=head4 Synopsis
+
+  $uid = $this->uid;
+  $uid = $this->uid($user);
+
+=head4 Description
+
+Liefere die reale User-Id des Prozesses. Ist Parameter $user
+angegeben, liefere die User-Id des betreffenden Benutzers.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub uid {
+    my ($this,$user) = @_;
+    return $user? $this->SUPER::uid($user): $<;
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 user() - Name des ausführenden Benutzers
+
+=head4 Synopsis
+
+  $user = $this->user;
+
+=head4 Description
+
+Liefere den Namen des Benutzers, unter dessen Rechten der
+Prozess ausgeführt wird.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub user {
+    my $this = shift;
+    return Sdoc::Core::System->user($>);
 }
 
 # -----------------------------------------------------------------------------

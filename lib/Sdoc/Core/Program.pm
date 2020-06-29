@@ -715,7 +715,7 @@ sub projectDir {
 
 # -----------------------------------------------------------------------------
 
-=head2 Zeitmessung
+=head2 Zeit
 
 =head3 elapsed() - Vergangene Zeit in Sekunden
 
