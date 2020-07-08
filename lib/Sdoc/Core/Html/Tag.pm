@@ -1397,7 +1397,7 @@ sub tag {
 
         if ($key eq 'style' && ref($val)) {
             # liefert undef, wenn Array leer ist
-            $val = Sdoc::Core::Css->rules(@$val);
+            $val = Sdoc::Core::Css->properties(@$val);
         }
         if (defined $val) {
             if ($checkLevel >= 2) {
