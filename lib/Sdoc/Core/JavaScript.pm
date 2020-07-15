@@ -1,4 +1,5 @@
 package Sdoc::Core::JavaScript;
+use base qw/Sdoc::Core::Object/;
 
 use v5.10;
 use strict;
@@ -6,6 +7,7 @@ use warnings;
 
 our $VERSION = '1.186';
 
+use Sdoc::Core::Template;
 use Sdoc::Core::Path;
 use Scalar::Util ();
 
@@ -17,9 +19,86 @@ use Scalar::Util ();
 
 Sdoc::Core::JavaScript - Generierung von JavaScript-Code
 
+=head1 BASE CLASS
+
+L<Sdoc::Core::Object>
+
 =head1 METHODS
 
 =head2 Klassenmethoden
+
+=head3 code() - Erstelle JavaScript-Code in Perl
+
+=head4 Synopsis
+
+  $js = $class->code(@keyVal,$text);
+
+=head4 Arguments
+
+=over 4
+
+=item @keyVal
+
+Liste von Platzhalter/Wert-Paaren. Die Platzhalter beginnen
+und enden mit zwei Unterstrichen.
+
+=item $text
+
+JavaScript-Code mit Platzhaltern (String)
+
+=back
+
+=head4 Returns
+
+JavaScript-Code (String)
+
+=head4 Description
+
+Setze die Platzhalter/Wert-Paare @keyVal in den JavaScript-Code $text
+ein und liefere den resultierenden JavaScript-Code zurück. Als
+Zeilenfortsetzungszeichen kann eine Tilde (~) verwendet werden
+(Achtung: dann darf $text nicht mit q~...~ gequotet werden).
+
+Die Methode ist vor allem nützlich, wenn der JavaScript-Code
+jQuery-Aufrufe mit Dollar-Zeichen ($) enthält oder die Zeilen
+überlang sind.
+
+=head4 Example
+
+  $js = Sdoc::Core::JavaScript->code(q~
+      __NAME__ => 'dgr',
+      __VALUE__ => 4711,q~
+      var __NAME__ = (function() {
+          return {
+              x: __VALUE__,
+          };
+      })();
+  ~);
+
+liefert
+
+  var dgr = (function() {
+      return {
+          x: 4711,
+      };
+  })();
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub code {
+    my $self = shift;
+    my $text = pop;
+    # @_: @keyVal
+
+    return Sdoc::Core::Template->combine(
+        placeholders => \@_,
+        template => $text,
+    );
+}
+
+# -----------------------------------------------------------------------------
 
 =head3 line() - Mache JavaScript-Code einzeilig
 
