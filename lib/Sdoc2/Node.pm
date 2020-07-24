@@ -759,7 +759,8 @@ sub expand {
                 "$1")|ge;
             $val =~ s|I\{([^}]+)\}|$h->tag('i',class=>"$cssPrefix-seg-i",
                 "$1")|ge;
-            $val =~ s|Q\{([^}]+)\}|&#132;$1&#148;|g; # wo in Unicode?
+            # $val =~ s|Q\{([^}]+)\}|&ldquo;$1&rdquo;|g;
+            $val =~ s|Q\{([^}]+)\}|"$1"|g;
         }
     }
     elsif ($format eq 'pod') {
