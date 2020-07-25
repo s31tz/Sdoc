@@ -65,15 +65,15 @@ jQuery-Aufrufe mit Dollar-Zeichen ($) enthält oder die Zeilen
 
 =head4 Example
 
-  $js = Sdoc::Core::JavaScript->code(q~
-      __NAME__ => 'dgr',
-      __VALUE__ => 4711,q~
+  $js = Sdoc::Core::JavaScript->code(q°
       var __NAME__ = (function() {
           return {
               x: __VALUE__,
           };
-      })();
-  ~);
+      })();°,
+      __NAME__ => 'dgr',
+      __VALUE__ => 4711,
+  );
 
 liefert
 
@@ -89,7 +89,7 @@ liefert
 
 sub code {
     my $self = shift;
-    my $text = pop;
+    my $text = shift;
     # @_: @keyVal
 
     return Sdoc::Core::Template->combine(
