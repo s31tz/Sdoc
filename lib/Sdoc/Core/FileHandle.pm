@@ -181,6 +181,7 @@ sub new {
                 $class->throw(
                     'FH-00001: Can\'t open file',
                     Path=>$path,
+                    Mode=>$mode,
                     Errstr=>$!,
                 );
             }

@@ -293,12 +293,12 @@ Anzahl Sekunden (Integer)
 
 =head4 Description
 
-Ermittele den Offset der lokalen Zeitzone gegenüber UTC in Sekunden
-und liefere diesen zurück.
+Ermittele den aktuellen Offset der lokalen Zeitzone gegenüber UTC
+in Sekunden und liefere diesen zurück.
 
 =head4 Example
 
-  Sdoc::Core::Epoch->tzOffset;
+  Sdoc::Core::Epoch->tzOffset; # MEST
   ==>
   7200
 
