@@ -58,6 +58,10 @@ Filehandle, von der die Benutzereingabe gelesen wird.
 
 Filehandle, auf die der Prompt geschrieben wird.
 
+=item -sloppy => $bool (Default: 0)
+
+Beschränke die möglichen Antworten nicht auf die Liste $valSpec.
+
 =item -timer => \$t (Default: undef)
 
 Addiere Antwortzeit des Benutzer zu Zeitvariable $t hinzu. Dieses
@@ -134,6 +138,7 @@ sub askUser {
     my $default = undef;
     my $in = *STDIN;
     my $out = *STDOUT;
+    my $sloppy = 0;
     my $timer = undef;
     my $timeout = undef;
     my $ttyIn = 0;
@@ -147,6 +152,7 @@ sub askUser {
             -default => \$default,
             -inHandle => \$in,
             -outHandle => \$out,
+            -sloppy => \$sloppy,
             -timer => \$timer,
             -timeout => \$timeout,
             -ttyIn => \$ttyIn,
@@ -257,7 +263,7 @@ sub askUser {
 
         if (@values) {
            next if !defined $answ; # kein Ausstieg mit ^D
-           next if !grep { $_ eq $answ } @values;
+           next if !$sloppy && !grep { $_ eq $answ } @values;
         }
         last; # Ausstieg
     }
