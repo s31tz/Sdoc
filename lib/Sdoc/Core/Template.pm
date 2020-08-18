@@ -75,7 +75,7 @@ Resultat C<$str>:
 
 =over 4
 
-=item --lineContinuation => $type (Default: undef)
+=item -lineContinuation => $type (Default: undef)
 
 Art der Zeilenfortsetzung. Mögliche Werte:
 
