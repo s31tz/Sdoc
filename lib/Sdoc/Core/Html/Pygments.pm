@@ -5,7 +5,7 @@ use v5.10;
 use strict;
 use warnings;
 
-our $VERSION = '1.190';
+our $VERSION = '1.191';
 
 use Sdoc::Core::CommandLine;
 use Sdoc::Core::Shell;
@@ -367,7 +367,7 @@ sub stylesPage {
 
 =head1 VERSION
 
-1.190
+1.191
 
 =head1 AUTHOR
 

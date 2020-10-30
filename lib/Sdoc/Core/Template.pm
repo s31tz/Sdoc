@@ -6,7 +6,7 @@ use strict;
 use warnings;
 use utf8;
 
-our $VERSION = '1.190';
+our $VERSION = '1.191';
 
 use Sdoc::Core::Path;
 use Sdoc::Core::Option;
@@ -877,7 +877,7 @@ sub asStringNL {
 
 =head1 VERSION
 
-1.190
+1.191
 
 =head1 AUTHOR
 
