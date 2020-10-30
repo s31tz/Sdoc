@@ -5,7 +5,7 @@ use v5.10;
 use strict;
 use warnings;
 
-our $VERSION = '1.189';
+our $VERSION = '1.190';
 
 use Sdoc::Core::Hash;
 
@@ -409,7 +409,7 @@ sub exists {
 
 =head1 VERSION
 
-1.189
+1.190
 
 =head1 AUTHOR
 
