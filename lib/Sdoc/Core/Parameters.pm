@@ -464,7 +464,7 @@ sub extractToObject {
     elsif (@$paramA) {
         $class->throw(
             'PARAM-00099: Unexpected parameter(s)',
-            Parameters => "@_",
+            Parameters => "@$paramA",
         );
     }
 
