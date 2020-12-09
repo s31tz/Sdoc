@@ -5,7 +5,7 @@ use v5.10;
 use strict;
 use warnings;
 
-our $VERSION = '1.192';
+our $VERSION = '1.193';
 
 use Sdoc::Core::Path;
 use Sdoc::Core::String;
@@ -635,7 +635,7 @@ sub style {
 
 =head1 VERSION
 
-1.192
+1.193
 
 =head1 AUTHOR
 
