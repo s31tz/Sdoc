@@ -19,6 +19,7 @@ use Sdoc::Core::Terminal;
 use Encode::Guess ();
 use Sdoc::Core::String;
 use Encode ();
+use Digest::SHA ();
 use Sdoc::Core::Unindent;
 use Fcntl qw/:DEFAULT/;
 use Sdoc::Core::Perl;
@@ -940,6 +941,43 @@ sub read {
     }
 
     return $data;
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 sha1() - SHA1 Hex Digest
+
+=head4 Synopsis
+
+  $this->sha1($file);
+
+=head4 Arguments
+
+=over 4
+
+=item $file
+
+Pfad der Datei.
+
+=back
+
+=head4 Description
+
+Ermittele den SHA1 Hex Digest der Datei $file und liefere diesen zurück.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub sha1 {
+    my $this = shift;
+    my $file = $this->expandTilde(shift);
+
+    my $sha = Digest::SHA->new(1);
+    say $file;
+    $sha->addfile($file);
+
+    return $sha->hexdigest;;
 }
 
 # -----------------------------------------------------------------------------
@@ -3487,7 +3525,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2020 Frank Seitz
+Copyright (C) 2021 Frank Seitz
 
 =head1 LICENSE
 
