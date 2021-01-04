@@ -615,7 +615,17 @@ sub encoding {
 
 =head4 Synopsis
 
-  $class->link($path,$link);
+  $this->link($path,$link);
+
+=head4 Options
+
+=over 4
+
+=item -force => $bool (Default: 0)
+
+Lösche die Datei $link, falls sie bereits existiert.
+
+=back
 
 =head4 Description
 
@@ -627,10 +637,22 @@ Die Methode liefert keinen Wert zurück.
 # -----------------------------------------------------------------------------
 
 sub link {
-    my ($class,$path,$link) = @_;
+    my $this = shift;
 
+    my $force = 0;
+
+    my $argA = $this->parameters(2,2,\@_,
+        -force => \$force,
+    );
+    my $path = $this->expandTilde(shift @$argA);
+    my $link = $this->expandTilde(shift @$argA);
+
+    if (-f $link && $force) {
+        $this->delete($link);
+    }
+    
     CORE::link $path,$link or do {
-        $class->throw(
+        $this->throw(
             'FS-00002: Kann Link nicht erzeugen',
             Path => $path,
             Link => $link,
@@ -974,7 +996,6 @@ sub sha1 {
     my $file = $this->expandTilde(shift);
 
     my $sha = Digest::SHA->new(1);
-    say $file;
     $sha->addfile($file);
 
     return $sha->hexdigest;;
@@ -2807,7 +2828,7 @@ sub removeExtension {
 
 =head4 Synopsis
 
-  $class->rename($oldPath,$newPath,@opt);
+  $this->rename($oldPath,$newPath,@opt);
 
 =head4 Options
 
@@ -2849,9 +2870,9 @@ Nach Ausführung existiert der der Pfad /tmp/x/b/c/d/f, aber der Pfad
 # -----------------------------------------------------------------------------
 
 sub rename {
-    my $class = shift;
-    my $oldPath = shift;
-    my $newPath = shift;
+    my $this = shift;
+    my $oldPath = $this->expandTilde(shift);
+    my $newPath = $this->expandTilde(shift);
     # @_: @opt
 
     # Nichts tun, wenn die Pfade identisch sind
@@ -2871,7 +2892,7 @@ sub rename {
     );
 
     if (!$overwrite && -e $newPath) {
-        $class->throw(
+        $this->throw(
             'PATH-00099: Zieldatei existiert bereits',
             Path => $newPath,
         );
@@ -2882,12 +2903,12 @@ sub rename {
     if ($recursive) {
         my $newDir = (Sdoc::Core::Path->split($newPath))[0];
         if ($newDir && !-d $newDir) {
-            $class->mkdir($newDir,-recursive=>1);
+            $this->mkdir($newDir,-recursive=>1);
         }
     }
 
     CORE::rename $oldPath,$newPath or do {
-        $class->throw(
+        $this->throw(
             'PATH-00010: Kann Pfad nicht umbenennen',
             Error => "$!",
             OldPath => $oldPath,
