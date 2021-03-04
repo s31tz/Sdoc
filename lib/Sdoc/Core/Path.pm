@@ -2957,6 +2957,20 @@ Die Schrittweite der Nummerierung.
 
 =back
 
+=head4 Options
+
+=over 4
+
+=item -start => $n (Default: $step)
+
+Startwert.
+
+=item -verbose => $bool (Default: 0)
+
+Gib Information aus.
+
+=back
+
 =head4 Description
 
 Sortiere die Basisnamen der Pfade B<@paths> lexikalisch und
@@ -2984,9 +2998,19 @@ aber ihre unterschiedliche Extension.
 # -----------------------------------------------------------------------------
 
 sub numberBasePaths {
-    my ($this,$pathA,$width,$step) = @_;
+    my $this = shift;
 
+    # Optionen und Argumente
+
+    my $start = undef;
     my $verbose = 0;
+
+    my $argA = $this->parameters(3,3,\@_,
+        -start => \$start,
+        -verbose => \$verbose,
+    );
+    my ($pathA,$width,$step) = @$argA;
+    $start //= $step;
 
     # Baue Liste der Basisnamen auf
 
@@ -3001,7 +3025,7 @@ sub numberBasePaths {
         push @$arr,$ext;
     }
 
-    my $n = $step;
+    my $n = $start;
     my @newPaths;
     for (sort keys %basePath) {
         my $oldBasePath = $_;
