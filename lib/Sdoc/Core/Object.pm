@@ -167,7 +167,7 @@ dass @params leer ist, denn dann kehrt parameters() sofort zurück.
 von ihr selbst behandelt werden, ist die Nutzung am effizientesten.
 Denn die Argumente müssen von parameters() dann nicht kopiert werden und
 wenn der Methodenaufruf ohne Optionen erfolgt, kehrt parameters(),
-wie bereits gesagt, sofort zurück. Beispiel:
+sofort zurück. Beispiel:
 
   sub myMethod {
       my ($this,$arg1,$arg2,$arg3) = splice @_,0,4;
@@ -600,7 +600,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2020 Frank Seitz
+Copyright (C) 2021 Frank Seitz
 
 =head1 LICENSE
 

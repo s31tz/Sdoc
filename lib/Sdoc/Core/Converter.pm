@@ -139,7 +139,8 @@ sub snakeCaseToCamelCase {
     my ($this,$str) = @_;
 
     # Eingebettete Bindestriche und Unterstriche in Camel Case wandeln
-    $str =~ s/(.)[_-](.)/$1\U$2/g;
+    # $str =~ s/(.)[_-](.)/$1\U$2/g;
+    $str =~ s/[_-](.)/\U$1/g;
 
     return $str;
 }
@@ -679,7 +680,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2020 Frank Seitz
+Copyright (C) 2021 Frank Seitz
 
 =head1 LICENSE
 

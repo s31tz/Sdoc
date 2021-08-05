@@ -121,6 +121,10 @@ sub fromString {
         @keys = $$ref =~ /^\@\@([\w-]+)\@\@ */gm;
         @vals = split /^\@\@[\w-]+\@\@ */m,$$ref;
     }
+    elsif (substr($$ref,0,1) eq '=') {
+        @keys = $$ref =~ /^==([\w-]+)== */gm;
+        @vals = split /^==[\w-]+== */m,$$ref;
+    }
     else {
         @keys = $$ref =~ /^([\w-]+) *[:=] */gm;
         @vals = split /^[\w-]+ *[:=] */m,$$ref;
@@ -340,7 +344,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2020 Frank Seitz
+Copyright (C) 2021 Frank Seitz
 
 =head1 LICENSE
 

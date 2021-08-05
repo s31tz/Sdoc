@@ -622,7 +622,7 @@ sub AUTOLOAD :lvalue {
 
     if (!exists $this->{$key}) {
         $this->throw(
-            'HASH-00001: Hash-Schlüssel oder Methode existiert nicht',
+            'HASH-00001: Hash key or object method does not exist',
             Attribute => $key,
             Class => ref($this)? ref($this): $this,
         );
@@ -1496,7 +1496,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2020 Frank Seitz
+Copyright (C) 2021 Frank Seitz
 
 =head1 LICENSE
 

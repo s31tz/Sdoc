@@ -39,6 +39,17 @@ im String-Kontext automatisch zum Verzeichnis-Pfad.
 
   $dir = $class->new;
 
+=head4 Options
+
+=over 4
+
+=item -cleanup => $bool (Default: 1)
+
+Entferne das Verzeichnis bei Beendigung des Programms. Wenn 0, bleibt das
+Verzeichnis nach Beendigung des Programms bestehen.
+
+=back
+
 =head4 Returns
 
 Tempverzeichnis-Objekt
@@ -58,7 +69,7 @@ sub new {
 
     # Optionen und Argumente
 
-    my $cleanup;
+    my $cleanup = 1;
 
     my $argA = $class->parameters(0,0,\@_,
         -cleanup => \$cleanup,
@@ -87,7 +98,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2020 Frank Seitz
+Copyright (C) 2021 Frank Seitz
 
 =head1 LICENSE
 
