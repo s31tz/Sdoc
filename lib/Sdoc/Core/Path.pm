@@ -1492,7 +1492,7 @@ sub entries {
     my $argA = $this->parameters(1,1,\@_,
         -encoding => \$encoding,
     );
-    my $dir = shift @$argA;
+    my $dir = $this->expandTilde(shift @$argA);
 
     # Operation ausführen
 
