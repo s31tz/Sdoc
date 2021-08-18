@@ -602,6 +602,12 @@ sub dump {
                     $h->tag('script',
                         src=>"$highlightUrl/scripts/shBrushSql.js",
                     ).
+                    $h->tag('script',
+                        src=>"$highlightUrl/scripts/shBrushCss.js",
+                    ).
+                    $h->tag('script',
+                        src=>"$highlightUrl/scripts/shBrushPython.js",
+                    ).
                     $h->tag('script',q~
                         SyntaxHighlighter.all();
                     ~)
@@ -652,7 +658,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2020 Frank Seitz
+Copyright (C) 2021 Frank Seitz
 
 =cut
 
