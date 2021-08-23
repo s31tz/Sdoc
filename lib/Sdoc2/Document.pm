@@ -608,6 +608,9 @@ sub dump {
                     $h->tag('script',
                         src=>"$highlightUrl/scripts/shBrushPython.js",
                     ).
+                    $h->tag('script',
+                        src=>"$highlightUrl/scripts/shBrushPlain.js",
+                    ).
                     $h->tag('script',q~
                         SyntaxHighlighter.all();
                     ~)
