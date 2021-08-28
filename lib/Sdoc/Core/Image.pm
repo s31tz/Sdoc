@@ -145,6 +145,16 @@ sub edit {
   @files|$fileA = $class->findImages(@filesAndDirs);
   @images|$imageA = $class->findImages(@filesAndDirs,-objects=>1);
 
+=head4 Arguments
+
+=over 4
+
+=item @filesAndDirs
+
+Liste von Bilddateien und Verzeichnissen mit Bilddateien.
+
+=back
+
 =head4 Options
 
 =over 4
@@ -163,7 +173,7 @@ oder nach Name. Per Default werden die Bilder unsortiert geliefert.
 =head4 Description
 
 Liefere die Liste aller Bild-Dateien, die in @filesAndDirs
-vorkommen. Vereichnisse werden rekursiv nach Bild-Dateien durchsucht.
+vorkommen. Verzeichnisse werden rekursiv nach Bild-Dateien durchsucht.
 Als Bild-Dateien werden alle Dateien angesehen, die eine
 Bild-Extension (.jpg, .png, .gif) besitzen. Bei Dateien ohne
 Extension wird mittels Sdoc::Core::Image->type() geprüft, ob es sich
@@ -238,6 +248,16 @@ sub findImages {
 =head4 Synopsis
 
   @files|$fileA = $class->pickImagesWithEog(@filesAndDirs);
+
+=head4 Arguments
+
+=over 4
+
+=item @filesAndDirs
+
+Liste von Bilddateien und Verzeichnissen mit Bilddateien.
+
+=back
 
 =head4 Description
 
