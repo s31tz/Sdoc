@@ -10,7 +10,6 @@ our $VERSION = '1.195';
 use Sdoc::Core::Option;
 use Sdoc::Core::Path;
 use Sdoc::Core::Shell;
-use Sdoc::Core::Trash;
 use Sdoc::Core::FileHandle;
 
 # -----------------------------------------------------------------------------
@@ -239,54 +238,6 @@ sub findImages {
     }
     
     return wantarray? @arr: \@arr;
-}
-
-# -----------------------------------------------------------------------------
-
-=head3 pickImagesWithEog() - Wähle Bilddateien mit eog aus
-
-=head4 Synopsis
-
-  @files|$fileA = $class->pickImagesWithEog(@filesAndDirs);
-
-=head4 Arguments
-
-=over 4
-
-=item @filesAndDirs
-
-Liste von Bilddateien und Verzeichnissen mit Bilddateien. Eog ermittelt
-die Bilddateien in Verzeichnissen eigenständig, aber nicht rekursiv.
-
-=back
-
-=head4 Description
-
-Zeige die Bilddateien mit C<eog> an. Bilder, die in C<eog> mit C<DEL>
-gelöscht werden, landen im Trash. Nach Verlassen von C<eog> kehrt die
-Methode zurück und liefert die Liste aller Dateien im Trash. Diese
-können dann nach Wunsch verarbeitet werden.
-
-Ist der Trash bei Aufruf der Methode nicht leer, wird gefragt, ob
-die Dateien im Trash gelöscht werden sollen.
-
-=cut
-
-# -----------------------------------------------------------------------------
-
-sub pickImagesWithEog {
-    my $class = shift;
-    # @_: @filesAndDirs 
-
-    my $t = Sdoc::Core::Trash->new;
-    $t->emptyTrash(1); # Leere Trash nach Rückfrage
-
-    Sdoc::Core::Shell->exec("eog @_ 2>/dev/null");
-
-    # Ermittele die Dateien im Trash
-    my $fileA = $t->files;
-
-    return wantarray? @$fileA: $fileA;
 }
 
 # -----------------------------------------------------------------------------
