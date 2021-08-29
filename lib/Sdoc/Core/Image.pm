@@ -255,17 +255,17 @@ sub findImages {
 
 =item @filesAndDirs
 
-Liste von Bilddateien und Verzeichnissen mit Bilddateien.
+Liste von Bilddateien und Verzeichnissen mit Bilddateien. Eog ermittelt
+die Bilddateien in Verzeichnissen eigenständig, aber nicht rekursiv.
 
 =back
 
 =head4 Description
 
-Ermittele mit findImages() alle Bild-Dateien, die in @filesAndDirs
-vorkommen und zeige sie mit eog an. Bilder, die in eog mit DEL gelöscht
-werden, landen im Trash. Nach Verlassen von eog kehrt die Methode
-zurück und liefert die Liste aller Dateien im Trash. Diese können
-dann nach Wunsch verarbeitet werden.
+Zeige die Bilddateien mit C<eog> an. Bilder, die in C<eog> mit C<DEL>
+gelöscht werden, landen im Trash. Nach Verlassen von C<eog> kehrt die
+Methode zurück und liefert die Liste aller Dateien im Trash. Diese
+können dann nach Wunsch verarbeitet werden.
 
 Ist der Trash bei Aufruf der Methode nicht leer, wird gefragt, ob
 die Dateien im Trash gelöscht werden sollen.
@@ -281,11 +281,10 @@ sub pickImagesWithEog {
     my $t = Sdoc::Core::Trash->new;
     $t->emptyTrash(1); # Leere Trash nach Rückfrage
 
-    my $fileA = $class->findImages(@_);
-    Sdoc::Core::Shell->exec("eog @$fileA 2>/dev/null");
+    Sdoc::Core::Shell->exec("eog @_ 2>/dev/null");
 
     # Ermittele die Dateien im Trash
-    $fileA = $t->files;
+    my $fileA = $t->files;
 
     return wantarray? @$fileA: $fileA;
 }
