@@ -167,7 +167,8 @@ sub DESTROY {
         # printf $fd "%s%s: %s\n",$pre,$prog,$duration;
         my $esc = $self->{'cmdAnsiColor'};
         my $a = Sdoc::Core::AnsiColor->new($esc);
-        printf $fd $a->strLn($esc,sprintf "%s%s: %s",$pre,$prog,$duration);
+        # printf $fd $a->strLn($esc,sprintf "%s%s: %s",$pre,$prog,$duration);
+        printf $fd $a->strLn($esc,sprintf "%s%s",$pre,$duration);
     }
 
     return;
