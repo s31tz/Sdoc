@@ -6,7 +6,7 @@ use strict;
 use warnings;
 use utf8;
 
-our $VERSION = '1.195';
+our $VERSION = '1.196';
 
 use Sdoc::Core::Object;
 use Cwd ();
@@ -1778,7 +1778,7 @@ sub removePod {
 
 =head1 VERSION
 
-1.195
+1.196
 
 =head1 AUTHOR
 

@@ -9,7 +9,7 @@ use strict;
 use warnings;
 use utf8;
 
-our $VERSION = '1.195';
+our $VERSION = '1.196';
 
 use Time::HiRes ();
 use Sdoc::Core::Duration;
@@ -635,7 +635,7 @@ sub _logCmd {
 
 =head1 VERSION
 
-1.195
+1.196
 
 =head1 AUTHOR
 
