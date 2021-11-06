@@ -30,7 +30,7 @@ L<Sdoc::Core::Object>
 
 =head1 DESCRIPTION
 
-Die  Klasse erlaubt es, Textausgaben - die typischerweise aufs
+Die Klasse erlaubt es, Textausgaben - die typischerweise aufs
 Terminal gehen - mit ANSI Colorcodes auszuzeichnen und diese
 Auszeichnung bei Aufruf des Konstruktors zentral an- oder ab-zuschalten.
 
