@@ -1,14 +1,3 @@
-package Sdoc::Core::LaTeX::Figure;
-use base qw/Sdoc::Core::Hash/;
-
-use v5.10;
-use strict;
-use warnings;
-
-our $VERSION = '1.196';
-
-use Sdoc::Core::Reference;
-
 # -----------------------------------------------------------------------------
 
 =encoding utf8
@@ -38,6 +27,23 @@ Der Code
 produziert
 
   FIXME
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+package Sdoc::Core::LaTeX::Figure;
+use base qw/Sdoc::Core::Hash/;
+
+use v5.10;
+use strict;
+use warnings;
+
+our $VERSION = '1.196';
+
+use Sdoc::Core::Reference;
+
+# -----------------------------------------------------------------------------
 
 =head1 METHODS
 

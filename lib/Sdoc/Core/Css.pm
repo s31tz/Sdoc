@@ -1,15 +1,3 @@
-package Sdoc::Core::Css;
-use base qw/Sdoc::Core::Hash/;
-
-use v5.10;
-use strict;
-use warnings;
-
-our $VERSION = '1.196';
-
-use Sdoc::Core::Path;
-use Sdoc::Core::String;
-
 # -----------------------------------------------------------------------------
 
 =encoding utf8
@@ -31,6 +19,24 @@ L<Sdoc::Core::Hash>
 Format des generierten CSS-Code.
 
 =back
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+package Sdoc::Core::Css;
+use base qw/Sdoc::Core::Hash/;
+
+use v5.10;
+use strict;
+use warnings;
+
+our $VERSION = '1.196';
+
+use Sdoc::Core::Path;
+use Sdoc::Core::String;
+
+# -----------------------------------------------------------------------------
 
 =head1 METHODS
 

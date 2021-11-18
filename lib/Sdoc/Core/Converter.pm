@@ -1,3 +1,19 @@
+# -----------------------------------------------------------------------------
+
+=encoding utf8
+
+=head1 NAME
+
+Sdoc::Core::Converter - Konvertierung von Werten
+
+=head1 BASE CLASS
+
+L<Sdoc::Core::Object>
+
+=cut
+
+# -----------------------------------------------------------------------------
+
 package Sdoc::Core::Converter;
 use base qw/Sdoc::Core::Object/;
 
@@ -12,16 +28,6 @@ use POSIX ();
 use Time::Local ();
 
 # -----------------------------------------------------------------------------
-
-=encoding utf8
-
-=head1 NAME
-
-Sdoc::Core::Converter - Konvertierung von Werten
-
-=head1 BASE CLASS
-
-L<Sdoc::Core::Object>
 
 =head1 METHODS
 

@@ -1,11 +1,3 @@
-package Sdoc::Core::Stacktrace;
-
-use v5.10;
-use strict;
-use warnings;
-
-our $VERSION = '1.196';
-
 # -----------------------------------------------------------------------------
 
 =encoding utf8
@@ -73,12 +65,8 @@ Aufrufreihenfolge wieder. Jede Zeile beschreibt einen Subroutine-Aufruf:
   +-- Package, zu dem die Subroutine gehört
 
 Die in eckigen Klammern genannte Quelltextposition kann bei
-Aufruf von vi(1) oder less(1) benutzt werden, um unmittelbar auf die
-entsprechende Zeile zu positionieren:
-
-  $ vi +17 ./test.pl
-
-bzw.
+Aufruf von vi(1), emacs(1) oder less(1) benutzt werden,
+um unmittelbar auf die entsprechende Zeile zu positionieren:
 
   $ less +17 ./test.pl
 
@@ -87,6 +75,20 @@ Konstruktors L<new|"new() - Konstruktor">() oder der Methode L<asString|"asStrin
 als Klassenmethode gerufen wird. Sollen Stacktrace-Frames am
 Ende weggelassen werden, kann dies durch Angabe des Parameters
 $i erreicht werden.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+package Sdoc::Core::Stacktrace;
+
+use v5.10;
+use strict;
+use warnings;
+
+our $VERSION = '1.196';
+
+# -----------------------------------------------------------------------------
 
 =head1 METHODS
 

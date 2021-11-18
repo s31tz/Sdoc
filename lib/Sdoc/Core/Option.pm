@@ -1,3 +1,19 @@
+# -----------------------------------------------------------------------------
+
+=encoding utf8
+
+=head1 NAME
+
+Sdoc::Core::Option - Verarbeitung von Programm- und Methoden-Optionen
+
+=head1 BASE CLASS
+
+L<Sdoc::Core::Object>
+
+=cut
+
+# -----------------------------------------------------------------------------
+
 package Sdoc::Core::Option;
 use base qw/Sdoc::Core::Object/;
 
@@ -12,16 +28,6 @@ use Sdoc::Core::Hash;
 use Scalar::Util ();
 
 # -----------------------------------------------------------------------------
-
-=encoding utf8
-
-=head1 NAME
-
-Sdoc::Core::Option - Verarbeitung von Programm- und Methoden-Optionen
-
-=head1 BASE CLASS
-
-L<Sdoc::Core::Object>
 
 =head1 METHODS
 

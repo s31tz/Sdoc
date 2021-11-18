@@ -1,19 +1,3 @@
-package Sdoc2::Code;
-use base qw/Sdoc2::Node/;
-
-use v5.10;
-use strict;
-use warnings;
-use utf8;
-
-our $VERSION = '1';
-
-use Sdoc::Core::Unindent;
-use Sdoc::Core::Path;
-use Sdoc::Core::Ipc;
-use Sdoc::Core::String;
-use Sdoc::Core::Html::Listing;
-
 # -----------------------------------------------------------------------------
 
 =encoding utf8
@@ -45,6 +29,28 @@ Text des Code-Abschnitts. Im Gegensatz zu einem Paragraphen
 enthält der Text eines Code-Knoten auch Leerzeilen.
 
 =back
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+package Sdoc2::Code;
+use base qw/Sdoc2::Node/;
+
+use v5.10;
+use strict;
+use warnings;
+use utf8;
+
+our $VERSION = '1';
+
+use Sdoc::Core::Unindent;
+use Sdoc::Core::Path;
+use Sdoc::Core::Ipc;
+use Sdoc::Core::String;
+use Sdoc::Core::Html::Listing;
+
+# -----------------------------------------------------------------------------
 
 =head1 METHODS
 
@@ -389,7 +395,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2020 Frank Seitz
+Copyright (C) 2021 Frank Seitz
 
 =cut
 

@@ -1,3 +1,38 @@
+# -----------------------------------------------------------------------------
+
+=encoding utf8
+
+=head1 NAME
+
+Sdoc::Document - Sdoc-Dokument
+
+=head1 BASE CLASS
+
+L<Sdoc::Core::Object>
+
+=head1 SYNOPSIS
+
+  use Sdoc::Document;
+  
+  my $doc = Sdoc::Document->parse($input);
+  print $doc->generate('html');
+  print $doc->generate('latex');
+  print $doc->generate('mediawiki');
+  print $doc->generate('tree');
+
+=head1 DESCRIPTION
+
+Diese Klasse implementiert die Klassenmethode parse(), mit der ein
+Sdoc-Dokument in einen Parsingbaum überführt wird. Die Methode
+liefert den Wurzelknoten auf diesen Parsingbaum zurück. Der
+Wurzelknoten ist vom Typ Sdoc::Node::Document. Alle weiteren
+Methoden, um auf dem Parsingbaum zu operieren, implementiert die
+Klasse Sdoc::Node::Document oder deren Basisklasse Sdoc::Node.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
 package Sdoc::Document;
 use base qw/Sdoc::Core::Object/;
 
@@ -32,35 +67,6 @@ use Sdoc::Core::Shell;
 use Sdoc::LineProcessor;
 
 # -----------------------------------------------------------------------------
-
-=encoding utf8
-
-=head1 NAME
-
-Sdoc::Document - Sdoc-Dokument
-
-=head1 BASE CLASS
-
-L<Sdoc::Core::Object>
-
-=head1 SYNOPSIS
-
-  use Sdoc::Document;
-  
-  my $doc = Sdoc::Document->parse($input);
-  print $doc->generate('html');
-  print $doc->generate('latex');
-  print $doc->generate('mediawiki');
-  print $doc->generate('tree');
-
-=head1 DESCRIPTION
-
-Diese Klasse implementiert die Klassenmethode parse(), mit der ein
-Sdoc-Dokument in einen Parsingbaum überführt wird. Die Methode
-liefert den Wurzelknoten auf diesen Parsingbaum zurück. Der
-Wurzelknoten ist vom Typ Sdoc::Node::Document. Alle weiteren
-Methoden, um auf dem Parsingbaum zu operieren, implementiert die
-Klasse Sdoc::Node::Document oder deren Basisklasse Sdoc::Node.
 
 =head1 METHODS
 
@@ -386,7 +392,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2020 Frank Seitz
+Copyright (C) 2021 Frank Seitz
 
 =head1 LICENSE
 

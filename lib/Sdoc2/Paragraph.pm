@@ -1,13 +1,3 @@
-package Sdoc2::Paragraph;
-use base qw/Sdoc2::Node/;
-
-use v5.10;
-use strict;
-use warnings;
-use utf8;
-
-our $VERSION = '1';
-
 # -----------------------------------------------------------------------------
 
 =encoding utf8
@@ -42,6 +32,22 @@ Verweis auf übergeordneten Knoten.
 Text des Paragraphs.
 
 =back
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+package Sdoc2::Paragraph;
+use base qw/Sdoc2::Node/;
+
+use v5.10;
+use strict;
+use warnings;
+use utf8;
+
+our $VERSION = '1';
+
+# -----------------------------------------------------------------------------
 
 =head1 METHODS
 
@@ -188,7 +194,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2020 Frank Seitz
+Copyright (C) 2021 Frank Seitz
 
 =cut
 

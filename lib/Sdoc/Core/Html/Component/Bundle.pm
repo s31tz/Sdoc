@@ -1,12 +1,3 @@
-package Sdoc::Core::Html::Component::Bundle;
-use base qw/Sdoc::Core::List/;
-
-use v5.10;
-use strict;
-use warnings;
-
-our $VERSION = '1.196';
-
 # -----------------------------------------------------------------------------
 
 =encoding utf8
@@ -58,6 +49,21 @@ deren Bestandteile abzufragen.
 Sdoc::Core::Html::Component
 
 =back
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+package Sdoc::Core::Html::Component::Bundle;
+use base qw/Sdoc::Core::List/;
+
+use v5.10;
+use strict;
+use warnings;
+
+our $VERSION = '1.196';
+
+# -----------------------------------------------------------------------------
 
 =head1 METHODS
 

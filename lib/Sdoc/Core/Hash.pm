@@ -1,16 +1,3 @@
-package Sdoc::Core::Hash;
-use base qw/Sdoc::Core::Object/;
-
-use v5.10;
-use strict;
-use warnings;
-use utf8;
-
-our $VERSION = '1.196';
-
-use Scalar::Util ();
-use Hash::Util ();
-
 # -----------------------------------------------------------------------------
 
 =encoding utf8
@@ -65,6 +52,21 @@ werden.  Bei den Methoden ist der konventionelle Zugriff als
 C<Alternative Formulierung> angegeben.
 
 =cut
+
+# -----------------------------------------------------------------------------
+
+package Sdoc::Core::Hash;
+use base qw/Sdoc::Core::Object/;
+
+use v5.10;
+use strict;
+use warnings;
+use utf8;
+
+our $VERSION = '1.196';
+
+use Scalar::Util ();
+use Hash::Util ();
 
 # -----------------------------------------------------------------------------
 

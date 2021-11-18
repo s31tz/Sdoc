@@ -1,3 +1,21 @@
+# -----------------------------------------------------------------------------
+
+=encoding utf8
+
+=head1 NAME
+
+Sdoc::Core::Object - Basisklasse für alle Klassen der Klassenbibliothek
+
+=head1 SYNOPSIS
+
+  package MyClass;
+  use base qw/Sdoc::Core::Object/;
+  ...
+
+=cut
+
+# -----------------------------------------------------------------------------
+
 package Sdoc::Core::Object;
 
 use v5.10;
@@ -12,18 +30,6 @@ use Sdoc::Core::Parameters;
 use Sdoc::Core::Stacktrace;
 
 # -----------------------------------------------------------------------------
-
-=encoding utf8
-
-=head1 NAME
-
-Sdoc::Core::Object - Basisklasse für alle Klassen der Klassenbibliothek
-
-=head1 SYNOPSIS
-
-  package MyClass;
-  use base qw/Sdoc::Core::Object/;
-  ...
 
 =head1 METHODS
 

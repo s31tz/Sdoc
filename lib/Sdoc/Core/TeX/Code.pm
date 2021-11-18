@@ -1,18 +1,3 @@
-package Sdoc::Core::TeX::Code;
-use base qw/Sdoc::Core::Hash/;
-
-use v5.10;
-use strict;
-use warnings;
-
-our $VERSION = '1.196';
-
-use Sdoc::Core::Option;
-use Scalar::Util ();
-use Sdoc::Core::Unindent;
-use Sdoc::Core::Math;
-use Sdoc::Core::Converter;
-
 # -----------------------------------------------------------------------------
 
 =encoding utf8
@@ -30,6 +15,27 @@ L<Sdoc::Core::Hash>
 Ein Objekt der Klasse repräsentiert einen TeX Code-Generator. Mit
 den Methoden der Klasse kann aus einem Perl-Programm heraus
 TeX-Code erzeugt werden.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+package Sdoc::Core::TeX::Code;
+use base qw/Sdoc::Core::Hash/;
+
+use v5.10;
+use strict;
+use warnings;
+
+our $VERSION = '1.196';
+
+use Sdoc::Core::Option;
+use Scalar::Util ();
+use Sdoc::Core::Unindent;
+use Sdoc::Core::Math;
+use Sdoc::Core::Converter;
+
+# -----------------------------------------------------------------------------
 
 =head1 METHODS
 

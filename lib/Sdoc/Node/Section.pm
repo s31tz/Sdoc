@@ -1,12 +1,3 @@
-package Sdoc::Node::Section;
-use base qw/Sdoc::Node/;
-
-use v5.10;
-use strict;
-use warnings;
-
-our $VERSION = '3.00';
-
 # -----------------------------------------------------------------------------
 
 =encoding utf8
@@ -106,6 +97,17 @@ Inhaltsverzeichnis aufgenommen.
 =back
 
 =cut
+
+# -----------------------------------------------------------------------------
+
+package Sdoc::Node::Section;
+use base qw/Sdoc::Node/;
+
+use v5.10;
+use strict;
+use warnings;
+
+our $VERSION = '3.00';
 
 # -----------------------------------------------------------------------------
 
@@ -493,7 +495,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2020 Frank Seitz
+Copyright (C) 2021 Frank Seitz
 
 =head1 LICENSE
 

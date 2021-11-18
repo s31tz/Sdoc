@@ -1,14 +1,3 @@
-package Sdoc::Core::AnsiColor;
-use base qw/Sdoc::Core::Object/;
-
-use v5.10;
-use strict;
-use warnings;
-
-our $VERSION = '1.196';
-
-use Term::ANSIColor ();
-
 # -----------------------------------------------------------------------------
 
 =encoding utf8
@@ -80,6 +69,23 @@ Debian-Repository enthalten.
 Term::ANSIColor
 
 =back
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+package Sdoc::Core::AnsiColor;
+use base qw/Sdoc::Core::Object/;
+
+use v5.10;
+use strict;
+use warnings;
+
+our $VERSION = '1.196';
+
+use Term::ANSIColor ();
+
+# -----------------------------------------------------------------------------
 
 =head1 METHODS
 

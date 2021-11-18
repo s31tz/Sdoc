@@ -1,15 +1,3 @@
-package Sdoc::Core::Html::Construct;
-use base qw/Sdoc::Core::Html::Tag/;
-
-use v5.10;
-use strict;
-use warnings;
-
-our $VERSION = '1.196';
-
-use Sdoc::Core::Css;
-use Sdoc::Core::JavaScript;
-
 # -----------------------------------------------------------------------------
 
 =encoding utf8
@@ -28,6 +16,24 @@ Die Klasse erweitert ihre Basisklasse Sdoc::Core::Html::Tag um die
 Generierung von einfachen HTML-Konstrukten, die einerseits
 über Einzeltags hinausgehen, andererseits aber nicht die Implementierung
 einer eigenen Klasse rechtfertigen.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+package Sdoc::Core::Html::Construct;
+use base qw/Sdoc::Core::Html::Tag/;
+
+use v5.10;
+use strict;
+use warnings;
+
+our $VERSION = '1.196';
+
+use Sdoc::Core::Css;
+use Sdoc::Core::JavaScript;
+
+# -----------------------------------------------------------------------------
 
 =head1 METHODS
 

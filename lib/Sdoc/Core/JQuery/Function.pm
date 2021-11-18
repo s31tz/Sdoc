@@ -1,14 +1,3 @@
-package Sdoc::Core::JQuery::Function;
-use base qw/Sdoc::Core::Object/;
-
-use v5.10;
-use strict;
-use warnings;
-
-our $VERSION = '1.196';
-
-use Sdoc::Core::Unindent;
-
 # -----------------------------------------------------------------------------
 
 =encoding utf8
@@ -24,6 +13,23 @@ L<Sdoc::Core::Object>
 =head1 DESCRIPTION
 
 Diese Klasse erweitert das jQuery-Objekt um nützliche Funktionen.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+package Sdoc::Core::JQuery::Function;
+use base qw/Sdoc::Core::Object/;
+
+use v5.10;
+use strict;
+use warnings;
+
+our $VERSION = '1.196';
+
+use Sdoc::Core::Unindent;
+
+# -----------------------------------------------------------------------------
 
 =head1 METHODS
 

@@ -1,3 +1,19 @@
+# -----------------------------------------------------------------------------
+
+=encoding utf8
+
+=head1 NAME
+
+Sdoc::Core::Process - Informationen über den laufenden Prozess
+
+=head1 BASE CLASS
+
+L<Sdoc::Core::System>
+
+=cut
+
+# -----------------------------------------------------------------------------
+
 package Sdoc::Core::Process;
 use base qw/Sdoc::Core::System/;
 
@@ -11,16 +27,6 @@ use Cwd ();
 use Sdoc::Core::System;
 
 # -----------------------------------------------------------------------------
-
-=encoding utf8
-
-=head1 NAME
-
-Sdoc::Core::Process - Informationen über den laufenden Prozess
-
-=head1 BASE CLASS
-
-L<Sdoc::Core::System>
 
 =head1 METHODS
 

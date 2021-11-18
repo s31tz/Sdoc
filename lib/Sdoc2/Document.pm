@@ -1,3 +1,41 @@
+# -----------------------------------------------------------------------------
+
+=encoding utf8
+
+=head1 NAME
+
+Sdoc2::Document - Sdoc-Dokument
+
+=head1 BASE CLASS
+
+L<Sdoc2::Node>
+
+=head1 SYNOPSIS
+
+Aufrufe zur Generierung eines Sdoc-Parsing-Baums:
+
+  $tree = Sdoc2::Document->new($file);
+  $tree = Sdoc2::Document->new(\$str);
+  $tree = Sdoc2::Document->new(\@lines);
+
+Aufrufe zur Generierung einer Repräsentation:
+
+  $str = $tree->dump('ehtml');
+  $str = $tree->dump('pod');
+  $str = $tree->dump('debug');
+
+In einem Aufruf:
+
+  $str = Sdoc2::Document->dump($format,$source);
+
+=head1 DESCRIPTION
+
+Die Klasse repräsentiert einen Sdoc-Parsingbaum.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
 package Sdoc2::Document;
 use base qw/Sdoc2::Node/;
 
@@ -38,38 +76,6 @@ use Sdoc::Core::Object;
 use Sdoc::Core::Html::Tag;
 
 # -----------------------------------------------------------------------------
-
-=encoding utf8
-
-=head1 NAME
-
-Sdoc2::Document - Sdoc-Dokument
-
-=head1 BASE CLASS
-
-L<Sdoc2::Node>
-
-=head1 SYNOPSIS
-
-Aufrufe zur Generierung eines Sdoc-Parsing-Baums:
-
-  $tree = Sdoc2::Document->new($file);
-  $tree = Sdoc2::Document->new(\$str);
-  $tree = Sdoc2::Document->new(\@lines);
-
-Aufrufe zur Generierung einer Repräsentation:
-
-  $str = $tree->dump('ehtml');
-  $str = $tree->dump('pod');
-  $str = $tree->dump('debug');
-
-In einem Aufruf:
-
-  $str = Sdoc2::Document->dump($format,$source);
-
-=head1 DESCRIPTION
-
-Die Klasse repräsentiert einen Sdoc-Parsingbaum.
 
 =head1 METHODS
 

@@ -1,15 +1,3 @@
-package Sdoc::Core::TempDir;
-use base qw/Sdoc::Core::Object/;
-
-use v5.10;
-use strict;
-use warnings;
-
-our $VERSION = '1.196';
-
-use overload '""' => sub {${$_[0]}}, 'cmp' => sub{${$_[0]} cmp $_[1]};
-use File::Temp ();
-
 # -----------------------------------------------------------------------------
 
 =encoding utf8
@@ -28,6 +16,24 @@ Der Konstruktor der Klasse erzeugt ein temporäres Verzeichnis.
 Geht die letzte Objekt-Referenz aus dem Scope, wird das Verzeichnis
 automatisch gelöscht. Das Verzeichnis-Objekt stringifiziert sich
 im String-Kontext automatisch zum Verzeichnis-Pfad.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+package Sdoc::Core::TempDir;
+use base qw/Sdoc::Core::Object/;
+
+use v5.10;
+use strict;
+use warnings;
+
+our $VERSION = '1.196';
+
+use overload '""' => sub {${$_[0]}}, 'cmp' => sub{${$_[0]} cmp $_[1]};
+use File::Temp ();
+
+# -----------------------------------------------------------------------------
 
 =head1 METHODS
 

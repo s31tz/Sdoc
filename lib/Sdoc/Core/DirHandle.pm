@@ -1,13 +1,3 @@
-package Sdoc::Core::DirHandle;
-use base qw/Sdoc::Core::Object/;
-
-use v5.10;
-use strict;
-use warnings;
-use utf8;
-
-our $VERSION = '1.196';
-
 # -----------------------------------------------------------------------------
 
 =encoding utf8
@@ -35,6 +25,22 @@ L<Sdoc::Core::Object>
 Die Klasse stellt eine objektorientierte Schnittstelle zu
 Perls Directory Handles her. Mit den Methoden der Klasse kann
 ein Verzeichnis geöffnet und über seine Einträge iteriert werden.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+package Sdoc::Core::DirHandle;
+use base qw/Sdoc::Core::Object/;
+
+use v5.10;
+use strict;
+use warnings;
+use utf8;
+
+our $VERSION = '1.196';
+
+# -----------------------------------------------------------------------------
 
 =head1 METHODS
 

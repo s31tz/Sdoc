@@ -1,16 +1,3 @@
-package Sdoc::Core::Duration;
-use base qw/Sdoc::Core::Object/;
-
-use v5.10;
-use strict;
-use warnings;
-use utf8;
-
-our $VERSION = '1.196';
-
-use Sdoc::Core::Option;
-use Sdoc::Core::Math;
-
 # -----------------------------------------------------------------------------
 
 =encoding utf8
@@ -70,6 +57,25 @@ Bei der Instantiierung kann die Zeitdauer auch in Doppelpunkt-Notation
 übergeben werden:
 
   D:H:M:S.X
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+package Sdoc::Core::Duration;
+use base qw/Sdoc::Core::Object/;
+
+use v5.10;
+use strict;
+use warnings;
+use utf8;
+
+our $VERSION = '1.196';
+
+use Sdoc::Core::Option;
+use Sdoc::Core::Math;
+
+# -----------------------------------------------------------------------------
 
 =head1 METHODS
 

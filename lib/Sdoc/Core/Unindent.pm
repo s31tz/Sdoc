@@ -1,13 +1,3 @@
-package Sdoc::Core::Unindent;
-
-use v5.10;
-use strict;
-use warnings;
-
-our $VERSION = '1.196';
-
-use Sdoc::Core::String;
-
 # -----------------------------------------------------------------------------
 
 =encoding utf8
@@ -54,6 +44,22 @@ Resultat in beiden Fällen:
 Die Klasse stellt Methoden zur Verfügung, mit denen die in der
 Regel unerwünschte Einrückung von eingerückten mehrzeiligen
 String-Literalen und "Here Documents" entfernt werden kann.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+package Sdoc::Core::Unindent;
+
+use v5.10;
+use strict;
+use warnings;
+
+our $VERSION = '1.196';
+
+use Sdoc::Core::String;
+
+# -----------------------------------------------------------------------------
 
 =head1 METHODS
 

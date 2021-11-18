@@ -1,3 +1,25 @@
+# -----------------------------------------------------------------------------
+
+=encoding utf8
+
+=head1 NAME
+
+Sdoc::Core::Perl - Erweiterte und abgesicherte Perl-Operationen
+
+=head1 BASE CLASS
+
+L<Sdoc::Core::Object>
+
+=head1 DESCRIPTION
+
+Die Klasse implementiert grundlegende Perl-Operationen, die
+Erweiterungen darstellen und/oder durch Exception-Behandlung
+abgesichert sind.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
 package Sdoc::Core::Perl;
 use base qw/Sdoc::Core::Object/;
 
@@ -17,22 +39,6 @@ use Sdoc::Core::FileHandle;
 use Encode ();
 
 # -----------------------------------------------------------------------------
-
-=encoding utf8
-
-=head1 NAME
-
-Sdoc::Core::Perl - Erweiterte und abgesicherte Perl-Operationen
-
-=head1 BASE CLASS
-
-L<Sdoc::Core::Object>
-
-=head1 DESCRIPTION
-
-Die Klasse implementiert grundlegende Perl-Operationen, die
-Erweiterungen darstellen und/oder durch Exception-Behandlung
-abgesichert sind.
 
 =head1 METHODS
 

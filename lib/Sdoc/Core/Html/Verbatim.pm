@@ -1,14 +1,3 @@
-package Sdoc::Core::Html::Verbatim;
-use base qw/Sdoc::Core::Hash/;
-
-use v5.10;
-use strict;
-use warnings;
-
-our $VERSION = '1.196';
-
-use Sdoc::Core::Html::Table::Simple;
-
 # -----------------------------------------------------------------------------
 
 =encoding utf8
@@ -123,6 +112,23 @@ wird kein Verbatim-Block erzeugt, d.h. die Methode $obj->html()
 liefert einen Leerstring.
 
 =back
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+package Sdoc::Core::Html::Verbatim;
+use base qw/Sdoc::Core::Hash/;
+
+use v5.10;
+use strict;
+use warnings;
+
+our $VERSION = '1.196';
+
+use Sdoc::Core::Html::Table::Simple;
+
+# -----------------------------------------------------------------------------
 
 =head1 METHODS
 

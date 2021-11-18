@@ -1,21 +1,3 @@
-package Sdoc::Core::Html::Tag;
-use base qw/Sdoc::Core::Hash/;
-
-use v5.10;
-use strict;
-use warnings;
-use utf8;
-
-our $VERSION = '1.196';
-
-use Sdoc::Core::Css;
-use Sdoc::Core::Template;
-use Sdoc::Core::String;
-use Scalar::Util ();
-use Sdoc::Core::Image;
-use Sdoc::Core::Path;
-use MIME::Base64 ();
-
 # -----------------------------------------------------------------------------
 
 =encoding utf8
@@ -490,6 +472,26 @@ wird nur bei klassischem HTML - nicht bei XHTML - beachtet.
 =back
 
 =cut
+
+# -----------------------------------------------------------------------------
+
+package Sdoc::Core::Html::Tag;
+use base qw/Sdoc::Core::Hash/;
+
+use v5.10;
+use strict;
+use warnings;
+use utf8;
+
+our $VERSION = '1.196';
+
+use Sdoc::Core::Css;
+use Sdoc::Core::Template;
+use Sdoc::Core::String;
+use Scalar::Util ();
+use Sdoc::Core::Image;
+use Sdoc::Core::Path;
+use MIME::Base64 ();
 
 # -----------------------------------------------------------------------------
 

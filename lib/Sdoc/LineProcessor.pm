@@ -1,3 +1,19 @@
+# -----------------------------------------------------------------------------
+
+=encoding utf8
+
+=head1 NAME
+
+Sdoc::LineProcessor - Sdoc Zeilen-Prozessor
+
+=head1 BASE CLASS
+
+L<Sdoc::Core::LineProcessor>
+
+=cut
+
+# -----------------------------------------------------------------------------
+
 package Sdoc::LineProcessor;
 use base qw/Sdoc::Core::LineProcessor/;
 
@@ -13,16 +29,6 @@ use Sdoc::Core::Unindent;
 use Sdoc::Core::Converter;
 
 # -----------------------------------------------------------------------------
-
-=encoding utf8
-
-=head1 NAME
-
-Sdoc::LineProcessor - Sdoc Zeilen-Prozessor
-
-=head1 BASE CLASS
-
-L<Sdoc::Core::LineProcessor>
 
 =head1 METHODS
 
@@ -739,7 +745,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2020 Frank Seitz
+Copyright (C) 2021 Frank Seitz
 
 =head1 LICENSE
 

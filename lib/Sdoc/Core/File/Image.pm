@@ -1,3 +1,19 @@
+# -----------------------------------------------------------------------------
+
+=encoding utf8
+
+=head1 NAME
+
+Sdoc::Core::File::Image - Informationen über Bild-Datei
+
+=head1 BASE CLASS
+
+L<Sdoc::Core::Hash>
+
+=cut
+
+# -----------------------------------------------------------------------------
+
 package Sdoc::Core::File::Image;
 use base qw/Sdoc::Core::Hash/;
 
@@ -14,16 +30,6 @@ use Sdoc::Core::Array;
 use Image::Size ();
 
 # -----------------------------------------------------------------------------
-
-=encoding utf8
-
-=head1 NAME
-
-Sdoc::Core::File::Image - Informationen über Bild-Datei
-
-=head1 BASE CLASS
-
-L<Sdoc::Core::Hash>
 
 =head1 METHODS
 

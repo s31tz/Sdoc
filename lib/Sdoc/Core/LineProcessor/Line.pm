@@ -1,13 +1,3 @@
-package Sdoc::Core::LineProcessor::Line;
-use base qw/Sdoc::Core::Object/;
-
-use v5.10;
-use strict;
-use warnings;
-use utf8;
-
-our $VERSION = '1.196';
-
 # -----------------------------------------------------------------------------
 
 =encoding utf8
@@ -24,6 +14,22 @@ L<Sdoc::Core::Object>
 
 Ein Objekt der Klasse repräsentiert eine Zeile, bestehend aus
 dem Zeileninhalt (Text) und einer Zeilennummer.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+package Sdoc::Core::LineProcessor::Line;
+use base qw/Sdoc::Core::Object/;
+
+use v5.10;
+use strict;
+use warnings;
+use utf8;
+
+our $VERSION = '1.196';
+
+# -----------------------------------------------------------------------------
 
 =head1 METHODS
 

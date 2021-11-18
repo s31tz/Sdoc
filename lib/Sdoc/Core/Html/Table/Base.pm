@@ -1,12 +1,3 @@
-package Sdoc::Core::Html::Table::Base;
-use base qw/Sdoc::Core::Hash/;
-
-use v5.10;
-use strict;
-use warnings;
-
-our $VERSION = '1.196';
-
 # -----------------------------------------------------------------------------
 
 =encoding utf8
@@ -73,6 +64,21 @@ Wert des style-Attributs der Tabelle.
 Wert des width-Attributs der Tabelle.
 
 =back
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+package Sdoc::Core::Html::Table::Base;
+use base qw/Sdoc::Core::Hash/;
+
+use v5.10;
+use strict;
+use warnings;
+
+our $VERSION = '1.196';
+
+# -----------------------------------------------------------------------------
 
 =head1 METHODS
 

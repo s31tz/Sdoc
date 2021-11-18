@@ -1,16 +1,3 @@
-package Sdoc::Core::LaTeX::Document;
-use base qw/Sdoc::Core::Hash/;
-
-use v5.10;
-use strict;
-use warnings;
-
-our $VERSION = '1.196';
-
-use Sdoc::Core::Reference;
-use Sdoc::Core::Unindent;
-use POSIX ();
-
 # -----------------------------------------------------------------------------
 
 =encoding utf8
@@ -53,6 +40,25 @@ produziert
   \begin{document}
   Hallo Welt!
   \end{document}
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+package Sdoc::Core::LaTeX::Document;
+use base qw/Sdoc::Core::Hash/;
+
+use v5.10;
+use strict;
+use warnings;
+
+our $VERSION = '1.196';
+
+use Sdoc::Core::Reference;
+use Sdoc::Core::Unindent;
+use POSIX ();
+
+# -----------------------------------------------------------------------------
 
 =head1 METHODS
 

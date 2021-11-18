@@ -1,3 +1,19 @@
+# -----------------------------------------------------------------------------
+
+=encoding utf8
+
+=head1 NAME
+
+Sdoc::Core::System - Information über das System und seine Umgebung
+
+=head1 BASE CLASS
+
+L<Sdoc::Core::Object>
+
+=cut
+
+# -----------------------------------------------------------------------------
+
 package Sdoc::Core::System;
 use base qw/Sdoc::Core::Object/;
 
@@ -15,16 +31,6 @@ use 5.010;
 use Sdoc::Core::Option;
 
 # -----------------------------------------------------------------------------
-
-=encoding utf8
-
-=head1 NAME
-
-Sdoc::Core::System - Information über das System und seine Umgebung
-
-=head1 BASE CLASS
-
-L<Sdoc::Core::Object>
 
 =head1 METHODS
 

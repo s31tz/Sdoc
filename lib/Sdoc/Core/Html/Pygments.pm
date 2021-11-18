@@ -1,20 +1,3 @@
-package Sdoc::Core::Html::Pygments;
-use base qw/Sdoc::Core::Hash/;
-
-use v5.10;
-use strict;
-use warnings;
-
-our $VERSION = '1.196';
-
-use Sdoc::Core::CommandLine;
-use Sdoc::Core::Shell;
-use Sdoc::Core::Ipc;
-use Sdoc::Core::Unindent;
-use Sdoc::Core::Css;
-use Sdoc::Core::Html::Table::Simple;
-use Sdoc::Core::Html::Page;
-
 # -----------------------------------------------------------------------------
 
 =encoding utf8
@@ -64,6 +47,29 @@ Diese Klasse stellt eine Schnittstelle zum Pygments Syntax
 Highlighting Paket dar, speziell zum Syntax Highlighting in HTML.
 Die Methoden der Klassen liefern die CSS-Regeln und den HTML-Code,
 um gehighlighteten Quelltext in HTML-Seiten integrieren zu können.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+package Sdoc::Core::Html::Pygments;
+use base qw/Sdoc::Core::Hash/;
+
+use v5.10;
+use strict;
+use warnings;
+
+our $VERSION = '1.196';
+
+use Sdoc::Core::CommandLine;
+use Sdoc::Core::Shell;
+use Sdoc::Core::Ipc;
+use Sdoc::Core::Unindent;
+use Sdoc::Core::Css;
+use Sdoc::Core::Html::Table::Simple;
+use Sdoc::Core::Html::Page;
+
+# -----------------------------------------------------------------------------
 
 =head1 METHODS
 

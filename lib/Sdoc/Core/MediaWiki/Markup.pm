@@ -1,16 +1,3 @@
-package Sdoc::Core::MediaWiki::Markup;
-use base qw/Sdoc::Core::Hash/;
-
-use v5.10;
-use strict;
-use warnings;
-use utf8;
-
-our $VERSION = '1.196';
-
-use Sdoc::Core::Unindent;
-use Sdoc::Core::Parameters;
-
 # -----------------------------------------------------------------------------
 
 =encoding utf8
@@ -63,6 +50,25 @@ Globale Community Site für Wikimedia-Projekte:
 L<https://meta.wikimedia.org/>
 
 =back
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+package Sdoc::Core::MediaWiki::Markup;
+use base qw/Sdoc::Core::Hash/;
+
+use v5.10;
+use strict;
+use warnings;
+use utf8;
+
+our $VERSION = '1.196';
+
+use Sdoc::Core::Unindent;
+use Sdoc::Core::Parameters;
+
+# -----------------------------------------------------------------------------
 
 =head1 METHODS
 

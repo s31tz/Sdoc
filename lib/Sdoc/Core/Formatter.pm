@@ -1,3 +1,19 @@
+# -----------------------------------------------------------------------------
+
+=encoding utf8
+
+=head1 NAME
+
+Sdoc::Core::Formatter - Formatierung von Werten
+
+=head1 BASE CLASS
+
+L<Sdoc::Core::Object>
+
+=cut
+
+# -----------------------------------------------------------------------------
+
 package Sdoc::Core::Formatter;
 use base qw/Sdoc::Core::Object/;
 
@@ -10,16 +26,6 @@ our $VERSION = '1.196';
 use Sdoc::Core::Epoch;
 
 # -----------------------------------------------------------------------------
-
-=encoding utf8
-
-=head1 NAME
-
-Sdoc::Core::Formatter - Formatierung von Werten
-
-=head1 BASE CLASS
-
-L<Sdoc::Core::Object>
 
 =head1 METHODS
 

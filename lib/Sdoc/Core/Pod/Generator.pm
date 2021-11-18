@@ -1,14 +1,3 @@
-package Sdoc::Core::Pod::Generator;
-use base qw/Sdoc::Core::Hash/;
-
-use v5.10;
-use strict;
-use warnings;
-
-our $VERSION = '1.196';
-
-use Sdoc::Core::Unindent;
-
 # -----------------------------------------------------------------------------
 
 =encoding utf8
@@ -39,6 +28,23 @@ und die Details der Formatierung nicht zu kümmern braucht.
 Einrücktiefe bei Code-Abschnitten und Listen.
 
 =back
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+package Sdoc::Core::Pod::Generator;
+use base qw/Sdoc::Core::Hash/;
+
+use v5.10;
+use strict;
+use warnings;
+
+our $VERSION = '1.196';
+
+use Sdoc::Core::Unindent;
+
+# -----------------------------------------------------------------------------
 
 =head1 METHODS
 

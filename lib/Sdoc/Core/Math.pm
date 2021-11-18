@@ -1,3 +1,19 @@
+# -----------------------------------------------------------------------------
+
+=encoding utf8
+
+=head1 NAME
+
+Sdoc::Core::Math - Mathematische Funktionen
+
+=head1 BASE CLASS
+
+L<Sdoc::Core::Object>
+
+=cut
+
+# -----------------------------------------------------------------------------
+
 package Sdoc::Core::Math;
 use base qw/Sdoc::Core::Object/;
 
@@ -15,16 +31,6 @@ use Sdoc::Core::Math;
 use Scalar::Util ();
 
 # -----------------------------------------------------------------------------
-
-=encoding utf8
-
-=head1 NAME
-
-Sdoc::Core::Math - Mathematische Funktionen
-
-=head1 BASE CLASS
-
-L<Sdoc::Core::Object>
 
 =head1 METHODS
 

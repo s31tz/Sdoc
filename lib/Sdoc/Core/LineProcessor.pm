@@ -1,16 +1,3 @@
-package Sdoc::Core::LineProcessor;
-use base qw/Sdoc::Core::Hash/;
-
-use v5.10;
-use strict;
-use warnings;
-use utf8;
-
-our $VERSION = '1.196';
-
-use Sdoc::Core::Option;
-use Sdoc::Core::FileHandle;
-
 # -----------------------------------------------------------------------------
 
 =encoding utf8
@@ -51,6 +38,25 @@ produziert (z.B.)
       20
   Stacktrace:
       ...
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+package Sdoc::Core::LineProcessor;
+use base qw/Sdoc::Core::Hash/;
+
+use v5.10;
+use strict;
+use warnings;
+use utf8;
+
+our $VERSION = '1.196';
+
+use Sdoc::Core::Option;
+use Sdoc::Core::FileHandle;
+
+# -----------------------------------------------------------------------------
 
 =head1 METHODS
 

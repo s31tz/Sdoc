@@ -1,12 +1,3 @@
-package Sdoc::Core::CommandLine;
-use base qw/Sdoc::Core::Hash/;
-
-use v5.10;
-use strict;
-use warnings;
-
-our $VERSION = '1.196';
-
 # -----------------------------------------------------------------------------
 
 =encoding utf8
@@ -49,6 +40,21 @@ Die Klasse stellt Methoden zur Konstruktion einer Unix-Kommandozeile
 zur Verfügung. Die Klasse ist hilfreich, wenn einzelne Bestandteile
 der Kommandozeile dynamisch sind, also von Bedingungen und
 variablen Werten abhängen.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+package Sdoc::Core::CommandLine;
+use base qw/Sdoc::Core::Hash/;
+
+use v5.10;
+use strict;
+use warnings;
+
+our $VERSION = '1.196';
+
+# -----------------------------------------------------------------------------
 
 =head1 METHODS
 

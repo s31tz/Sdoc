@@ -1,18 +1,3 @@
-package Sdoc::Core::Html::Page;
-use base qw/Sdoc::Core::Html::Base/;
-
-use v5.10;
-use strict;
-use warnings;
-
-our $VERSION = '1.196';
-
-use Sdoc::Core::Html::Component::Bundle;
-use Sdoc::Core::Css;
-use Sdoc::Core::JQuery::Function;
-use Sdoc::Core::JavaScript;
-use Sdoc::Core::Template;
-
 # -----------------------------------------------------------------------------
 
 =encoding utf8
@@ -139,6 +124,27 @@ Titel der Seite.
 Einrückung des Inhalts der obersten Elemente <head> und <body>.
 
 =back
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+package Sdoc::Core::Html::Page;
+use base qw/Sdoc::Core::Html::Base/;
+
+use v5.10;
+use strict;
+use warnings;
+
+our $VERSION = '1.196';
+
+use Sdoc::Core::Html::Component::Bundle;
+use Sdoc::Core::Css;
+use Sdoc::Core::JQuery::Function;
+use Sdoc::Core::JavaScript;
+use Sdoc::Core::Template;
+
+# -----------------------------------------------------------------------------
 
 =head1 METHODS
 

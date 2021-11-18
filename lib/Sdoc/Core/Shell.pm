@@ -1,3 +1,19 @@
+# -----------------------------------------------------------------------------
+
+=encoding utf8
+
+=head1 NAME
+
+Sdoc::Core::Shell - Ausführung von Shell-Kommandos
+
+=head1 BASE CLASS
+
+L<Sdoc::Core::Hash>
+
+=cut
+
+# -----------------------------------------------------------------------------
+
 package Sdoc::Core::Shell;
 BEGIN {
     $INC{'Sdoc::Core/Shell.pm'} ||= __FILE__;
@@ -21,16 +37,6 @@ use Sdoc::Core::Process;
 use Cwd ();
 
 # -----------------------------------------------------------------------------
-
-=encoding utf8
-
-=head1 NAME
-
-Sdoc::Core::Shell - Ausführung von Shell-Kommandos
-
-=head1 BASE CLASS
-
-L<Sdoc::Core::Hash>
 
 =head1 METHODS
 

@@ -1,3 +1,19 @@
+# -----------------------------------------------------------------------------
+
+=encoding utf8
+
+=head1 NAME
+
+Sdoc::Core::Image - Operationen im Zusammenhang mit Bildern/Bilddateien
+
+=head1 BASE CLASS
+
+L<Sdoc::Core::Object>
+
+=cut
+
+# -----------------------------------------------------------------------------
+
 package Sdoc::Core::Image;
 use base qw/Sdoc::Core::Object/;
 
@@ -13,16 +29,6 @@ use Sdoc::Core::Shell;
 use Sdoc::Core::FileHandle;
 
 # -----------------------------------------------------------------------------
-
-=encoding utf8
-
-=head1 NAME
-
-Sdoc::Core::Image - Operationen im Zusammenhang mit Bildern/Bilddateien
-
-=head1 BASE CLASS
-
-L<Sdoc::Core::Object>
 
 =head1 METHODS
 

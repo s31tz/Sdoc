@@ -1,20 +1,3 @@
-package Sdoc::Node::Graphic;
-use base qw/Sdoc::Node/;
-
-use v5.10;
-use strict;
-use warnings;
-
-our $VERSION = '3.00';
-
-use Sdoc::Core::File::Image;
-use Sdoc::Core::Math;
-use Sdoc::Core::Html::Image;
-use Sdoc::Core::Converter;
-use Sdoc::Core::LaTeX::Figure;
-use Sdoc::Core::MediaWiki::Markup;
-use Sdoc::Core::Path;
-
 # -----------------------------------------------------------------------------
 
 =encoding utf8
@@ -150,6 +133,25 @@ skaliert wird.
 =back
 
 =cut
+
+# -----------------------------------------------------------------------------
+
+package Sdoc::Node::Graphic;
+use base qw/Sdoc::Node/;
+
+use v5.10;
+use strict;
+use warnings;
+
+our $VERSION = '3.00';
+
+use Sdoc::Core::File::Image;
+use Sdoc::Core::Math;
+use Sdoc::Core::Html::Image;
+use Sdoc::Core::Converter;
+use Sdoc::Core::LaTeX::Figure;
+use Sdoc::Core::MediaWiki::Markup;
+use Sdoc::Core::Path;
 
 # -----------------------------------------------------------------------------
 
@@ -767,7 +769,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2020 Frank Seitz
+Copyright (C) 2021 Frank Seitz
 
 =head1 LICENSE
 

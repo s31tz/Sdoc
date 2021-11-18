@@ -1,14 +1,3 @@
-package Sdoc::Core::TreeFormatter;
-use base qw/Sdoc::Core::Hash/;
-
-use v5.10;
-use strict;
-use warnings;
-
-our $VERSION = '1.196';
-
-use Sdoc::Core::Option;
-
 # -----------------------------------------------------------------------------
 
 =encoding utf8
@@ -220,6 +209,23 @@ Ein Ausschnitt aus der produzierten Ausgabe:
         |  :   regexes()
         |
         ...
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+package Sdoc::Core::TreeFormatter;
+use base qw/Sdoc::Core::Hash/;
+
+use v5.10;
+use strict;
+use warnings;
+
+our $VERSION = '1.196';
+
+use Sdoc::Core::Option;
+
+# -----------------------------------------------------------------------------
 
 =head1 METHODS
 

@@ -1,12 +1,3 @@
-package Sdoc::Node::Style;
-use base qw/Sdoc::Node/;
-
-use v5.10;
-use strict;
-use warnings;
-
-our $VERSION = '3.00';
-
 # -----------------------------------------------------------------------------
 
 =encoding utf8
@@ -42,6 +33,17 @@ das Pluszeichen zum Pfad des Dokumentverzeichnisses expandiert.
 =back
 
 =cut
+
+# -----------------------------------------------------------------------------
+
+package Sdoc::Node::Style;
+use base qw/Sdoc::Node/;
+
+use v5.10;
+use strict;
+use warnings;
+
+our $VERSION = '3.00';
 
 # -----------------------------------------------------------------------------
 
@@ -321,7 +323,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2020 Frank Seitz
+Copyright (C) 2021 Frank Seitz
 
 =head1 LICENSE
 

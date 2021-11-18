@@ -1,12 +1,3 @@
-package Sdoc::Core::Html::Producer;
-use base qw/Sdoc::Core::Html::Construct/;
-
-use v5.10;
-use strict;
-use warnings;
-
-our $VERSION = '1.196';
-
 # -----------------------------------------------------------------------------
 
 =encoding utf8
@@ -42,6 +33,21 @@ Einfacher Anwendungsfall:
   print Sdoc::Core::Html::Page->html($h,
       ...
   );
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+package Sdoc::Core::Html::Producer;
+use base qw/Sdoc::Core::Html::Construct/;
+
+use v5.10;
+use strict;
+use warnings;
+
+our $VERSION = '1.196';
+
+# -----------------------------------------------------------------------------
 
 =head1 VERSION
 

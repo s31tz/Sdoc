@@ -1,14 +1,3 @@
-package Sdoc2::Format;
-use base qw/Sdoc2::Node/;
-
-use v5.10;
-use strict;
-use warnings;
-
-our $VERSION = '1';
-
-use Sdoc::Core::FileHandle;
-
 # -----------------------------------------------------------------------------
 
 =encoding utf8
@@ -44,6 +33,23 @@ Code der Zielformate. Schlüssel des Hashs ist der Name des jeweiligen
 Zielformats (kleingeschrieben).
 
 =back
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+package Sdoc2::Format;
+use base qw/Sdoc2::Node/;
+
+use v5.10;
+use strict;
+use warnings;
+
+our $VERSION = '1';
+
+use Sdoc::Core::FileHandle;
+
+# -----------------------------------------------------------------------------
 
 =head1 METHODS
 
@@ -152,7 +158,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2020 Frank Seitz
+Copyright (C) 2021 Frank Seitz
 
 =cut
 

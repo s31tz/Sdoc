@@ -1,16 +1,3 @@
-package Sdoc::Node::Table;
-use base qw/Sdoc::Node/;
-
-use v5.10;
-use strict;
-use warnings;
-
-our $VERSION = '3.00';
-
-use Sdoc::Core::AsciiTable;
-use Sdoc::Core::Html::Table::List;
-use Sdoc::Core::LaTeX::LongTable;
-
 # -----------------------------------------------------------------------------
 
 =encoding utf8
@@ -128,6 +115,21 @@ Farbe der Titelzeile.
 =back
 
 =cut
+
+# -----------------------------------------------------------------------------
+
+package Sdoc::Node::Table;
+use base qw/Sdoc::Node/;
+
+use v5.10;
+use strict;
+use warnings;
+
+our $VERSION = '3.00';
+
+use Sdoc::Core::AsciiTable;
+use Sdoc::Core::Html::Table::List;
+use Sdoc::Core::LaTeX::LongTable;
 
 # -----------------------------------------------------------------------------
 
@@ -720,7 +722,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2020 Frank Seitz
+Copyright (C) 2021 Frank Seitz
 
 =head1 LICENSE
 

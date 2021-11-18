@@ -1,19 +1,3 @@
-package Sdoc::Core::Config;
-use base qw/Sdoc::Core::Hash/;
-
-use v5.10;
-use strict;
-use warnings;
-
-our $VERSION = '1.196';
-
-use Sdoc::Core::Option;
-use Sdoc::Core::Reference;
-use Sdoc::Core::Path;
-use Sdoc::Core::Unindent;
-use Sdoc::Core::Perl;
-use Sdoc::Core::Process;
-
 # -----------------------------------------------------------------------------
 
 =encoding utf8
@@ -77,6 +61,28 @@ Verzeichnis über einen Dienst wie FTP:
   FtpUrl => 'user:passw@localhost:%CWD%'
 
 =back
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+package Sdoc::Core::Config;
+use base qw/Sdoc::Core::Hash/;
+
+use v5.10;
+use strict;
+use warnings;
+
+our $VERSION = '1.196';
+
+use Sdoc::Core::Option;
+use Sdoc::Core::Reference;
+use Sdoc::Core::Path;
+use Sdoc::Core::Unindent;
+use Sdoc::Core::Perl;
+use Sdoc::Core::Process;
+
+# -----------------------------------------------------------------------------
 
 =head1 METHODS
 

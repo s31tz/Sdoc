@@ -1,15 +1,3 @@
-package Sdoc::Core::Assert;
-use base qw/Sdoc::Core::Hash/;
-
-use v5.10;
-use strict;
-use warnings;
-
-our $VERSION = '1.196';
-
-use Sdoc::Core::Path;
-use Sdoc::Core::Math;
-
 # -----------------------------------------------------------------------------
 
 =encoding utf8
@@ -59,6 +47,24 @@ Test von der Kommandozeile aus:
       Sdoc::Core::Assert::isNotNull() [+1 -e]
         Quiq::Object::throw() [+210 .../Quiq/Assert.pm]
           Quiq::Stacktrace::asString() [+425 .../Quiq/Object.pm]
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+package Sdoc::Core::Assert;
+use base qw/Sdoc::Core::Hash/;
+
+use v5.10;
+use strict;
+use warnings;
+
+our $VERSION = '1.196';
+
+use Sdoc::Core::Path;
+use Sdoc::Core::Math;
+
+# -----------------------------------------------------------------------------
 
 =head1 METHODS
 

@@ -1,14 +1,3 @@
-package Sdoc2::Quote;
-use base qw/Sdoc2::Node/;
-
-use v5.10;
-use strict;
-use warnings;
-
-our $VERSION = '1';
-
-use Sdoc::Core::Pod::Generator;
-
 # -----------------------------------------------------------------------------
 
 =encoding utf8
@@ -39,6 +28,23 @@ Verweis auf den Elternknoten.
 Zitat-Text.
 
 =back
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+package Sdoc2::Quote;
+use base qw/Sdoc2::Node/;
+
+use v5.10;
+use strict;
+use warnings;
+
+our $VERSION = '1';
+
+use Sdoc::Core::Pod::Generator;
+
+# -----------------------------------------------------------------------------
 
 =head1 METHODS
 
@@ -165,7 +171,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2020 Frank Seitz
+Copyright (C) 2021 Frank Seitz
 
 =cut
 

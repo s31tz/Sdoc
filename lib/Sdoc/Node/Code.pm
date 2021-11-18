@@ -1,19 +1,3 @@
-package Sdoc::Node::Code;
-use base qw/Sdoc::Node/;
-
-use v5.10;
-use strict;
-use warnings;
-
-our $VERSION = '3.00';
-
-use Sdoc::Core::Unindent;
-use Sdoc::Core::Path;
-use Sdoc::Core::Shell;
-use Sdoc::Core::Ipc;
-use Sdoc::Core::Html::Pygments;
-use Sdoc::Core::Html::Verbatim;
-
 # -----------------------------------------------------------------------------
 
 =encoding utf8
@@ -99,6 +83,24 @@ Text des Code-Blocks.
 =back
 
 =cut
+
+# -----------------------------------------------------------------------------
+
+package Sdoc::Node::Code;
+use base qw/Sdoc::Node/;
+
+use v5.10;
+use strict;
+use warnings;
+
+our $VERSION = '3.00';
+
+use Sdoc::Core::Unindent;
+use Sdoc::Core::Path;
+use Sdoc::Core::Shell;
+use Sdoc::Core::Ipc;
+use Sdoc::Core::Html::Pygments;
+use Sdoc::Core::Html::Verbatim;
 
 # -----------------------------------------------------------------------------
 
@@ -543,7 +545,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2020 Frank Seitz
+Copyright (C) 2021 Frank Seitz
 
 =head1 LICENSE
 

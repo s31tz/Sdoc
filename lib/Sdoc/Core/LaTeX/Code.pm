@@ -1,14 +1,3 @@
-package Sdoc::Core::LaTeX::Code;
-use base qw/Sdoc::Core::TeX::Code/;
-
-use v5.10;
-use strict;
-use warnings;
-
-our $VERSION = '1.196';
-
-use Sdoc::Core::Option;
-
 # -----------------------------------------------------------------------------
 
 =encoding utf8
@@ -28,6 +17,23 @@ Code-Generator. Mit den Methoden der Klasse kann aus einem
 Perl-Programm heraus LaTeX-Code erzeugt werden. Die Klasse stützt
 sich ab auf ihre Basisklasse Sdoc::Core::TeX::Code. Weitere Methoden
 siehe dort.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+package Sdoc::Core::LaTeX::Code;
+use base qw/Sdoc::Core::TeX::Code/;
+
+use v5.10;
+use strict;
+use warnings;
+
+our $VERSION = '1.196';
+
+use Sdoc::Core::Option;
+
+# -----------------------------------------------------------------------------
 
 =head1 METHODS
 

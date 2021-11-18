@@ -1,23 +1,3 @@
-package Sdoc::Node::Document;
-use base qw/Sdoc::Node/;
-
-use v5.10;
-use strict;
-use warnings;
-
-our $VERSION = '3.00';
-
-use Sdoc::Core::Hash;
-use Sdoc::Node::TableOfContents;
-use Sdoc::Core::Path;
-use Sdoc::Core::Process;
-use Sdoc::Core::Time;
-use Sdoc::Core::Css;
-use Sdoc::Core::Html::Page;
-use POSIX ();
-use Sdoc::Core::LaTeX::Document;
-use Sdoc::Core::Record;
-
 # -----------------------------------------------------------------------------
 
 =encoding utf8
@@ -303,6 +283,28 @@ Aufruf-Optionen des Benutzers enthält.
 =back
 
 =cut
+
+# -----------------------------------------------------------------------------
+
+package Sdoc::Node::Document;
+use base qw/Sdoc::Node/;
+
+use v5.10;
+use strict;
+use warnings;
+
+our $VERSION = '3.00';
+
+use Sdoc::Core::Hash;
+use Sdoc::Node::TableOfContents;
+use Sdoc::Core::Path;
+use Sdoc::Core::Process;
+use Sdoc::Core::Time;
+use Sdoc::Core::Css;
+use Sdoc::Core::Html::Page;
+use POSIX ();
+use Sdoc::Core::LaTeX::Document;
+use Sdoc::Core::Record;
 
 # -----------------------------------------------------------------------------
 
@@ -2265,7 +2267,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2020 Frank Seitz
+Copyright (C) 2021 Frank Seitz
 
 =head1 LICENSE
 

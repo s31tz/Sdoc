@@ -1,3 +1,19 @@
+# -----------------------------------------------------------------------------
+
+=encoding utf8
+
+=head1 NAME
+
+Sdoc::Application::Update
+
+=head1 BASE CLASS
+
+L<Sdoc::Core::Program>
+
+=cut
+
+# -----------------------------------------------------------------------------
+
 package Sdoc::Application::Update;
 use base qw/Sdoc::Core::Program/;
 
@@ -11,16 +27,6 @@ use Sdoc::Core::Shell;
 use Sdoc::Core::Path;
 
 # -----------------------------------------------------------------------------
-
-=encoding utf8
-
-=head1 NAME
-
-Sdoc::Application::Update
-
-=head1 BASE CLASS
-
-L<Sdoc::Core::Program>
 
 =head1 METHODS
 
@@ -125,7 +131,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2020 Frank Seitz
+Copyright (C) 2021 Frank Seitz
 
 =head1 LICENSE
 

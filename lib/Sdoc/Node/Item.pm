@@ -1,15 +1,3 @@
-package Sdoc::Node::Item;
-use base qw/Sdoc::Node/;
-
-use v5.10;
-use strict;
-use warnings;
-
-our $VERSION = '3.00';
-
-use Sdoc::Node::List;
-use Sdoc::LineProcessor;
-
 # -----------------------------------------------------------------------------
 
 =encoding utf8
@@ -57,6 +45,20 @@ Array mit Informationen über die im Key vorkommenden Links.
 =back
 
 =cut
+
+# -----------------------------------------------------------------------------
+
+package Sdoc::Node::Item;
+use base qw/Sdoc::Node/;
+
+use v5.10;
+use strict;
+use warnings;
+
+our $VERSION = '3.00';
+
+use Sdoc::Node::List;
+use Sdoc::LineProcessor;
 
 # -----------------------------------------------------------------------------
 
@@ -420,7 +422,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2020 Frank Seitz
+Copyright (C) 2021 Frank Seitz
 
 =head1 LICENSE
 

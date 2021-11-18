@@ -1,12 +1,3 @@
-package Sdoc2::Line;
-use base qw/Sdoc::Core::LineProcessor::Line/;
-
-use v5.10;
-use strict;
-use warnings;
-
-our $VERSION = '1';
-
 # -----------------------------------------------------------------------------
 
 =encoding utf8
@@ -18,6 +9,21 @@ Sdoc2::Line - Zeile einer Sdoc-Quelldatei
 =head1 BASE CLASS
 
 L<Sdoc::Core::LineProcessor::Line>
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+package Sdoc2::Line;
+use base qw/Sdoc::Core::LineProcessor::Line/;
+
+use v5.10;
+use strict;
+use warnings;
+
+our $VERSION = '1';
+
+# -----------------------------------------------------------------------------
 
 =head1 METHODS
 
@@ -301,7 +307,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2020 Frank Seitz
+Copyright (C) 2021 Frank Seitz
 
 =cut
 

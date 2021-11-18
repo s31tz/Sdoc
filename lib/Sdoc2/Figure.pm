@@ -1,14 +1,3 @@
-package Sdoc2::Figure;
-use base qw/Sdoc2::Node/;
-
-use v5.10;
-use strict;
-use warnings;
-
-our $VERSION = '1';
-
-use Sdoc::Core::Html::Tag;
-
 # -----------------------------------------------------------------------------
 
 =encoding utf8
@@ -62,6 +51,23 @@ Zentriere Abbildung
 Mache Bild zu einem Link auf $url.
 
 =back
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+package Sdoc2::Figure;
+use base qw/Sdoc2::Node/;
+
+use v5.10;
+use strict;
+use warnings;
+
+our $VERSION = '1';
+
+use Sdoc::Core::Html::Tag;
+
+# -----------------------------------------------------------------------------
 
 =head1 METHODS
 
@@ -228,7 +234,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2020 Frank Seitz
+Copyright (C) 2021 Frank Seitz
 
 =cut
 

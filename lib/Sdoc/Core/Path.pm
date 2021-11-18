@@ -1,3 +1,25 @@
+# -----------------------------------------------------------------------------
+
+=encoding utf8
+
+=head1 NAME
+
+Sdoc::Core::Path - Dateisystem-Operationen
+
+=head1 BASE CLASS
+
+L<Sdoc::Core::Object>
+
+=head1 DESCRIPTION
+
+Die Klasse definiert alle grundlegenden (link, mkdir, rename, symlink
+usw.) und komplexen (copy, glob, find usw.) Dateisystem-Operationen.
+Eine Dateisystem-Operation ist eine Operation auf einem I<Pfad>.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
 package Sdoc::Core::Path;
 BEGIN {
     $INC{'Sdoc::Core/Path.pm'} ||= __FILE__;
@@ -31,22 +53,6 @@ use Sdoc::Core::Time;
 use Sdoc::Core::Process;
 
 # -----------------------------------------------------------------------------
-
-=encoding utf8
-
-=head1 NAME
-
-Sdoc::Core::Path - Dateisystem-Operationen
-
-=head1 BASE CLASS
-
-L<Sdoc::Core::Object>
-
-=head1 DESCRIPTION
-
-Die Klasse definiert alle grundlegenden (link, mkdir, rename, symlink
-usw.) und komplexen (copy, glob, find usw.) Dateisystem-Operationen.
-Eine Dateisystem-Operation ist eine Operation auf einem I<Pfad>.
 
 =head1 METHODS
 

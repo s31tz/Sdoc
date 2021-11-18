@@ -1,14 +1,3 @@
-package Sdoc2::KeyValTable;
-use base qw/Sdoc2::Node/;
-
-use v5.10;
-use strict;
-use warnings;
-
-our $VERSION = '1';
-
-use Sdoc2::KeyValRow;
-
 # -----------------------------------------------------------------------------
 
 =encoding utf8
@@ -40,6 +29,23 @@ Liste der Subknoten. Die Subknoten sind ausschließlich
 KeyValRow-Knoten.
 
 =back
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+package Sdoc2::KeyValTable;
+use base qw/Sdoc2::Node/;
+
+use v5.10;
+use strict;
+use warnings;
+
+our $VERSION = '1';
+
+use Sdoc2::KeyValRow;
+
+# -----------------------------------------------------------------------------
 
 =head1 METHODS
 
@@ -160,7 +166,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2020 Frank Seitz
+Copyright (C) 2021 Frank Seitz
 
 =cut
 

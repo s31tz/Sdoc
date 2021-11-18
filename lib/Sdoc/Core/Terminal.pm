@@ -1,3 +1,19 @@
+# -----------------------------------------------------------------------------
+
+=encoding utf8
+
+=head1 NAME
+
+Sdoc::Core::Terminal - Ein- und Ausgabe aufs Terminal
+
+=head1 BASE CLASS
+
+L<Sdoc::Core::Object>
+
+=cut
+
+# -----------------------------------------------------------------------------
+
 package Sdoc::Core::Terminal;
 use base qw/Sdoc::Core::Object/;
 
@@ -13,16 +29,6 @@ use Time::HiRes ();
 use Term::ANSIColor ();
 
 # -----------------------------------------------------------------------------
-
-=encoding utf8
-
-=head1 NAME
-
-Sdoc::Core::Terminal - Ein- und Ausgabe aufs Terminal
-
-=head1 BASE CLASS
-
-L<Sdoc::Core::Object>
 
 =head1 METHODS
 

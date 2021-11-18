@@ -1,18 +1,3 @@
-package Sdoc::Core::Epoch;
-use base qw/Sdoc::Core::Object/;
-
-use v5.10;
-use strict;
-use warnings;
-
-our $VERSION = '1.196';
-
-use Time::HiRes ();
-use Time::Local ();
-use Sdoc::Core::Duration;
-use Time::Zone ();
-use POSIX ();
-
 # -----------------------------------------------------------------------------
 
 =encoding utf8
@@ -45,6 +30,27 @@ Zeitangabe in der Darstellung C<YYYY-MM-DD HH:MI:SS.X>.
 Ein Objekt der Klasse repräsentiert einen Zeitpunkt. Die Klasse
 implementiert Operationen auf einem solchen Zeitpunkt. Der
 Zeitpunkt ist hochauflösend, umfasst also auch Sekundenbruchteile.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+package Sdoc::Core::Epoch;
+use base qw/Sdoc::Core::Object/;
+
+use v5.10;
+use strict;
+use warnings;
+
+our $VERSION = '1.196';
+
+use Time::HiRes ();
+use Time::Local ();
+use Sdoc::Core::Duration;
+use Time::Zone ();
+use POSIX ();
+
+# -----------------------------------------------------------------------------
 
 =head1 METHODS
 

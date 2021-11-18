@@ -1,19 +1,3 @@
-package Sdoc::Core::Template;
-use base qw/Sdoc::Core::Hash/;
-
-use v5.10;
-use strict;
-use warnings;
-use utf8;
-
-our $VERSION = '1.196';
-
-use Sdoc::Core::Path;
-use Sdoc::Core::Option;
-use Sdoc::Core::Unindent;
-use Scalar::Util ();
-use Sdoc::Core::Reference;
-
 # -----------------------------------------------------------------------------
 
 =encoding utf8
@@ -59,6 +43,28 @@ Resultat C<$str>:
   <body>
     Hello World!
   </body>
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+package Sdoc::Core::Template;
+use base qw/Sdoc::Core::Hash/;
+
+use v5.10;
+use strict;
+use warnings;
+use utf8;
+
+our $VERSION = '1.196';
+
+use Sdoc::Core::Path;
+use Sdoc::Core::Option;
+use Sdoc::Core::Unindent;
+use Scalar::Util ();
+use Sdoc::Core::Reference;
+
+# -----------------------------------------------------------------------------
 
 =head1 METHODS
 

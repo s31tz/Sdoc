@@ -1,14 +1,3 @@
-package Sdoc2::TableOfContents;
-use base qw/Sdoc2::Node/;
-
-use v5.10;
-use strict;
-use warnings;
-
-our $VERSION = '1';
-
-use Sdoc::Core::Hash::Ordered;
-
 # -----------------------------------------------------------------------------
 
 =encoding utf8
@@ -43,6 +32,23 @@ Tiefe des Inhaltsverzeichnisses
 Überschrift.
 
 =back
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+package Sdoc2::TableOfContents;
+use base qw/Sdoc2::Node/;
+
+use v5.10;
+use strict;
+use warnings;
+
+our $VERSION = '1';
+
+use Sdoc::Core::Hash::Ordered;
+
+# -----------------------------------------------------------------------------
 
 =head1 METHODS
 
@@ -180,7 +186,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2020 Frank Seitz
+Copyright (C) 2021 Frank Seitz
 
 =cut
 

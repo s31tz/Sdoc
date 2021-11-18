@@ -1,16 +1,3 @@
-package Sdoc::Core::Record;
-use base qw/Sdoc::Core::Object/;
-
-use v5.10;
-use strict;
-use warnings;
-
-our $VERSION = '1.196';
-
-use Sdoc::Core::String;
-use Sdoc::Core::Option;
-use Sdoc::Core::Path;
-
 # -----------------------------------------------------------------------------
 
 =encoding utf8
@@ -64,6 +51,25 @@ oder ein Mischung aus beidem oder
 
 Um die dritte Repräsentation (mit @@Schlüssel@@) zu erzeugen, muss
 als Option -format => '@' angegeben werden.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+package Sdoc::Core::Record;
+use base qw/Sdoc::Core::Object/;
+
+use v5.10;
+use strict;
+use warnings;
+
+our $VERSION = '1.196';
+
+use Sdoc::Core::String;
+use Sdoc::Core::Option;
+use Sdoc::Core::Path;
+
+# -----------------------------------------------------------------------------
 
 =head1 METHODS
 

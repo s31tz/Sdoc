@@ -1,23 +1,3 @@
-package Sdoc::Core::Program;
-use base qw/Sdoc::Core::Process Sdoc::Core::Hash/;
-
-use v5.10;
-use strict;
-use warnings;
-
-our $VERSION = '1.196';
-
-use Sdoc::Core::Perl;
-use Encode ();
-use Sdoc::Core::Parameters;
-use Sdoc::Core::Assert;
-use Sdoc::Core::Option;
-use Time::HiRes ();
-use Sdoc::Core::FileHandle;
-use PerlIO::encoding;
-use Sdoc::Core::System;
-use Sdoc::Core::Hash;
-
 # -----------------------------------------------------------------------------
 
 =encoding utf8
@@ -44,15 +24,69 @@ L<Sdoc::Core::Hash>
 
 Programm:
 
-  Command failed: Blob/sdoc_reference/sdoc-highlight perl pod
+  #!/usr/bin/env perl
+  
+  use Sdoc::Core::Program;
+  exit Sdoc::Core::Program->run('MyProg')->exitCode;
+  
+  # eof
 
 Programm-Klasse:
 
-  Command failed: Blob/sdoc_reference/sdoc-highlight perl pod
+  package MyProg;
+  use base 'Sdoc::Core::Program';
+  
+  sub main {
+      my $self = shift;
+      ...
+      return;
+  }
+  
+  # eof
 
 Optionen und Argumente:
 
-  Command failed: Blob/sdoc_reference/sdoc-highlight perl pod
+  my ($error,$opt,$argA) = $self->options(
+      ...
+      -help => 0,
+  );
+  if ($error) {
+      $self->help(10,"ERROR: $error");
+  }
+  elsif ($opt->help) {
+      $self->help;
+  }
+  elsif (@$argA != 1) {
+      $self->help(11,'ERROR: Falsche Anzahl Argumente');
+  }
+  my $myArg = shift @$argA;
+  ...
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+package Sdoc::Core::Program;
+use base qw/Sdoc::Core::Process Sdoc::Core::Hash/;
+
+use v5.10;
+use strict;
+use warnings;
+
+our $VERSION = '1.196';
+
+use Sdoc::Core::Perl;
+use Encode ();
+use Sdoc::Core::Parameters;
+use Sdoc::Core::Assert;
+use Sdoc::Core::Option;
+use Time::HiRes ();
+use Sdoc::Core::FileHandle;
+use PerlIO::encoding;
+use Sdoc::Core::System;
+use Sdoc::Core::Hash;
+
+# -----------------------------------------------------------------------------
 
 =head1 METHODS
 

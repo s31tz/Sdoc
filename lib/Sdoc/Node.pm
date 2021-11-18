@@ -1,22 +1,3 @@
-package Sdoc::Node;
-use base qw/Sdoc::Core::Hash/;
-
-use v5.10;
-use strict;
-use warnings;
-
-our $VERSION = '3.00';
-
-use Sdoc::Core::Option;
-use Digest::SHA ();
-use Scalar::Util ();
-use Sdoc::Core::Html::Producer;
-use Sdoc::Core::LaTeX::Code;
-use Sdoc::Core::MediaWiki::Markup;
-use Sdoc::Core::AnsiColor;
-use Sdoc::Core::TreeFormatter;
-use Sdoc::Core::LaTeX::Figure;
-
 # -----------------------------------------------------------------------------
 
 =encoding utf8
@@ -62,6 +43,31 @@ Dokument-Knoten des Sdoc-Dokuments.
 Verweis auf den Elternknoten.
 
 =back
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+package Sdoc::Node;
+use base qw/Sdoc::Core::Hash/;
+
+use v5.10;
+use strict;
+use warnings;
+
+our $VERSION = '3.00';
+
+use Sdoc::Core::Option;
+use Digest::SHA ();
+use Scalar::Util ();
+use Sdoc::Core::Html::Producer;
+use Sdoc::Core::LaTeX::Code;
+use Sdoc::Core::MediaWiki::Markup;
+use Sdoc::Core::AnsiColor;
+use Sdoc::Core::TreeFormatter;
+use Sdoc::Core::LaTeX::Figure;
+
+# -----------------------------------------------------------------------------
 
 =head1 METHODS
 
@@ -2225,7 +2231,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2020 Frank Seitz
+Copyright (C) 2021 Frank Seitz
 
 =head1 LICENSE
 

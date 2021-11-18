@@ -1,14 +1,3 @@
-package Sdoc2::Table;
-use base qw/Sdoc2::Node/;
-
-use v5.10;
-use strict;
-use warnings;
-
-our $VERSION = '1';
-
-use Sdoc2::Row;
-
 # -----------------------------------------------------------------------------
 
 =encoding utf8
@@ -38,6 +27,23 @@ Verweis auf Superknoten.
 Liste der Subknoten. Die Subknoten sind ausschließlich Row-Knoten.
 
 =back
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+package Sdoc2::Table;
+use base qw/Sdoc2::Node/;
+
+use v5.10;
+use strict;
+use warnings;
+
+our $VERSION = '1';
+
+use Sdoc2::Row;
+
+# -----------------------------------------------------------------------------
 
 =head1 METHODS
 
@@ -220,7 +226,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2020 Frank Seitz
+Copyright (C) 2021 Frank Seitz
 
 =cut
 

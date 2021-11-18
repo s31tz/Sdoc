@@ -1,17 +1,3 @@
-package Sdoc::Core::Array;
-use base qw/Sdoc::Core::Object/;
-
-use v5.10;
-use strict;
-use warnings;
-use utf8;
-
-our $VERSION = '1.196';
-
-use Encode ();
-use Sdoc::Core::Reference;
-use Sdoc::Core::Math;
-
 # -----------------------------------------------------------------------------
 
 =encoding utf8
@@ -38,6 +24,26 @@ Aufruf als Objektmethode:
 Aufruf als Klassenmethode:
 
   $class->$meth(\@arr, ...);
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+package Sdoc::Core::Array;
+use base qw/Sdoc::Core::Object/;
+
+use v5.10;
+use strict;
+use warnings;
+use utf8;
+
+our $VERSION = '1.196';
+
+use Encode ();
+use Sdoc::Core::Reference;
+use Sdoc::Core::Math;
+
+# -----------------------------------------------------------------------------
 
 =head1 METHODS
 

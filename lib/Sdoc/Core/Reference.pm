@@ -1,13 +1,3 @@
-package Sdoc::Core::Reference;
-
-use v5.10;
-use strict;
-use warnings;
-
-our $VERSION = '1.196';
-
-use Scalar::Util ();
-
 # -----------------------------------------------------------------------------
 
 =encoding utf8
@@ -20,6 +10,22 @@ Sdoc::Core::Reference - Operationen auf Referenzen
 
 Die Klasse stellt Methoden auf Referenzen zur Verfügung, insbesondere,
 um den Grundtyp einer Referenz zu ermitteln.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+package Sdoc::Core::Reference;
+
+use v5.10;
+use strict;
+use warnings;
+
+our $VERSION = '1.196';
+
+use Scalar::Util ();
+
+# -----------------------------------------------------------------------------
 
 =head1 METHODS
 

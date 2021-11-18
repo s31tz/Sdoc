@@ -1,14 +1,3 @@
-package Sdoc::Node::Format;
-use base qw/Sdoc::Node/;
-
-use v5.10;
-use strict;
-use warnings;
-
-our $VERSION = '3.00';
-
-use Sdoc::Core::FileHandle;
-
 # -----------------------------------------------------------------------------
 
 =encoding utf8
@@ -46,6 +35,19 @@ Zielformats (kleingeschrieben).
 =back
 
 =cut
+
+# -----------------------------------------------------------------------------
+
+package Sdoc::Node::Format;
+use base qw/Sdoc::Node/;
+
+use v5.10;
+use strict;
+use warnings;
+
+our $VERSION = '3.00';
+
+use Sdoc::Core::FileHandle;
 
 # -----------------------------------------------------------------------------
 
@@ -279,7 +281,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2020 Frank Seitz
+Copyright (C) 2021 Frank Seitz
 
 =head1 LICENSE
 
