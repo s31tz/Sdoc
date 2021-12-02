@@ -972,7 +972,8 @@ sub getCounts {
 
 =item $format
 
-Das Zielformat. Mögliche Werte: 'html', 'latex','mediawiki', 'tree'.
+Das Zielformat. Mögliche Werte: 'html', 'ehtml', 'latex','mediawiki',
+'tree'.
 
 =back
 
@@ -999,7 +1000,7 @@ sub generate {
     if ($format eq 'tree') {
         return $self->tree(@_);
     }
-    elsif ($format eq 'html') {
+    elsif ($format eq 'html' || $format eq 'ehtml') {
         my $h = Sdoc::Core::Html::Producer->new;
         return $self->htmlCode($h);
     }
@@ -1279,9 +1280,15 @@ sub expandSegmentsToHtml {
         }
         my ($name,$gph) = @{$self->graphicA->[$val]};
         if ($gph) {
-            # FIXME
-            $self->warn('G-Segment not implemented for HTML');
-            $code = sprintf 'G{%s}',$name;
+            # Nachträglich implementiert, Lücke geschlossen am
+            # 2021-11-30, nicht sicher, ob richtig...
+
+            $code = $h->tag('img',
+                width => $gph->width,
+                height => $gph->height,
+                src => $gph->url,
+                alt => $name,
+            );
         }
         else {
             $code = sprintf 'G{%s}',$name;

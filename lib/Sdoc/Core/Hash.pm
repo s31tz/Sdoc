@@ -63,7 +63,7 @@ use strict;
 use warnings;
 use utf8;
 
-our $VERSION = '1.196';
+our $VERSION = '1.197';
 
 use Scalar::Util ();
 use Hash::Util ();
@@ -88,6 +88,7 @@ our $SetCount = 0;
   $h = $class->new(\@keys,\@vals[,$val]); # [3]
   $h = $class->new(\@keys[,$val]);        # [4]
   $h = $class->new(\%hash);               # [5]
+  $h = $class->new(\%hash,@keyVal);       # [6]
 
 =head4 Description
 
@@ -119,6 +120,15 @@ werden alle Werte auf C<undef> gesetzt.
 
 Blesse den Hash %hash auf Klasse $class.
 
+=item [6]
+
+Instantiiere den Hash aus den Schlüssel/Wert-Paaren @keyVal
+und weise dem (restricted) Hash alle Komponenten aus %hash
+zu. Dieser Aufruf ist nützlich, um einen anonymen Hash
+zu einem Hash-Objekt mit vorgegebenen Attributen zu machen.
+(Wenn der anonyme Hash ein nicht-vorgesehenes Attribut
+enthält, wird eine Exception geworfen.)
+
 =back
 
 =cut
@@ -141,8 +151,18 @@ sub new {
         }
     }
     elsif ((Scalar::Util::reftype($_[0]) || '') eq 'HASH') { # Perform.
-        # Aufruf: $h = $class->new(\%hash);
-        $h = bless shift,$class;
+        if (@_ == 1) {
+            # Aufruf: $h = $class->new(\%hash);
+            $h = bless shift,$class;
+        }
+        else {
+            # Aufruf: $h = $class->new(\%hash,@keyVal);
+            my $anonH = shift;
+
+            my $self = $class->new(@_);
+            $self->set(%$anonH);
+            return $self;
+        }
     }
     else {
         # Aufruf: $h = $class->new(\@keys,...);
@@ -1490,7 +1510,7 @@ Das Benchmark-Programm (bench-hash):
 
 =head1 VERSION
 
-1.196
+1.197
 
 =head1 AUTHOR
 

@@ -21,7 +21,7 @@ use v5.10;
 use strict;
 use warnings;
 
-our $VERSION = '1.196';
+our $VERSION = '1.197';
 
 use Sdoc::Core::Option;
 use Sdoc::Core::Path;
@@ -444,7 +444,7 @@ sub type {
 
 =head1 VERSION
 
-1.196
+1.197
 
 =head1 AUTHOR
 

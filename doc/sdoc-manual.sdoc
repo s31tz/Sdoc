@@ -280,8 +280,8 @@ verwendet werden:
   Zielformats zu finden, die aus einem bestimmten Sdoc-Konstrukt
   hervorgegangen ist.
 
-[cssPrefix=NAME]
-  (Default: 'sdoc') Präfix für die CSS-Klassen der Elemente des
+[cssPrefix=NAME]:
+  (Default: 'sdoc3') Präfix für die CSS-Klassen der Elemente des
   Dokuments.
 
 [date=STRING]:
@@ -805,7 +805,7 @@ In der Beschriftung (C{caption}) einer Abbildung können alle Segmente
   die Grafik wird im Dokument als Inline-Grafik genutzt), andernfalls 1.
 
 [url=URL]:
-  Wenn angegeben und URL nicht leer, wird in HTML <img src="URL" ... />
+  Wenn angegeben und URL nicht leer, wird in HTML <img src=Q{URL} ... />
   gesetzt.
 
 [width=INTEGER]:

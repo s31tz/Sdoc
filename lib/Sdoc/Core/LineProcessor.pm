@@ -51,10 +51,11 @@ use strict;
 use warnings;
 use utf8;
 
-our $VERSION = '1.196';
+our $VERSION = '1.197';
 
 use Sdoc::Core::Option;
 use Sdoc::Core::FileHandle;
+use Encode ();
 
 # -----------------------------------------------------------------------------
 
@@ -161,6 +162,9 @@ sub new {
         @lines = @$input;
     }
     else { # Zeilen aus Datei oder String lesen
+        if (ref($input) && $encoding) {
+            $$input = Encode::encode($encoding,$$input);
+        }
         my $fh = Sdoc::Core::FileHandle->new('<',$input);
         if ($encoding) {
             $fh->binmode(":encoding($encoding)");
@@ -399,7 +403,7 @@ sub dump {
 
 =head1 VERSION
 
-1.196
+1.197
 
 =head1 AUTHOR
 

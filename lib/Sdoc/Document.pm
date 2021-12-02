@@ -382,6 +382,214 @@ sub sdoc2ToSdoc3 {
 
 # -----------------------------------------------------------------------------
 
+=head3 foswikiToSdoc3() - Konvertiere FOSWIKI-Code in Sdoc3-Code
+
+=head4 Synopsis
+
+  $code = $class->foswikiToSdoc3($code);
+
+=head4 Arguments
+
+=over 4
+
+=item $code (String)
+
+FOSWIKI-Code
+
+=back
+
+=head4 Returns
+
+Sdoc3-Code (String)
+
+=head4 Description
+
+Wandele FOSWIKI-Code in Sdoc3-Code und liefere das Resultat zurück.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub foswikiToSdoc3 {
+    my ($class,$code) = @_;
+
+    # Zu entfernende Konstrukte
+
+    $code =~ s/\r//g;
+    $code =~ s/\n\s*%DRAWING\{synopsis\}%\s*/\n/g;
+    $code =~ s{(<font.*?>|</font>)}{}gs;
+    $code =~ s{</?noautolink>}{}g;
+    $code =~ s{<br\s*/>}{}g;
+
+    # Tabellen umwandeln
+
+    my $processTable = sub {
+        my $str = shift;
+
+        my (@lines,@colLen);
+        for my $line (split /\n/,$str) {
+            $line =~ s/^\|\s*//gm;
+            $line =~ s/\s*\|\s*$//gm;
+            my @cols = split /\s*\|\s*/,$line;
+            if (!@lines) {
+                @cols = map {s/\*(.*)\*/$1/; $_} @cols;
+            }
+            for (my $i = 0; $i < @cols; $i++) {
+                my $len = length $cols[$i];
+                my $colLen = $colLen[$i];
+                if (!defined($colLen) || $colLen < $len) {
+                    $colLen[$i] = $len;
+                }
+            }
+            push @lines,[@cols];
+        }
+
+        my $fmt;
+        for my $colLen (@colLen) {
+            if ($fmt) {
+                $fmt .= ' ';
+            }
+            $fmt .= "%-${colLen}s";
+        }
+
+        my $sdoc = sprintf "$fmt\n",@{shift @lines};
+        my $i = 0;
+        for my $colLen (@colLen) {
+            if ($i++) {
+                $sdoc .= ' ';
+            }
+            $sdoc .= ('-' x $colLen);
+        }
+        $sdoc .= "\n";
+
+        #$sdoc = join(' | ',@colLen)."\n";
+        #$sdoc .= $fmt."\n";
+        for (@lines) {
+            my $line = sprintf "$fmt\n",@$_;
+            $line =~ s/\s+$/\n/;
+            $sdoc .= $line;
+        }
+
+        return "%Table:\n  border=hvHV\n$sdoc.\n";
+    };
+    $code =~ s/(^\|(.*)\|\n)+/$processTable->($1)/egms;
+
+    # Überschriften und Textauszeichnungen umschreiben
+
+    $code =~ s/(^|[ \(])_(\S.*?\S)_([\s.\)])/$1I{$2}$3/gms; # italic
+    $code =~ s/(^|[ \(])=(\S.*?\S)=([\s.\)])/$1C{$2}$3/gms; # Code
+    $code =~ s/\*(\S+?)\*/B{$1}/gm; # Bold
+    $code =~ s/&gt;/>/g; # &gt;
+    $code =~ s/^---(\++)/'=' x length($1)/egm;
+
+    # Image-Tags
+    # <img alt='image005.png' height='386' src='%ATTACHURLPATH%/image005.png'
+    # width='955' />
+
+    my $i = 0;
+    my @images;
+    my $processImage = sub {
+        my $str = shift;
+
+        my ($url) = $str =~ /src=["'](.*?)["']/;
+        my ($width) = $str =~ /width=["'](.*?)["']/;
+        my ($height) = $str =~ /height=["'](.*?)["']/;
+        my $name = sprintf 'BILD%02d',++$i;
+
+        push @images,[$name,$url,$width,$height];
+
+        return "G{$name}";
+    };
+    $code =~ s|<img (.*?)/>|$processImage->($1)|egs;
+
+    # Links umschreiben
+
+    my @links;
+    my $processLink = sub {
+        my ($url,$str) = @_;
+
+        if (!defined $str) {
+            if ($url =~ /^http/) {
+                # Externer Link als direkte HTTP(S)-Adresse
+                return "L{$url}";
+            }
+            elsif ($url =~ /^(BA|IF|MM|PS|RC|SJ)\S+$/) {
+                # Interner Link auf eine andere Schnittstelle
+                push @links,[$url,$url];
+                return "L{$url}";
+            }
+            else {
+                # Interner FOSWIKI-Link, den wir nicht auflösen können.
+                # Muss manuell korrigiert werden
+                return "$url (in FOSWIKI)";
+            }
+        }
+
+        $str =~ s/\n/ /g;
+        push @links,[$url,$str];
+
+        return "L{$str}";
+    };
+    $code =~ s/\[{2}(.*?)\]\[(.*?)\]{2}/$processLink->($1,$2)/egs;
+    $code =~ s/\[{2}(.*?)\]{2}/$processLink->($1)/egs;
+
+    # Bullet-Listen umwandeln (auch eingerückte). Eine Bullet-Liste
+    # beginnt mit einer Zeile mit einem eingerückten Stern (*) und
+    # geht bis zu einer letzten Zeile mit einem eingerückten Stern.
+
+    my $processBulletList = sub {
+        my $str = shift;
+
+        $str =~ /^( *)/;
+        my $ind = $1;
+        $str =~ s/^$ind//gm;
+
+        return $str;
+    };
+    $code =~ s/((^ *\*.*\n)+)/$processBulletList->($1)/egm;
+
+    # Verbatim Abschnitt <verbatim>...</verbatim> verarbeiten
+
+    my $processVerbatimBlock = sub {
+        my $str = shift;
+
+        $str =~ s/\s*$/\n/;
+
+        return $str;
+    };
+    $code =~ s|<verbatim>(.*?)</verbatim>\n|$processVerbatimBlock->($1)|egms;
+
+    $code =~ s/\s+$/\n/; # Code auf genau ein Newline enden lassen
+
+    # Links definieren
+
+    for (@links) {
+        my ($url,$str) = @$_;
+        if ($url =~ /^(BA|IF|MM|PS|RC|SJ)\S+$/) {
+            $url = "/schnittstelleDetail?sch_name=$url";
+        }
+        $code .= qq~\n%Link:\n  name="$str"\n  url="$url"\n~;
+    }
+
+    # Bilder definieren
+
+    for (@images) {
+        my ($name,$url,$width,$height) = @$_;
+
+        $code .= qq~\n%Graphic:\n  name="$name"\n  url="$url"\n~;
+        if ($width) {
+            $code .= qq~  width="$width"\n~;
+        }
+        if ($height) {
+            $code .= qq~  height="$height"\n~;
+        }
+    }
+
+    return $code;
+}
+
+# -----------------------------------------------------------------------------
+
 =head1 VERSION
 
 3.00

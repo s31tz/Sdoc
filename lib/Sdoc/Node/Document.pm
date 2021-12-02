@@ -297,6 +297,7 @@ our $VERSION = '3.00';
 
 use Sdoc::Core::Hash;
 use Sdoc::Node::TableOfContents;
+use Sdoc::Core::Unindent;
 use Sdoc::Core::Path;
 use Sdoc::Core::Process;
 use Sdoc::Core::Time;
@@ -1653,6 +1654,9 @@ sub numberSections {
 =head4 Synopsis
 
   $code = $doc->generate($format,@args);
+  
+  # Format ehtml im Array-Kontext liefert $html und $css getrennt
+  ($html,$css) = $doc->generate('ehtml',@args);
 
 =head4 Arguments
 
@@ -1660,7 +1664,8 @@ sub numberSections {
 
 =item $format
 
-Das Zielformat. Mögliche Werte: 'html', 'latex', 'tree'.
+Das Zielformat. Mögliche Werte: 'html', 'ehtml, 'latex', 'mediawiki',
+'tree'.
 
 =back
 
@@ -1692,6 +1697,17 @@ sub generate {
         if ($node->type eq 'PostProcessor') {
             $code = $node->execute($format,$code);
         }
+    }
+
+    if ($format eq 'ehtml') {
+        my ($ehtml) = $code =~ m|<body>\n(.*?)</body>|s;
+        $ehtml = Sdoc::Core::Unindent->trim($ehtml);
+        if (wantarray) {
+            my ($css) = $code =~ m|<style.*?>\n(.*?)</style>|s;
+            $css = Sdoc::Core::Unindent->trim($css);
+            return ($ehtml,$css);
+        }
+        return $ehtml;
     }
 
     return $code;
