@@ -26,6 +26,13 @@ Datei lesen:
   }
   $fh->close;
 
+Programm darf nur einmal laufen:
+
+  my $fh = eval{Sdoc::Core::FileHandle->new('<',$file,-lock=>'EXNB')};
+  if ($@) {
+      exit 5;
+  }
+
 Zähler-Datei mit Locking:
 
   my $fh = Sdoc::Core::FileHandle->new('+>>',$file,-lock=>'EX');
