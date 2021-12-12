@@ -516,11 +516,11 @@ sub classFile {
 
 # -----------------------------------------------------------------------------
 
-=head3 functionName() - Liefere Namen der ausgeführten Methode
+=head3 methodName() - Liefere Namen der ausgeführten Methode
 
 =head4 Synopsis
 
-  $name = $this->functionName;
+  $name = $this->methodName;
 
 =head4 Returns
 
@@ -540,7 +540,7 @@ Ermittele den Namen der ausgeführten Methode und liefere diesen zurück.
 
 # -----------------------------------------------------------------------------
 
-sub functionName {
+sub methodName {
     my $this = shift;
 
     my $name = (caller(1))[3];
