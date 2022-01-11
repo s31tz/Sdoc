@@ -500,13 +500,15 @@ use MIME::Base64 ();
 # Werte anders gesetzt, gelten sie für die gesamte Applikation.
 
 my %Default = (
-    checkLevel => 1,            # Umfang der Element- und Attribut-Prüfungen
-    compact => 0,               # Einzeilig, Whitespace komprimiert
-    embedImages => 0,           # Einbettung von Bildern
+    checkLevel => 1,              # Umfang der Element- und Attribut-Prüfungen
+    compact => 0,                 # Einzeilig, Whitespace komprimiert
+    embedImages => 0,             # Einbettung von Bildern
     # htmlVersion => 'xhtml-1.0', # XHTML vs. HTML, Versionsnr. für DOCTYPE
-    htmlVersion => 'html-5',    # XHTML vs. HTML, Versionsnr. für DOCTYPE
-    indentation => undef,       # forcierte Einrückung
-    uppercase => 0,             # wandele Elem.- und Att.-Namen in Großschr.
+    htmlVersion => 'html-5',      # XHTML vs. HTML, Versionsnr. für DOCTYPE
+    indentation => undef,         # forcierte Einrückung
+    oneLineCss => 0,              # <style>-Content stets einzeilig
+    oneLineJs => 0,               # <script>-Content stets einzeilig
+    uppercase => 0,               # wandele Elem.- und Att.-Namen in Großschr.
 );
 Hash::Util::lock_keys(%Default);
 
@@ -807,7 +809,7 @@ my %Domain = (
 
 =head1 METHODS
 
-=head2 Konstruktor
+=head2 Klassenmethoden
 
 =head3 new() - Konstruktor
 
@@ -837,6 +839,56 @@ sub new {
     $self->set(@_);
 
     return $self;
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 setDefault:() - Setze Objekt-Defaults
+
+=head4 Synopsis
+
+  $class->setDefault:(@keyVal);
+
+=head4 Arguments
+
+=over 4
+
+=item @keyVal
+
+Liste der Schlüssel/Wert-Paare, die gesetzt werden sollen.
+
+=back
+
+=head4 Example
+
+Definiere, dass applikationsweit jeglicher CSS- und JavaScript-Code
+in HTML einzeilig dargestellt wird:
+
+  Sdoc::Core::Html::Tag->setDefault:(
+      oneLineCss => 1,
+      oneLineJs => 1,
+  );
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub setDefault: {
+    my $class = shift;
+    # @_: @keyVal
+
+    while (@_) {
+        my $key = shift;
+        if (!exists $Default{$key}) {
+            $class->throw(
+                'HTML-00099: Unkown attribute',
+                Attribute => $key,
+            );
+        }
+        $Default{$key} = shift;
+    }
+
+    return;
 }
 
 # -----------------------------------------------------------------------------
@@ -1207,6 +1259,8 @@ sub tag {
     my $embedImage = $self->{'embedImages'};
     my $checkLevel = $self->{'checkLevel'};
     my $compact = $self->{'compact'};
+    my $oneLineJs = $self->{'oneLineJs'};
+    my $oneLineCss = $self->{'oneLineCss'};
     my $contentInd = undef;
     my $fmt = 'm';
     my $nl = 1;
@@ -1217,6 +1271,7 @@ sub tag {
     my $endTagOnly = 0;
     my $ignoreIfNull = 0;
     my $ignoreTagIf = 0;
+    my $oneLine = 0;
     my $tagWrap = 0;
     my $remComments = 0;
     my $remNl = 0;
@@ -1545,22 +1600,28 @@ sub tag {
     elsif ($fmt eq 'v' && $content !~ /\n/ || $fmt eq 'i') {
         # nichts tun
     }
-    elsif ($fmt eq 'v' || $fmt eq 'm' || $fmt eq 'c' || $fmt eq 'C') {
+    elsif ($fmt eq 'v' || $fmt eq 'm' || $fmt eq 'c') {
         Sdoc::Core::String->removeIndentation(\$content);
         if ($contentInd) {
             # Bringe Einrückung des Content auf Tiefe $contendInd
             Sdoc::Core::String->reduceIndentation($contentInd,\$content);
         }
-        if ($fmt eq 'C') {
-            # JavaScript-Code einzeilig machen
-            $content = Sdoc::Core::JavaScript->line($content);
+        if ($fmt eq 'c') {
+            if ($oneLineJs) {
+                # mache JavaScript-Code einzeilig
+                $content = Sdoc::Core::JavaScript->line($content);
+            }
+            if ($content =~ tr/&<>//) {
+                # Script-Code in CDATA einfassen, wenn &, < oder > enthalten
+                $content = "// <![CDATA[\n$content\n// ]]>";
+                # Folgendes geht nicht!
+                # $content =~ s/&/&amp;/g;
+                # $content =~ s/</&lt;/g;
+            }
         }
-        if (($fmt eq 'c' || $fmt eq 'C') && $content =~ tr/&<>//) {
-            # Script-Code in CDATA einfassen, wenn &, < oder > enthalten
-            $content = "// <![CDATA[\n$content\n// ]]>";
-            # Folgendes geht nicht!
-            # $content =~ s/&/&amp;/g;
-            # $content =~ s/</&lt;/g;
+        elsif ($tag eq 'style' && $oneLineCss) {
+            # mache CSS-Code einzeilig
+            $content = Sdoc::Core::Css->oneLine($content);
         }
         if (defined(my $forceIndent = $self->{'indentation'})) {
             $ind = $forceIndent;

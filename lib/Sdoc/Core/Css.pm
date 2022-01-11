@@ -498,6 +498,36 @@ sub makeFlat {
 
 # -----------------------------------------------------------------------------
 
+=head3 oneLine() - Mache CSS-Code insgesamt einzeilig
+
+=head4 Synopsis
+
+  $cssCode = $this->oneLine($cssCode);
+
+=head4 Arguments
+
+=over 4
+
+=item $cssCode
+
+(String) CSS-Code als Text (Content des style-Tag).
+
+=back
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub oneLine {
+    my ($this,$css) = @_;
+
+    $css =~ s/\s+/ /g;
+
+    return $css;
+}
+
+# -----------------------------------------------------------------------------
+
 =head3 style() - Generiere StyleSheet-Tags
 
 =head4 Synopsis
@@ -649,7 +679,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2021 Frank Seitz
+Copyright (C) 2022 Frank Seitz
 
 =head1 LICENSE
 

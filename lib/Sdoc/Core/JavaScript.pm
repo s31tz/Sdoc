@@ -215,22 +215,24 @@ wie JavaScipt es auch erlaubt, weggelassen werden.
 sub line {
     my ($this,$code) = @_;
 
-    my $line;
-    if (defined $code) {
-        open my $fh,'<',\$code or $this->throw;
-        while (<$fh>) {
-            s|\s*//.*||; # Kommentar entfernen
-            s/^\s+//;
-            s/\s+$//;
-            next if $_ eq '';
-
-            if (defined $line) {
-                $line .= ' ';
-            }
-            $line .= $_;
-        }
-        close $fh;
+    if (!defined $code) {
+        return undef;
     }
+
+    my $line = '';
+    open my $fh,'<',\$code or $this->throw;
+    while (<$fh>) {
+        s|\s*//.*||; # Kommentar entfernen
+        s/^\s+//;
+        s/\s+$//;
+        next if $_ eq '';
+
+        if ($line ne '') {
+            $line .= ' ';
+        }
+        $line .= $_;
+    }
+    close $fh;
 
     return $line;
 }
@@ -390,7 +392,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2021 Frank Seitz
+Copyright (C) 2022 Frank Seitz
 
 =head1 LICENSE
 
