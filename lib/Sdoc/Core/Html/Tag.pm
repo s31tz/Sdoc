@@ -1550,7 +1550,7 @@ sub tag {
             # Bringe Einrückung des Content auf Tiefe $contendInd
             Sdoc::Core::String->reduceIndentation($contentInd,\$content);
         }
-        if ($fmt eq 'c' && $content =~ tr/&<>//) {
+        if (($fmt eq 'c' || $fmt eq 'C') && $content =~ tr/&<>//) {
             # Script-Code in CDATA einfassen, wenn &, < oder > enthalten
             $content = "// <![CDATA[\n$content\n// ]]>";
             # Folgendes geht nicht!
@@ -2188,7 +2188,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2021 Frank Seitz
+Copyright (C) 2022 Frank Seitz
 
 =head1 LICENSE
 
