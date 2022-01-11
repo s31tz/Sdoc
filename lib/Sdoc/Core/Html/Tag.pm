@@ -488,6 +488,7 @@ our $VERSION = '1.197';
 use Sdoc::Core::Css;
 use Sdoc::Core::Template;
 use Sdoc::Core::String;
+use Sdoc::Core::JavaScript;
 use Scalar::Util ();
 use Sdoc::Core::Image;
 use Sdoc::Core::Path;
@@ -1544,11 +1545,15 @@ sub tag {
     elsif ($fmt eq 'v' && $content !~ /\n/ || $fmt eq 'i') {
         # nichts tun
     }
-    elsif ($fmt eq 'v' || $fmt eq 'm' || $fmt eq 'c') {
+    elsif ($fmt eq 'v' || $fmt eq 'm' || $fmt eq 'c' || $fmt eq 'C') {
         Sdoc::Core::String->removeIndentation(\$content);
         if ($contentInd) {
             # Bringe Einrückung des Content auf Tiefe $contendInd
             Sdoc::Core::String->reduceIndentation($contentInd,\$content);
+        }
+        if ($fmt eq 'C') {
+            # JavaScript-Code einzeilig machen
+            $content = Sdoc::Core::JavaScript->line($content);
         }
         if (($fmt eq 'c' || $fmt eq 'C') && $content =~ tr/&<>//) {
             # Script-Code in CDATA einfassen, wenn &, < oder > enthalten
