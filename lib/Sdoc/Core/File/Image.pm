@@ -21,7 +21,7 @@ use v5.10;
 use strict;
 use warnings;
 
-our $VERSION = '1.197';
+our $VERSION = '1.198';
 
 use Sdoc::Core::Hash;
 use Sdoc::Core::Path;
@@ -447,7 +447,7 @@ sub analyzeFile {
 
 =head1 VERSION
 
-1.197
+1.198
 
 =head1 AUTHOR
 
