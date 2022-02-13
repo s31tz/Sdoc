@@ -1701,10 +1701,10 @@ sub generate {
 
     if ($format eq 'ehtml') {
         my ($ehtml) = $code =~ m|<body>\n(.*?)</body>|s;
-        $ehtml = Sdoc::Core::Unindent->trim($ehtml);
+        $ehtml = Sdoc::Core::Unindent->trimNl($ehtml);
         if (wantarray) {
             my ($css) = $code =~ m|<style.*?>\n(.*?)</style>|s;
-            $css = Sdoc::Core::Unindent->trim($css);
+            $css = Sdoc::Core::Unindent->trimNl($css);
             return ($ehtml,$css);
         }
         return $ehtml;
@@ -2283,7 +2283,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2021 Frank Seitz
+Copyright (C) 2022 Frank Seitz
 
 =head1 LICENSE
 

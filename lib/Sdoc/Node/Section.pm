@@ -43,6 +43,10 @@ M{}-Segmenten.
 Array mit Informationen über die im Abschnittstitel vorkommenden
 G-Segmente (Inline-Grafiken).
 
+=item htmlFolding => $bool (Default: 0)
+
+Der Abschnitt ist in HTML klappbar.
+
 =item isAppendix => $bool (Default: 0)
 
 Der Abschnitt gehört zu den Appendix-Abschnitten.
@@ -202,6 +206,7 @@ sub new {
         childA => [],
         formulaA => [],
         graphicA => [],
+        htmlFolding => 0,
         isAppendix => 0,
         level => undef,
         linkA => [],
@@ -390,6 +395,21 @@ HTML-Code (String)
 
 sub htmlCode {
     my ($self,$h) = @_;
+
+    if ($self->htmlFolding) {
+        return $self->htmlSectionCode($h).
+            $h->tag('details',
+                '-',
+                $h->tag('summary',
+                    $h->tag('span',
+                        class => $self->cssClass.'-summary-text',
+                        'Inhalt'
+                    )
+                ),
+                $self->generateChilds('html',$h),
+            );
+    }
+
     return $self->htmlSectionCode($h).$self->generateChilds('html',$h);
 }
 
@@ -495,7 +515,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2021 Frank Seitz
+Copyright (C) 2022 Frank Seitz
 
 =head1 LICENSE
 

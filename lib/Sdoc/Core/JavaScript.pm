@@ -222,7 +222,7 @@ sub line {
     my $line = '';
     open my $fh,'<',\$code or $this->throw;
     while (<$fh>) {
-        s|\s*//.*||; # Kommentar entfernen
+        s~(^|\s+)//.*~~; # Kommentar entfernen
         s/^\s+//;
         s/\s+$//;
         next if $_ eq '';

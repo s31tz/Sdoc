@@ -507,6 +507,7 @@ L{+Syntax/Segment}) verwendet werden:
 
   %Section:
     anchor=STRING
+    htmlFolding=BOOL
     isAppendix=BOOL
     level=N
     title=STRING
@@ -514,7 +515,10 @@ L{+Syntax/Segment}) verwendet werden:
 
 [anchor=STRING]:
   Anker des Abschnitts.
-  
+
+[htmlFolding=BOOL]:
+  Der Abschnitt ist in HTML klappbar.
+
 [isAppendix=BOOL]:
   Mit diesem Abschnitt beginnen die Appendizes.
 
