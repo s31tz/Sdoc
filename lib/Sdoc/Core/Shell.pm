@@ -398,7 +398,7 @@ sub exec {
     # Returnwerte
 
     if ($capture) {
-        if ($capture eq 'stderr+stdout') {
+        if ($capture eq 'stdout,stderr') {
             my $stdout = $p->read($stdoutFile,-delete=>1);
             my $stderr = $p->read($stderrFile,-delete=>1);
             return ($stdout,$stderr);
