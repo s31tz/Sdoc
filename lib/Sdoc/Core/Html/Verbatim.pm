@@ -260,17 +260,17 @@ sub html {
             $tmp .= sprintf '%*d',$lnMaxWidth,$i;
         }
         push my @cols,
-            [class=>"ln",$h->tag('pre',$tmp)],
+            [class=>"ln",$h->tag('pre',style=>'margin: 0',$tmp)],
             [class=>"margin",''],
         ;
 
         # Text-Kolumne
-        push @cols,[class=>"text",$h->tag('pre',$text)];
+        push @cols,[class=>"text",$h->tag('pre',style=>'margin: 0',$text)];
 
         # Erzeuge Tabelle
 
         $html = Sdoc::Core::Html::Table::Simple->html($h,
-            border => undef,
+            border => 0,
             cellpadding => undef,
             cellspacing => undef,
             rows => [
