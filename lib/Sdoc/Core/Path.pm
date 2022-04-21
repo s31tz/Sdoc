@@ -47,6 +47,7 @@ use Fcntl qw/:DEFAULT/;
 use Sdoc::Core::Perl;
 use Sdoc::Core::DirHandle;
 use File::Find ();
+use Sdoc::Core::Exit;
 use Sdoc::Core::TempDir;
 use Cwd ();
 use Sdoc::Core::Time;
@@ -1865,7 +1866,8 @@ sub findProgram {
     my $path = qx/$cmd/;
     chomp $path;
     if (!$sloppy) {
-        Sdoc::Core::Shell->checkError($?,$!,$cmd);
+        # Sdoc::Core::Shell->checkError($?,$!,$cmd);
+        Sdoc::Core::Exit->check($?,$cmd);
     }
 
     return $path eq ''? undef: $path;

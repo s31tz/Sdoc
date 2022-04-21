@@ -25,6 +25,7 @@ our $VERSION = '1.202';
 
 use Sdoc::Core::Option;
 use Sdoc::Core::Shell;
+use Sdoc::Core::Exit;
 use IPC::Open3 ();
 
 # -----------------------------------------------------------------------------
@@ -106,7 +107,8 @@ sub filter {
     if (!$ignoreError) {
         # FIXME: checkError nach Sdoc::Core::Ipc verlagern,
         # in checkExit umbenennen
-        Sdoc::Core::Shell->checkError($?,$err,$cmd);
+        # Sdoc::Core::Shell->checkError($?,$err,$cmd);
+        Sdoc::Core::Exit->check($?,"$cmd\n$err");
     }
 
     return wantarray? ($out,$err): $out;
