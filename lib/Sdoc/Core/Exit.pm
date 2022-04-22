@@ -13,7 +13,8 @@ L<Sdoc::Core::Object>
 =head1 DESCRIPTION
 
 Die Klasse implementiert eine einzelne Methode. Diese prüft den Status
-eines terminierten Child-Prozesses.
+eines terminierten Child-Prozesses. Im Fehlerfall löst sie eine
+Exception aus.
 
 =cut
 
