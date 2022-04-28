@@ -72,7 +72,7 @@ Prüfe den Status nach Aufruf von system():
   my $r = system($cmd);
   Sdoc::Core::Exit->check($r,$cmd);
 
-Minimale Variante:
+Minimale Variante (Prüfung über $?):
 
   system($cmd);
   Sdoc::Core::Exit->check;
@@ -103,7 +103,7 @@ sub check {
     }
     elsif ($exitCode & 127) {       # Abbruch mit Signal
         my $sig = $exitCode & 127;  # unterste 8 Bit sind Signalnummer
-        my $core = $exitCode & 128; # 8. Bit zeigt Coredump an
+        my $core = $exitCode & 128; # das 8. Bit zeigt Coredump an
         $this->throw(
             'CMD-00003: Child died with signal',
             Signal => $sig.($core? ' (Coredump)': ''),
