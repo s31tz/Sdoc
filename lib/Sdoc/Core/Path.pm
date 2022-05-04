@@ -2056,7 +2056,7 @@ sub mkdir {
         }
     }
 
-    return if !$dir;
+    return if !defined($dir) || $dir eq '';
 
     if (-d $dir) {
         if ($mustNotExist) {
@@ -2426,24 +2426,20 @@ sub chmod {
 
 =head4 Synopsis
 
-  $class->delete($path);
+  $this->delete($path);
 
 =head4 Description
 
-Lösche den Pfad aus dem Dateisystem, also entweder die Datei oder
-das Verzeichnis einschließlich Inhalt. Es ist kein Fehler, wenn
-der Pfad im Dateisystem nicht existiert. Existiert der Pfad und
-kann nicht gelöscht werden, wird eine Exception ausgelöst.
-Die Methode liefert keinen Wert zurück.
+Lösche den Pfad aus dem Dateisystem, also die Datei oder das Verzeichnis
+einschließlich Inhalt. Es ist kein Fehler, wenn der Pfad nicht existiert.
 
 =cut
 
 # -----------------------------------------------------------------------------
 
 sub delete {
-    my ($class,$path) = @_;
-
-    $path = $class->expandTilde($path);
+    my $this = shift;
+    my $path = $this->expandTilde(shift);
 
     if (!defined($path) || $path eq '' || !-e $path && !-l $path) {
         # Bei Nichtexistenz nichts tun, aber nur, wenn es
@@ -2455,8 +2451,8 @@ sub delete {
         (my $dir = $path) =~ s/'/\\'/g; # ' quoten
         eval {Sdoc::Core::Shell->exec("/bin/rm -r '$dir' >/dev/null 2>&1")};
         if ($@) {
-            $class->throw(
-                'PATH-00001: Verzeichnis löschen fehlgeschlagen',
+            $this->throw(
+                'PATH-00002: Can\'t delete directory',
                 Error => $@,
                 Path => $path,
             );
@@ -2465,8 +2461,8 @@ sub delete {
     else {
         # Datei löschen
         if (!CORE::unlink $path) {
-            Sdoc::Core::Path->throw(
-                'PATH-00002: Datei löschen fehlgeschlagen',
+            $this->throw(
+                'PATH-00003: Can\'t delete file',
                 Path => $path,
             );
         }

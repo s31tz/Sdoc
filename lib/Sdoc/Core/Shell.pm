@@ -4,7 +4,7 @@
 
 =head1 NAME
 
-Sdoc::Core::Shell - Ausführung von Shell-Kommandos
+Sdoc::Core::Shell - Führe Shell-Kommandos aus
 
 =head1 BASE CLASS
 
