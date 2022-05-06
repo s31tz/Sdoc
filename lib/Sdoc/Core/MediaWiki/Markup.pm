@@ -63,7 +63,7 @@ use strict;
 use warnings;
 use utf8;
 
-our $VERSION = '1.202';
+our $VERSION = '1.203';
 
 use Sdoc::Core::Unindent;
 use Sdoc::Core::Parameters;
@@ -1829,7 +1829,7 @@ sub testPage {
 
 =head1 VERSION
 
-1.202
+1.203
 
 =head1 AUTHOR
 
