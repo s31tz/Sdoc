@@ -194,7 +194,7 @@ sub nextType {
             $type = 'Item';
             $variant = 2;
         }
-        elsif ($text =~ /^\d+\. /) {
+        elsif ($text =~ /^([A-Za-z]|\d+)\. /) {
             $type = 'Item';
             $variant = 3;
         }
@@ -745,7 +745,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2021 Frank Seitz
+Copyright (C) 2022 Frank Seitz
 
 =head1 LICENSE
 

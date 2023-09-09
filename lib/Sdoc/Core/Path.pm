@@ -31,7 +31,7 @@ use strict;
 use warnings;
 use utf8;
 
-our $VERSION = '1.203';
+our $VERSION = '1.212';
 
 use Sdoc::Core::Option;
 use Sdoc::Core::FileHandle;
@@ -42,6 +42,7 @@ use Encode::Guess ();
 use Sdoc::Core::String;
 use Encode ();
 use Digest::SHA ();
+use Time::HiRes ();
 use Sdoc::Core::Unindent;
 use Fcntl qw/:DEFAULT/;
 use Sdoc::Core::Perl;
@@ -209,7 +210,9 @@ sub checkFileSecurity {
 =head4 Description
 
 Prüfe, ob der Inhalt der Dateien $file1 und $file2 differiert.
-Ist dies der Fall, liefere I<wahr>, andernfalls I<falsch>.
+Ist dies der Fall, liefere I<wahr> (1 oder 2), andernfalls I<falsch> (0).
+Differiert $file2, wird 1 geliefert, existiert $file2 nicht,
+wird 2 geliefert.
 
 =cut
 
@@ -219,6 +222,10 @@ sub compare {
     my $class = shift;
     my $file1 = $class->expandTilde(shift);
     my $file2 = $class->expandTilde(shift);
+
+    if (!-e $file2) {
+        return 2;
+    }
 
     if (-s $file1 != -s $file2) {
         return 1;
@@ -320,7 +327,7 @@ sub convertEncoding {
 
 =head4 Synopsis
 
-  $class->copy($srcPath,$destPath,@opt);
+  $this->copy($srcPath,$destPath,@opt);
 
 =head4 Options
 
@@ -347,16 +354,18 @@ Behalte den Zeitpunkt der letzten Änderung bei.
 
 =head4 Description
 
-Kopiere Datei $srcPath nach $destPath.
+Kopiere Datei $srcPath nach $destPath. Ist eine Nulloperation,
+wenn die Ziledatei existiert und identisch zur Quelldatei ist
+(gleicher Inode).
 
 =cut
 
 # -----------------------------------------------------------------------------
 
 sub copy {
-    my $class = shift;
-    my $srcPath = shift;
-    my $destPath = shift;
+    my $this = shift;
+    my $srcPath = $this->expandTilde(shift);
+    my $destPath = $this->expandTilde(shift);
     # @_: @opt
 
     # Optionen
@@ -377,38 +386,44 @@ sub copy {
 
     # Operation ausführen
 
-    if (!$overwrite && -e $destPath) {
-        $class->throw(
-            'PATH-00099: Zieldatei existiert bereits',
-            Path => $destPath,
-        );
+    if (-e $destPath) {
+        if ($this->sameFile($srcPath,$destPath)) {
+            # Wenn Quell- und Zieldatei identisch sind
+            # (gleicher Inode), machen wir nichts
+            return;
+        }
+        if (!$overwrite) {
+            $this->throw(
+                'PATH-00099: Destination path already exists',
+                Path => $destPath,
+            );
+        }
     }
 
     my $fh1 = Sdoc::Core::FileHandle->new('<',$srcPath);
 
     if ($createDir) {
-        my ($destDir) = $class->split($destPath);
-        $class->mkdir($destDir,-recursive=>1);
+        my ($destDir) = $this->split($destPath);
+        $this->mkdir($destDir,-recursive=>1);
     }
-
 
     my $fh2 = Sdoc::Core::FileHandle->new('>',$destPath);
     while (<$fh1>) {
-        print $fh2 $_ or $class->throw(
-            'PATH-00007: Schreiben auf Datei fehlgeschlagen',
+        print $fh2 $_ or $this->throw(
+            'PATH-00007: Write failed',
             SourcePath => $srcPath,
             DestinationPath => $destPath,
         );
     }
-    $fh1->close;
     $fh2->close;
+    $fh1->close;
 
     if ($preserve) {
-        $class->mtime($destPath,$class->mtime($srcPath));
+        $this->mtime($destPath,$this->mtime($srcPath));
     }
 
     if ($move) {
-        $class->delete($srcPath);
+        $this->delete($srcPath);
     }
 
     return;
@@ -472,6 +487,29 @@ sub copyToDir {
 =head4 Synopsis
 
   $class->duplicate($method,$srcPath,$destPath,@opt);
+
+=head4 Arguments
+
+=over 4
+
+=item $method
+
+Anzuwendende Pfadoperation:
+
+  copy
+  move -or- rename
+  link
+  symlink
+
+=item $srcPath
+
+(String) Quellpfad
+
+=item $destPath
+
+(String) Zielpfad
+
+=back
 
 =head4 Options
 
@@ -638,11 +676,15 @@ sub edit {
 
 # -----------------------------------------------------------------------------
 
-=head3 encoding() - Liefere das Encoding der Datei
+=head3 detectEncoding() - Liefere das Encoding der Datei
 
 =head4 Synopsis
 
-  $encoding = $class->encoding($path,$altEncoding);
+  $encoding = $class->detectEncoding($path,$altEncoding);
+
+=head4 Alias
+
+encoding()
 
 =head4 Description
 
@@ -675,7 +717,7 @@ Bei großen Dateien kann dies ineffizient sein.
 
 # -----------------------------------------------------------------------------
 
-sub encoding {
+sub detectEncoding {
     my $class = shift;
     my $path = shift;
     my $altEncoding = shift // 'ISO-8859-1';
@@ -696,6 +738,11 @@ sub encoding {
         Path => $path,
         Message => $dec,
     );
+}
+
+{
+    no warnings 'once';
+    *encoding = \&detectEncoding;
 }
 
 # -----------------------------------------------------------------------------
@@ -1092,6 +1139,138 @@ sub sha1 {
 
 # -----------------------------------------------------------------------------
 
+=head3 size() - Größe der Datei in Bytes
+
+=head4 Synopsis
+
+  $size = $this->size($file);
+
+=head4 Arguments
+
+=over 4
+
+=item $file
+
+Pfad der Datei.
+
+=back
+
+=head4 Description
+
+Ermittele die Größe der Datei in Bytes und liefere diesen Wert zurück.
+Im Unterschied zu
+
+  -s $file
+
+führt die Methode eine Tilde-Expansion durch.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub size {
+    my $this = shift;
+    my $file = $this->expandTilde(shift);
+    return -s $file;
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 tail() - Überwache Datei und gib hinzugefügte Daten kontinuierlich aus
+
+=head4 Synopsis
+
+  $data = $this->tail($file,@opt);
+
+=head4 Arguments
+
+=over 4
+
+=item $file
+
+(String) Pfad der Datei.
+
+=back
+
+=head4 Options
+
+=over 4
+
+=item -offset => $pos (Default: 0)
+
+Beginne die Überwachung bei Datei-Offset $pos.
+
+=item -sleepInterval => $s (Default: 0.1)
+
+Zeitraum, der zwischen den Prüfungen auf Änderung gewartet wird.
+
+=item -timeout => $s (Default: I<überwache unendlich lange>)
+
+Beende die Überwachung der Datei, wenn $s Sekunden (Sekundenbruchteile
+erlaubt, z.B. C<0.5>) lang keine Änderung an der Datei erfolgt ist.
+Der Werte sollte größer sein als das Sleep Interval (s. C{-sleepInterval).
+
+=back
+
+=head4 Returns
+
+(String) Die während der Überwachung hinzugefügte Daten.
+
+=head4 Description
+
+Überwache Datei $file und gib die am Ende hinzugefügten Daten
+kontinuierlich aus. Die Überwachung endet, wenn der Datiinhalt sich
+$s Sekunden lang nicht geändert hat (Option C<--timeout>).
+Liefere die hinzugefügten Daten zurück.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub tail {
+    my $this = shift;
+    my $file = $this->expandTilde(shift);
+
+    # Options
+
+    my $offset = 0;
+    my $sleepInterval = 0.1;
+    my $timeout = undef;
+
+    $this->parameters(\@_,
+        -offset => \$offset,
+        -timeout => \$timeout,
+    );
+
+    my $str = '';
+    my $lastChange = Time::HiRes::gettimeofday;
+    while (1) {
+        my $size = -s $file;
+        if ($size > $offset) {
+            my $fh = Sdoc::Core::FileHandle->new('<',$file);
+            $fh->seek($offset);
+            $fh->setEncoding('UTF-8');
+            my $data = $fh->slurp;
+            $str .= $data;
+            print $data;
+            $offset = $fh->tell;
+            $fh->close;
+            $lastChange = Time::HiRes::gettimeofday;
+        }
+        elsif (defined $timeout) {
+            my $now = Time::HiRes::gettimeofday;
+            if ($now-$lastChange > $timeout) {
+                last; # Ende der Überwachung
+            }
+        }
+        Time::HiRes::usleep(int $sleepInterval*1000_000);
+    }
+
+    return $str;
+}
+
+# -----------------------------------------------------------------------------
+
 =head3 truncate() - Kürze Datei
 
 =head4 Synopsis
@@ -1441,7 +1620,8 @@ zurück. Die Einträge C<.> und C<..> werden I<nicht> mitgezählt.
 # -----------------------------------------------------------------------------
 
 sub count {
-    my ($this,$dir) = @_;
+    my $this = shift;
+    my $dir = $this->expandTilde(shift);
 
     my $n = 0;
     my $dh = Sdoc::Core::DirHandle->new($dir);
@@ -1851,7 +2031,7 @@ Programmpfad (String)
 
 Suche Programm $program über den Suchpfad der Shell und liefere
 den vollständigen Pfad zurück. Wird das Programm nicht gefunden,
-wird eine Exception geworfen, sofern $sloppy nicht wahr ist.
+wird eine Exception geworfen.
 
 =cut
 
@@ -1979,11 +2159,95 @@ sub maxFileNumber {
 
 # -----------------------------------------------------------------------------
 
+=head3 minFileNumber() - Liefere den numerisch größten Dateinamen
+
+=head4 Synopsis
+
+  $min = $class->minFileNumber($dir,$max,@opt);
+
+=head4 Arguments
+
+=over 4
+
+=item $dir
+
+Pfad des Verzeichnisses
+
+=item $max
+
+Der Wert, mit dem die Zählung beginnt.
+
+=back
+
+=head4 Options
+
+=over 4
+
+=item -sloppy => $bool (Default: 0)
+
+Wirf keine Exception, wenn ein Dateiname nicht mit einer Nummer
+beginnt.
+
+=back
+
+=head4 Description
+
+Liefere den numerisch kleinsten Dateinamen aus Verzeichnis $dir.
+Die Methode ist nützlich, wenn die Dateinamen mit einer Zahl
+NNNNNN beginnen und man die Datei mit der kleinsten Zahl ermitteln
+möchte um einer neu erzeugten Datei die nächstniedrigere Nummer
+zuzuweisen.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub minFileNumber {
+    my ($class,$dir,$max) = splice @_,0,3;
+    # @_: @opt
+
+    # Options
+
+    my $sloppy = 0;
+    
+    Sdoc::Core::Option->extract(\@_,
+        -sloppy => \$sloppy,
+    );
+
+    # Verarbeitung
+
+    my $min = $max;
+    my $dh = Sdoc::Core::DirHandle->new($dir);
+    while (my $file = $dh->next) {
+        if ($file eq '.' || $file eq '..') {
+            next;
+        }
+        my ($n) = $file =~ /^(\d+)/;
+        if (!defined($n)) {
+            if ($sloppy) {
+                next;
+            }
+            $class->throw(
+                'PATH-00099: Dateiname beginnt nicht mit Ziffernfolge',
+                File => $file,
+            );
+        }
+        if ($n+0 < $min) {
+            $min = $n+0;
+        }
+    }
+    $dh->close;
+
+    return $min;
+}
+
+# -----------------------------------------------------------------------------
+
 =head3 mkdir() - Erzeuge Verzeichnis
 
 =head4 Synopsis
 
-  $class->mkdir($dir,@opt);
+  $dir = $class->mkdir($dir,@opt);
 
 =head4 Options
 
@@ -2018,9 +2282,13 @@ Erzeuge übergeordnete Verzeichnisse, wenn nötig.
 
 =back
 
+=head4 Returns
+
+(String) Pfad des erzeugten Verzeichnisses.
+
 =head4 Description
 
-Erzeuge Verzeichnis. Existiert das Verzeichnis bereits, hat
+Erzeuge Verzeichnis $dir. Existiert das Verzeichnis bereits, hat
 der Aufruf keinen Effekt. Kann das Verzeichnis nicht angelegt
 werden, wird eine Exception ausgelöst.
 
@@ -2056,7 +2324,7 @@ sub mkdir {
         }
     }
 
-    return if !defined($dir) || $dir eq '';
+    return $dir if !defined($dir) || $dir eq '';
 
     if (-d $dir) {
         if ($mustNotExist) {
@@ -2065,7 +2333,7 @@ sub mkdir {
                 Dir => $dir,
             );
         }    
-        return;
+        return $dir;
     }
 
     if ($recursive) {
@@ -2082,7 +2350,7 @@ sub mkdir {
         # Hack, damit rekursiv erzeugte Pfade wie /tmp/a/b/c/..
         # angelegt werden können. Ohne diesen zusätzlichen
         # Existenz-Test schlägt sonst das folgende mkdir fehl.
-        return;
+        return $dir;
     }
 
     CORE::mkdir($dir,$mode) || do {
@@ -2096,7 +2364,7 @@ sub mkdir {
         $class->chmod($dir,$forceMode);
     }
 
-    return;
+    return $dir;
 }
 
 # -----------------------------------------------------------------------------
@@ -2396,7 +2664,7 @@ sub basePath {
 
 =head4 Synopsis
 
-  $class->chmod($path,$mode);
+  $this->chmod($path,$mode);
 
 =head4 Description
 
@@ -2407,10 +2675,12 @@ Setze Zugriffsrechte $mode auf Pfad $path.
 # -----------------------------------------------------------------------------
 
 sub chmod {
-    my ($class,$path,$mode) = @_;
+    my $this = shift;
+    my $path = $this->expandTilde(shift);
+    my $mode = shift;
 
     CORE::chmod $mode,$path or do {
-        $class->throw(
+        $this->throw(
             'PATH-00003: Setzen von Zugriffsrechten fehlgeschlagen',
             Path => $path,
             Mode => $mode,
@@ -2449,7 +2719,8 @@ sub delete {
     elsif (-d $path) {
         # Verzeichnis löschen
         (my $dir = $path) =~ s/'/\\'/g; # ' quoten
-        eval {Sdoc::Core::Shell->exec("/bin/rm -r '$dir' >/dev/null 2>&1")};
+        eval {Sdoc::Core::Shell->exec("/bin/rm -r --interactive=never".
+            " '$dir' >/dev/null 2>&1")};
         if ($@) {
             $this->throw(
                 'PATH-00002: Can\'t delete directory',
@@ -3380,6 +3651,47 @@ sub numberPaths {
 
 # -----------------------------------------------------------------------------
 
+=head3 sameFile() - Prüfe auf identische Datei
+
+=head4 Synopsis
+
+  $bool = $this->sameFile($path1,$path2);
+
+=head4 Arguments
+
+=over 4
+
+=item $path1
+
+Erster Pfad
+
+=item $path2
+
+Zweiter Pfad
+
+=back
+
+=head4 Returns
+
+(Integer)
+
+=head4 Description
+
+Prüfe, ob die beiden Pfade $path1 und $path2 auf dieselbe
+Datei (deselben Inode) verweisen. Wenn ja, liefere 1, sonst 0.
+Funktioniert auch bei Symlinks.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub sameFile {
+    my ($this,$path1,$path2) = @_;
+    return ($this->stat($path1))[1] == ($this->stat($path2))[1]? 1: 0;
+}
+
+# -----------------------------------------------------------------------------
+
 =head3 split() - Zerlege Pfad in seine Komponenten
 
 =head4 Synopsis
@@ -3416,6 +3728,74 @@ sub split {
     }
 
     return ($dir,$file,$base,$ext,$shortBase,$longExt);
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 spreadToSubDirs() - Kopiere, bewege, linke oder symlinke Dateien in Subverzeichnisse
+
+=head4 Synopsis
+
+  $this->%METHOD($method,$destDir,$maxPerDir);
+
+=head4 Arguments
+
+=over 4
+
+=item $method
+
+Anzuwendende Pfadoperation (siehe Methode duplicate()):
+
+  copy
+  move -or- rename
+  link
+  symlink
+
+=item $destDir
+
+(String) Verzeichnis, in dem die Subverzeichnisse angelegt werden.
+Das Verzeichnis muss existieren.
+
+=item $maxPerDir
+
+(Integer) Maximale Anzahl Dateien pro Unterverzeichnis.
+
+=back
+
+=head4 Description
+
+Lies Pfade von <STDIN> und verteile die Pfade auf dynamisch erzeugte
+Subverzeichnisse.
+
+=head4 Example
+
+  $ find SRCDIR -type f | sort | perl -MSdoc::Core::Path -E 'Sdoc::Core::Path->spreadToSubDirs("link",$destDir,100)'
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub spreadToSubDirs {
+    my $this = shift;
+    my $method = shift;
+    my $destDir = $this->expandTilde(shift);
+    my $maxPerDir = shift;
+
+    my $i = 0;
+    my $dir;
+    while (<STDIN>) {
+        chomp;
+        if ($i%$maxPerDir == 0) {
+            $dir = sprintf '%s/%04d',$destDir,int($i/$maxPerDir)+1;
+            $this->mkdir($dir);
+            say $dir;
+        }
+        $i++;
+        my $file = $this->filename($_);
+        $this->duplicate($method,$_,"$dir/$file");
+    }
+
+    return;
 }
 
 # -----------------------------------------------------------------------------
@@ -3656,7 +4036,7 @@ sub symlinkRelative {
 
 =head4 Synopsis
 
-  $mtime = $this->mtime($path);
+  $mtime = $this->touch($path);
 
 =head4 Arguments
 
@@ -3711,7 +4091,7 @@ sub uid {
 
 =head1 VERSION
 
-1.203
+1.212
 
 =head1 AUTHOR
 
@@ -3719,7 +4099,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2022 Frank Seitz
+Copyright (C) 2023 Frank Seitz
 
 =head1 LICENSE
 

@@ -403,6 +403,7 @@ sub css {
                 padding => '4px',
             ],
             ".$cssClass table td" => [
+                verticalAlign => 'top',
                 padding => '4px',
             ],
             # Default-Layout der Bildunterschrift
@@ -441,7 +442,7 @@ sub css {
 
     my $border = $self->border;
     if (!defined $border) {
-        $border = $atb->multiLine? 'hvHV': 'hHV';
+        $border = $atb->multiLine? 'hvHV': 'hvHV';
     }
 
     my $bh = index($border,'h') >= 0;
@@ -552,7 +553,7 @@ sub htmlCode {
                 my @row;
                 for (@$row) {
                     my $text = $node->expandText($h,\$_);
-                    $text =~ s/\n/$h->tag('br')/ge;
+                    # $text =~ s/\n/$h->tag('br')/ge;
                     push @row,$text;
                 }
                 return (undef,@row);
@@ -722,7 +723,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2021 Frank Seitz
+Copyright (C) 2023 Frank Seitz
 
 =head1 LICENSE
 

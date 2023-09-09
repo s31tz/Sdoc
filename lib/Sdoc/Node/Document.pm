@@ -1900,15 +1900,16 @@ sub htmlCode {
         # * strftime-Formate werden expandiert
 
         if ($date eq 'today') {
-            my $t = Sdoc::Core::Time->new(local=>time);
-            if ($self->language eq 'german') {
-                $date = sprintf '%d. %s %d',
-                    $t->day,$t->monthName('german'),$t->year;
-            }
-            else {
-                $date = sprintf '%s %d, %d',
-                    $t->monthName('english'),$t->day,$t->year;
-            }
+            $date = '%Y-%m-%d';
+            # my $t = Sdoc::Core::Time->new(local=>time);
+            # if ($self->language eq 'german') {
+            #     $date = sprintf '%d. %s %d',
+            #         $t->day,$t->monthName('german'),$t->year;
+            # }
+            # else {
+            #     $date = sprintf '%s %d, %d',
+            #         $t->monthName('english'),$t->day,$t->year;
+            # }
         }
         elsif ($date eq 'now') {
             $date = '%Y-%m-%d %H:%M:%S';
@@ -2197,6 +2198,20 @@ sub latexCode {
         ;
     }
 
+    # Spezielle Datumswerte:
+    # * today
+    # * now
+    # * strftime-Formate werden expandiert
+
+    my $date = $self->expandText($l,'dateS');
+    if ($date eq 'today') {
+        $date = '%Y-%m-%d';
+    }
+    elsif ($date eq 'now') {
+        $date = '%Y-%m-%d %H:%M:%S';
+    }
+    POSIX::strftime($date,localtime);
+
     return Sdoc::Core::LaTeX::Document->latex($l,
         documentClass => $documentClass,
         options => $self->latexDocumentOptions,
@@ -2206,7 +2221,7 @@ sub latexCode {
         fontSize => $self->latexFontSize,
         title => $self->expandText($l,'titleS') // '',
         author => $self->expandText($l,'authorS') // '',
-        date => $self->expandText($l,'dateS') // '',
+        date => $date // '',
         secNumDepth => $att->sections?
             $self->getUserNodeAttribute('sectionNumberLevel'): undef,
         tocDepth => $toc? $toc->maxLevel: undef,
@@ -2283,7 +2298,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2022 Frank Seitz
+Copyright (C) 2023 Frank Seitz
 
 =head1 LICENSE
 

@@ -52,7 +52,7 @@ use v5.10;
 use strict;
 use warnings;
 
-our $VERSION = '1.203';
+our $VERSION = '1.212';
 
 # -----------------------------------------------------------------------------
 
@@ -531,7 +531,7 @@ Zeichenkette mit Whitespace und/oder Shell-Metazeichen:
 sub value {
     my ($this,$str) = @_;
 
-    if (!defined($str) || $str =~ m|^([\w/:+-.]+)$|) {
+    if (!defined($str) || $str =~ m|^([\w/:+-.~]+)$|) {
         return $str;
     }
     
@@ -542,7 +542,7 @@ sub value {
 
 =head1 VERSION
 
-1.203
+1.212
 
 =head1 AUTHOR
 
@@ -550,7 +550,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2022 Frank Seitz
+Copyright (C) 2023 Frank Seitz
 
 =head1 LICENSE
 

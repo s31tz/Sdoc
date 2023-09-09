@@ -63,9 +63,10 @@ use strict;
 use warnings;
 use utf8;
 
-our $VERSION = '1.203';
+our $VERSION = '1.212';
 
 use Scalar::Util ();
+use Sdoc::Core::Stacktrace;
 use Hash::Util ();
 
 # -----------------------------------------------------------------------------
@@ -240,7 +241,7 @@ sub fabricate {
 
 # -----------------------------------------------------------------------------
 
-=head2 Akzessor-Methoden
+=head2 Akzessoren
 
 =head3 get() - Werte abfragen
 
@@ -574,7 +575,7 @@ sub compute {
 
 # -----------------------------------------------------------------------------
 
-=head2 Automatische Akzessor-Methoden
+=head2 Automatische Akzessoren
 
 =head3 AUTOLOAD() - Erzeuge Akzessor-Methode
 
@@ -657,6 +658,10 @@ sub AUTOLOAD :lvalue {
     *{$AUTOLOAD} = sub :lvalue {
         my $self = shift;
         # @_: $val
+
+        # if (!exists $self->{$key}) {
+        #     die Sdoc::Core::Stacktrace->asString;
+        # }
 
         if (@_) {
             $self->{$key} = shift;
@@ -1510,7 +1515,7 @@ Das Benchmark-Programm (bench-hash):
 
 =head1 VERSION
 
-1.203
+1.212
 
 =head1 AUTHOR
 
@@ -1518,7 +1523,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2022 Frank Seitz
+Copyright (C) 2023 Frank Seitz
 
 =head1 LICENSE
 

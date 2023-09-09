@@ -21,7 +21,7 @@ use v5.10;
 use strict;
 use warnings;
 
-our $VERSION = '1.203';
+our $VERSION = '1.212';
 
 use Sdoc::Core::Option;
 use Sdoc::Core::Path;
@@ -133,10 +133,10 @@ sub edit {
     }
     Sdoc::Core::Shell->exec("$program $file");
 
-    if ($backupFile && !$p->compare($file,$backupFile)) {
-        $p->delete($backupFile);
-            
-    }
+    # MEMO: Geht nicht, wenn GIMP bereits offen ist
+    # if ($backupFile && !$p->compare($file,$backupFile)) {
+    #     $p->delete($backupFile);
+    # }
 
     return;
 }
@@ -194,10 +194,12 @@ sub findImages {
     
     # Optionen
 
+    my $encoding = 'utf-8';
     my $object = 0;
     my $sort = '';
 
     Sdoc::Core::Option->extract(-mode=>'sloppy',\@_,
+        -encoding => \$encoding,
         -object => \$object,
         -sort => \$sort,
     );
@@ -206,7 +208,10 @@ sub findImages {
     for my $path (@_) {
         if (-d $path) {
             my @tmp;
-            for my $file (Sdoc::Core::Path->find($path,-type=>'f')) {
+            for my $file (Sdoc::Core::Path->find($path,
+                    -type => 'f',
+                    -decode => $encoding,
+                )) {
                 my $ext = Sdoc::Core::Path->extension($file);
                 if ($ext) {
                     if ($ext =~ /^(jpe?g|gif|png)$/i) {
@@ -325,7 +330,8 @@ sub standardName {
 
     my $str = sprintf '%06d-%dx%d',$n,$width,$height;
     if (defined($name) && $name ne '') {
-        $name =~ s/\s+/-/g;
+        $name =~ s/\W+/-/g;
+        $name =~ s/^-+|-+$//g;
         $str .= "-$name";
     }
     $str .= ".$extension";
@@ -444,7 +450,7 @@ sub type {
 
 =head1 VERSION
 
-1.203
+1.212
 
 =head1 AUTHOR
 
@@ -452,7 +458,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2022 Frank Seitz
+Copyright (C) 2023 Frank Seitz
 
 =head1 LICENSE
 

@@ -25,7 +25,7 @@ use strict;
 use warnings;
 use utf8;
 
-our $VERSION = '1.203';
+our $VERSION = '1.212';
 
 use Time::HiRes ();
 use Sdoc::Core::Duration;
@@ -94,6 +94,10 @@ Zeichenkette, die jeder Meldung im Log vorangestellt wird.
 
 Unterdrücke stdout und stderr.
 
+=item sloppy => $bool
+
+Ignoriere den Exitcode.
+
 =item time => $bool (Default: 0)
 
 Gib nach jedem Kommando die Zeit aus, die es benötigt hat.
@@ -132,6 +136,7 @@ sub new {
         logRewrite => undef,
         msgPrefix => '',
         quiet => 0,
+        sloppy => 0,
         time => 0,
         timePrefix => '',
         timeSummary => 0,
@@ -163,7 +168,7 @@ Shell-Objekt ausgeführt wurden, ausgegeben.
 sub DESTROY {
     my $self = shift;
 
-    if ($self->{'timeSummary'}) {
+    if ($self->{'timeSummary'} && $self->{'log'}) {
         (my $prog = $0) =~ s|.*/||;
         my $fd = $self->{'logDest'};
         my $pre = $self->{'msgPrefix'};
@@ -295,7 +300,7 @@ sub exec {
     my $capture = undef;
     my $outputTo = undef;
     my $quiet = $self->get('quiet');
-    my $sloppy = 0;
+    my $sloppy = $self->get('sloppy');
 
     if (@_) {
         Sdoc::Core::Option->extract(\@_,
@@ -451,6 +456,7 @@ sub cd {
     }
 
     my $cwd = Sdoc::Core::Process->cwd;
+
     unless ($dryRun) {
         my $t0 = Time::HiRes::gettimeofday;
         Sdoc::Core::Process->cwd($dir);
@@ -571,7 +577,7 @@ sub _logCmd {
 
 =head1 VERSION
 
-1.203
+1.212
 
 =head1 AUTHOR
 
@@ -579,7 +585,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2022 Frank Seitz
+Copyright (C) 2023 Frank Seitz
 
 =head1 LICENSE
 

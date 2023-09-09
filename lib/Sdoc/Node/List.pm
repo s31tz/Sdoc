@@ -526,7 +526,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2021 Frank Seitz
+Copyright (C) 2023 Frank Seitz
 
 =head1 LICENSE
 

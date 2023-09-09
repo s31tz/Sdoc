@@ -22,7 +22,7 @@ use strict;
 use warnings;
 use utf8;
 
-our $VERSION = '1.203';
+our $VERSION = '1.212';
 
 use POSIX ();
 use Time::Local ();
@@ -147,6 +147,50 @@ sub snakeCaseToCamelCase {
     # Eingebettete Bindestriche und Unterstriche in Camel Case wandeln
     # $str =~ s/(.)[_-](.)/$1\U$2/g;
     $str =~ s/[_-](.)/\U$1/g;
+
+    return $str;
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 protectRegexChars() - Maskiere Regex-Metazeichen in Zeichenkette
+
+=head4 Synopsis
+
+  $strProtexted = $this->protectRegexChars($str);
+
+=head4 Arguments
+
+=over 4
+
+=item $str
+
+Zeichenkette, in der die Zeichen maskiert werden sollen
+
+=back
+
+=head4 Returns
+
+(String) Zeichenkette, in der die Regex-Metazeichen maskiert sind.
+
+=head4 Description
+
+Maskiere in Zeichenkete $str alle Regex-Metazeichen und liefere
+das Resultat zurück. Maskiert werden die Zeichen
+
+  . + * ? | ( ) { } [ ] \ ^ $
+
+Im Gegensatz zur Perl Buildinfunktion quotemeta() bzw. "\Q..."
+maskiert diese Methode keine anderen Zeichen als Regex-Metazeichen.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub protectRegexChars {
+    my ($this,$str) = @_;
+
+    $str =~ s/([.+*?|(){}\[\]\\^\$])/\\$1/g;
 
     return $str;
 }
@@ -278,11 +322,15 @@ sub umlautToAscii {
 
 =head2 Zahlen
 
-=head3 germanToProgramNumber() - Wandele deutsche Zahldarstellung in Zahl
+=head3 germanNumber() - Wandele deutsche Zahldarstellung in Zahl
 
 =head4 Synopsis
 
-  $x = $this->germanToProgramNumber($germanX);
+  $x = $this->germanNumber($germanX);
+
+=head4 Alias
+
+germanToProgramNumber()
 
 =head4 Description
 
@@ -294,13 +342,41 @@ und liefere das Resultat zurück.
 
 # -----------------------------------------------------------------------------
 
-sub germanToProgramNumber {
+sub germanNumber {
     my ($this,$x) = @_;
 
     $x =~ s/\.//;
     $x =~ s/,/./;
 
     return $x;
+}
+
+{
+    no warnings 'once';
+    *germanToProgramNumber = \&germanNumber;
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 germanMoneyAmount() - Wandele deutschen Geldbetrag in Zahl
+
+=head4 Synopsis
+
+  $x = $this->germanMoneyAmount($germanMoneyAmount);
+
+=head4 Description
+
+Wandele deutschen Geldbetrag mit Punkt (.) als Stellen-Trenner und
+Komma (,) als Dezimaltrennzeichen in eine Zahl mit zwei Nachkommastellen
+der Programmiersprache und liefere das Resultat zurück.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub germanMoneyAmount {
+    my ($this,$x) = @_;
+    return sprintf '%.2f',$this->germanNumber($x);
 }
 
 # -----------------------------------------------------------------------------
@@ -678,7 +754,7 @@ sub stringToKeyVal {
 
 =head1 VERSION
 
-1.203
+1.212
 
 =head1 AUTHOR
 
@@ -686,7 +762,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2022 Frank Seitz
+Copyright (C) 2023 Frank Seitz
 
 =head1 LICENSE
 

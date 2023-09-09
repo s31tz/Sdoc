@@ -413,27 +413,49 @@ Wandele FOSWIKI-Code in Sdoc3-Code und liefere das Resultat zurück.
 sub foswikiToSdoc3 {
     my ($class,$code) = @_;
 
-    # Zu entfernende Konstrukte
+    # Global zu entfernende Konstrukte
 
     $code =~ s/\r//g;
     $code =~ s/\n\s*%DRAWING\{synopsis\}%\s*/\n/g;
+    $code =~ s/%META\{.*?\}%\s*//g;
     $code =~ s{(<font.*?>|</font>)}{}gs;
     $code =~ s{</?noautolink>}{}g;
     $code =~ s{<br\s*/>}{}g;
+    $code =~ s{!([A-Z])}{$1}g;
+
+    # Segmente expandieren
+
+    my $expandSegments = sub {
+        my $str = shift;
+        $str =~ s/(^|[ \(])_(\S.*?\S)_([^A-Za-z0-9]|$)/$1I{$2}$3/gms; # italic
+        $str =~ s/(^|[ \(])=(\S.*?\S)=([^A-Za-z0-9]|$)/$1C{$2}$3/gms; # Code
+        $str =~ s/\*(\S.*?\S)\*/B{$1}/g; # Bold
+        $str =~ s|<b>(.+)</b>|B{$1}|g; # Bold
+        $str =~ s/"(.+?)"/Q{$1}/g; # Quote
+        $str =~ s/&gt;/>/g; # &gt;
+        return $str;
+    };
 
     # Tabellen umwandeln
 
     my $processTable = sub {
-        my $str = shift;
+        my $in = shift;
 
-        my (@lines,@colLen);
-        for my $line (split /\n/,$str) {
-            $line =~ s/^\|\s*//gm;
-            $line =~ s/\s*\|\s*$//gm;
-            my @cols = split /\s*\|\s*/,$line;
+        # Tabellenzeilen und Kolumnenlängen ermitteln
+
+        my (@lines,@colLen,$hasTitles);
+        for my $line (split /\n/,$in) {
+            $line =~ s/^\|\s*//gm;             # | am Anfang entfernen
+            $line =~ s/\s*\|\s*$//gm;          # | am Ende entfernen
+            my @cols = split /\s*\|\s*/,$line; # Zeile in Kolumen zerlegen
             if (!@lines) {
+                # Eine Titelzeile erkennen wir an den Sternen
+                $hasTitles = $cols[0] =~ /\*.+?\*/? 1: 0;
                 @cols = map {s/\*(.*)\*/$1/; $_} @cols;
             }
+            for (my $i = 0; $i < @cols; $i++) {
+                $cols[$i] = $expandSegments->($cols[$i]);
+            }            
             for (my $i = 0; $i < @cols; $i++) {
                 my $len = length $cols[$i];
                 my $colLen = $colLen[$i];
@@ -441,8 +463,10 @@ sub foswikiToSdoc3 {
                     $colLen[$i] = $len;
                 }
             }
-            push @lines,[@cols];
+            push @lines,\@cols;
         }
+
+        # Formatstring für die Tabellenzeilen erstellen
 
         my $fmt;
         for my $colLen (@colLen) {
@@ -452,34 +476,41 @@ sub foswikiToSdoc3 {
             $fmt .= "%-${colLen}s";
         }
 
-        my $sdoc = sprintf "$fmt\n",@{shift @lines};
+        # Sdoc-Tabelle aufbauen
+
+        my $out = '';
+        # Titelzeile
+        if ($hasTitles) {
+            $out = sprintf "$fmt\n",@{shift @lines};
+        }
+        # Trennzeile
         my $i = 0;
         for my $colLen (@colLen) {
             if ($i++) {
-                $sdoc .= ' ';
+                $out .= ' ';
             }
-            $sdoc .= ('-' x $colLen);
+            $out .= ('-' x $colLen);
         }
-        $sdoc .= "\n";
-
-        #$sdoc = join(' | ',@colLen)."\n";
-        #$sdoc .= $fmt."\n";
-        for (@lines) {
-            my $line = sprintf "$fmt\n",@$_;
+        $out .= "\n";
+        # Zeilen des Tabellenkörpers
+        for my $colA (@lines) {
+            my $line = sprintf "$fmt\n",@$colA;
             $line =~ s/\s+$/\n/;
-            $sdoc .= $line;
+            $out .= $line;
         }
+        $out = "%Table:\n$out.\n";
 
-        return "%Table:\n  border=hvHV\n$sdoc.\n";
+        return $out;
     };
-    $code =~ s/(^\|(.*)\|\n)+/$processTable->($1)/egms;
+    $code =~ s/((^\|.*\n)+)/$processTable->($1)/egm;
 
     # Überschriften und Textauszeichnungen umschreiben
 
-    $code =~ s/(^|[ \(])_(\S.*?\S)_([\s.\)])/$1I{$2}$3/gms; # italic
-    $code =~ s/(^|[ \(])=(\S.*?\S)=([\s.\)])/$1C{$2}$3/gms; # Code
-    $code =~ s/\*(\S+?)\*/B{$1}/gm; # Bold
-    $code =~ s/&gt;/>/g; # &gt;
+    # $code =~ s/(^|[ \(])_(\S.*?\S)_([\s.\)])/$1I{$2}$3/gms; # italic
+    # $code =~ s/(^|[ \(])=(\S.*?\S)=([\s.\)])/$1C{$2}$3/gms; # Code
+    # $code =~ s/\*(\S+?)\*/B{$1}/gm; # Bold
+    # $code =~ s/&gt;/>/g; # &gt;
+    $code = $expandSegments->($code);
     $code =~ s/^---(\++)/'=' x length($1)/egm;
 
     # Image-Tags
@@ -530,8 +561,8 @@ sub foswikiToSdoc3 {
 
         return "L{$str}";
     };
-    $code =~ s/\[{2}(.*?)\]\[(.*?)\]{2}/$processLink->($1,$2)/egs;
-    $code =~ s/\[{2}(.*?)\]{2}/$processLink->($1)/egs;
+    $code =~ s/\[\[(.*?)\]\[(.*?)\]\]}/$processLink->($1,$2)/egs;
+    $code =~ s/\[\[(\S+?)\]\]/$processLink->($1)/egs;
 
     # Bullet-Listen umwandeln (auch eingerückte). Eine Bullet-Liste
     # beginnt mit einer Zeile mit einem eingerückten Stern (*) und
@@ -554,6 +585,7 @@ sub foswikiToSdoc3 {
         my $str = shift;
 
         $str =~ s/\s*$/\n/;
+        $str = "%Code:\n$str.\n";
 
         return $str;
     };
@@ -600,7 +632,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2021 Frank Seitz
+Copyright (C) 2022 Frank Seitz
 
 =head1 LICENSE
 

@@ -21,8 +21,9 @@ use v5.10;
 use strict;
 use warnings;
 
-our $VERSION = '1.203';
+our $VERSION = '1.212';
 
+use Sdoc::Core::Path;
 use Cwd ();
 use Sdoc::Core::System;
 
@@ -47,7 +48,7 @@ cd()
 
 Liefere das aktuelle Verzeichnis ("current working directory") des
 Prozesses. Ist ein Argument angegeben, wechsele in das betreffende
-Verzeichnis.
+Verzeichnis. Tilde-Nt
 
 =head4 Examples
 
@@ -71,7 +72,7 @@ sub cwd {
         return Cwd::cwd;
     }
 
-    my $dir = shift;
+    my $dir = Sdoc::Core::Path->expandTilde(shift);
     if (!defined($dir) || $dir eq '' || $dir eq '.') {
         return;
     }
@@ -268,7 +269,7 @@ sub user {
 
 =head1 VERSION
 
-1.203
+1.212
 
 =head1 AUTHOR
 
@@ -276,7 +277,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2022 Frank Seitz
+Copyright (C) 2023 Frank Seitz
 
 =head1 LICENSE
 

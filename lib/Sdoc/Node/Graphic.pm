@@ -146,12 +146,12 @@ use warnings;
 our $VERSION = '3.00';
 
 use Sdoc::Core::File::Image;
+use Sdoc::Core::Path;
 use Sdoc::Core::Math;
 use Sdoc::Core::Html::Image;
 use Sdoc::Core::Converter;
 use Sdoc::Core::LaTeX::Figure;
 use Sdoc::Core::MediaWiki::Markup;
-use Sdoc::Core::Path;
 
 # -----------------------------------------------------------------------------
 
@@ -590,7 +590,7 @@ sub htmlCode {
     my $width = $self->width;
     my $height = $self->height;
 
-    # Wenn kein UR angegeben ist, ziehen wir die Bilddatei heran
+    # Wenn kein URL angegeben ist, ziehen wir die Bilddatei heran
 
     if (!$src) {
         # Pfad der Bilddatei
@@ -599,10 +599,13 @@ sub htmlCode {
             -extensions => [qw/png jpg gif/],
         );
 
+        my $img = Sdoc::Core::File::Image->new($src);
+        $src = \Sdoc::Core::Path->read($img->path);
+
         # Breite/Höhe ermitteln
 
         if (!$width || !$height) {
-            ($width,$height) = Sdoc::Core::File::Image->new($src)->size;
+            ($width,$height) = $img->size;
         }
 
         # Skalieren
@@ -769,7 +772,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2021 Frank Seitz
+Copyright (C) 2023 Frank Seitz
 
 =head1 LICENSE
 

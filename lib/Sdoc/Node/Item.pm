@@ -129,7 +129,7 @@ sub new {
 
     # Quelltext verarbeiten
 
-    my ($attribH,$firstLine);
+    my ($attribH,$firstLine,$indent);
     if ($variant == 0) {
         # %Item:
         #   KEY=VAL
@@ -155,12 +155,14 @@ sub new {
             $line->text =~ /^([*o+]) (.*)/;
             $key = $1;
             $text = $2;
+            $indent = 2;
         }
         elsif ($variant == 3) {
             $listType = 'ordered';
-            $line->text =~ /^(\d+)\. (.*)/;
+            $line->text =~ /^([A-Za-z]|\d+)\. (.*)/;
             $key = $1;
             $text = $2;
+            $indent = length($key)+2;
         }
         if (!defined $parent->listType) {
             $parent->listType($listType);
@@ -201,7 +203,7 @@ sub new {
 
     $par->removeEmptyLines;
     my $lineA = $par->lines;
-    my (@lines,$indent);
+    my @lines;
     while (@$lineA) {
         my $line = $lineA->[0];
         if (!defined $indent) {
@@ -242,6 +244,7 @@ sub new {
     $lineA = $par->lines;
     while (@$lineA) {
         my ($nodeClass,$variant) = $par->nextType(1);
+
         $self->push(childA=>$nodeClass->new($variant,$par,$root,$self));
     }
 
@@ -284,12 +287,21 @@ sub htmlCode {
     my $childs = $self->generateChilds('html',$h);
 
     if ($listType eq 'ordered') {
+        # N. => list-style-type: decimal (Default)
+
+        my $key = $self->key;
+        my $mark;
+        if ($key =~ /^[A-Za-z]$/) {
+            $mark = 'lower-alpha';
+        }
+
         return $h->tag('li',
+            style => $mark? "list-style-type:$mark": undef,
             $childs,
         );
     }
     elsif ($listType eq 'unordered') {
-        # '*' => 'disc', # Default
+        # '*' => 'disc', (Default)
         my $mark = {
             'o' => 'circle',
             '+' => 'square',
@@ -422,7 +434,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2021 Frank Seitz
+Copyright (C) 2023 Frank Seitz
 
 =head1 LICENSE
 

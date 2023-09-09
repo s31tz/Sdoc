@@ -1186,13 +1186,13 @@ sub expandText {
         # Ermittele Zielformat-spezifische Methode
 
         my $meth = 'unknown';
-        if ($gen->isa('Quiq::Html::Tag')) {
+        if ($gen->isa('Sdoc::Core::Html::Tag')) {
             $meth = 'expandSegmentsToHtml';
         }
-        elsif ($gen->isa('Quiq::LaTeX::Code')) {
+        elsif ($gen->isa('Sdoc::Core::LaTeX::Code')) {
             $meth = 'expandSegmentsToLatex';
         }
-        elsif ($gen->isa('Quiq::MediaWiki::Markup')) {
+        elsif ($gen->isa('Sdoc::Core::MediaWiki::Markup')) {
             $meth = 'expandSegmentsToMediaWiki';
         }
 
@@ -1729,10 +1729,7 @@ sub codeSegmentS {
     my ($self,$format,$content) = @_;
 
     my ($name,$text) = split /,/,$content,2;
-    if (!defined $text) {
-        $self->warn('S segment does not have 2 arguments: S{%s}',$content);
-        return $content;
-    }
+    $text //= ''; # Segment ohne Argument
 
     my $doc = $self->root;
     my $seg = $doc->segmentNode($name);
@@ -1747,7 +1744,7 @@ sub codeSegmentS {
         return $text;
     }
 
-    return sprintf $fmt,$text;
+    return $text eq ''? $fmt: sprintf($fmt,$text);
 }
 
 # -----------------------------------------------------------------------------
@@ -2238,7 +2235,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2022 Frank Seitz
+Copyright (C) 2023 Frank Seitz
 
 =head1 LICENSE
 
