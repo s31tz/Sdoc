@@ -1836,7 +1836,7 @@ sub css {
             'div.author' => [
             ],
             'div.date' => [
-                marginTop => '0.2em',
+                marginTop => '0.5em',
             ],
             p => [
                 fontSize => '115%',
