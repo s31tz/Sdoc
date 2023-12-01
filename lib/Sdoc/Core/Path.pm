@@ -31,7 +31,7 @@ use strict;
 use warnings;
 use utf8;
 
-our $VERSION = '1.212';
+our $VERSION = '1.213';
 
 use Sdoc::Core::Option;
 use Sdoc::Core::FileHandle;
@@ -1029,6 +1029,10 @@ verwendet werden, um Kommentarzeilen zu überlesen.
 
 Überlies die ersten $n Zeilen.
 
+=item -sloppy => $bool (Default: 0)
+
+Existiert die Datei nicht, liefere C<undef> und wirf keine Exception.
+
 =back
 
 =head4 Description
@@ -1052,6 +1056,7 @@ sub read {
     my $maxLines = 0;
     my $skip = undef;
     my $skipLines = 0;
+    my $sloppy = 0;
 
     if (@_) {
         Sdoc::Core::Option->extract(\@_,
@@ -1061,12 +1066,17 @@ sub read {
             -maxLines => \$maxLines,
             -skip => \$skip,
             -skipLines => \$skipLines,
+            -sloppy => \$sloppy,
         );
     }
 
     # Datei lesen
 
     $file = $class->expandTilde($file);
+    if ($sloppy && !-e $file) {
+        return undef;
+    }
+
     my $fh = Sdoc::Core::FileHandle->new('<',$file);
 
     my $data = '';
@@ -3456,7 +3466,10 @@ sub numberBasePaths {
         for my $ext (@{$basePath{$oldBasePath}}) {
             my $oldPath = $oldBasePath;
             my $newPath = $newBasePath;
-            if ($ext ne '') {
+            if ($ext eq '') {
+                $newPath .= ".tmp";
+            }
+            else {
                 $oldPath .= ".$ext";
                 $newPath .= ".$ext.tmp";
             }
@@ -3515,7 +3528,7 @@ Die Schrittweite der Nummerierung.
 Ordne alle Pfade von $from bis $to (lexikalisch sortiert) nach der
 Datei $after ein. Ist $after leer (Leerstring oder undef), werden
 die Pfade an den Anfang gestellt. Alle Angaben I<vor> der
-(Re-)Nummerierung.
+Nummerierung.
 
 =item -start => $n (Default: $step)
 
@@ -3525,7 +3538,7 @@ Verwende $n als Startwert.
 
 =head4 Description
 
-Nummeriere die Pfade @paths, gemäß ihrer gegebenen Reihenfolge.
+Nummeriere die Pfade @paths, gemäß der gegebenen Reihenfolge.
 Der Basisname der jeweiligen Datei/des Directory aus @paths wird
 hierbei durch eine Nummer der Breite $width ersetzt. Die Extension
 (sofern vorhanden) bleibt erhalten. Die Nummerierung erfolgt mit
@@ -4091,7 +4104,7 @@ sub uid {
 
 =head1 VERSION
 
-1.212
+1.213
 
 =head1 AUTHOR
 
