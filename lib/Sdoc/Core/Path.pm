@@ -51,6 +51,7 @@ use File::Find ();
 use Sdoc::Core::Exit;
 use Sdoc::Core::TempDir;
 use Cwd ();
+use POSIX ();
 use Sdoc::Core::Time;
 use Sdoc::Core::Process;
 
@@ -3021,6 +3022,84 @@ sub mode {
 
 # -----------------------------------------------------------------------------
 
+=head3 moveToDateSubDir() - Verschiebe Pfad in Datums-Subverzeichnis
+
+=head4 Synopsis
+
+  $this->moveToDateSubDir($path);
+  $this->moveToDateSubDir($path,$rootDir);
+
+=head4 Arguments
+
+=over 4
+
+=item $path
+
+Pfad, der verschoben wird.
+
+=item $rootDir (Default: '.')
+
+Verzeichnis, in dem das Datums-Subverzeichnis angelegt wird.
+
+=back
+
+=head4 Options
+
+=over 4
+
+=item -verbose => $bool (Default: 1)
+
+Gib Information aus.
+
+=back
+
+=head4 Description
+
+Ermitte das Modifikationsdatum des Pfads $path, erzeuge ein Subverzeichnis
+C<YYYY-MM-DD> in $rootDir und verschiebe den Pfad dorthin. Diese Methode
+ist nützlich, wenn der Inhalt eines großen Verzeichnisses, der sich
+nach-und-nach aufgebaut hat, auf Subverzeichnisse aufgeteilt werden soll.
+
+=head4 Example
+
+Innerhalb eines Verzeichnisses:
+
+  $ perl -MSdoc::Core::Path -E 'Sdoc::Core::Path->moveToDateSubDir($_) for glob("*.jpg")'
+
+Mit Zielverzeichnis ("dest"):
+
+$ perl -MSdoc::Core::Path -E 'Sdoc::Core::Path->moveToDateSubDir($_,"dest") for glob("src/*.jpg")'
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub moveToDateSubDir {
+    my $this = shift;
+
+    # Optionen und Argumente
+
+    my $verbose = 1;
+
+    my $argA = $this->parameters(1,2,\@_,
+        -verbose => \$verbose,
+    );
+    my ($path,$rootDir) = @$argA;
+
+    my $date = POSIX::strftime('%Y-%m-%d',localtime $this->mtime($path));
+    my $destDir = $rootDir? "$rootDir/$date": $date;
+    my $name = $this->filename($path);
+    if ($verbose) {
+        say "$path => $destDir/$name";
+    }
+    $this->mkdir($destDir,-recursive=>1);
+    $this->duplicate('move',$path,"$destDir/$name");
+
+    return;
+}
+
+# -----------------------------------------------------------------------------
+
 =head3 mtime() - Setze/Liefere Modifikationszeit
 
 =head4 Synopsis
@@ -4112,7 +4191,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2023 Frank Seitz
+Copyright (C) 2024 Frank Seitz
 
 =head1 LICENSE
 
