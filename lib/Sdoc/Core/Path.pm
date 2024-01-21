@@ -31,7 +31,7 @@ use strict;
 use warnings;
 use utf8;
 
-our $VERSION = '1.213';
+our $VERSION = '1.214';
 
 use Sdoc::Core::Option;
 use Sdoc::Core::FileHandle;
@@ -3068,7 +3068,7 @@ Innerhalb eines Verzeichnisses:
 
 Mit Zielverzeichnis ("dest"):
 
-$ perl -MSdoc::Core::Path -E 'Sdoc::Core::Path->moveToDateSubDir($_,"dest") for glob("src/*.jpg")'
+  $ perl -MSdoc::Core::Path -E 'Sdoc::Core::Path->moveToDateSubDir($_,"dest") for glob("src/*.jpg")'
 
 =cut
 
@@ -4183,7 +4183,7 @@ sub uid {
 
 =head1 VERSION
 
-1.213
+1.214
 
 =head1 AUTHOR
 
