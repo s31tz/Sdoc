@@ -921,6 +921,53 @@ sub clear {
 
 # -----------------------------------------------------------------------------
 
+=head2 Externe Repräsentation
+
+=head3 asString() - Darstellung in einer Zeile
+
+=head4 Synopsis
+
+  $str = $h->asString;
+
+=head4 Alias
+
+asLine()
+
+=head4 Description
+
+Liefere den Hash in der Darstellung:
+
+  KEY1=>VAL1;KEY2=>VAL2;...
+
+Die Schlüssel sind in alphanumerischer Reihenfolge.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub asString {
+    my $self = shift;
+
+    my $str = '';
+    my @keys = CORE::keys %$self;
+    for my $key (sort @keys) {
+        if ($str) {
+            $str .= ';';
+        }
+        my $val = $self->{$key} // 'undef';
+        $str .= "$key=>$val";
+    }
+
+    return $str;
+}
+
+{
+    no warnings 'once';
+    *asLine = \&asString;
+}
+
+# -----------------------------------------------------------------------------
+
 =head2 Tests
 
 =head3 exists() - Prüfe Schlüssel auf Existenz

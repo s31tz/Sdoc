@@ -2516,7 +2516,7 @@ sub tempDir {
 
 =head4 Synopsis
 
-  $absolutePath = $class->absolute($path);
+  $absolutePath = $this->absolute($path);
 
 =head4 Alias
 
@@ -2533,8 +2533,10 @@ unverändert.
 # -----------------------------------------------------------------------------
 
 sub absolute {
-    my $class = shift;
+    my $this = shift;
     my $path = shift // '';
+
+    $path = $this->expandTilde($path);
     return Cwd::realpath($path);
 }
 
