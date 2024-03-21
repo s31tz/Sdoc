@@ -3523,6 +3523,16 @@ sub numberBasePaths {
         # my ($dir,undef,$base,$ext) = $this->split($path);
         my ($dir,undef,undef,undef,$base,$ext) = $this->split($path);
 
+        my $l = length $base;
+        if ($l != $width) {
+            $this->throw(
+                'PATH-00099: Wrong base width',
+                Path => $path,
+                Base => $base,
+                AllowedWidth => $width,
+            );
+        }
+
         if ($dir ne '') {
             $base = "$dir/$base";
         }
