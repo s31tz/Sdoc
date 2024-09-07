@@ -119,7 +119,7 @@ Instantiiere ein Stacktrace-Objekt und liefere eine Referenz auf diese
 Objekt zurück. Das Stacktrace-Objekt repräsentiert die Aufruf-Hierarchie
 des laufenden Perl-Programms zum Zeitpunkt der Instantiierung. Letztes
 Element in der Hierarchie ist der Konstruktor-Aufruf. Soll der
-Stacktrace vorher enden,
+Stacktrace vorher enden, wird der Parameter $i gesetzt.
 
 =cut
 
