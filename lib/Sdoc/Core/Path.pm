@@ -1182,6 +1182,14 @@ führt die Methode eine Tilde-Expansion durch.
 sub size {
     my $this = shift;
     my $file = $this->expandTilde(shift);
+
+    if (!-f $file) {
+        $this->throw(
+            'PATH-00099: File not found',
+            Path => $file,
+        );
+    }
+
     return -s $file;
 }
 
