@@ -27,6 +27,7 @@ use Sdoc::Core::Option;
 use Sdoc::Core::FileHandle;
 use Time::HiRes ();
 use Term::ANSIColor ();
+use Sdoc::Core::Exit;
 
 # -----------------------------------------------------------------------------
 
@@ -338,6 +339,68 @@ Terminal in den Anfangszustand zurückversetzen:
 sub ansiEsc {
     my ($class,$str) = @_;
     return substr($str,0,1) eq "\e"? $str: Term::ANSIColor::color($str);
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 width() - Liefere die Breite des Terminals
+
+=head4 Synopsis
+
+  $width = $this->width;
+
+=head4 Returns
+
+Integer
+
+=head4 Description
+
+Ermittele die Anzahl der Spalten des Terminals und liefere diese zurück.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub width {
+    my $this = shift;
+
+    my $cmd = 'tput cols';
+    my $width = `$cmd`;
+    Sdoc::Core::Exit->check($?,$cmd);
+    chomp $width;
+
+    return $width;
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 height() - Liefere die Höhe des Terminals
+
+=head4 Synopsis
+
+  $height = $this->height;
+
+=head4 Returns
+
+Integer
+
+=head4 Description
+
+Ermittele die Anzahl der Zeilen des Terminals und liefere diese zurück.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub height {
+    my $this = shift;
+
+    my $cmd = 'tput lines';
+    my $height = `$cmd`;
+    Sdoc::Core::Exit->check($?,$cmd);
+    chomp $height;
+
+    return $height;
 }
 
 # -----------------------------------------------------------------------------
