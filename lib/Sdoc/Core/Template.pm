@@ -593,6 +593,41 @@ sub value {
 
 # -----------------------------------------------------------------------------
 
+=head3 removePlaceholders() - Entferne unaufgelöste Platzhalter
+
+=head4 Synopsis
+
+  $tpl->removePlaceholders;
+
+=head4 Description
+
+Entferne alle Attribute und Tags, die unaufgelöste Platzhalter der
+Form "__...__" enthalten.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub removePlaceholders {
+    my $self = shift;
+
+    # Kopie, auf der wir ersetzen
+    my $str = $self->{'string'};
+
+    # Entferne Attribute mit unaufgelösten Platzhaltern
+    $str =~ s/\s\w+="__.*?__"//g;
+
+    # Entferne Tags mit unaufgelösten Platzhaltern
+    $str =~ s|(^\s*)?<.*?>__.*?__</.*?>(\s*\n)?||gm;
+
+    # Inhalt wieder herstellen
+    $self->{'string'} = $str;
+
+    return;
+}
+
+# -----------------------------------------------------------------------------
+
 =head3 removeOptional() - Entferne Optional-Metatags
 
 =head4 Synopsis
