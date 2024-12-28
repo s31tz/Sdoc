@@ -56,7 +56,7 @@ use strict;
 use warnings;
 use utf8;
 
-our $VERSION = '1.222';
+our $VERSION = '1.223';
 
 use Sdoc::Core::Path;
 use Sdoc::Core::Option;
@@ -585,7 +585,7 @@ sub value {
     }
     else {
         # Stringreferenz: Wir liefern den Wert unverändert
-        return $$arg
+        return $$arg;
     }
 
     $self->throw;
@@ -918,7 +918,7 @@ sub asStringNL {
 
 =head1 VERSION
 
-1.222
+1.223
 
 =head1 AUTHOR
 
