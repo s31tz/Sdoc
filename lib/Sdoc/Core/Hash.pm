@@ -283,7 +283,7 @@ sub get {
 
 # -----------------------------------------------------------------------------
 
-=head3 getDeep() - Werte mit "tiefem Zugriff" abfragen
+=head3 getDeep() - Werte per "tiefem Zugriff" abfragen
 
 =head4 Synopsis
 
@@ -331,7 +331,6 @@ sub getDeep {
                 $self->throw(
                     'HASH-00099: Non-existent access path',
                     Path => $key,
-                    Component => $_,
                 );
             }
             return undef;
@@ -340,6 +339,63 @@ sub getDeep {
     }
 
     return $val;
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 setDeep() - Wert per "tiefem Zugriff" setzen
+
+=head4 Synopsis
+
+  $h->setDeep($key,$val);
+
+=head4 Arguments
+
+=over 4
+
+=item $key
+
+Zugriffspfad der Form "key1.key2..."
+
+=item $val
+
+Wert, der gesetzt wird
+
+=back
+
+=head4 Description
+
+Setze den Wert zum angegebenen Schlüssel. Der Schlüssel ist eine
+mit Punkt (.) getrennte Kette von Einzelschlüsseln, so dass
+sich ein "tiefer Zugriff" kompakt formulieren lässt. Beispiel:
+
+  $h->setDeep('invoice.header.invoiceNumber',$val);
+
+ist dasselbe wie
+
+  $h->{'invoice'}->{'header'}->{'invoiceNumber'} = $val;
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub setDeep {
+    my ($self,$key,$val) = @_;
+
+    my $ref = $self;
+    my @keys = split /\./,$key;
+    for (my $i = 0; $i < $#keys; $i++) {
+        if (!exists $ref->{$keys[$i]}) {
+            $self->throw(
+                'HASH-00099: Non-existent access path',
+                Path => $key,
+            );
+        }
+        $ref = $ref->{$keys[$i]};
+    }
+    $ref->{$keys[-1]} = $val;
+
+    return;
 }
 
 # -----------------------------------------------------------------------------
@@ -1660,7 +1716,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2024 Frank Seitz
+Copyright (C) 2025 Frank Seitz
 
 =head1 LICENSE
 
