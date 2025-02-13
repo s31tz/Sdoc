@@ -1439,6 +1439,12 @@ Encodiere $data gemäß dem Encoding $encoding.
 Setze während des Schreibens einen Exclusive-Lock auf die Datei.
 Dies kann im Falle von -append sinnvoll sein.
 
+=item -log => $stream (Default: undef)
+
+Schreibe Meldung auf Dateihandle. Beispiel:
+
+  -log => \*STDOUT
+
 =item -mode => $mode (Default: keiner)
 
 Setze die Permissions der Datei auf $mode. Beispiel: -mode=>0775
@@ -1469,6 +1475,7 @@ sub write {
     my $append = 0;
     my $encode = undef;
     my $lock = 0;
+    my $log = undef;
     my $mode = undef;
     my $recursive = 1;
     my $unindent = 0;
@@ -1478,6 +1485,7 @@ sub write {
             -append => \$append,
             -encode => \$encode,
             -lock => \$lock,
+            -log => \$log,
             -mode => \$mode,
             -recursive => \$recursive,
             -unindent => \$unindent,
@@ -1542,6 +1550,10 @@ sub write {
                 Path => $file,
                 Error => $errStr,
             );
+        };
+
+        if ($log) {
+            print $log "$file written\n";
         }
     }
 
@@ -4244,7 +4256,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2024 Frank Seitz
+Copyright (C) 2025 Frank Seitz
 
 =head1 LICENSE
 
