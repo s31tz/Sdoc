@@ -3106,6 +3106,12 @@ Verzeichnis, in dem das Datums-Subverzeichnis angelegt wird.
 
 Gib Information aus.
 
+=item -dirSuffix => $suffix
+
+Füge an das Datums-Subverzeichnis den Suffix $suffix an. Beispiel:
+
+  Quiq::Path->moveToDateSubDir($_,-dirSuffix=>'.tmp')
+
 =back
 
 =head4 Description
@@ -3135,14 +3141,19 @@ sub moveToDateSubDir {
     # Optionen und Argumente
 
     my $verbose = 1;
+    my $dirSuffix = undef;
 
     my $argA = $this->parameters(1,2,\@_,
         -verbose => \$verbose,
+        -dirSuffix => \$dirSuffix,
     );
     my ($path,$rootDir) = @$argA;
 
     my $date = POSIX::strftime('%Y-%m-%d',localtime $this->mtime($path));
     my $destDir = $rootDir? "$rootDir/$date": $date;
+    if ($dirSuffix) {
+        $destDir .= $dirSuffix;
+    }
     my $name = $this->filename($path);
     if ($verbose) {
         say "$path => $destDir/$name";
