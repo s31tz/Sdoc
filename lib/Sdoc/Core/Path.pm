@@ -4041,6 +4041,99 @@ sub stat {
 
 # -----------------------------------------------------------------------------
 
+=head3 swap() - Vertausche in einem Verzeichnis zwei Namen
+
+=head4 Synopsis
+
+  $this->%METHOD($dir,$glob1,$glob2);
+
+=head4 Arguments
+
+=over 4
+
+=item $dir
+
+Pfad des Verzeichnisses
+
+=item $glob1
+
+Datei oder Verzeichnisname
+
+=item $glob2
+
+Datei oder Verzeichnisname
+
+=back
+
+=head4 Description
+
+Vertausche in Verzeichnis $dir die beiden (Datei- oder Verzeichnis-)Namen
+$glob1 und $glob2.
+
+=head4 Example
+
+  $ perl -MSdoc::Core::Path -E 'Sdoc::Core::Path->swap("06-album","0000940.*","0010200.*")'
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub swap {
+    my $this = shift;
+    my $dir = $this->expandTilde(shift);
+    my $glob1 = shift;
+    my $glob2 = shift;
+
+    my @paths1 = $this->glob("$dir/$glob1");
+    if (!@paths1) {
+        $this->throw(
+            'PATH-00099: Glob pattern not found',
+            Pattern => "$dir/$glob1",
+        );
+    }
+    my @paths2 = $this->glob("$dir/$glob2");
+    if (!@paths2) {
+        $this->throw(
+            'PATH-00099: Glob pattern not found',
+            Pattern => "$dir/$glob2",
+        );
+    }
+
+    (my $name1 = $glob1) =~ s/\*//g;
+    (my $name2 = $glob2) =~ s/\*//g;
+
+    my @newPaths;
+
+    # $name1 in $name2 umbenennen und Endung .tmp hinzufügen
+
+    for my $path (@paths1) {
+        (my $newPath = $path) =~ s/$name1/$name2/;
+        $newPath .= '.tmp';
+        $this->rename($path,$newPath);
+        push @newPaths,$newPath;
+    }
+
+    # $name2 in $name1 umbenennen und Endung .tmp hinzufügen
+
+    for my $path (@paths2) {
+        (my $newPath = $path) =~ s/$name2/$name1/;
+        $newPath .= '.tmp';
+        $this->rename($path,$newPath);
+        push @newPaths,$newPath;
+    }
+
+    # Endung .tmp entfernen
+
+    for my $path (@newPaths) {
+        (my $newPath = $path) =~ s/\.tmp//;
+        $this->rename($path,$newPath);
+    }
+
+    return;
+}
+
+# -----------------------------------------------------------------------------
+
 =head3 symlink() - Erzeuge Symlink
 
 =head4 Synopsis
