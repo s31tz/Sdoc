@@ -226,6 +226,10 @@ Liefere Ausgabe auf stdout und stderr getrennt.
 
 Für Beispiele siehe Abschnitt ""exec/Examples"".
 
+=item -log => $bool (Default: 0)
+
+Logge das Kommando auf STDOUT.
+
 =item -outputTo => $name
 
 Schreibe jegliche Ausgabe von $cmd auf stdout und stderr nach
@@ -298,6 +302,7 @@ sub exec {
     # Optionen
 
     my $capture = undef;
+    my $log = 0;
     my $outputTo = undef;
     my $quiet = $self->get('quiet');
     my $sloppy = $self->get('sloppy');
@@ -305,6 +310,7 @@ sub exec {
     if (@_) {
         Sdoc::Core::Option->extract(\@_,
             -capture => \$capture,
+            -log => \$log,
             -outputTo => \$outputTo,
             -quiet => \$quiet,
             -sloppy => \$sloppy,
@@ -368,9 +374,9 @@ sub exec {
     # Kommando protokollieren
 
     my $dryRun = $self->{'dryRun'};
-    my $log = $self->{'log'};
+    my $doLog = $log || $self->{'log'};
 
-    if ($log || $dryRun) {
+    if ($doLog || $dryRun) {
         $self->_logCmd($cmd);
     }
 
@@ -388,7 +394,7 @@ sub exec {
         }
         $exit = $?;
         my $t1 = Time::HiRes::gettimeofday;
-        if ($log && $self->{'time'}) {
+        if ($doLog && $self->{'time'}) {
             my $fd = $self->{'logDest'};
             printf $fd "%s%s\n",$self->{'timePrefix'},
                 Sdoc::Core::Converter->epochToDuration($t1-$t0,1,3);
