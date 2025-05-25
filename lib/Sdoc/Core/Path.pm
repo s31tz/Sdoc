@@ -31,7 +31,7 @@ use strict;
 use warnings;
 use utf8;
 
-our $VERSION = '1.225';
+our $VERSION = '1.226';
 
 use Sdoc::Core::Option;
 use Sdoc::Core::FileHandle;
@@ -1819,11 +1819,11 @@ Anwendungsfall: nur die Blatt-Verzeichnisse eines Verzeichnisbaums.
 
 Liefere nur Dateien, die vor mindestens $seconds zuletzt geändert
 wurden. Diese Option ist z.B. nützlich, um veraltete temporäre Dateien
-zu finden, um sie zu löschen.
+zu finden.
 
 =item -outHandle => $fh (Default: \*STDOUT)
 
-Filehandle, auf die Ausgabe im Falle von -verbose=>1 geschrieben
+Filehandle, auf die die Ausgabe im Falle von -verbose=>1 geschrieben
 werden.
 
 =item -pattern => $regex (Default: keiner)
@@ -1852,7 +1852,7 @@ Liefere nur den Subpfad, entferne also $path am Anfang.
 
 =item -testSub => sub {} (Default: undef)
 
-Subroutine, die den Pfad als Argument erthält und einen boolschen
+Subroutine, die den Pfad als Argument erhält und einen boolschen
 Wert liefert, der angibt, ob der Pfad zur Ergebnismenge gehört
 oder nicht.
 
@@ -2887,7 +2887,7 @@ sub expandTilde {
     if ($path && substr($path,0,1) eq '~') {
         if (!exists $ENV{'HOME'}) {
             $class->throw(
-                'PATH-00016: Environment-Variable HOME existiert nicht',
+                'PATH-00016: Envvar HOME does not exist',
             );
         }
         substr($path,0,1) = $ENV{'HOME'};
@@ -2926,6 +2926,10 @@ sub extension {
 
   $filename = $class->filename($path);
 
+=head4 Alias
+
+lastName()
+
 =head4 Description
 
 Liefere die letzte Komponente des Pfads.
@@ -2938,6 +2942,11 @@ sub filename {
     my ($class,$path) = @_;
     $path =~ s|.*/||;
     return $path;
+}
+
+{
+    no warnings 'once';
+    *lastName = \&filename;
 }
 
 # -----------------------------------------------------------------------------
@@ -3364,6 +3373,52 @@ sub readlink {
 {
     no warnings 'once';
     *readLink = \&readlink;
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 reduceToTilde() - Ersetze Pfandanfang durch Tilde
+
+=head4 Synopsis
+
+  $pathNew = $class->reduceToTilde($path);
+
+=head4 Arguments
+
+=over 4
+
+=item $path
+
+Ein Pfad
+
+=back
+
+=head4 Returns
+
+Pfad (String)
+
+=head4 Description
+
+Ersetze das Homedir am Pfadanfang durch eine Tilde und liefere den
+resultierenden Pfad zurück. Beginnt der Pfad nicht mit dem Homedir,
+bleibt er unverändert.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub reduceToTilde {
+    my ($class,$path) = @_;
+
+    if (!exists $ENV{'HOME'}) {
+        $class->throw(
+            'PATH-00016: Envar HOME does not exist',
+        );
+    }
+
+    $path =~ s#^$ENV{'HOME'}#~#;
+    
+    return $path;
 }
 
 # -----------------------------------------------------------------------------
@@ -4352,7 +4407,7 @@ sub uid {
 
 =head1 VERSION
 
-1.225
+1.226
 
 =head1 AUTHOR
 
