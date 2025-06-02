@@ -1049,6 +1049,10 @@ sub resolveLinks {
             (my $text = $linkText) =~ s/^([+])?//;
             my $attribute = $1 // '';
 
+            # Ist ein Anzeigetext angegeben, trennen wir diesen ab
+            # FIXME: Hier fortsetzen
+            (my $displayedText,$text) =~ split /\|/,$text;
+
             if ($text =~ m{^(https?://|mailto:)}) {
                 # Unmittelbare Referenz auf eine externe Resource
 
@@ -2203,14 +2207,16 @@ sub latexCode {
     # * now
     # * strftime-Formate werden expandiert
 
-    my $date = $self->expandText($l,'dateS');
-    if ($date eq 'today') {
-        $date = '%Y-%m-%d';
+    my $date;
+    if ($date = $self->expandText($l,'dateS')) {
+        if ($date eq 'today') {
+            $date = '%Y-%m-%d';
+        }
+        elsif ($date eq 'now') {
+            $date = '%Y-%m-%d %H:%M:%S';
+        }
+        POSIX::strftime($date,localtime);
     }
-    elsif ($date eq 'now') {
-        $date = '%Y-%m-%d %H:%M:%S';
-    }
-    POSIX::strftime($date,localtime);
 
     return Sdoc::Core::LaTeX::Document->latex($l,
         documentClass => $documentClass,
@@ -2221,7 +2227,7 @@ sub latexCode {
         fontSize => $self->latexFontSize,
         title => $self->expandText($l,'titleS') // '',
         author => $self->expandText($l,'authorS') // '',
-        date => $date // '',
+        date => $date,
         secNumDepth => $att->sections?
             $self->getUserNodeAttribute('sectionNumberLevel'): undef,
         tocDepth => $toc? $toc->maxLevel: undef,
@@ -2298,7 +2304,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2023 Frank Seitz
+Copyright (C) 2025 Frank Seitz
 
 =head1 LICENSE
 
