@@ -21,7 +21,7 @@ use v5.10;
 use strict;
 use warnings;
 
-our $VERSION = '1.227';
+our $VERSION = '1.228';
 
 use Sdoc::Core::Math;
 use Sdoc::Core::Formatter;
@@ -302,7 +302,7 @@ sub reducedIsoTime {
 
 =head1 VERSION
 
-1.227
+1.228
 
 =head1 AUTHOR
 
