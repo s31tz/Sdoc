@@ -3008,7 +3008,7 @@ sub getFirst {
     if (!$sloppy) {
         $this->throw(
             'PATH-00099: No pattern matches a path',
-            Patterns => join(', ',@_),
+            Patterns => join(', ',@$argA),
         );
     }
 

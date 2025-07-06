@@ -2151,6 +2151,16 @@ L{Google}
   name="Google"
   url="http://google.com"
 
+====* Beispiel: Link mit abweichendem Anzeigetext
+
+  L{Google|Suchmaschine}
+
+  %Link:
+    name="Google"
+    url="http://google.com"
+
+L{Google|Suchmaschine}
+
 ===! M - Mathematische Formel (math)
 
 Der von C{\M~TEXT~} eingefasste Text C{TEXT} wird als mathematische

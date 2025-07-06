@@ -1040,6 +1040,12 @@ sub resolveLinks {
 
     for my $srcNode ($self->linkContainingNodes) {
         for my $e (@{$srcNode->linkA}) {
+            # $e ist ein dreielementiges Array, bestehend aus
+            # [$text,undef,$displayText]. [0] ist im Falle von
+            # L{TEXT} der Text TEXT, [1] ist das Link-Objekt, welches
+            # hier instantiiert wird, [2] ist der Anzeigetext
+            # im Falle von L{TEXT|DISPLAYTEXT}.
+
             my $linkText = $e->[0];
             $linkText =~ s/[\n\t]/ /g;
             $linkText =~ s/  +/ /g;
@@ -1049,10 +1055,6 @@ sub resolveLinks {
             (my $text = $linkText) =~ s/^([+])?//;
             my $attribute = $1 // '';
 
-            # Ist ein Anzeigetext angegeben, trennen wir diesen ab
-            # FIXME: Hier fortsetzen
-            (my $displayedText,$text) =~ split /\|/,$text;
-
             if ($text =~ m{^(https?://|mailto:)}) {
                 # Unmittelbare Referenz auf eine externe Resource
 
@@ -1060,7 +1062,7 @@ sub resolveLinks {
                     type => 'external',
                     destText => $text,
                     destNode => undef,
-                    text => $text,
+                    text => $e->[2] // $text,
                     attribute => $attribute,
                     linkNode => undef,
                     subType => undef,
@@ -1111,7 +1113,7 @@ sub resolveLinks {
                         type => 'internal',
                         destText => undef,
                         destNode => $node,
-                        text => $text,
+                        text => $e->[2] // $text,
                         attribute => $attribute,
                         linkNode => undef,
                         subType => undef,
@@ -1133,7 +1135,7 @@ sub resolveLinks {
                     type => 'internal',
                     destText => undef,
                     destNode => $node,
-                    text => $text,
+                    text => $e->[2] // $text,
                     attribute => $attribute,
                     linkNode => $lnk,
                     subType => 'regex',
@@ -1148,7 +1150,7 @@ sub resolveLinks {
                     type => 'external',
                     destText => $file,
                     destNode => undef,
-                    text => $text,
+                    text => $e->[2] // $text,
                     attribute => $attribute,
                     linkNode => $lnk,
                     subType => 'file',
@@ -1161,7 +1163,7 @@ sub resolveLinks {
                     type => 'external',
                     destText => $url,
                     destNode => undef,
-                    text => $text,
+                    text => $e->[2] // $text,
                     attribute => $attribute,
                     linkNode => $lnk,
                     subType => 'url',

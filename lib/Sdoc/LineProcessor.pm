@@ -643,10 +643,13 @@ sub parseSegments {
                 else {
                     # Link. Die unten stehende Komponente undef wird nach
                     # dem Parsen des gesamten Dokuments durch einen Hash
-                    # mit Link-Information ersetzt.
+                    # mit Link-Information ersetzt. Der Text $displayText
+                    # ist der Anzeigetext im Falle von L{NAME|TEXT}.
+
+                    ($val,my $displayText) = split /\|/,$val;
 
                     my $linkA = $node->linkA;
-                    push @$linkA,[$val,undef];
+                    push @$linkA,[$val,undef,$displayText];
                     $val = $#$linkA;
                 }
             }
@@ -745,7 +748,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2022 Frank Seitz
+Copyright (C) 2025 Frank Seitz
 
 =head1 LICENSE
 
