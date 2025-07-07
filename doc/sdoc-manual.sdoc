@@ -1754,6 +1754,7 @@ gebildet.
     name=STRING
     file=PATH
     regex=REGEX
+    target=TARGET
     url=URL
 
 [name=STRING]:
@@ -1765,6 +1766,9 @@ gebildet.
 
 [regex=REGEX]:
   Regex, der den internen Zielknoten identifiziert.
+
+[target=TARGET]:
+  Target, der in HTML dem Link hinzugefügt wird.
 
 [url=URL]:
   URL eines externen Dokuments.
@@ -1984,7 +1988,7 @@ Ergebnis:
 
 === Eigenschaften
 
-  %Link:
+  %Segment:
     name=STRING
     html=CODE
     latex=CODE
