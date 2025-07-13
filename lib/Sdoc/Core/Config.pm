@@ -73,7 +73,7 @@ use v5.10;
 use strict;
 use warnings;
 
-our $VERSION = '1.228';
+our $VERSION = '1.229';
 
 use Sdoc::Core::Option;
 use Sdoc::Core::Reference;
@@ -297,7 +297,7 @@ sub try {
 
 =head1 VERSION
 
-1.228
+1.229
 
 =head1 AUTHOR
 

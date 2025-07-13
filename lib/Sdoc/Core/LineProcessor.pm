@@ -51,7 +51,7 @@ use strict;
 use warnings;
 use utf8;
 
-our $VERSION = '1.228';
+our $VERSION = '1.229';
 
 use Sdoc::Core::Option;
 use Sdoc::Core::FileHandle;
@@ -403,7 +403,7 @@ sub dump {
 
 =head1 VERSION
 
-1.228
+1.229
 
 =head1 AUTHOR
 

@@ -129,6 +129,7 @@ sub new {
         name => undef,
         file => undef,
         regex => undef,
+        target => undef,
         url => undef,
         useCount => 0,
     );
@@ -259,7 +260,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2021 Frank Seitz
+Copyright (C) 2025 Frank Seitz
 
 =head1 LICENSE
 

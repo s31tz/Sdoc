@@ -1308,9 +1308,13 @@ sub expandSegmentsToHtml {
         }
 
         my ($linkText,$obj) = @{$self->linkA->[$val]};
+        my $linkNode = $obj->linkNode;
+        my $target = $linkNode? $linkNode->target: undef;
+
         if ($obj->type eq 'external') {
             $code = $h->tag('a',
                 href => $obj->destText,
+                target => $target,
                 $h->protect($obj->text),
             );
         }
@@ -1321,12 +1325,14 @@ sub expandSegmentsToHtml {
             if ($obj->attribute eq '+') {
                 $code = $h->tag('a',
                     href => "#$linkId",
+                    target => $target,
                     $destNode->linkText($h),
                 );
             }
             else {
                 $code = $h->tag('a',
                     href => "#$linkId",
+                    target => $target,
                     $h->protect($obj->text),
                 );
             }
@@ -2235,7 +2241,7 @@ Frank Seitz, L<http://fseitz.de/>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2023 Frank Seitz
+Copyright (C) 2025 Frank Seitz
 
 =head1 LICENSE
 
