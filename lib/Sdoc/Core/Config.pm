@@ -108,7 +108,7 @@ dem Inhalt $text.
 =item -secure => $bool (Default: 0)
 
 Prüfe die Sicherheit der Datei. Wenn gesetzt, wird geprüft,
-ob die Datei nur für den Benutzer lesbar/schreibbar ist.
+ob die Datei nur für den aufrufenden Benutzer lesbar/schreibbar ist.
 
 =back
 
@@ -184,7 +184,7 @@ sub new {
             else {
                 $class->throw(
                     'CFG-00002: Config file not found',
-                    ConfigFile => $cfgFile,
+                    ConfigFile => "@_",
                 );
             }
         }
