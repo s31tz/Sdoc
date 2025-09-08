@@ -907,12 +907,12 @@ sub hashSize {
 
 # -----------------------------------------------------------------------------
 
-=head3 validate() - Überprüfe Hash-Schlüssel
+=head3 validateKeys() - Überprüfe Hash-Schlüssel
 
 =head4 Synopsis
 
-  $class->validate(\%hash,\@keys);
-  $class->validate(\%hash,\%keys);
+  $class->validateKeys(\%hash,\@keys);
+  $class->validateKeys(\%hash,\%keys);
 
 =head4 Description
 
@@ -924,7 +924,7 @@ Prüfe die Schlüssel des Hash %hash gegen die Schlüssel in Array
 
 # -----------------------------------------------------------------------------
 
-sub validate {
+sub validateKeys {
     my ($class,$h,$arg) = @_;
 
     my $refH;
