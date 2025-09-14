@@ -1687,7 +1687,7 @@ sub count {
 
 # -----------------------------------------------------------------------------
 
-=head3 deleteContent() - Lösche Inhalt des Verzeichnis
+=head3 deleteContent() - Lösche Inhalt des Verzeichnisses
 
 =head4 Synopsis
 

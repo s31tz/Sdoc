@@ -939,10 +939,12 @@ $str um.
 sub captureStderr {
     my ($class,$ref) = @_;
 
-    CORE::close STDERR;
+    if (Scalar::Util::openhandle(*STDERR)) {
+        CORE::close STDERR;
+    }
     CORE::open STDERR,'>',$ref or do {
         $class->throw(
-            'FH-00001: Abfangen von STDERR fehlgeschlagen',
+            'FH-00001: Capture of STDERR failed',
             Errstr=>$!,
         );
     };
