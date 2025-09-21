@@ -209,7 +209,7 @@ sub new {
                 # Wir haben die Datei geöffnet und schließen sie gleich wieder
                 CORE::close $self;
             }
-            $class->throw('FH-00002: Kann Lock nicht setzen',Errstr=>$!);
+            $class->throw('FH-00002: Can\'t acquire lock',Errstr=>$!);
         };
     }
 

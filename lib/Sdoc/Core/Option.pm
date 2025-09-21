@@ -309,7 +309,7 @@ sub extract {
                 die "Ungültige Option: $dashPrefix$key\n";
             }
             $class->throw(
-                'OPT-00001: Ungültige Option',
+                'OPT-00001: Unknown option',
                 Option => "$dashPrefix$key",
             );
         };
@@ -481,7 +481,7 @@ sub extractMulti {
 
             if (!$sloppy) {
                 $this->throw(
-                    'OPT-00001: Ungültige Option',
+                    'OPT-00001: Unknown option',
                     Option => $arg);
             }
             $ref = undef;
