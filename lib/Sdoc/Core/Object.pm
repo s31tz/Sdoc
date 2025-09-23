@@ -254,7 +254,7 @@ sub parameters {
     # Parameterliste bestimmen
 
     my $paramA = shift;
-    if (!@$paramA) {
+    if (!@$paramA && $minArgs == 0) {
         # Wenn die Parameterliste leer ist, kehren wir sofort mit einer
         # leeren Argumentliste zurück. Die Optionsvariblen behalten
         # einfach ihren Wert.
