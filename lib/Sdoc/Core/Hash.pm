@@ -588,10 +588,10 @@ sub set {
     while (@_) {
         my $key = shift;
         $self->{$key} = shift;
-        #eval {$self->{$key} = shift};
-        #if ($@) {
-        #    $self->throw($@);
-        #}
+        # eval {$self->{$key} = shift};
+        # if ($@) {
+        #     $self->throw($@);
+        # }
     }
 
     return;

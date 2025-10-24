@@ -80,7 +80,7 @@ Parser-Objekt
 
 =head4 Description
 
-Instantiiere eine Parser-Objekt für Sdoc-Dateien und liefere eine
+Instantiiere ein Parser-Objekt für Sdoc-Dateien und liefere eine
 Referenz auf dieses Objekt zurück.
 
 =cut
