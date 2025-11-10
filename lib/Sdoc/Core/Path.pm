@@ -2859,6 +2859,10 @@ sub delete {
 
   $dir = $class->dir($path);
 
+=head4 Alias
+
+parent()
+
 =head4 Returns
 
 String
@@ -2876,6 +2880,11 @@ geliefert.
 sub dir {
     my ($class,$path) = @_;
     return $path =~ m|(.*)/|? $1: '';
+}
+
+{
+    no warnings 'once';
+    *parent = \&dir;
 }
 
 # -----------------------------------------------------------------------------

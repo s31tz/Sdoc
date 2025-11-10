@@ -63,7 +63,8 @@ in den Exception-Text eingesetzt.
 =head4 Description
 
 Prüfe den Status eines terminierten Child-Prozesses und löse
-eine Execption aus, wenn dieser ungleich 0 ist.
+eine Execption aus, wenn dieser ungleich 0 ist. Ausnahme: Einen Abbruch
+via ^C tolerieren wir.
 
 =head4 Examples
 
@@ -103,6 +104,9 @@ sub check {
     }
     elsif ($exitCode & 127) {       # Abbruch mit Signal
         my $sig = $exitCode & 127;  # unterste 8 Bit sind Signalnummer
+        if ($sig == 2) {
+            return; # Abbruch per ^C tolerieren wir
+        }
         my $core = $exitCode & 128; # das 8. Bit zeigt Coredump an
         $this->throw(
             'CMD-00003: Child died with signal',
