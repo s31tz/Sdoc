@@ -98,7 +98,7 @@ sub check {
     elsif ($exitCode == -1) {
         $this->throw(
             'CMD-00001: Failed to execute command',
-            Command => $cmd,
+            Command => qq|"$cmd"|,
             ErrorMessage => $!,
         );
     }
