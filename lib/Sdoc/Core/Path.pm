@@ -3387,9 +3387,9 @@ sub partionizeDir {
         -width => \$width,
     );
 
-    if ($verbose) {
-        say "$dir $destDir $maxFiles $verbose $width";
-    }
+    # if ($verbose) {
+    #     say "$dir $destDir $maxFiles $verbose $width";
+    # }
 
     my $p = Sdoc::Core::Path->new;
 
@@ -3400,6 +3400,49 @@ sub partionizeDir {
                 Direcory => $_,
             );
         }
+    }
+
+    # Ermittele das Verzeichnis mit der maximalen Nummer ($maxSubDir) und
+    # baue die Liste der Dateien auf (@files).
+
+    my $maxSubDir = 0;
+    my @files;
+    my $dh = Sdoc::Core::DirHandle->new($dir);
+    while (my $e = $dh->next) {
+        if ($e eq '.' || $e eq '..') {
+            next;
+        }
+        if (-d "$dir/$e" && $e =~ /^\d+$/) {
+            if (!$maxSubDir || $e > $maxSubDir) {
+                $maxSubDir = $e;
+            }
+            next;
+        }
+        push @files,$e;
+    }
+    $dh->close;
+
+    @files = sort @files;
+
+    # Verteile die Dateien auf Subverzeichnisse
+
+    $maxSubDir ||= 1;
+    my $subDir = sprintf '%0*d',$width,$maxSubDir;
+    my $subDirCount = $p->exists("$destDir/$subDir")?
+        $p->count("$destDir/$subDir"): 0;
+# say $subDirCount;
+    while (my $name = shift @files) {
+        if ($subDirCount >= $maxFiles) {
+             $maxSubDir++;
+             $subDir = sprintf '%0*d',$width,$maxSubDir;
+             $subDirCount = 0;
+        }
+        if ($verbose) {
+            say "$dir/$name => $destDir/$subDir/$name ($subDirCount)";
+        }
+        $p->mkdir("$destDir/$subDir");
+        $this->duplicate('move',"$dir/$name","$destDir/$subDir/$name");
+        $subDirCount++;
     }
 
     return;
