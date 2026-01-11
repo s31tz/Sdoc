@@ -31,7 +31,7 @@ use strict;
 use warnings;
 use utf8;
 
-our $VERSION = '1.233';
+our $VERSION = '1.234';
 
 use Sdoc::Core::Option;
 use Sdoc::Core::FileHandle;
@@ -4732,7 +4732,7 @@ sub uid {
 
 =head1 VERSION
 
-1.233
+1.234
 
 =head1 AUTHOR
 
