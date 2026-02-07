@@ -62,6 +62,7 @@ use warnings;
 our $VERSION = '1.234';
 
 use Sdoc::Core::Path;
+use Sdoc::Core::Time;
 use Sdoc::Core::Math;
 
 # -----------------------------------------------------------------------------
@@ -290,6 +291,86 @@ sub pathExists {
     no warnings 'once';
     *fileExists = \&pathExists;
     *dirExists = \&pathExists;
+}
+
+# -----------------------------------------------------------------------------
+
+=head3 isDate() - Prüfe auf Datum
+
+=head4 Synopsis
+
+  $this->isDate($val,@opt);         # Exception
+  $bool = $this->isDate($val,@opt); # Rückgabewert
+
+=head4 Arguments
+
+=over 4
+
+=item $val
+
+Wert, der geprüft wird.
+
+=back
+
+=head4 Options
+
+=over 4
+
+=item -name => $str
+
+Name, der bei Verletzung der Bedingung als Teil der Fehlermeldung
+ausgegeben wird. Dies kann der Name der geprüften Variable,
+des geprüften Parameters o.ä. sein.
+
+=back
+
+=head4 Returns
+
+Boolean
+
+=head4 Description
+
+Prüfe den Wert $val daraufhin, dass er eingültiges Datum ist. Falls nein,
+wirf eine Exception, wenn die Methode im Void-Kontext gerufen wurde,
+andernfalls 0.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub isDate {
+    my $self = ref $_[0]? shift: shift->new;
+    my $val = shift;
+    # @_: @opt
+
+    # Optionen
+
+    my $name = undef;
+
+    $self->parameters(\@_,
+        -name => \$name,
+    );
+
+    # Prüfung
+
+    if (defined($val) && $val ne '') {
+        local $@;
+        eval {Sdoc::Core::Time->new(split /-/,$val)};
+        if ($@) {
+            if (defined wantarray) {
+                return 0;
+            }
+
+            $self->throw(
+                'ASSERT-00002: Invalid date',
+                defined $name? ($self->{'nameSection'} => $name): (),
+                Date => $val,
+                -stacktrace => $self->{'stacktrace'},
+            );
+        }
+    }
+    
+    return 1;
 }
 
 # -----------------------------------------------------------------------------
