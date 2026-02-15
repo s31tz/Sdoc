@@ -846,6 +846,41 @@ sub link {
 
 # -----------------------------------------------------------------------------
 
+=head3 mimeTypeByExtension() - Liefere MIME Type zur Extension
+
+=head4 Synopsis
+
+  $mineType = $this->mimeTypeByExtension($path);
+
+=head4 Description
+
+Ermittele den MIME Type der Datei auf Basis der Extension und liefere
+diesen zurück.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub mimeTypeByExtension {
+    my ($this,$path) = @_;
+
+    my $ext = lc $this->extension($path);
+    my $mimeType = {
+        pdf => 'application/pdf',
+    }->{$ext};
+
+    if (!$mimeType) {
+        $this->throw(
+            'PATH-00099: Unknown path extension',
+            Extension => $path,
+        );
+    }
+
+    return $mimeType;
+}
+
+# -----------------------------------------------------------------------------
+
 =head3 newlineStr() - Ermittele Zeilentrenner
 
 =head4 Synopsis
