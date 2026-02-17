@@ -221,7 +221,7 @@ use v5.10;
 use strict;
 use warnings;
 
-our $VERSION = '1.234';
+our $VERSION = '1.235';
 
 use Sdoc::Core::Option;
 
@@ -525,7 +525,7 @@ sub asText {
 
 =head1 VERSION
 
-1.234
+1.235
 
 =head1 AUTHOR
 

@@ -22,7 +22,7 @@ use strict;
 use warnings;
 use utf8;
 
-our $VERSION = '1.234';
+our $VERSION = '1.235';
 
 use Sdoc::Core::Hash;
 use Scalar::Util ();
@@ -513,7 +513,7 @@ sub extractMulti {
 
 =head1 VERSION
 
-1.234
+1.235
 
 =head1 AUTHOR
 
