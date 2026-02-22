@@ -502,6 +502,108 @@ sub copyToDir {
 
 # -----------------------------------------------------------------------------
 
+=head3 copyN() - Kopiere N Dateien
+
+=head4 Synopsis
+
+  $this->copyN($n,$destDir,@globPaths,%options);
+
+=head4 Options
+
+=over 4
+
+=item -createDir => $bool (Default: 0)
+
+Erzeuge Zielverzeichnis, falls es nicht existiert.
+
+=item -log => $stream (Default: undef)
+
+Schreibe Meldung auf Dateihandle. Beispiel:
+
+  -log => \*STDOUT
+
+=item -move => $bool (Default: 0)
+
+Lösche Quelldatei $srcPath nach dem Kopieren.
+
+=item -overwrite => $bool (Default: 1)
+
+Wenn gesetzt, wird die Zieldatei $destPath überschrieben, falls sie
+existiert. Andernfalls wird eine Exception geworfen.
+
+=item -preserve => $bool (Default: 1)
+
+Behalte den Zeitpunkt der letzten Änderung bei.
+
+=back
+
+=head4 Description
+
+Kopiere N Dateien aus @globPaths nach $destPath.
+
+=cut
+
+# -----------------------------------------------------------------------------
+
+sub copyN {
+    my $this = shift;
+    # @_: $n,$destDir,@globPaths,%options
+
+    # Optionen und Argumente
+
+    my $createDir = 0;
+    my $log => undef;
+    my $move = 0;
+    my $overwrite = 1;
+    my $preserve = 1;
+
+    my $argA = $this->parameters(3,undef,\@_,
+        -createDir => \$createDir,
+        -log => \$log,
+        -move => \$move,
+        -overwrite => \$overwrite,
+        -preserve => \$preserve,
+    );
+    my $n = shift @$argA;
+    my $destDir = $this->expandTilde(shift @$argA);
+    my @globPaths = map {$this->expandTilde($_)} @$argA;
+
+    # Operation ausführen
+
+    if (!-e $destDir) {
+        if ($createDir) {
+            $this->mkdir($destDir);
+        }
+        else {
+            $this->throw(
+                'PATH-00099: Destination dir does not exist',
+                Dir => $destDir,
+            );
+        }
+    }
+
+    my @files;
+    for my $globPath (@globPaths) {
+        push @files,$this->glob($globPath);
+    }
+    @files = sort @files;
+    @files = splice @files,0,$n;
+
+    for my $file (@files) {
+        $this->copyToDir($file,$destDir,
+            -createDir => $createDir,
+            -log => $log,
+            -move => $move,
+            -overwrite => $overwrite,
+            -preserve => $preserve,
+        );
+    }
+
+    return;
+}
+
+# -----------------------------------------------------------------------------
+
 =head3 duplicate() - Kopiere, bewege, linke oder symlinke Datei
 
 =head4 Synopsis
