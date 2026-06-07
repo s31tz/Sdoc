@@ -194,12 +194,16 @@ Colorcode 'reset' beendet. Ist die Erzeugung von Colorcodes
 abgeschaltet (siehe Konstruktor), wird die Zeichenkette unverändert
 geliefert.
 
+Ist $str C<undef>, wird ein Leerstring geliefert.
+
 =cut
 
 # -----------------------------------------------------------------------------
 
 sub str {
     my ($self,$attr,$str) = @_;
+
+    $str //= '';
 
     if ($$self) {
         my $esc = Term::ANSIColor::color($attr);
