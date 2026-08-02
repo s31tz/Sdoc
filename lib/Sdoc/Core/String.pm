@@ -148,8 +148,6 @@ sub autoDecode {
 
 # -----------------------------------------------------------------------------
 
-=head2 Einrückung
-
 =head3 indent() - Rücke Text ein
 
 =head4 Synopsis
